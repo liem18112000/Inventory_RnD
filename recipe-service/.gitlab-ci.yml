@@ -1,0 +1,41 @@
+variables:
+  APP_NAME: inventory-service
+  APP_VERSION: latest
+  IMAGE_TAG: fromlabs/$APP_NAME:$APP_VERSION
+
+stages:
+  - build
+  - deploy
+
+######################################## DEPLOY ON RIVEN SERVER #######################################################
+build-riven:
+  variables:
+    APP_VERSION: riven
+  stage: build
+  script:
+    - DOCKER_BUILDKIT=1 docker build --rm -t $LOCAL_REGISTRY/$IMAGE_TAG .
+    - docker push $LOCAL_REGISTRY/$IMAGE_TAG
+  tags:
+    - builder-runner
+  only:
+    refs:
+      - master
+      - develop
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /\[build-riven\]/
+
+deploy-riven:
+  stage: deploy
+  variables:
+    DEPLOYING_APP: $APP_NAME
+  trigger:
+    project: fromlabs/configuration/riven-devops
+    branch: master
+    strategy: depend
+  when: on_success
+  only:
+    refs:
+      - master
+      - develop
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /\[deploy-riven\]/
