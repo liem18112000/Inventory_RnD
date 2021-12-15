@@ -62,8 +62,17 @@ public class RecipeEntity extends RecipeBaseEntity<Long> {
         entity.setName(request.getName());
         entity.setCode(request.getCode());
         entity.setDescription(request.getDescription());
-        entity.setGroup(Objects.isNull(request.getParentId()) || request.getParentId() < 0);
+        entity.setGroup(checkIsGroupFromPageRequest(request));
         return entity;
+    }
+
+    private static boolean checkIsGroupFromPageRequest(RecipePageRequest request) {
+        if(Objects.nonNull(request.getGroup())) {
+            return request.getGroup();
+        } else {
+            return Objects.isNull(request.getParentId()) || request.getParentId() < 0;
+        }
+
     }
 
     public static RecipeEntity from(RecipeRequest request) {

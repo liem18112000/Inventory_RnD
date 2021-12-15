@@ -128,6 +128,21 @@ public class RecipeController implements ApplicationController {
         return (ResponseEntity<?>) buildGetPageRecipeChildTemplateProcess(tenantId, request, recipeService).run();
     }
 
+    /**
+     * Get all recipe child page
+     * @param tenantId  Tenant ID
+     * @param request   RecipePageRequest
+     * @return          ResponseEntity
+     */
+    @PostMapping("child/page/all")
+    public ResponseEntity<?> getAllChildPage(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody RecipePageRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "child/page/all"));
+        return (ResponseEntity<?>) buildGetPageAllRecipeChildTemplateProcess(tenantId, request, recipeService).run();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="GENERAL">

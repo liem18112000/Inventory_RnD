@@ -22,6 +22,12 @@ public class RequestBootstrap {
         return logWrapper(request, "pageBootstrap: {}");
     }
 
+    public Object bootstrapGetAllRecipeChildPage(Long tenantId, RecipePageRequest request) {
+        request.setTenantId(tenantId);
+        request.setGroup(false);
+        return logWrapper(request, "pageBootstrap: {}");
+    }
+
     /**
      * Page bootstrap for get all recipe group and child
      * @param tenantId  Client ID

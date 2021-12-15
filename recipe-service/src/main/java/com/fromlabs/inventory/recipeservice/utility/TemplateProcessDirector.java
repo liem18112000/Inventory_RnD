@@ -88,6 +88,22 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
+    //<editor-fold desc="Build get page all recipe child template process">
+
+    public TemplateProcess buildGetPageAllRecipeChildTemplateProcess(
+            Long                tenantId,
+            RecipePageRequest   request,
+            RecipeService       recipeService
+    ) {
+        return WebTemplateProcess.builder()
+                .bootstrap( () -> bootstrapGetAllRecipeChildPage(tenantId, request))
+                .validate(  () -> validateTenant(tenantId))
+                .process(   () -> ok(getRecipePageWithFilter(request, recipeService)))
+                .build();
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="Build get all recipe child template process">
 
     /**

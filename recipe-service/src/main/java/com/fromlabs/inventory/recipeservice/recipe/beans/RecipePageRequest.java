@@ -7,9 +7,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class RecipePageRequest extends BaseCustomizePageRequest {
-    protected Long   tenantId;
-    protected Long   parentId = null;
-    protected String name = "";
-    protected String description = "";
-    protected String code = "";
+    protected Long      tenantId;
+    protected Long      parentId = null;
+    protected String    name = "";
+    protected String    description = "";
+    protected String    code = "";
+    protected Boolean   group;
 }
