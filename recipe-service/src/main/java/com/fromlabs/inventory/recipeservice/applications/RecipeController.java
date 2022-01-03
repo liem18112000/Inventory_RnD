@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.InetAddress;
 
 import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
-import static com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto.*;
 import static com.fromlabs.inventory.recipeservice.utility.TemplateProcessDirector.*;
 import static com.fromlabs.inventory.recipeservice.utility.TransactionConstraint.*;
 import static com.fromlabs.inventory.recipeservice.utility.ControllerValidation.*;
@@ -171,7 +170,7 @@ public class RecipeController implements ApplicationController {
         return (ResponseEntity<?>) WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .validate(  () -> validateId(id))
                 .before(    () -> isRecipeExistById(id, recipeService))
-                .process(   () -> ok(RecipeMapper.toDto(recipeService.get(id))))
+                .process(   () -> ok(RecipeMapper.toDto(recipeService.getById(id))))
                 .build().run();
     }
 

@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.fromlabs.inventory.recipeservice.recipe.RecipeEntity.update;
-
 import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.filter;
 import static java.util.Objects.*;
 
@@ -80,7 +78,7 @@ public class TransactionLogic {
             RecipeService       service
     ) {
         log.info("getRecipePageWithFilter: getFilter");
-        return filter(RecipeEntity.from(request), getParent(request, service));
+        return filter(RecipeMapper.toEntity(request), getParent(request, service));
     }
 
     /**
@@ -94,7 +92,7 @@ public class TransactionLogic {
             RecipeService       service
     ) {
         log.info("getRecipePageWithFilter: getParent");
-        return isNull(request.getParentId()) ? null : service.get(request.getParentId());
+        return isNull(request.getParentId()) ? null : service.getById(request.getParentId());
     }
 
     //</editor-fold>
@@ -124,7 +122,7 @@ public class TransactionLogic {
             RecipeService service
     ) {
         log.info("saveRecipeEntity");
-        return RecipeMapper.toDto(service.save(RecipeEntity.from(request).setParent(nonNull(request.getParentId()) ? service.get(request.getParentId()) : null)));
+        return RecipeMapper.toDto(service.save(RecipeMapper.toEntity(request).setParent(nonNull(request.getParentId()) ? service.getById(request.getParentId()) : null)));
     }
 
     //</editor-fold>
@@ -146,7 +144,7 @@ public class TransactionLogic {
     ) {
         log.info("saveRecipeDetailEntity");
         return RecipeDetailMapper.toDto(recipeDetailService.save(
-                RecipeDetailMapper.toEntity(request, recipeService.get(request.getRecipeId()))),
+                RecipeDetailMapper.toEntity(request, recipeService.getById(request.getRecipeId()))),
                 ingredientClient);
     }
 
@@ -165,11 +163,11 @@ public class TransactionLogic {
             RecipeService service
     ) {
         log.info("updateRecipeEntity");
-        final var recipe = service.get(request.getId());
+        final var recipe = service.getById(request.getId());
         return RecipeMapper.toDto(service.save(
-                update(request, recipe)
-                        .setParent(isNull(request.getParentId()) || request.getParentId() < 0 ?
-                                null : service.get(request.getParentId()))
+                recipe.update(request).setParent(
+                        isNull(request.getParentId()) || request.getParentId() < 0 ?
+                                null : service.getById(request.getParentId()))
         ));
     }
 
@@ -219,7 +217,7 @@ public class TransactionLogic {
     }
 
     private RecipeEntity getRecipeById(Long id, RecipeService recipeService) {
-        return Objects.nonNull(id) ? recipeService.get(id) : null;
+        return Objects.nonNull(id) ? recipeService.getById(id) : null;
     }
 
     /**
@@ -317,7 +315,7 @@ public class TransactionLogic {
             Long                recipeId,
             RecipeService       recipeService
     ) {
-        return RecipeDetailSpecification.hasClientId(tenantId).and(RecipeDetailSpecification.hasRecipe(recipeService.get(recipeId)));
+        return RecipeDetailSpecification.hasClientId(tenantId).and(RecipeDetailSpecification.hasRecipe(recipeService.getById(recipeId)));
     }
 
     //</editor-fold>
@@ -355,7 +353,7 @@ public class TransactionLogic {
             RecipeService   recipeService
     ) {
         log.info("getRecipeByCode");
-        return RecipeMapper.toDto(recipeService.get(code));
+        return RecipeMapper.toDto(recipeService.getByCode(code));
     }
 
     //</editor-fold>

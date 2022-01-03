@@ -28,7 +28,7 @@ public class TransactionConstraint {
             String          property,
             RecipeService   service
     ) {
-        return logWrapper(nonNull(service.get(property)), "isRecipeExistByCode : {}");
+        return logWrapper(nonNull(service.getByCode(property)), "isRecipeExistByCode : {}");
     }
 
     /**
@@ -51,7 +51,7 @@ public class TransactionConstraint {
      * @return          boolean
      */
     public boolean isRecipeExistById(Long property, RecipeService service) {
-        return logWrapper(nonNull(service.get(property)), "isRecipeExistById : {}");
+        return logWrapper(nonNull(service.getById(property)), "isRecipeExistById : {}");
     }
 
     /**
@@ -183,9 +183,9 @@ public class TransactionConstraint {
             RecipeRequest request,
             RecipeService service
     ) {
-        final var recipeWithName = service.get(request.getTenantId(), request.getName());
-        final var recipeWithCode = service.get(request.getCode());
-        return logWrapper( nonNull(service.get(request.getId())) &&
+        final var recipeWithName = service.getByName(request.getTenantId(), request.getName());
+        final var recipeWithCode = service.getByCode(request.getCode());
+        return logWrapper( nonNull(service.getById(request.getId())) &&
                 (isNull(recipeWithCode) || recipeWithCode.getId().equals(request.getId())) &&
                 (isNull(recipeWithName) || recipeWithName.getId().equals(request.getId())) &&
                 isRecipeParentExistByIDOrNullParentId(request.getParentId(), service)
@@ -217,7 +217,7 @@ public class TransactionConstraint {
             RecipeRequest request,
             RecipeService service
     ) {
-        final var recipe = service.get(request.getId());
+        final var recipe = service.getById(request.getId());
         return logWrapper( nonNull(recipe) &&
                 request.getCode().equals(recipe.getCode()) &&
                 request.getName().equals(recipe.getName())
@@ -247,7 +247,7 @@ public class TransactionConstraint {
      * @return          boolean
      */
     public boolean isRecipeParentExistByIDOrNullParentId(Long parentId, RecipeService service) {
-        return logWrapper( isNull(parentId) || nonNull(service.get(parentId)),"isRecipeParentExistByID: {}");
+        return logWrapper( isNull(parentId) || nonNull(service.getById(parentId)),"isRecipeParentExistByID: {}");
     }
 
     /**

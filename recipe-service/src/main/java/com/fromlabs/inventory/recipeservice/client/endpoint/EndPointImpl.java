@@ -67,7 +67,7 @@ public class EndPointImpl implements EndPoint {
             @PathVariable(ID) Long id
     ) {
         log.info(path(HttpMethod.GET, String.valueOf(id)));
-        return RecipeMapper.toDto(this.recipeService.get(id));
+        return RecipeMapper.toDto(this.recipeService.getById(id));
     }
 
     /**
@@ -80,7 +80,7 @@ public class EndPointImpl implements EndPoint {
             @RequestParam(CODE) String code
     ) {
         log.info(path(HttpMethod.GET, "code"));
-        return RecipeMapper.toDto(this.recipeService.get(code));
+        return RecipeMapper.toDto(this.recipeService.getByCode(code));
     }
 
     /**
