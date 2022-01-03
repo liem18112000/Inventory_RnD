@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.domains;
 
+import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.domains.fast.services.FastInventoryDomainService;
 import com.fromlabs.inventory.inventoryservice.domains.fast.services.FastInventoryDomainServiceImpl;
 import com.fromlabs.inventory.inventoryservice.domains.jakten.services.JaktenInventoryDomainService;
@@ -101,6 +102,7 @@ public class DomainServiceConfiguration {
      * @param ingredientService IngredientService
      * @param inventoryService  InventoryService
      * @param itemService       ItemService
+     * @param recipeClient      RecipeClient
      * @return                  RestaurantInventoryDomainService
      */
     @Bean(name = RESTAURANT_DOMAIN)
@@ -111,13 +113,15 @@ public class DomainServiceConfiguration {
     public RestaurantInventoryDomainService getResDomainService(
             IngredientService ingredientService,
             InventoryService inventoryService,
-            ItemService itemService
+            ItemService itemService,
+            RecipeClient recipeClient
     ) {
         log.info("Domain service : {}", RestaurantInventoryDomainServiceImpl.class.getName());
         return new RestaurantInventoryDomainServiceImpl(
                 ingredientService,
                 inventoryService,
-                itemService
+                itemService,
+                recipeClient
         );
     }
 

@@ -4,7 +4,6 @@ import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { IngredientService } from '../../service/IngredientService';
-import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import moment from 'moment';
 import { sleep } from '../../core/utility/ComponentUtility';
@@ -27,16 +26,18 @@ export class IngredientItemForm extends Component {
                 name: '',
                 tenantId: '',
                 description: '',
-                unit: '',
-                unitType: '',
+                unit: this.props.unit,
+                unitType: this.props.unitType,
                 code: '',
-                expiredAt: ''
+                expiredAt: '',
             },
             isMock: false,
             visible: false,
             errors: {},
             editTitle: 'Edit Ingredient Item',
-            createTitle: 'New Ingredient Item'
+            createTitle: 'New Ingredient Item',
+            batchTitle: 'New Ingredient Item Batch',
+
         }
         this.ingredientService = new IngredientService();
     }
@@ -51,16 +52,34 @@ export class IngredientItemForm extends Component {
      * Form action is activated when the form need to save or update ingredient detail information
      * @param id        Ingredient Type ID
      * @param isSave    True if save otherwise false
+     * @param isBatch   True if save a batch of item otherwise false
      */
-    action = (id, isSave = true) => {
-        this.ingredientService.getUnitTypes(this.state.isMock).then(ut => this.setState({
-            unitTypes: ut
-        }));
-        if (!isSave && id != null) {
+    action = (id, isSave = true, isBatch = true) => {
+        if (id != null) {
             this.setUpdateInformation(id);
-        } else {
-            this.setSaveInformation();
+        } else if(isSave) {
+            if (isBatch) {
+                this.setSaveBatch();
+            } else {
+                this.setSaveInformation();
+            }
         }
+    }
+
+    /**
+     * Set up information batch to state
+     */
+    setSaveBatch() {
+        this.setState({
+            data: {
+                ...this.state.data,
+                ingredientId: this.props.id,
+                quantity: 1
+            },
+            id: null,
+            visible: true,
+            formHeader: this.state.batchTitle
+        })
     }
 
     /**
@@ -69,15 +88,8 @@ export class IngredientItemForm extends Component {
     setSaveInformation() {
         this.setState({
             data: {
-                id: null,
-                ingredientId: this.props.id,
-                name: '',
-                tenantId: '',
-                description: '',
-                unit: '',
-                unitType: '',
-                code: '',
-                expiredAt: ''
+                ...this.state.data,
+                ingredientId: this.props.id
             },
             id: null,
             visible: true,
@@ -87,7 +99,7 @@ export class IngredientItemForm extends Component {
 
     /**
      * Get updated ingredient category and set to update information state
-     * @param id    Ingredient Category id
+     * @param id        Ingredient Category id
      */
     setUpdateInformation(id) {
         this.ingredientService.getItemByID(id, this.state.isMock).then(data => {
@@ -101,17 +113,11 @@ export class IngredientItemForm extends Component {
                     unit: data ? data.unit : '',
                     unitType: data ? data.unitType : '',
                     code: data ? data.code : '',
-                    expiredAt: data ? data.expiredAt : ''
+                    expiredAt: data ? data.expiredAt : '',
                 },
                 id: data ? data.id : null,
                 visible: true,
                 formHeader: this.state.editTitle
-            }, () => {
-                if (data.unitType) {
-                    this.ingredientService.getUnit(data.unitType, false).then(u => this.setState({
-                        units: u
-                    }))
-                }
             })
         })
     }
@@ -133,7 +139,6 @@ export class IngredientItemForm extends Component {
         return !(this.state.errors.name || this.state.errors.code || this.state.errors.unitType || this.state.errors.unit);
     }
 
-
     /**
      * Validating all field in the form (required fields)
      * @param callback The callback on processing the next transaction
@@ -143,9 +148,7 @@ export class IngredientItemForm extends Component {
             ...this.state,
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Ingredient detail name is required" : null,
-                code: !this.requireField(this.state.data.code) ? "Ingredient detail code is required" : null,
-                unitType: !this.requireField(this.state.data.unitType) ? "Ingredient detail unit type is required" : null,
-                unit: !this.requireField(this.state.data.unit) ? "Ingredient detail unit is required" : null,
+                code: !this.requireField(this.state.data.code) ? "Ingredient detail code is required" : null
             }
         }, callback);
     }
@@ -167,12 +170,6 @@ export class IngredientItemForm extends Component {
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
                     </div>
-                    <div className="p-col-12">
-                        {this.state.errors.unitType ? this.state.errors.unitType : ""}
-                    </div>
-                    <div className="p-col-12">
-                        {this.state.errors.unit ? this.state.errors.unit : ""}
-                    </div>
                 </div>
             </div>
         )
@@ -184,9 +181,8 @@ export class IngredientItemForm extends Component {
     */
     handleSubmit = (e) => {
 
-        this.state.data.expiredAt = moment(this.state.data.expiredAt).format('YYYY-MM-DD')
-
         this.validateSubmit(() => {
+
             // If validation is valid, call API and get response
             if (this.isSubmitValid()) {
                 let response = this.getResponseAfterSubmit();
@@ -236,8 +232,21 @@ export class IngredientItemForm extends Component {
         });
 
         sleep(500).then(() => {
-            this.props.refreshData();
-            this.onHide();
+            this.setState({
+                ...this.state,
+                data: {
+                    ...this.state.data,
+                    id: null,
+                    name: '',
+                    tenantId: '',
+                    description: '',
+                    code: '',
+                    expiredAt: '',
+                }
+            }, () => {
+                this.props.refreshData();
+                this.onHide();
+            })
         })
     }
 
@@ -257,12 +266,15 @@ export class IngredientItemForm extends Component {
      * @returns {Promise<AxiosResponse<*>|void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getResponseAfterSubmit() {
-        if (this.state.formHeader == this.state.editTitle) {
+        if (this.state.formHeader === this.state.editTitle) {
             console.log('Edit')
             return this.ingredientService.updateItem(this.state.data, this.state.isMock);
-        } else {
+        } else if (this.state.formHeader === this.state.createTitle) {
             console.log('Save')
             return this.ingredientService.saveItem(this.state.data, this.state.isMock);
+        } else {
+            console.log('Save Batch')
+            return this.ingredientService.saveItemBatch(this.state.data, this.state.isMock);
         }
     }
 
@@ -298,32 +310,43 @@ export class IngredientItemForm extends Component {
                     </div>
                     <div className="p-col-12">
                         <label>* Unit Type </label>
-                        <Dropdown value={this.state.data.unitType}
-                            options={this.state.unitTypes}
-                            onChange={(e) => {
-                                this.setState({
-                                    data: { ...this.state.data, unitType: e.target.value }
-                                },
-                                    () => {
-                                        this.ingredientService.getUnit(this.state.data.unitType, false).then(u => this.setState({
-                                            units: u
-                                        }));
-                                    }
-                                )
-                            }} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
+                        <InputText value={this.state.data.unitType} disabled={true}/>
                     </div>
                     <div className="p-col-12">
                         <label>* Unit </label>
-                        <Dropdown value={this.state.data.unit}
-                            options={this.state.units} onChange={(e) => this.setState({ data: { ...this.state.data, unit: e.target.value } })} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unit}</div>
+                        <InputText value={this.state.data.unit} disabled={true}/>
                     </div>
                     <div className="p-field p-col-12">
                         <label>* Expired At</label>
-                        <Calendar id="icon" dateFormat="yy-mm-dd" value={this.state.data.expiredAt} placeholder={moment(this.state.data.expiredAt).format('YYYY-MM-DD')}
-                            onChange={(e) => this.setState({ data: { ...this.state.data, expiredAt: e.target.value } })} showIcon />
+                        <Calendar
+                            id="icon"
+                            dateFormat="yy-mm-dd"
+                            value={this.state.data.expiredAt}
+                            placeholder={moment(this.state.data.expiredAt).format('YYYY-MM-DD')}
+                            onChange={(e) => this.setState({
+                                data: {
+                                    ...this.state.data,
+                                    expiredAt: moment(e.target.value).format('YYYY-MM-DD')
+                                }
+                            })}
+                            showIcon
+                        />
                     </div>
+
+                    {this.state.formHeader === this.state.batchTitle ?
+                        <div className="p-col-12">
+                            <label>* Quantity</label>
+                            <InputText
+                                value={this.state.data.quantity}
+                                placeholder="Enter quantity"
+                                type="number"
+                                min="1"
+                                max="1000"
+                                onChange={(e) => this.setState({ data: { ...this.state.data, quantity: e.target.value } })} />
+                        </div>
+                        : <></>
+                    }
+
                     <div className="p-col-12">
                         <label>Description</label>
                         <InputTextarea rows={5} value={this.state.data.description} placeholder="Enter description"

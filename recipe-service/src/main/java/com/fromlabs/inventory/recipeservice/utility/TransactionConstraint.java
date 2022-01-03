@@ -4,9 +4,9 @@ import com.fromlabs.inventory.recipeservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.recipeservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.recipeservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,7 +41,7 @@ public class TransactionConstraint {
             String              property,
             RecipeDetailService service
     ) {
-        return logWrapper(nonNull(service.get(property)), "isRecipeDetailExistByCode : {}");
+        return logWrapper(nonNull(service.getByCode(property)), "isRecipeDetailExistByCode : {}");
     }
 
     /**
@@ -64,7 +64,7 @@ public class TransactionConstraint {
             Long                property,
             RecipeDetailService service
     ) {
-        return logWrapper(nonNull(service.get(property)), "isRecipeDetailExistById : {}");
+        return logWrapper(nonNull(service.getById(property)), "isRecipeDetailExistById : {}");
     }
 
     /**
@@ -156,7 +156,7 @@ public class TransactionConstraint {
     ) {
         return ConstraintWrapper.builder()
                 .name("Check constrain recipe detail is not duplicate by code")
-                .check(() -> isNull(service.get(code)))
+                .check(() -> isNull(service.getByCode(code)))
                 .exception(new ConstraintViolateException("Check constrain recipe detail is duplicate by code"))
                 .build().constraintCheck();
     }
@@ -202,8 +202,8 @@ public class TransactionConstraint {
             RecipeDetailRequest request,
             RecipeDetailService service
     ) {
-        return logWrapper( nonNull(service.get(request.getId())) &&
-                (isNull(service.get(request.getCode())) || service.get(request.getCode()).getId().equals(request.getId()))
+        return logWrapper( nonNull(service.getById(request.getId())) &&
+                (isNull(service.getByCode(request.getCode())) || service.getByCode(request.getCode()).getId().equals(request.getId()))
                 , "checkConstrainsBeforeUpdateRecipe: {}");
     }
 
@@ -234,7 +234,7 @@ public class TransactionConstraint {
             RecipeDetailRequest request,
             RecipeDetailService service
     ) {
-        final var recipe = service.get(request.getId());
+        final var recipe = service.getById(request.getId());
         return logWrapper( nonNull(recipe) &&
                 request.getCode().equals(recipe.getCode())
                 , "checkConstrainsAfterUpdateRecipeDetail: {}");

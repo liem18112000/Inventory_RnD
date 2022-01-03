@@ -1,7 +1,7 @@
 package com.fromlabs.inventory.recipeservice.recipe;
 
 import com.fromlabs.inventory.recipeservice.RecipeServiceApplication;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
 import com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -14,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = RecipeServiceApplication.class)

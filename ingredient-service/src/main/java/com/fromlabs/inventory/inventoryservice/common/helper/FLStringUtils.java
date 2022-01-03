@@ -32,9 +32,7 @@ public class FLStringUtils {
         SimpleDateFormat df = new SimpleDateFormat("yyyy");
         String year = df.format(now);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Guest-").append(year).append("-").append(generateRandomNumericStringSizeOf(10));
-        return sb.toString();
+        return "Guest-" + year + "-" + generateRandomNumericStringSizeOf(10);
     }
 
     public static String generateRandomAlphaNumericCaseSensitiveStringSizeOf(int size){
@@ -110,8 +108,8 @@ public class FLStringUtils {
     }
 
     public static String convertYmcaDateToProgramDate(String input){
-        SimpleDateFormat df = new SimpleDateFormat("mm/dd/yy");
-        Date date = null;
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy");
+        Date date;
         try {
             date = df.parse(input);
         } catch (ParseException e) {
@@ -123,7 +121,7 @@ public class FLStringUtils {
     }
 
     public static String insertIntoString(String source, String needle, int ...index){
-        StringBuffer sb = new StringBuffer(source);
+        StringBuilder sb = new StringBuilder(source);
         int needleSize = needle.length();
         int i = 0;
         for(int p : index){
@@ -138,9 +136,7 @@ public class FLStringUtils {
     }
 
     public static boolean isNullOrEmpty(final String str) {
-        if(str==null || str.trim().isEmpty())
-            return true;
-        return false;
+        return str == null || str.trim().isEmpty();
     }
 
     public static boolean isEmailValid(final String email) {

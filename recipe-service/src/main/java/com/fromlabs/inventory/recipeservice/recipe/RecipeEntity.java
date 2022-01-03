@@ -1,10 +1,9 @@
 package com.fromlabs.inventory.recipeservice.recipe;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fromlabs.inventory.recipeservice.common.entity.BaseEntity;
 import com.fromlabs.inventory.recipeservice.entity.RecipeBaseEntity;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipePageRequest;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;

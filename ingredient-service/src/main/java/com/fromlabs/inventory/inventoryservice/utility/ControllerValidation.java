@@ -1,11 +1,15 @@
 package com.fromlabs.inventory.inventoryservice.utility;
 
 import com.fromlabs.inventory.inventoryservice.common.validator.*;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.*;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.*;
-import com.fromlabs.inventory.inventoryservice.item.beans.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.BatchItemsRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotNull;
 
 import static com.fromlabs.inventory.inventoryservice.common.validator.RequestValidator.*;
 import static com.fromlabs.inventory.inventoryservice.config.AppConfig.*;
@@ -43,9 +47,11 @@ public class ControllerValidation {
      * @return RequestValidator
      * @see RequestValidator
      */
-    public RequestValidator validateTenant(Long tenantId) {
+    public RequestValidator validateTenant(
+            @NotNull final Long tenantId
+    ) {
         log.info("validateTenant");
-        return StringRequestValidator()
+        return  StringRequestValidator()
                 .criteriaIsPositiveLong(TENANT_ID, tenantId)
                 .validate();
     }
@@ -57,9 +63,12 @@ public class ControllerValidation {
      * @return RequestValidator
      * @see RequestValidator
      */
-    public RequestValidator validateTenantAndIngredientId(Long tenantId, Long ingredientId) {
+    public RequestValidator validateTenantAndIngredientId(
+            @NotNull final Long tenantId,
+            @NotNull final Long ingredientId
+    ) {
         log.info("validateTenant");
-        return StringRequestValidator()
+        return  StringRequestValidator()
                 .criteriaIsPositiveLong(TENANT_ID, tenantId)
                 .criteriaIsPositiveLong("ingredientId", ingredientId)
                 .validate();
@@ -72,9 +81,15 @@ public class ControllerValidation {
      * @return RequestValidator
      * @see RequestValidator
      */
-    public RequestValidator validateTenantAndId(Long tenantId, Long id) {
+    public RequestValidator validateTenantAndId(
+            @NotNull final Long tenantId,
+            @NotNull final Long id
+    ) {
         log.info("validateTenantAndId");
-        return StringRequestValidator().criteriaIsPositiveLong(ID, id).criteriaIsPositiveLong(TENANT_ID, tenantId).validate();
+        return  StringRequestValidator()
+                .criteriaIsPositiveLong(ID, id)
+                .criteriaIsPositiveLong(TENANT_ID, tenantId)
+                .validate();
     }
 
     /**
@@ -83,9 +98,13 @@ public class ControllerValidation {
      * @return RequestValidator
      * @see RequestValidator
      */
-    public RequestValidator validateId(Long id) {
+    public RequestValidator validateId(
+            @NotNull final Long id
+    ) {
         log.info("validateId");
-        return StringRequestValidator().criteriaIsPositiveLong(ID, id).validate();
+        return  StringRequestValidator()
+                .criteriaIsPositiveLong(ID, id)
+                .validate();
     }
 
     /**
@@ -95,9 +114,15 @@ public class ControllerValidation {
      * @return RequestValidator
      * @see RequestValidator
      */
-    public RequestValidator validateTenantAndParentId(Long tenantId, Long parentId) {
+    public RequestValidator validateTenantAndParentId(
+            @NotNull final Long tenantId,
+            @NotNull final Long parentId
+    ) {
         log.info("validateTenantAndParentId");
-        return StringRequestValidator().criteriaIsPositiveLong("parentId", parentId).criteriaIsPositiveLong(TENANT_ID, tenantId).validate();
+        return  StringRequestValidator()
+                .criteriaIsPositiveLong("parentId", parentId)
+                .criteriaIsPositiveLong(TENANT_ID, tenantId)
+                .validate();
     }
 
     /**
@@ -108,10 +133,15 @@ public class ControllerValidation {
      * @return RequestValidator
      * @see RequestValidator
      */
-    public RequestValidator validateIngredient(IngredientRequest request, Boolean isUpdate){
+    public RequestValidator validateIngredient(
+            @NotNull final IngredientRequest request,
+            @NotNull final Boolean isUpdate
+    ){
         log.info("validateIngredient");
-        var validator = StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
-                .criteriaRequired("name", request.getName()).criteriaRequired("code", request.getCode());
+        var validator = StringRequestValidator()
+                .criteriaIsPositiveLong(TENANT_ID, request.getClientId())
+                .criteriaRequired(NAME, request.getName())
+                .criteriaRequired(CODE, request.getCode());
         return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator.validate();
     }
 
@@ -122,9 +152,11 @@ public class ControllerValidation {
      * @see ItemRequest
      * @see RequestValidator
      */
-    public RequestValidator validateSaveItem(ItemRequest request) {
+    public RequestValidator validateSaveItem(
+            @NotNull final ItemRequest request
+    ) {
         log.info("validateSaveItem");
-        return StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
+        return  StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
                 .criteriaIsPositiveLong("ingredientId", request.getIngredientId())
 //                .criteriaIsPositiveLong("importId", request.getImportId())
                 .criteriaRequired("name", request.getName())
@@ -136,15 +168,36 @@ public class ControllerValidation {
     }
 
     /**
+     * Check constraint for save item
+     * @param request BatchItemsRequest
+     * @return RequestValidator
+     */
+    public RequestValidator validateSaveItems(
+            @NotNull final BatchItemsRequest request
+    ) {
+        log.info("validateSaveItems");
+        return  StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
+                .criteriaIsPositiveLong("ingredientId", request.getIngredientId())
+                .criteriaIsPositiveLong("quantity", request.getQuantity())
+                .criteriaRequired("expiredAt", request.getExpiredAt())
+                .criteriaRequired("unit", request.getUnit())
+                .criteriaRequired("unitType", request.getUnitType())
+                .criteriaRequired("codes", request.getCodes())
+                .validate();
+    }
+
+    /**
      * Check constraint for update item
      * @param request ItemRequest
      * @return RequestValidator
      * @see ItemRequest
      * @see RequestValidator
      */
-    public RequestValidator validateUpdateItem(ItemRequest request) {
+    public RequestValidator validateUpdateItem(
+            @NotNull final ItemRequest request
+    ) {
         log.info("validateUpdateItem");
-        return StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
+        return  StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
                 .criteriaRequired("name", request.getName())
                 .criteriaRequired("code", request.getCode())
                 .criteriaRequired("expiredAt", request.getExpiredAt())
@@ -158,9 +211,11 @@ public class ControllerValidation {
      * @see RequestValidator
      * @see InventoryRequest
      */
-    public RequestValidator validateInventoryRequest(InventoryRequest request) {
+    public RequestValidator validateInventoryRequest(
+            @NotNull final InventoryRequest request
+    ) {
         log.info("validateInventoryRequest");
-        return StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
+        return  StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
                 .criteriaIsPositiveLong(ID, request.getId()).criteriaRequired("name", request.getName())
                 .criteriaRequired("description", request.getDescription()).validate();
     }
@@ -170,8 +225,10 @@ public class ControllerValidation {
      * @param request   ItemDeleteAllRequest
      * @return          RequestValidator
      */
-    public RequestValidator validateDeleteItems(ItemDeleteAllRequest request) {
-        return StringRequestValidator()
+    public RequestValidator validateDeleteItems(
+            @NotNull final ItemDeleteAllRequest request
+    ) {
+        return  StringRequestValidator()
                 .criteriaIsPositiveLong(TENANT_ID, request.getClientId())
                 .criteriaIsPositiveLong("ingredientId", request.getIngredientId())
                 .criteriaIsPositiveFloat("quantity", request.getQuantity())

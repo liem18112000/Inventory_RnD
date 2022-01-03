@@ -6,7 +6,6 @@ package com.fromlabs.inventory.inventoryservice.item.factory;
 
 import com.fromlabs.inventory.inventoryservice.common.factory.BaseEntityWithLongIDFactory;
 import com.fromlabs.inventory.inventoryservice.common.factory.FactoryCreateType;
-import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 import com.fromlabs.inventory.inventoryservice.item.ItemEntity;
 import lombok.NoArgsConstructor;
 
@@ -32,8 +31,10 @@ public class ItemEntityFactory extends BaseEntityWithLongIDFactory {
     static private final ItemEntityFactory factory = new ItemEntityFactory();
 
     static public ItemEntity create(FactoryCreateType createType) {
-        if(createType == FactoryCreateType.DEFAULT) return factory.create();
-        else if(createType == FactoryCreateType.RANDOM) return factory.createRandom();
-        else return factory.createEmpty();
+        switch (createType) {
+            case DEFAULT:   return factory.create();
+            case RANDOM:    return factory.createRandom();
+            default:        return factory.createEmpty();
+        }
     }
 }

@@ -23,3 +23,7 @@ export const isJson = (item) => {
 
     return typeof item === "object" && item !== null;
 }
+
+export const isNumber = (number) => {
+    return number && !isNaN(number);
+}

@@ -13,6 +13,8 @@ import { IngredientInventory } from './pages/IngredientInventory';
 import { RecipeGroup } from './recipe/group/RecipeGroup';
 import { RecipeChild } from './recipe/child/RecipeChild';
 import { RecipeDetail } from './recipe/detail/RecipeDetail';
+import { Recipes } from './recipe/recipes/Recipes';
+import { IngredientHistory } from './ingredient/type/IngredientHistory';
 // import { IngredientItem } from './ingredient/item/IngredientItem';
 
 export const history = createBrowserHistory();
@@ -25,8 +27,10 @@ function App() {
         <AdminTemplate path="/ingredient-inventory" exact Component={IngredientInventory}/>
         <AdminTemplate path="/ingredient" exact Component={IngredientCategory} />
         <AdminTemplate path="/ingredient/:id" exact Component={IngredientType} />
+        <AdminTemplate path="/ingredient/history/:id" exact Component={IngredientHistory} />
         <AdminTemplate path="/ingredient/type/:id" exact Component={IngredientItem} />
         <AdminTemplate path="/recipe" exact Component={RecipeGroup} />
+        <AdminTemplate path="/recipes" exact Component={Recipes} />
         <AdminTemplate path="/recipe/:id" exact Component={RecipeChild} />
         <AdminTemplate path="/recipe/child/:id" exact Component={RecipeDetail} />
         <AdminTemplate path="/supplier" exact Component={Dashboard} />

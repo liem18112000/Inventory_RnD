@@ -4,8 +4,6 @@
 
 package com.fromlabs.inventory.inventoryservice.common.transaction;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * <h1>Transaction</h1>
  * <h2>Definition</h2>
@@ -67,13 +65,13 @@ public interface TransactionTemplate {
      * First step - optional: Initial commit state and bootstrap some information about transaction
      * @return Object
      */
-    Object bootstrap() throws Exception;
+    Object bootstrap();
 
     /**
      * Second step - required: Transaction manager start the process.
      * @return  Object
      */
-    Object start() throws Exception;
+    Object start();
 
     /**
      * Third step - required: commit state on transaction processing

@@ -41,8 +41,6 @@ public class TemplateProcessCacheConfiguration {
     public static final String HASH_MAP_MANAGER                 = "HashMapManagerBean";
     public static final String CONCURRENT_HASH_MAP_MANAGER      = "ConcurrentHashMapManagerBean";
 
-    private final String CUSTOM_CONFIG  = "Template process cache manager - {} is injected";
-
     @Primary
     @Bean(name = HASH_MAP_MANAGER)
     TemplateProcessCacheManger getHashMapCacheManager() {
@@ -52,6 +50,7 @@ public class TemplateProcessCacheConfiguration {
 
     @Bean(name = CONCURRENT_HASH_MAP_MANAGER)
     TemplateProcessCacheManger getConcurrentHashMapCacheManager() {
+        String CUSTOM_CONFIG = "Template process cache manager - {} is injected";
         log.info(CUSTOM_CONFIG, CONCURRENT_HASH_MAP_MANAGER);
         return new TemplateProcessMapCacheMangerImpl(new ConcurrentHashMap<>());
     }

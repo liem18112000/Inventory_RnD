@@ -86,7 +86,7 @@ public interface ExceptionHandler<T> {
      * @see HttpStatus
      */
     default ResponseEntity<?> response(HttpStatus status, ExceptionInfo info){
-        return new ResponseEntity<>(info, status);};
+        return new ResponseEntity<>(info, status);}
 
     /**
      * Get response to fetch error when an Exception occur

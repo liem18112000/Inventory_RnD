@@ -96,8 +96,8 @@ import static org.springframework.http.ResponseEntity.ok;
  */
 public class WebTemplateProcessWithCheckBeforeAfter extends WebTemplateProcess implements WebCheckBeforeAfterTemplateProcess {
 
-    protected Callable<Boolean> before;
-    protected Callable<Boolean> after;
+    protected final Callable<Boolean> before;
+    protected final Callable<Boolean> after;
 
     /**
      * Constructor as a builder for web template process

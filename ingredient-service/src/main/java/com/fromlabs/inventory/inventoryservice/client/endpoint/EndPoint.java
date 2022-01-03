@@ -4,14 +4,9 @@
 
 package com.fromlabs.inventory.inventoryservice.client.endpoint;
 
-import com.fromlabs.inventory.inventoryservice.config.versions.ApiV1;
-import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientDto;
-import org.springframework.web.bind.annotation.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
 
 import java.util.List;
-
-import static com.fromlabs.inventory.inventoryservice.config.AppConfig.*;
 
 /**
  * Ingredient endpoint interface for internally expose API to other service

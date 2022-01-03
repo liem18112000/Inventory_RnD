@@ -4,23 +4,32 @@
 
 package com.fromlabs.inventory.inventoryservice.applications;
 
-import com.fromlabs.inventory.inventoryservice.common.helper.FLStringUtils;
 import com.fromlabs.inventory.inventoryservice.common.template.WebStatefulTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.common.template.manager.TemplateProcessCacheManger;
-import com.fromlabs.inventory.inventoryservice.config.versions.ApiV1;
+import com.fromlabs.inventory.inventoryservice.config.ApiV1;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.*;
-import com.fromlabs.inventory.inventoryservice.ingredient.config.beans.request.IngredientConfigRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.config.beans.request.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.IngredientEventService;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.IngredientHistoryService;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.*;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.*;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryRequest;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
-import com.fromlabs.inventory.inventoryservice.item.beans.*;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.BatchItemsRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,6 +53,8 @@ public class IngredientController implements ApplicationController {
     // <editor-fold desc="SETUP">
 
     private final IngredientService             ingredientService;
+    private final IngredientHistoryService      historyService;
+    private final IngredientEventService        eventService;
     private final InventoryService              inventoryService;
     private final ItemService                   itemService;
     private final TemplateProcessCacheManger    processCache;
@@ -74,22 +85,30 @@ public class IngredientController implements ApplicationController {
     /**
      * The constructor is initialized with three parameter (see in Parameters)
      * @param ingredientService     The service of IngredientEntity
+     * @param historyService        the service of IngredientHistoryEntity
+     * @param eventService          the service of IngredientEvent
      * @param inventoryService      The service of InventoryEntity
      * @param itemService           The service of ItemEntity
      * @param processCache          The service of TemplateProcessCache
      */
     public IngredientController(
-            IngredientService           ingredientService,
-            InventoryService            inventoryService,
-            ItemService                 itemService,
-            TemplateProcessCacheManger  processCache
+            IngredientService ingredientService,
+            IngredientHistoryService historyService,
+            IngredientEventService eventService,
+            InventoryService inventoryService,
+            ItemService itemService,
+            TemplateProcessCacheManger processCache
     ) {
         this.ingredientService  = ingredientService;
+        this.historyService     = historyService;
+        this.eventService       = eventService;
         this.inventoryService   = inventoryService;
         this.itemService        = itemService;
         this.processCache       = processCache;
         trackControllerDependencyInjectionInformation(
                 this.ingredientService,
+                this.historyService,
+                this.eventService,
                 this.inventoryService,
                 this.itemService,
                 this.processCache
@@ -99,17 +118,23 @@ public class IngredientController implements ApplicationController {
     /**
      * Track all injected dependencies to Application Controller
      * @param ingredientService     IngredientService
+     * @param historyService        IngredientHistoryService
+     * @param eventService          IngredientEventService
      * @param inventoryService      InventoryService
      * @param itemService           ItemService
      * @param processCache          TemplateProcessCacheManger
      */
     private void trackControllerDependencyInjectionInformation(
-            IngredientService           ingredientService,
-            InventoryService            inventoryService,
-            ItemService                 itemService,
-            TemplateProcessCacheManger  processCache
+            IngredientService ingredientService,
+            IngredientHistoryService historyService,
+            IngredientEventService eventService,
+            InventoryService inventoryService,
+            ItemService itemService,
+            TemplateProcessCacheManger processCache
     ) {
         log.info("Ingredient service : {}",             ingredientService.getClass().getName());
+        log.info("History service : {}",                historyService.getClass().getName());
+        log.info("Event service : {}",                  eventService.getClass().getName());
         log.info("Inventory service : {}",              inventoryService.getClass().getName());
         log.info("Item service : {}",                   itemService.getClass().getName());
         log.info("Template Process Cache Manager : {}", processCache.getClass().getName());
@@ -127,18 +152,10 @@ public class IngredientController implements ApplicationController {
      * @return              boolean
      */
     private boolean isProcessCanBeGetFromCache(
-            Object                      request,
-            String                      key,
-            TemplateProcessCacheManger  processCache
+            @NotNull final Object                request,
+            @NotNull @NotBlank final String      key,
+            @NotNull TemplateProcessCacheManger  processCache
     ) {
-
-        // Check existence of process manager and request
-        assert nonNull(processCache);
-        assert nonNull(request);
-
-        // CHeck key must not be null
-        assert !FLStringUtils.isNullOrEmpty(key);
-
         // Check template process is not null
         final var templateProcess = processCache.getTemplateProcessByKey(key);
         assert nonNull(templateProcess);
@@ -165,6 +182,77 @@ public class IngredientController implements ApplicationController {
 
     // </editor-fold>
 
+    //<editor-fold desc="EVENT">
+
+    @GetMapping("event/all/simple")
+    public ResponseEntity<?> getLabelValueEvent(
+            @RequestHeader(TENANT_ID) Long clientId
+    ) {
+        return (ResponseEntity<?>) buildGetLabelValueEventTemplateProcess(clientId, eventService).run();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="STATUS">
+
+    @GetMapping("status/all/simple")
+    public ResponseEntity<?> getLabelValueStatus() {
+        return (ResponseEntity<?>) buildGetLabelValueStatusTemplateProcess().run();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="HISTORY TRACK">
+
+    /**
+     * Get all history as list by ingredient id
+     * @param tenantId      Tenant ID
+     * @param ingredientId  Ingredient unique id
+     * @return ResponseEntity
+     */
+    @GetMapping("history/all")
+    public ResponseEntity<?> getAllHistoryByIngredient(
+            @RequestHeader(TENANT_ID)    Long tenantId,
+            @RequestParam(value = INGREDIENT_ID, required = false) Long ingredientId
+    ) {
+        log.info(path(HttpMethod.GET, "history/all"));
+        return (ResponseEntity<?>) buildGetHistoryByIngredientTemplateProcess(tenantId, ingredientId,
+                ingredientService, historyService, eventService).run();
+    }
+
+    /**
+     * Get history by id
+     *
+     * @param id History unique id
+     * @return ResponseEntity
+     */
+    @GetMapping("history/{id:\\d+}")
+    public ResponseEntity<?> getHistoryById(
+            @PathVariable(ID) Long id
+    ) {
+        log.info(path(HttpMethod.GET, "history/".concat(String.valueOf(id))));
+        return (ResponseEntity<?>) buildGetHistoryByIdTemplateProcess(id, historyService, eventService).run();
+    }
+
+    /**
+     * Get page of history with filter
+     *
+     * @param tenantId Tenant ID
+     * @param request  IngredientHistoryPageRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("history/page")
+    public ResponseEntity<?> getPageHistory(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody IngredientHistoryPageRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "history/page"));
+        return (ResponseEntity<?>) buildGetPageHistoryTemplateProcess(tenantId, request,
+                ingredientService, historyService, eventService).run();
+    }
+
+    //</editor-fold>
+
     // <editor-fold desc="INGREDIENT">
 
     // <editor-fold desc="CATEGORY">
@@ -182,7 +270,7 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.POST, "category/page"));
         final var key = generateProcessKey(PROCESS_KEY_GET_PAGE_INGREDIENT_CATE, tenantId);
-        return (ResponseEntity<?>) (isProcessCanBeGetFromCache(setTenantBoostrap(tenantId, request), key, processCache) ?
+        return (ResponseEntity<?>) (isProcessCanBeGetFromCache(bootstrapTenantAndPreprocessIngredientPageRequest(tenantId, request), key, processCache) ?
                 processCache.getTemplateProcessByKeyThenRun(key) : processCache.forceCacheTemplateProcessThenRun(key,
                 buildGetPageIngredientCategoryTemplateProcess(tenantId, request, ingredientService, inventoryService)));
     }
@@ -217,7 +305,7 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.POST, "type/page"));
         final var key = generateProcessKey(PROCESS_KEY_GET_PAGE_INGREDIENT_TYPE, tenantId);
-        return (ResponseEntity<?>) (isProcessCanBeGetFromCache(setTenantBoostrap(tenantId, request), key, processCache) ?
+        return (ResponseEntity<?>) (isProcessCanBeGetFromCache(bootstrapTenantAndPreprocessIngredientPageRequest(tenantId, request), key, processCache) ?
                 processCache.getTemplateProcessByKeyThenRun(key) : processCache.forceCacheTemplateProcessThenRun(key,
                 buildGetPageIngredientTypeTemplateProcess(tenantId, request, ingredientService, inventoryService)));
     }
@@ -300,7 +388,8 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.POST, ""));
         var transactFlag = new AtomicBoolean(Boolean.TRUE);
-        return (ResponseEntity<?>) buildSaveIngredientTemplateProcess(tenantId, request, transactFlag, ingredientService).run();
+        return (ResponseEntity<?>) buildSaveIngredientTemplateProcess(tenantId, request,
+                transactFlag, ingredientService, historyService, eventService).run();
     }
 
     /**
@@ -315,7 +404,8 @@ public class IngredientController implements ApplicationController {
             @RequestBody IngredientRequest request
     ){
         log.info(path(HttpMethod.PUT, ""));
-        return (ResponseEntity<?>) buildUpdateIngredientTemplateProcess(tenantId, request, ingredientService).run();
+        return (ResponseEntity<?>) buildUpdateIngredientTemplateProcess(tenantId, request,
+                ingredientService, historyService, eventService).run();
     }
 
     /**
@@ -545,7 +635,24 @@ public class IngredientController implements ApplicationController {
             @RequestBody ItemRequest request
     ){
         log.info(path(HttpMethod.POST, "item"));
-        return (ResponseEntity<?>) buildSaveItemProcessTemplate(tenantId, request, ingredientService, itemService).run();
+        return (ResponseEntity<?>) buildSaveItemProcessTemplate(tenantId, request,
+                ingredientService, itemService, historyService, eventService).run();
+    }
+
+    /**
+     * Save batch of item by request
+     * @param tenantId Tenant ID
+     * @param request  BatchItemsRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("item/batch")
+    public ResponseEntity<?> saveBatchItems(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody BatchItemsRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "item/batch"));
+        return (ResponseEntity<?>) buildSaveItemsProcessTemplate(tenantId, request,
+                ingredientService, itemService, historyService, eventService).run();
     }
 
     /**
@@ -562,7 +669,8 @@ public class IngredientController implements ApplicationController {
             @RequestBody ItemRequest request
     ){
         log.info(path(HttpMethod.PUT, "item/".concat(String.valueOf(id))));
-        return (ResponseEntity<?>) buildUpdateItemProcessTemplate(tenantId, id, request, ingredientService, itemService).run();
+        return (ResponseEntity<?>) buildUpdateItemProcessTemplate(tenantId, id, request,
+                ingredientService, itemService, historyService, eventService).run();
     }
 
     /**
@@ -577,7 +685,8 @@ public class IngredientController implements ApplicationController {
             @PathVariable(ID) Long id
     ){
         log.info(path(HttpMethod.DELETE, "item/".concat(String.valueOf(id))));
-        return (ResponseEntity<?>) buildDeleteIdProcessTemplate(tenantId, id, itemService).run();
+        return (ResponseEntity<?>) buildDeleteIdProcessTemplate(tenantId, id,
+                ingredientService, itemService, historyService, eventService).run();
     }
 
     /**
@@ -589,7 +698,7 @@ public class IngredientController implements ApplicationController {
     @DeleteMapping("item/all")
     public ResponseEntity<?> deleteAllItemsAfterConfirm(
             @RequestHeader(TENANT_ID) Long      tenantId,
-            @RequestBody ItemDeleteAllRequest   request
+            @RequestBody ItemDeleteAllRequest request
     ) {
         log.info(path(HttpMethod.DELETE, "item/all"));
         return (ResponseEntity<?>) buildDeleteAllItemAfterConfirmTemplateProcess(tenantId, request,

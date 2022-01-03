@@ -6,14 +6,27 @@ package com.fromlabs.inventory.inventoryservice.utility;
 
 import com.fromlabs.inventory.inventoryservice.common.template.*;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.beans.request.IngredientConfigRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.IngredientEventService;
+import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.IngredientHistoryService;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.IngredientHistoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.mapper.IngredientHistoryMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.*;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.mapper.InventoryMapper;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
-import com.fromlabs.inventory.inventoryservice.item.beans.*;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.BatchItemsRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
+import com.fromlabs.inventory.inventoryservice.item.mapper.ItemMapper;
 import lombok.experimental.UtilityClass;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,6 +43,40 @@ import static org.springframework.http.ResponseEntity.*;
 @UtilityClass
 public class TemplateProcessDirector {
 
+    //<editor-fold desc="buildGetLabelValueStatus">
+
+    // TODO: Using status service
+    /**
+     * Build get lis of label-value status template process
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildGetLabelValueStatusTemplateProcess() {
+        return WebTemplateProcess.builder()
+                .process(TransactionLogic::getLabelValueStatus)
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildGetLabelValueEventTemplateProcess">
+
+    /**
+     * Build get event label-value list template process
+     * @param clientId      Client ID
+     * @param eventService  IngredientEventService
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildGetLabelValueEventTemplateProcess(
+            @NotNull final Long clientId,
+            @NotNull final IngredientEventService eventService
+    ) {
+        return WebTemplateProcess.builder()
+                .process(() -> getLabelValueEvent(clientId, eventService))
+                .build();
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="buildGetPageIngredientTypeTemplateProcess">
 
     public final String PROCESS_KEY_GET_PAGE_INGREDIENT_TYPE = "ProcessKey_GetIngredientTypePage";
@@ -43,13 +90,13 @@ public class TemplateProcessDirector {
      * @return                  TemplateProcess
      */
     public TemplateProcess buildGetPageIngredientTypeTemplateProcess(
-            Long                    tenantId,
-            IngredientPageRequest   request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService
+            @NotNull final Long                     tenantId,
+            @NotNull final IngredientPageRequest    request,
+            @NotNull final IngredientService        ingredientService,
+            @NotNull final InventoryService         inventoryService
     ) {
         return WebStatefulTemplateProcess.statefulWebCheckBuilder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessIngredientPageRequest(tenantId, request))
                 .validate(  () -> validateTenantAndParentId(request.getClientId(), request.getParentId()))
                 .process(   () -> ok(getIngredientPageWithFilter(request, ingredientService, inventoryService)))
                 .build();
@@ -70,13 +117,13 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetPageIngredientCategoryTemplateProcess(
-            Long                    tenantId,
-            IngredientPageRequest   request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService
+            @NotNull final Long                     tenantId,
+            @NotNull final IngredientPageRequest    request,
+            @NotNull final IngredientService        ingredientService,
+            @NotNull final InventoryService         inventoryService
     ) {
         return WebStatefulTemplateProcess.statefulWebCheckBuilder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessIngredientPageRequest(tenantId, request))
                 .validate(  () -> validateTenant(request.getClientId()))
                 .process(   () -> ok(getIngredientPageWithFilter(request, ingredientService, inventoryService)))
                 .build();
@@ -95,8 +142,8 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetLabelValueIngredientTypeTemplateProcess(
-            Long                tenantId,
-            IngredientService   ingredientService
+            @NotNull final Long                 tenantId,
+            @NotNull final IngredientService    ingredientService
     ) {
         return WebStatefulTemplateProcess.statefulWebCheckBuilder()
                 .bootstrap( () -> tenantId)
@@ -116,12 +163,12 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetAllIngredientCategoryTemplateProcess(
-            Long                tenantId,
-            IngredientService   ingredientService
+            @NotNull final Long                 tenantId,
+            @NotNull final IngredientService    ingredientService
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenant(tenantId))
-                .process(   () -> ok(IngredientDto.from(ingredientService.getAll(tenantId))))
+                .process(   () -> ok(IngredientMapper.toDto(ingredientService.getAll(tenantId))))
                 .build();
     }
 
@@ -137,13 +184,13 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetAllIngredientTypeTemplateProcess(
-            Long                tenantId,
-            Long                parentId,
-            IngredientService   ingredientService
+            @NotNull final Long                 tenantId,
+            @NotNull final Long                 parentId,
+            @NotNull final IngredientService    ingredientService
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenantAndParentId(tenantId, parentId))
-                .process(   () -> ok(IngredientDto.from(ingredientService.getAll(tenantId, parentId))))
+                .process(   () -> ok(IngredientMapper.toDto(ingredientService.getAll(tenantId, parentId))))
                 .build();
     }
 
@@ -160,14 +207,14 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetIngredientByCodeTemplateProcess(
-            Long                tenantId,
-            String              code,
-            IngredientService   ingredientService,
-            InventoryService    inventoryService
+            @NotNull final Long                 tenantId,
+            @NotNull final String               code,
+            @NotNull final IngredientService    ingredientService,
+            @NotNull final InventoryService     inventoryService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenant(tenantId))
-                .before(    () -> Objects.nonNull(ingredientService.get(code)))
+                .before(    () -> Objects.nonNull(ingredientService.getByCode(code)))
                 .process(   () -> ok(getIngredientByCodeWithQuantity(code, ingredientService, inventoryService)))
                 .after(     () -> Boolean.TRUE).build();
     }
@@ -185,14 +232,14 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetIngredientByIdTemplateProcess(
-            Long                tenantId,
-            Long                id,
-            IngredientService   ingredientService,
-            InventoryService    inventoryService
+            @NotNull final Long                 tenantId,
+            @NotNull final Long                 id,
+            @NotNull final IngredientService    ingredientService,
+            @NotNull final InventoryService     inventoryService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenantAndId(tenantId, id))
-                .before(    () -> Objects.nonNull(ingredientService.get(id)))
+                .before(    () -> Objects.nonNull(ingredientService.getById(id)))
                 .process(   () -> ok(getIngredientByIdWithQuantity(id, ingredientService, inventoryService)))
                 .build();
     }
@@ -207,20 +254,24 @@ public class TemplateProcessDirector {
      * @param request           IngredientRequest
      * @param transactFlag      AtomicBoolean
      * @param ingredientService IngredientService
-     * @return                  WebTemplateProcess
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
+     * @return                  TemplateProcess
      */
-    public WebTemplateProcess buildSaveIngredientTemplateProcess(
-            Long                tenantId,
-            IngredientRequest request,
-            AtomicBoolean transactFlag,
-            IngredientService   ingredientService
+    public TemplateProcess buildSaveIngredientTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final IngredientRequest request,
+            @NotNull AtomicBoolean transactFlag,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
     ) {
         return WebCheckBuilder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessIngredientRequest(tenantId, request))
                 .validate(  () -> validateIngredient(request, false))
-                .before(    () -> beforeSaveIngredientCheckConstraint(request, ingredientService))
+                .before(    () -> beforeSaveIngredientCheckConstraint(request, ingredientService, historyService, eventService))
                 .process(   () -> saveIngredientAndConfig(request, ingredientService, transactFlag))
-                .after(     () -> afterSaveIngredientCheckConstraint(tenantId, request, ingredientService, transactFlag))
+                .after(     () -> afterSaveIngredientCheckConstraint(tenantId, request, ingredientService, transactFlag, historyService, eventService))
                 .build();
     }
 
@@ -233,18 +284,43 @@ public class TemplateProcessDirector {
      * @param tenantId          Tenant ID
      * @param id                Ingredient ID
      * @param ingredientService IngredientService
-     * @return                  WebTemplateProcess
+     * @return                  TemplateProcess
      */
-    public WebTemplateProcess buildDeleteIngredientByIdTemplateProcess(
-            Long                tenantId,
-            Long                id,
-            IngredientService   ingredientService
+    public TemplateProcess buildDeleteIngredientByIdTemplateProcess(
+            @NotNull final Long                 tenantId,
+            @NotNull final Long                 id,
+            @NotNull final IngredientService    ingredientService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenantAndId(tenantId, id))
                 .before(    () -> isIngredientExistById(id, ingredientService))
                 .process(   () -> deleteIngredientEntity(id, ingredientService))
                 .after(     () -> !isIngredientExistById(id, ingredientService))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildGetHistoryByIngredientTemplateProcess">
+
+    /**
+     * Build get all ingredient history by ingredient id template process
+     * @param tenantId          Tenant ID
+     * @param ingredientId      Unique Ingredient ID
+     * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     * @return                  TemplateProcess
+     */
+    public TemplateProcess buildGetHistoryByIngredientTemplateProcess(
+            @NotNull final Long                     tenantId,
+            @NotNull final Long                     ingredientId,
+            @NotNull final IngredientService        ingredientService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService   eventService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(  () -> validateTenant(tenantId))
+                .process(   () -> getAllHistory(tenantId, ingredientId, ingredientService, historyService, eventService))
                 .build();
     }
 
@@ -257,19 +333,24 @@ public class TemplateProcessDirector {
      * @param tenantId          Tenant ID
      * @param request           IngredientRequest
      * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildUpdateIngredientTemplateProcess(
-            Long                tenantId,
-            IngredientRequest   request,
-            IngredientService   ingredientService
+            @NotNull final Long tenantId,
+            @NotNull final IngredientRequest request,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
     ) {
         return WebCheckBuilder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessIngredientRequest(tenantId, request))
                 .validate(  () -> validateIngredient(request, true))
-                .before(    () -> updateIngredientCheckConstraint(request, ingredientService))
-                .process(   () -> ok(ingredientService.save(ingredientService.get(request.getId()).update(request))))
-                .after(     () -> Objects.nonNull(ingredientService.get(request.getCode()))).build();
+                .before(    () -> checkConstraintBeforeUpdateIngredient(request, ingredientService, historyService, eventService))
+                .process(   () -> ok(ingredientService.save(ingredientService.getById(request.getId()).update(request))))
+                .after(     () -> checkConstraintAfterUpdateIngredient(request, ingredientService, historyService, eventService))
+                .build();
     }
 
     //</editor-fold>
@@ -285,16 +366,57 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildUpdateInventoryByIdTemplateProcess(
-            Long                tenantId,
-            InventoryRequest    request,
-            Long                id,
-            InventoryService    inventoryService
+            @NotNull final Long                 tenantId,
+            @NotNull final InventoryRequest request,
+            @NotNull final Long                 id,
+            @NotNull final InventoryService     inventoryService
     ) {
         return WebCheckBuilder()
-                .bootstrap( () -> setIdAndTenantBootstrap(tenantId, id, request))
+                .bootstrap( () -> bootstrapTenantAndIdAndPreprocessInventoryRequest(tenantId, id, request))
                 .validate(  () -> validateInventoryRequest(request))
                 .before(    () -> updateInventoryCheckConstraint(request, inventoryService))
-                .process(   () -> ok(InventoryDto.from(inventoryService.save(inventoryService.get(id).update(request)))))
+                .process(   () -> ok(InventoryMapper.toDto(inventoryService.save(inventoryService.getById(id).update(request)))))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildGetHistoryByIdTemplateProcess">
+
+    public TemplateProcess buildGetHistoryByIdTemplateProcess(
+            @NotNull final Long                     id,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService   eventService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(() -> validateId(id))
+                .process(() -> ok(IngredientHistoryMapper.toDto(historyService.getByIdWithException(id), eventService)))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildGetPageHistoryTemplateProcess">
+
+    /**
+     * Build get page ingredient history template process
+     * @param tenantId          Tenant ID
+     * @param request           IngredientHistoryPageRequest
+     * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     * @return                  TemplateProcess
+     */
+    public TemplateProcess buildGetPageHistoryTemplateProcess(
+            @NotNull final Long                         tenantId,
+            @NotNull final IngredientHistoryPageRequest request,
+            @NotNull final IngredientService            ingredientService,
+            @NotNull final IngredientHistoryService     historyService,
+            @NotNull final IngredientEventService       eventService
+    ) {
+        return WebTemplateProcess.builder()
+                .bootstrap( () -> bootstrapTenantPreprocessIngredientHistoryPageRequest(tenantId, request))
+                .validate(  () -> validateTenantAndIngredientId(tenantId, request.getIngredientId()))
+                .process(   () -> getPageIngredientHistory(request, ingredientService, historyService, eventService))
                 .build();
     }
 
@@ -310,14 +432,14 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetInventoryByIdTemplateProcess(
-            Long                tenantId,
-            Long                id,
-            InventoryService    inventoryService
+            @NotNull final Long                 tenantId,
+            @NotNull final Long                 id,
+            @NotNull final InventoryService     inventoryService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenantAndId(tenantId, id))
-                .before(    () -> Objects.nonNull(inventoryService.get(id)))
-                .process(   () -> ok(inventoryService.get(id)))
+                .before(    () -> Objects.nonNull(inventoryService.getById(id)))
+                .process(   () -> ok(inventoryService.getById(id)))
                 .after(     () -> Boolean.TRUE)
                 .build();
     }
@@ -336,16 +458,16 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildSyncInventoryByIngredientTemplateProcess(
-            Long                tenantId,
-            Long                ingredientId,
-            IngredientService   ingredientService,
-            InventoryService    inventoryService,
-            ItemService itemService
+            @NotNull final Long                 tenantId,
+            @NotNull final Long                 ingredientId,
+            @NotNull final IngredientService    ingredientService,
+            @NotNull final InventoryService     inventoryService,
+            @NotNull final ItemService          itemService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenantAndIngredientId(tenantId, ingredientId))
                 .before(    () -> checkConstraintBeforeSyncInventoryByIngredient(ingredientId, ingredientService))
-                .process(   () -> ok(syncIngredientInInventory(tenantId, ingredientService.get(ingredientId), inventoryService, itemService)))
+                .process(   () -> ok(syncIngredientInInventory(tenantId, ingredientService.getById(ingredientId), inventoryService, itemService)))
                 .build();
     }
 
@@ -362,10 +484,10 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildSyncInventoryTemplateProcess(
-            Long                tenantId,
-            IngredientService   ingredientService,
-            InventoryService    inventoryService,
-            ItemService         itemService
+            @NotNull final Long                tenantId,
+            @NotNull final IngredientService   ingredientService,
+            @NotNull final InventoryService    inventoryService,
+            @NotNull final ItemService         itemService
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenant(tenantId))
@@ -384,12 +506,12 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetAllInventoryTemplateProcess(
-            Long                tenantId,
-            InventoryService    inventoryService
+            @NotNull final Long                tenantId,
+            @NotNull final InventoryService    inventoryService
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenant(tenantId))
-                .process(   () -> ok(InventoryDto.from(inventoryService.getAll(tenantId))))
+                .process(   () -> ok(InventoryMapper.toDto(inventoryService.getAll(tenantId))))
                 .build();
     }
 
@@ -406,13 +528,13 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetPageInventoryTemplateProcess(
-            Long                    tenantId,
-            InventoryPageRequest request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService
+            @NotNull final Long                     tenantId,
+            @NotNull final InventoryPageRequest request,
+            @NotNull final IngredientService        ingredientService,
+            @NotNull final InventoryService         inventoryService
     ) {
         return WebTemplateProcess.builder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessInventoryPageRequest(tenantId, request))
                 .validate(  () -> validateTenant(request.getClientId()))
                 .process(   () -> ok(getInventoryPageWithFilter(request, ingredientService, inventoryService)))
                 .build();
@@ -431,13 +553,13 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildGetPageItemTemplateProcess(
-            Long                tenantId,
-            ItemPageRequest request,
-            IngredientService   ingredientService,
-            ItemService         itemService
+            @NotNull final Long                 tenantId,
+            @NotNull final ItemPageRequest request,
+            @NotNull final IngredientService    ingredientService,
+            @NotNull final ItemService          itemService
     ) {
         return WebTemplateProcess.builder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessItemPageRequest(tenantId, request))
                 .validate(  () -> validateTenant(request.getClientId()))
                 .process(   () -> ok(getItemPageWithFiler(request, ingredientService, itemService)))
                 .build();
@@ -454,12 +576,12 @@ public class TemplateProcessDirector {
      * @return              WebTemplateProcess
      */
     public WebTemplateProcess buildGetAllItemProcessTemplate(
-            Long        tenantId,
-            ItemService itemService
+            @NotNull final Long        tenantId,
+            @NotNull final ItemService itemService
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenant(tenantId))
-                .process(   () -> ok(ItemDto.from(itemService.getAll(tenantId))))
+                .process(   () -> ok(ItemMapper.toDto(itemService.getAll(tenantId))))
                 .build();
     }
 
@@ -474,13 +596,13 @@ public class TemplateProcessDirector {
      * @return              WebTemplateProcess
      */
     public WebTemplateProcess buildGetItemByIdTemplateProcess(
-            Long        id,
-            ItemService itemService
+            @NotNull final Long        id,
+            @NotNull final ItemService itemService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateId(id))
                 .before(    () -> isItemExistById(id, itemService))
-                .process(   () -> ok(ItemDto.from(itemService.getById(id))))
+                .process(   () -> ok(ItemMapper.toDto(itemService.getById(id))))
                 .build();
     }
 
@@ -494,19 +616,24 @@ public class TemplateProcessDirector {
      * @param request           ItemRequest
      * @param ingredientService IngredientService
      * @param itemService       ItemService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildSaveItemProcessTemplate(
-            Long                tenantId,
-            ItemRequest request,
-            IngredientService   ingredientService,
-            ItemService         itemService
+            @NotNull final Long tenantId,
+            @NotNull final ItemRequest request,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final ItemService itemService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
     ) {
         return WebCheckBuilder()
-                .bootstrap( () -> setTenantBoostrap(tenantId, request))
+                .bootstrap( () -> bootstrapTenantAndPreprocessItemRequest(tenantId, request))
                 .validate(  () -> validateSaveItem(request))
-                .before(    () -> saveItemCheckConstraint(request, ingredientService, itemService))
+                .before(    () -> checkConstraintBeforeSaveItem(request, ingredientService, itemService, historyService, eventService))
                 .process(   () -> saveOrUpdateItem(request, ingredientService, itemService))
+                .after(     () -> checkConstraintAfterSaveItem(request, itemService, ingredientService, historyService, eventService))
                 .build();
     }
 
@@ -516,21 +643,27 @@ public class TemplateProcessDirector {
 
     /**
      * Build delete item template process
-     * @param tenantId      Tenant ID
-     * @param id            Item ID
-     * @param itemService   ItemService
-     * @return              WebTemplateProcess
+     * @param tenantId          Tenant ID
+     * @param id                Item ID
+     * @param ingredientService IngredientService
+     * @param itemService       ItemService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
+     * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildDeleteIdProcessTemplate(
-            Long tenantId,
-            Long id,
-            ItemService itemService
+            @NotNull final Long tenantId,
+            @NotNull final Long id,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final ItemService itemService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenantAndId(tenantId, id))
-                .before(    () -> isItemExistById(id, itemService))
+                .before(    () -> checkConstraintBeforeDeleteItem(id, itemService, ingredientService, historyService, eventService))
                 .process(   () -> deleteItemEntity(id, itemService))
-                .after(     () -> !isItemExistById(id, itemService))
+                .after(     () -> checkConstraintAfterDeleteItem(id, itemService, ingredientService, historyService))
                 .build();
     }
 
@@ -548,14 +681,14 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildDeleteAllItemAfterConfirmTemplateProcess(
-            Long                    tenantId,
-            ItemDeleteAllRequest    request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService,
-            ItemService             itemService
+            @NotNull final Long                     tenantId,
+            @NotNull final ItemDeleteAllRequest request,
+            @NotNull final IngredientService        ingredientService,
+            @NotNull final InventoryService         inventoryService,
+            @NotNull final ItemService              itemService
     ) {
         return WebCheckBuilder()
-                .bootstrap( () -> deleteItemsBootstrap(tenantId, request, ingredientService, inventoryService, itemService))
+                .bootstrap( () -> bootstrapTenantItemDeleteAllRequest(tenantId, request, ingredientService, inventoryService, itemService))
                 .validate(  () -> validateDeleteItems(request))
                 .before(    () -> beforeDeleteAllItemsCheckConstraint(request, ingredientService, inventoryService, itemService))
                 .process(   () -> deleteAllItems(request, ingredientService, itemService))
@@ -573,20 +706,56 @@ public class TemplateProcessDirector {
      * @param request           ItemRequest
      * @param ingredientService IngredientService
      * @param itemService       ItemService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildUpdateItemProcessTemplate(
-            Long                tenantId,
-            Long                id,
-            ItemRequest         request,
-            IngredientService   ingredientService,
-            ItemService         itemService
+            @NotNull final Long tenantId,
+            @NotNull final Long id,
+            @NotNull final ItemRequest request,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final ItemService itemService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap( () -> setIdAndTenantBoostrap(tenantId, id, request))
+                .bootstrap( () -> bootstrapTenantAndIdtAndPreprocessItemRequest(tenantId, id, request))
                 .validate(  () -> validateUpdateItem(request))
-                .before(    () -> updateItemCheckConstraint(request, itemService))
+                .before(    () -> checkConstraintBeforeUpdateItem(request, itemService, ingredientService, historyService, eventService))
                 .process(   () -> saveOrUpdateItem(request, ingredientService, itemService))
+                .after(     () -> checkConstraintAfterUpdateItem(request, itemService, ingredientService, historyService, eventService))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildSaveItemsProcessTemplate">
+
+    /**
+     * Build save items process template
+     * @param tenantId          Tenant ID
+     * @param request           BatchItemsRequest
+     * @param ingredientService IngredientService
+     * @param itemService       ItemService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
+     * @return                  TemplateProcess
+     */
+    public TemplateProcess buildSaveItemsProcessTemplate(
+            @NotNull final Long tenantId,
+            @NotNull final BatchItemsRequest request,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final ItemService itemService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .bootstrap( () -> bootstrapTenantAndPreprocessBatchItemRequest(tenantId, request))
+                .validate(  () -> validateSaveItems(request))
+                .before(    () -> checkConstraintBeforeSaveItems(request, ingredientService, itemService, historyService, eventService))
+                .process(   () -> saveItems(request, ingredientService, itemService))
+                .after(     () -> checkConstraintAfterSaveItems(request, ingredientService, itemService, historyService, eventService))
                 .build();
     }
 
@@ -603,13 +772,13 @@ public class TemplateProcessDirector {
      * @return                  WebTemplateProcess
      */
     public WebTemplateProcess buildUpdateConfigTemplateProcess(
-            Long                    tenantId,
-            Long                    id,
-            IngredientConfigRequest request,
-            IngredientService       ingredientService
+            @NotNull final Long                     tenantId,
+            @NotNull final Long                     id,
+            @NotNull final IngredientConfigRequest  request,
+            @NotNull final IngredientService        ingredientService
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap( () -> setIdAndTenantBoostrap(tenantId, id, request))
+                .bootstrap( () -> bootstrapTenantAndIdIngredientConfigRequest(tenantId, id, request))
                 .validate(  () -> validateTenantAndId(request.getClientId(), request.getId()))
                 .before(    () -> Objects.nonNull(ingredientService.getConfig(request.getId())))
                 .process(   () -> ok(ingredientService.saveConfig(ingredientService.getConfig(request.getId()).update(request))))

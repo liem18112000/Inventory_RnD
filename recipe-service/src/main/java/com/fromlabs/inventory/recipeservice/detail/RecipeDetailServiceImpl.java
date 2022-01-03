@@ -6,8 +6,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * {@inheritDoc}
+ */
 @Service
 @Transactional(rollbackFor = {Exception.class, Throwable.class})
 public class RecipeDetailServiceImpl implements RecipeDetailService {
@@ -18,31 +22,53 @@ public class RecipeDetailServiceImpl implements RecipeDetailService {
         this.repository = repository;
     }
 
-    public RecipeDetailEntity get(Long id) {
+    /**
+     * {@inheritDoc}
+     */
+    public RecipeDetailEntity getById(@NotNull final Long id) {
         return this.repository.findById(id).orElse(null) ;
     }
 
-    public RecipeDetailEntity get(String code) {
+    /**
+     * {@inheritDoc}
+     */
+    public RecipeDetailEntity getByCode(@NotNull final String code) {
         return this.repository.findByCode(code);
     }
 
-    public RecipeDetailEntity get(Long clientId, String name) {
+    /**
+     * {@inheritDoc}
+     */
+    public RecipeDetailEntity getByName(@NotNull final Long clientId, @NotNull final String name) {
         return this.repository.findByClientIdAndName(clientId, name);
     }
 
-    public Page<RecipeDetailEntity> getPage(Specification<RecipeDetailEntity> specification, Pageable pageable) {
+    /**
+     * {@inheritDoc}
+     */
+    public Page<RecipeDetailEntity> getPage(
+            @NotNull final Specification<RecipeDetailEntity> specification, @NotNull final Pageable pageable) {
         return this.repository.findAll(specification, pageable);
     }
 
-    public List<RecipeDetailEntity> getAll(Specification<RecipeDetailEntity> specification) {
+    /**
+     * {@inheritDoc}
+     */
+    public List<RecipeDetailEntity> getAll(@NotNull final Specification<RecipeDetailEntity> specification) {
         return this.repository.findAll(specification);
     }
 
-    public RecipeDetailEntity save(RecipeDetailEntity entity) {
+    /**
+     * {@inheritDoc}
+     */
+    public RecipeDetailEntity save(@NotNull final RecipeDetailEntity entity) {
         return this.repository.save(entity);
     }
 
-    public void delete(RecipeDetailEntity entity) {
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(@NotNull final RecipeDetailEntity entity) {
         this.repository.delete(entity);
     }
 }

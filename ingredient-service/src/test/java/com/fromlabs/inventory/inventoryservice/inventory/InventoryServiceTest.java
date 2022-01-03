@@ -9,8 +9,8 @@ import com.fromlabs.inventory.inventoryservice.common.helper.CustomizePageReques
 import com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientPageRequest;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.InventoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.mapper.InventoryMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,9 +27,7 @@ import static com.fromlabs.inventory.inventoryservice.common.template.UnitTestTe
 import static com.fromlabs.inventory.inventoryservice.helper.KeyIndicator.*;
 import static com.fromlabs.inventory.inventoryservice.helper.TestKeyIndicator.*;
 import static com.fromlabs.inventory.inventoryservice.helper.TestcaseName.*;
-import static com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity.from;
-import static com.fromlabs.inventory.inventoryservice.inventory.beans.InventorySpecification.filter;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.fromlabs.inventory.inventoryservice.inventory.specification.InventorySpecification.filter;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = InventoryServiceApplication.class)
@@ -97,7 +95,7 @@ class InventoryServiceTest {
     @Order(1)
     void getByID_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(ID)), (inventory) -> {
+                () -> this.service.getById((Long) getInput(ID)), (inventory) -> {
                     assert Objects.nonNull(inventory);
                     assert Objects.equals(((InventoryEntity)inventory).getId(), getInput(ID));
                 }).run();
@@ -108,7 +106,7 @@ class InventoryServiceTest {
     @Order(2)
     void getByID_NegativeCase_IdIsNegative() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(NEGATIVE_ID)), (inventory) -> {
+                () -> this.service.getById((Long) getInput(NEGATIVE_ID)), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -118,7 +116,7 @@ class InventoryServiceTest {
     @Order(3)
     void getByID_NegativeCase_IdIsNonExist() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(NON_EXIST_ID)), (inventory) -> {
+                () -> this.service.getById((Long) getInput(NON_EXIST_ID)), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -132,7 +130,7 @@ class InventoryServiceTest {
     @Order(4)
     void getByName_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(TENANT_ID), (String) getInput(NAME)), (inventory) -> {
+            () -> this.service.getByName((Long) getInput(TENANT_ID), (String) getInput(NAME)), (inventory) -> {
                 assert Objects.nonNull(inventory);
                 assert Objects.equals(((InventoryEntity)inventory).getClientId(), getInput(TENANT_ID));
                 assert Objects.equals(((InventoryEntity)inventory).getName(), getInput(NAME));
@@ -144,7 +142,7 @@ class InventoryServiceTest {
     @Order(5)
     void getByName_NegativeCase_NameIsNotExist() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(TENANT_ID), (String) getInput(NON_EXIST_NAME)), (inventory) -> {
+                () -> this.service.getByName((Long) getInput(TENANT_ID), (String) getInput(NON_EXIST_NAME)), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -154,7 +152,7 @@ class InventoryServiceTest {
     @Order(6)
     void getByName_NegativeCase_TenantIdIsNotExist() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(NON_EXIST_TENANT_ID), (String) getInput(NAME)), (inventory) -> {
+                () -> this.service.getByName((Long) getInput(NON_EXIST_TENANT_ID), (String) getInput(NAME)), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -164,7 +162,7 @@ class InventoryServiceTest {
     @Order(7)
     void getByName_NegativeCase_TenantIdIsNegative() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(NEGATIVE_TENANT_ID), (String) getInput(NAME)), (inventory) -> {
+                () -> this.service.getByName((Long) getInput(NEGATIVE_TENANT_ID), (String) getInput(NAME)), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -178,8 +176,8 @@ class InventoryServiceTest {
     @Order(8)
     void getByIngredient_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-                () -> this.service.get(this.ingredientService.get((Long) getInput(INGREDIENT_ID))), (inventory) -> {
-                    final var ingredient = this.ingredientService.get((Long) getInput(INGREDIENT_ID));
+                () -> this.service.getByIngredient(this.ingredientService.getById((Long) getInput(INGREDIENT_ID))), (inventory) -> {
+                    final var ingredient = this.ingredientService.getById((Long) getInput(INGREDIENT_ID));
                     assert Objects.nonNull(inventory);
                     assert Objects.equals(((InventoryEntity)inventory).getIngredientId(), ingredient.getId());
                     assert Objects.equals(((InventoryEntity)inventory).getClientId(), ingredient.getClientId());
@@ -191,7 +189,7 @@ class InventoryServiceTest {
     @Order(9)
     void getByIngredient_PositiveCase_IngredientIdIsNonExist() {
         this.getTemplate(
-                () -> this.service.get(this.ingredientService.get((Long) getInput(NON_EXIST_INGREDIENT_ID))), (inventory) -> {
+                () -> this.service.getByIngredient(this.ingredientService.getById((Long) getInput(NON_EXIST_INGREDIENT_ID))), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -201,7 +199,7 @@ class InventoryServiceTest {
     @Order(10)
     void getByIngredient_NegativeCase_IngredientIdIsNegative() {
         this.getTemplate(
-                () -> this.service.get(this.ingredientService.get((Long) getInput(NEGATIVE_INGREDIENT_ID))), (inventory) -> {
+                () -> this.service.getByIngredient(this.ingredientService.getById((Long) getInput(NEGATIVE_INGREDIENT_ID))), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -211,7 +209,7 @@ class InventoryServiceTest {
     @Order(11)
     void getByIngredient_NegativeCase_IngredientIsNotChild() {
         this.getTemplate(
-                () -> this.service.get(this.ingredientService.get(1L)), (inventory) -> {
+                () -> this.service.getByIngredient(this.ingredientService.getById(1L)), (inventory) -> {
                     assert Objects.isNull(inventory);
                 }).run();
     }
@@ -268,7 +266,7 @@ class InventoryServiceTest {
                 () -> {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -287,7 +285,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setName((String) getInput(NAME));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> inventoryPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  inventoryPage.stream().allMatch(item -> {
@@ -308,7 +306,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnitType((String) getInput(UNIT_TYPE));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -329,7 +327,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnit((String) getInput(UNIT));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> inventoryPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  inventoryPage.stream().allMatch(item -> {
@@ -350,7 +348,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setDescription((String) getInput(DESCRIPTION));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> inventoryPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  inventoryPage.stream().allMatch(item -> {
@@ -371,7 +369,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUpdateAt((String) getInput(UPDATED_AT));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> inventoryPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  inventoryPage.stream().allMatch(item -> {
@@ -392,7 +390,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setName((String) getInput(NON_EXIST_NAME));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -406,7 +404,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnitType((String) getInput(NON_EXIST_UNIT_TYPE));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -420,7 +418,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnit((String) getInput(NON_EXIST_UNIT));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -434,7 +432,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setDescription((String) getInput(NON_EXIST_DESCRIPTION));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -448,7 +446,7 @@ class InventoryServiceTest {
                     var request = (InventoryPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUpdateAt((String) getInput(NON_EXIST_UPDATED_AT));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -463,7 +461,7 @@ class InventoryServiceTest {
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setPage(1);
                     request.setSize(1);
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), 1);
@@ -483,7 +481,7 @@ class InventoryServiceTest {
                     request.setClientId((Long)getInput(TENANT_ID));
                     request.setPage((Integer) getInput(NEGATIVE_PAGE_NUMBER));
                     request.setSize((Integer) getInput(PAGE_SIZE));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), CustomizePageRequest.MIN_PAGE_VALUE);
@@ -503,7 +501,7 @@ class InventoryServiceTest {
                     request.setClientId((Long)getInput(TENANT_ID));
                     request.setPage((Integer) getInput(PAGE_NUMBER));
                     request.setSize((Integer) getInput(NEGATIVE_PAGE_NUMBER));
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), getInput(PAGE_NUMBER));
@@ -524,7 +522,7 @@ class InventoryServiceTest {
                     request.setPage((Integer) getInput(PAGE_NUMBER));
                     request.setSize((Integer) getInput(PAGE_SIZE));
                     request.setSort("id, asc");
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), getInput(PAGE_NUMBER));
@@ -545,7 +543,7 @@ class InventoryServiceTest {
                     request.setPage((Integer) getInput(PAGE_NUMBER));
                     request.setSize((Integer) getInput(PAGE_SIZE));
                     request.setSort("id, desc");
-                    return this.service.getPage(filter(from(request),ingredientService.get(request.getIngredientId())), request.getPageable());
+                    return this.service.getPage(filter(InventoryMapper.toEntity(request),ingredientService.getById(request.getIngredientId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), getInput(PAGE_NUMBER));

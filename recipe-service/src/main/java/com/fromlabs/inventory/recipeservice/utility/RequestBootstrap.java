@@ -1,9 +1,9 @@
 package com.fromlabs.inventory.recipeservice.utility;
 
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailPageRequest;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailRequest;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipePageRequest;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +22,12 @@ public class RequestBootstrap {
         return logWrapper(request, "pageBootstrap: {}");
     }
 
+    /**
+     * Bootstrap get all recipe child page
+     * @param tenantId  Tenant ID
+     * @param request   RecipePageRequest
+     * @return Object
+     */
     public Object bootstrapGetAllRecipeChildPage(Long tenantId, RecipePageRequest request) {
         request.setTenantId(tenantId);
         request.setGroup(false);

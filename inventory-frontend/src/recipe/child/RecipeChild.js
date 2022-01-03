@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -14,7 +13,8 @@ import 'primeflex/primeflex.css';
 import { Link } from 'react-router-dom';
 import { RecipeChildForm } from './RecipeChildForm';
 import { Toast } from 'primereact/toast';
-import {handleGetPage} from "../../core/handlers/ApiLoadContentHandler";
+import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export class RecipeChild extends Component {
 
@@ -36,16 +36,24 @@ export class RecipeChild extends Component {
                 description: "",
                 updatedAt: "",
             },
+            groupName: "",
             isMock: false,
             loading: false
         };
         this.history = props.history
         this.recipeService = new RecipeService();
+        console.log(props)
     }
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageChildren()
+        this.getPageChildren();
+        this.recipeService.getByID(this.props.match.params.id, this.state.isMock)
+            .then(recipe => {
+                this.setState(
+                    { ...this.state, groupName: recipe.name }
+                );
+            })
     };
 
     getPageChildren = () => {
@@ -80,6 +88,16 @@ export class RecipeChild extends Component {
         );
     }
 
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this recipe?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
+    }
 
     actionBodyTemplate(rowData, form) {
         console.log(rowData.id)
@@ -92,9 +110,9 @@ export class RecipeChild extends Component {
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => {
-                    this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                        .then(this.getPageChildren)
+                command: (e) => { this.confirmDelete(rowData)
+                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
+                    //     .then(this.getPageChildren)
                 }
             }
         ];
@@ -105,7 +123,7 @@ export class RecipeChild extends Component {
                 <div className="card">
                     <SplitButton label="View" onClick={() => this.props.history.push({
                         pathname: `child/${rowData.id}`,
-                        state: { groupId: this.props.match.params.id }
+                        state: { groupId: this.props.match.params.id, isParent: false }
                     })} model={items}></SplitButton>
                 </div>
             </React.Fragment>
@@ -218,8 +236,10 @@ export class RecipeChild extends Component {
             () => {
                 this.setState({ loading: true });
                 this.getPageChildren()
-                this.toast.show({ severity: 'info', summary: 'Reset page size',
-                    detail: 'Page size is set to ' + l, life: 1000 });
+                this.toast.show({
+                    severity: 'info', summary: 'Reset page size',
+                    detail: 'Page size is set to ' + l, life: 1000
+                });
             }
         );
     };
@@ -296,7 +316,8 @@ export class RecipeChild extends Component {
                 <RecipeChildForm ref={el => this.form = el}
                     refreshData={() => this.getPageChildren()}
                 />
-                <Fieldset legend="Recipes" toggleable>
+                <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1>
+                <Fieldset legend="Recipe" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

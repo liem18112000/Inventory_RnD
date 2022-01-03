@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -13,8 +12,9 @@ import { Button } from "primereact/button";
 import 'primeflex/primeflex.css';
 import { Link } from 'react-router-dom';
 import { RecipeDetailForm } from './RecipeDetailForm';
-import {handleGetPage} from "../../core/handlers/ApiLoadContentHandler";
-import {Toast} from "primereact/toast";
+import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
+import { Toast } from "primereact/toast";
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export class RecipeDetail extends Component {
     constructor(props) {
@@ -36,6 +36,7 @@ export class RecipeDetail extends Component {
                 updatedAt: "",
             },
             groupId: props.location.state.groupId,
+            isParent: props.location.state.isParent,
             isMock: false,
             loading: false
         };
@@ -80,15 +81,25 @@ export class RecipeDetail extends Component {
         );
     }
 
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this detail?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
+    }
 
     actionBodyTemplate(rowData, form) {
         let items = [
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => {
-                    this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                        .then(this.getPageDetails)
+                command: (e) => { this.confirmDelete(rowData)
+                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
+                    //     .then(this.getPageDetails)
                 }
             }
         ];
@@ -220,8 +231,10 @@ export class RecipeDetail extends Component {
             () => {
                 this.setState({ loading: true });
                 this.getPageDetails()
-                this.toast.show({ severity: 'info', summary: 'Reset page size',
-                    detail: 'Page size is set to ' + l, life: 1000 });
+                this.toast.show({
+                    severity: 'info', summary: 'Reset page size',
+                    detail: 'Page size is set to ' + l, life: 1000
+                });
             }
         );
     };
@@ -235,6 +248,14 @@ export class RecipeDetail extends Component {
         }
         return ''
     };
+
+    goBack = (isParent) => {
+        return (
+            !isParent
+                ? <Link to={`../${this.state.groupId}`}> Back to Recipe</Link>
+                : <Link to={`../../recipes`}> Back to Recipes</Link>
+        )
+    }
 
     render() {
         let tableLengthOptions = [
@@ -287,7 +308,7 @@ export class RecipeDetail extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    <Link to={`../${this.state.groupId}`}> Back to Recipes</Link>
+                    {this.goBack(this.state.isParent)}
                 </span>
             </div>
         )

@@ -1,10 +1,10 @@
 package com.fromlabs.inventory.recipeservice.utility;
 
 import com.fromlabs.inventory.recipeservice.common.validator.RequestValidator;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailPageRequest;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailRequest;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipePageRequest;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 

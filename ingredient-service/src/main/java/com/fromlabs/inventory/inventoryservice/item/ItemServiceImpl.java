@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
      * @return ItemEntity
      * @see ItemEntity
      */
-    public ItemEntity getById(Long id) {
+    public ItemEntity getById(@NotNull final Long id) {
         return this.repository.findById(id).orElse(null);
     }
 
@@ -44,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
      * @return ItemEntity
      * @see ItemEntity
      */
-    public ItemEntity getByCode(Long clientId, String code) {
+    public ItemEntity getByCode(@NotNull final Long clientId, @NotNull final String code) {
         return this.repository.findByClientIdAndCode(clientId, code);
     }
 
@@ -54,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
      * @param name      String of code
      * @return          List&lt;ItemEntity&gt;
      */
-    public List<ItemEntity> getByName(Long clientId, String name) {
+    public List<ItemEntity> getByName(@NotNull final Long clientId, @NotNull final String name) {
         return this.repository.findByClientIdAndName(clientId, name);
     }
 
@@ -63,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
      * @param clientId  Long
      * @return List&lt;ItemEntity&gt;
      */
-    public List<ItemEntity> getAll(Long clientId) {
+    public List<ItemEntity> getAll(@NotNull final Long clientId) {
         return this.repository.findAllByClientId(clientId);
     }
 
@@ -74,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
      * @return Page&lt;ItemEntity&gt;
      * @see ItemEntity
      */
-    public Page<ItemEntity> getPage(Long clientId, Pageable pageable) {
+    public Page<ItemEntity> getPage(@NotNull final Long clientId, @NotNull final Pageable pageable) {
         return this.repository.findAllByClientId(clientId, pageable);
     }
 
@@ -84,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
      * @return ItemEntity
      * @see ItemEntity
      */
-    public ItemEntity save(ItemEntity entity) {
+    public ItemEntity save(@NotNull final ItemEntity entity) {
         return this.repository.save(entity);
     }
 
@@ -93,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
      * @param entity Deleted entity
      * @see ItemEntity
      */
-    public void delete(ItemEntity entity) {
+    public void delete(@NotNull final ItemEntity entity) {
         this.repository.delete(entity);
     }
 
@@ -103,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
      * @see Collection
      * @see ItemEntity
      */
-    public void deleteAll(Collection<ItemEntity> entities) {
+    public void deleteAll(@NotNull final Collection<ItemEntity> entities) {
         this.repository.deleteAll(entities);
     }
 
@@ -111,12 +112,15 @@ public class ItemServiceImpl implements ItemService {
      * Ger all item with pagination
      * @param specification Specification
      * @param pageable Pageable
-     * @return Page<ItemEntity>
+     * @return Page&lt;ItemEntity&gt;
      * @see ItemEntity
      * @see Specification
      * @see Pageable
      */
-    public Page<ItemEntity> getPage(Specification<ItemEntity> specification, Pageable pageable) {
+    public Page<ItemEntity> getPage(
+            @NotNull final Specification<ItemEntity> specification,
+            @NotNull final Pageable pageable
+    ) {
         return this.repository.findAll(specification, pageable);
     }
 
@@ -126,7 +130,9 @@ public class ItemServiceImpl implements ItemService {
      * @see Collection
      * @see ItemEntity
      */
-    public void deleteAllByIds(Collection<Long> ids) {
+    public void deleteAllByIds(
+            @NotNull final Collection<Long> ids
+    ) {
         this.repository.deleteAllById(ids);
     }
 
@@ -138,7 +144,32 @@ public class ItemServiceImpl implements ItemService {
      * @see IngredientEntity
      * @see ItemEntity
      */
-    public List<ItemEntity> getAllByIngredient(Long clientId, IngredientEntity ingredient) {
+    public List<ItemEntity> getAllByIngredient(
+            @NotNull final Long clientId,
+            @NotNull final IngredientEntity ingredient
+    ) {
         return this.repository.findAllByClientIdAndIngredient(clientId, ingredient);
+    }
+
+    /**
+     * Save all items
+     * @param items Items
+     * @return Items
+     */
+    public List<ItemEntity> save(
+            @NotNull final List<ItemEntity> items
+    ) {
+        return this.repository.saveAll(items);
+    }
+
+    /**
+     * Get all item with filter
+     * @param specification Specification
+     * @return List of item
+     */
+    public List<ItemEntity> getAll(
+            @NotNull final Specification<ItemEntity> specification
+    ) {
+        return this.repository.findAll(specification);
     }
 }

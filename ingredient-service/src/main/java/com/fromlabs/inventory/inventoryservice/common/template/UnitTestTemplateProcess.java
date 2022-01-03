@@ -127,7 +127,7 @@ public class UnitTestTemplateProcess implements TestTemplateProcess {
         try{ return this.process.call();
         } catch (Exception e){
             var error = ServerExceptionHandler().getRawResponse(e);
-            logger.error("Exception in process", error);
+            logger.error("Exception in process: {}", error);
             return error;
         }
     }

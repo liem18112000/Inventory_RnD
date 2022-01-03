@@ -4,7 +4,7 @@
 
 package com.fromlabs.inventory.recipeservice.domains.restaurant.controller;
 
-import com.fromlabs.inventory.recipeservice.config.versions.ApiV1;
+import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import com.fromlabs.inventory.recipeservice.domains.restaurant.services.RestaurantInventoryDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

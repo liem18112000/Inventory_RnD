@@ -5,11 +5,13 @@
 package com.fromlabs.inventory.recipeservice.client.endpoint;
 
 import com.fromlabs.inventory.recipeservice.client.ingredient.IngredientClient;
-import com.fromlabs.inventory.recipeservice.config.versions.ApiV1;
+import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailDto;
+import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
+import com.fromlabs.inventory.recipeservice.detail.mapper.RecipeDetailMapper;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeDto;
+import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
+import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
 import com.fromlabs.inventory.recipeservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
-import static com.fromlabs.inventory.recipeservice.recipe.beans.RecipeDto.from;
 import static com.fromlabs.inventory.recipeservice.utility.TransactionLogic.*;
 
 /**
@@ -66,7 +67,7 @@ public class EndPointImpl implements EndPoint {
             @PathVariable(ID) Long id
     ) {
         log.info(path(HttpMethod.GET, String.valueOf(id)));
-        return from(this.recipeService.get(id));
+        return RecipeMapper.toDto(this.recipeService.get(id));
     }
 
     /**
@@ -79,7 +80,7 @@ public class EndPointImpl implements EndPoint {
             @RequestParam(CODE) String code
     ) {
         log.info(path(HttpMethod.GET, "code"));
-        return from(this.recipeService.get(code));
+        return RecipeMapper.toDto(this.recipeService.get(code));
     }
 
     /**
@@ -92,7 +93,7 @@ public class EndPointImpl implements EndPoint {
             @RequestHeader(TENANT_ID) Long tenantId
     ) {
         log.info(path(HttpMethod.GET, "group/all"));
-        return from(this.recipeService.getAll(tenantId));
+        return RecipeMapper.toDto(this.recipeService.getAll(tenantId));
     }
 
     /**
@@ -107,7 +108,7 @@ public class EndPointImpl implements EndPoint {
             @RequestParam(PARENT_ID) Long parentId
     ){
         log.info(path(HttpMethod.GET, "child/all"));
-        return from(this.recipeService.getAll(tenantId, parentId));
+        return RecipeMapper.toDto(this.recipeService.getAll(tenantId, parentId));
     }
 
     /**
@@ -147,7 +148,7 @@ public class EndPointImpl implements EndPoint {
             @PathVariable(ID) Long id
     ) {
         log.info(path(HttpMethod.GET, "detail/".concat(String.valueOf(id))));
-        return RecipeDetailDto.from(recipeDetailService.get(id), ingredientClient);
+        return RecipeDetailMapper.toDto(recipeDetailService.getById(id), ingredientClient);
     }
 
     /**
@@ -160,6 +161,6 @@ public class EndPointImpl implements EndPoint {
             @RequestParam(CODE) String code
     ) {
         log.info(path(HttpMethod.GET, "detail/code"));
-        return RecipeDetailDto.from(recipeDetailService.get(code), ingredientClient);
+        return RecipeDetailMapper.toDto(recipeDetailService.getByCode(code), ingredientClient);
     }
 }

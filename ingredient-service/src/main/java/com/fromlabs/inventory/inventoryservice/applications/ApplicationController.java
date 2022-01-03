@@ -4,17 +4,72 @@
 
 package com.fromlabs.inventory.inventoryservice.applications;
 
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.beans.request.IngredientConfigRequest;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.*;
-import com.fromlabs.inventory.inventoryservice.item.beans.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.IngredientHistoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.BatchItemsRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface ApplicationController {
 
+    //<editor-fold desc="EVENT">
+
+    ResponseEntity<?> getLabelValueEvent(
+            Long clientId
+    );
+
+    //</editor-fold>
+
+    //<editor-fold desc="STATUS">
+
+    ResponseEntity<?> getLabelValueStatus();
+
+    //</editor-fold>
+
+    //<editor-fold desc="HISTORY">
+
+    /**
+     * Get all history as list by ingredient id
+     * @param tenantId      Tenant ID
+     * @param ingredientId  Ingredient unique id
+     * @return              ResponseEntity
+     */
+    ResponseEntity<?> getAllHistoryByIngredient(
+            Long tenantId,
+            Long ingredientId
+    );
+
+    /**
+     * Get history by id
+     * @param id    History unique id
+     * @return      ResponseEntity
+     */
+    ResponseEntity<?> getHistoryById(
+            Long id
+    );
+
+    /**
+     * Get page of history with filter
+     * @param tenantId  Tenant ID
+     * @param request   IngredientHistoryPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getPageHistory(
+            Long tenantId,
+            IngredientHistoryPageRequest request
+    );
+
+    //</editor-fold>
+
     //<editor-fold desc="INGREDIENT">
 
-    //<editor-fold desc="'CATEGORY'">
+    //<editor-fold desc="CATEGORY">
 
     /**
      * Return a ResponseEntity object of all ingredient category (ingredient parent) with pagination
@@ -261,6 +316,17 @@ public interface ApplicationController {
     ResponseEntity<?> saveItem(
             Long tenantId,
             ItemRequest request
+    );
+
+    /**
+     * Save batch of item by request
+     * @param tenantId  Tenant ID
+     * @param request   BatchItemsRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> saveBatchItems(
+            Long tenantId,
+            BatchItemsRequest request
     );
 
     /**

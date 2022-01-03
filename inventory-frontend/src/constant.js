@@ -15,7 +15,7 @@ export const ENABLE_GATEWAY     = process.env.REACT_APP_ENABLE_GATEWAY.trim()
  * Base api for Ingredient service
  * @returns Ingredient service url (domain/path-to-service/version)
  */
-export function baseAPI () {
+export function baseIngredientAPI () {
     return BASE_URL + "/" + INGREDIENT_PATH + "/" + VERSION
 } 
 

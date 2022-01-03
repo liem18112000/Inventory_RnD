@@ -3,7 +3,6 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
-import classNames from 'classnames';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
@@ -38,6 +37,7 @@ export class IngredientTypeForm extends Component {
             createTitle: 'New Ingredient Detail'
         }
         this.ingredientService = new IngredientService();
+        console.log(props);
     }
 
     /**
@@ -79,6 +79,7 @@ export class IngredientTypeForm extends Component {
                 code: ''
             },
             id: null,
+            // unitType: null,
             visible: true,
             formHeader: this.state.createTitle
         })
@@ -102,6 +103,7 @@ export class IngredientTypeForm extends Component {
                     code: data ? data.code : ''
                 },
                 id: data ? data.id : null,
+                // unitType: data ? data.unitType : null,
                 visible: true,
                 formHeader: this.state.editTitle
             }, () => {
@@ -251,7 +253,7 @@ export class IngredientTypeForm extends Component {
      * @returns {Promise<AxiosResponse<*>|void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getResponseAfterSubmit() {
-        if (this.state.formHeader == this.state.editTitle) {
+        if (this.state.formHeader === this.state.editTitle) {
             console.log('Edit')
             return this.ingredientService.updateIngredient(this.state.data, this.state.isMock);
         } else {

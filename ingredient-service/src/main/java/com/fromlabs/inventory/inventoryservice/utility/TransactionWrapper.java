@@ -6,11 +6,12 @@ package com.fromlabs.inventory.inventoryservice.utility;
 
 import com.fromlabs.inventory.inventoryservice.common.transaction.RequestTransactionTemplate;
 import com.fromlabs.inventory.inventoryservice.ingredient.*;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigEntity;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -78,14 +79,14 @@ public class TransactionWrapper {
      * @param request           IngredientRequest
      * @param ingredientService IngredientService
      * @param ingredient        AtomicReference&lt;IngredientEntity&gt;
-     * @param config            AtomicReference&lt;IngredientConfigEntity>&gt;
+     * @param config            AtomicReference&lt;IngredientConfigEntity&gt;
      * @return                  RequestTransactionTemplate
      */
     public RequestTransactionTemplate<Serializable> getSaveConfigTransaction(
-            IngredientRequest                       request,
-            IngredientService                       ingredientService,
-            AtomicReference<IngredientEntity>       ingredient,
-            AtomicReference<IngredientConfigEntity> config
+            @NotNull final IngredientRequest                    request,
+            @NotNull final IngredientService                    ingredientService,
+            @NotNull AtomicReference<IngredientEntity>          ingredient,
+            @NotNull AtomicReference<IngredientConfigEntity>    config
     ) {
         log.info("saveIngredientAndConfig: getSaveConfigTransaction");
         return RequestTransactionTemplate.builder()
@@ -103,9 +104,9 @@ public class TransactionWrapper {
      * @return                  RequestTransactionTemplate
      */
     public RequestTransactionTemplate<Serializable> getSaveIngredientTransaction(
-            IngredientRequest                   request,
-            IngredientService                   ingredientService,
-            AtomicReference<IngredientEntity>   ingredient
+            @NotNull final IngredientRequest            request,
+            @NotNull final IngredientService            ingredientService,
+            @NotNull AtomicReference<IngredientEntity>  ingredient
     ) {
         log.info("saveIngredientAndConfig: getSaveIngredientTransaction");
         return RequestTransactionTemplate.builder()
@@ -116,4 +117,7 @@ public class TransactionWrapper {
     }
 
     //</editor-fold>
+
+
+    // TODO: Consider wrap save batch item in transaction wrapper
 }

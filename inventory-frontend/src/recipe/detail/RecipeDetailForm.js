@@ -3,7 +3,6 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
-import classNames from 'classnames';
 import { RecipeService } from '../../service/RecipeService';
 import { Dropdown } from 'primereact/dropdown';
 import { IngredientService } from '../../service/IngredientService';

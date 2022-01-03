@@ -4,7 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.domains.fast.controller;
 
-import com.fromlabs.inventory.inventoryservice.config.versions.ApiV1;
+import com.fromlabs.inventory.inventoryservice.config.ApiV1;
 import com.fromlabs.inventory.inventoryservice.domains.fast.services.FastInventoryDomainService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;

@@ -1,15 +1,22 @@
 package com.fromlabs.inventory.inventoryservice.utility;
 
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.beans.request.IngredientConfigRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.IngredientHistoryPageRequest;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.*;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryRequest;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
-import com.fromlabs.inventory.inventoryservice.item.beans.*;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.BatchItemsRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.inventoryservice.utility.TransactionLogic.*;
@@ -46,9 +53,38 @@ public class RequestBootstrap {
      * @param request   IngredientPageRequest
      * @return Object
      */
-    public Object setTenantBoostrap(Long tenantId, IngredientPageRequest request) {
+    public Object bootstrapTenantAndPreprocessIngredientPageRequest(
+            @NotNull final Long            tenantId,
+            @NotNull IngredientPageRequest request
+    ) {
         request.setClientId(tenantId);
+        request.setCode(request.getCode().strip());
+        request.setName(request.getName().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        request.setCreateAt(request.getCreateAt().strip());
+        request.setUpdateAt(request.getUpdateAt().strip());
         return logWrapper(request, "setTenantBoostrap: {}");
+    }
+
+    /**
+     * Page bootstrap for get all ingredient category and type
+     * @param tenantId  Client ID
+     * @param request   IngredientPageRequest
+     * @return Object
+     */
+    public Object bootstrapTenantPreprocessIngredientHistoryPageRequest(
+            @NotNull final Long tenantId,
+            @NotNull IngredientHistoryPageRequest request
+    ) {
+        request.setClientId(tenantId);
+        request.setName(request.getName().strip());
+        request.setDescription(request.getDescription().strip());
+        request.setUpdateAt(request.getUpdateAt().strip());
+        request.setActorName(request.getActorName().strip());
+        request.setActorRole(request.getActorRole().strip());
+        return logWrapper(request, "IngredientHistoryPageRequest: {}");
     }
 
     /**
@@ -57,9 +93,17 @@ public class RequestBootstrap {
      * @param request   InventoryPageRequest
      * @return Object
      */
-    public Object setTenantBoostrap(Long tenantId, InventoryPageRequest request) {
+    public Object bootstrapTenantAndPreprocessInventoryPageRequest(
+            @NotNull final Long tenantId,
+            @NotNull InventoryPageRequest request
+    ) {
         request.setClientId(tenantId);
-        return logWrapper(request, "setTenantBoostrap: {}");
+        request.setName(request.getName().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        request.setUpdateAt(request.getUpdateAt().strip());
+        return logWrapper(request, "InventoryPageRequest: {}");
     }
 
     /**
@@ -71,17 +115,17 @@ public class RequestBootstrap {
      * @param itemService       ItemService
      * @return                  Object
      */
-    public Object deleteItemsBootstrap(
-            Long                    tenantId,
-            ItemDeleteAllRequest    request,
-            IngredientService ingredientService,
-            InventoryService inventoryService,
-            ItemService itemService
+    public Object bootstrapTenantItemDeleteAllRequest(
+            @NotNull final Long                    tenantId,
+            @NotNull ItemDeleteAllRequest          request,
+            @NotNull final IngredientService       ingredientService,
+            @NotNull final InventoryService        inventoryService,
+            @NotNull final ItemService             itemService
     ) {
-        final var ingredient = ingredientService.get(Objects.requireNonNull(request.getIngredientId()));
+        final var ingredient = ingredientService.getById(Objects.requireNonNull(request.getIngredientId()));
         syncIngredientInInventory(tenantId, ingredient, inventoryService, itemService);
         request.setClientId(tenantId);
-        return logWrapper(request, "deleteItemsBootstrap: {}");
+        return logWrapper(request, "ItemDeleteAllRequest: {}");
     }
 
     /**
@@ -90,9 +134,19 @@ public class RequestBootstrap {
      * @param request   IngredientRequest
      * @return Object
      */
-    public Object setTenantBoostrap(Long tenantId, IngredientRequest request) {
+    public Object bootstrapTenantAndPreprocessIngredientRequest(
+            @NotNull final Long        tenantId,
+            @NotNull IngredientRequest request
+    ) {
         request.setClientId(tenantId);
-        return logWrapper(request, "setTenantBoostrap: {}");
+        request.setCode(request.getCode().strip());
+        request.setName(request.getName().strip());
+        request.setActorName(request.getActorName().strip());
+        request.setActorRole(request.getActorRole().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        return logWrapper(request, "IngredientRequest: {}");
     }
 
     /**
@@ -101,9 +155,19 @@ public class RequestBootstrap {
      * @param request   IngredientRequest
      * @return Object
      */
-    public Object setTenantBoostrap(Long tenantId, ItemRequest request) {
+    public Object bootstrapTenantAndPreprocessItemRequest(
+            @NotNull final Long  tenantId,
+            @NotNull ItemRequest request
+    ) {
         request.setClientId(tenantId);
-        return logWrapper(request, "setTenantBoostrap: {}");
+        request.setCode(request.getCode().strip());
+        request.setName(request.getName().strip());
+        request.setActorName(request.getActorName().strip());
+        request.setActorRole(request.getActorRole().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        return logWrapper(request, "ItemRequest: {}");
     }
 
     /**
@@ -112,8 +176,17 @@ public class RequestBootstrap {
      * @param request   IngredientRequest
      * @return Object
      */
-    public Object setTenantBoostrap(Long tenantId, ItemPageRequest request) {
+    public Object bootstrapTenantAndPreprocessItemPageRequest(
+            @NotNull final Long      tenantId,
+            @NotNull ItemPageRequest request
+    ) {
         request.setClientId(tenantId);
+        request.setCode(request.getCode().strip());
+        request.setName(request.getName().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        request.setUpdateAt(request.getUpdateAt().strip());
         return logWrapper(request, "setTenantBoostrap: {}");
     }
 
@@ -124,10 +197,14 @@ public class RequestBootstrap {
      * @param request   IngredientConfigRequest
      * @return Object
      */
-    public Object setIdAndTenantBoostrap(Long tenantId, Long id, IngredientConfigRequest request) {
+    public Object bootstrapTenantAndIdIngredientConfigRequest(
+            @NotNull final Long tenantId,
+            @NotNull final Long id,
+            @NotNull IngredientConfigRequest request
+    ) {
         request.setClientId(tenantId);
         request.setId(id);
-        return logWrapper(request, "setIdAndTenantBoostrap: {}");
+        return logWrapper(request, "IngredientConfigRequest: {}");
     }
 
     /**
@@ -137,10 +214,21 @@ public class RequestBootstrap {
      * @param request   IngredientConfigRequest
      * @return Object
      */
-    public Object setIdAndTenantBoostrap(Long tenantId, Long id, ItemRequest request) {
+    public Object bootstrapTenantAndIdtAndPreprocessItemRequest(
+            @NotNull final Long  tenantId,
+            @NotNull final Long  id,
+            @NotNull ItemRequest request
+    ) {
         request.setClientId(tenantId);
         request.setId(id);
-        return logWrapper(request, "setIdAndTenantBoostrap: {}");
+        request.setCode(request.getCode().strip());
+        request.setName(request.getName().strip());
+        request.setActorName(request.getActorName().strip());
+        request.setActorRole(request.getActorRole().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        return logWrapper(request, "ItemRequest: {}");
     }
 
     /**
@@ -150,10 +238,37 @@ public class RequestBootstrap {
      * @param request   IngredientConfigRequest
      * @return Object
      */
-    public Object setIdAndTenantBootstrap(Long tenantId, Long id, InventoryRequest request) {
+    public Object bootstrapTenantAndIdAndPreprocessInventoryRequest(
+            @NotNull final Long         tenantId,
+            @NotNull final Long         id,
+            @NotNull InventoryRequest request
+    ) {
         request.setClientId(tenantId);
         request.setId(id);
-        return logWrapper(request, "setIdAndTenantBootstrap");
+        request.setName(request.getName().strip());
+        request.setDescription(request.getDescription().strip());
+        return logWrapper(request, "InventoryRequest: {}");
+    }
+
+    /**
+     * Bootstrap tenant id for add all items
+     * @param tenantId  Tenant ID
+     * @param request   BatchItemsRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantAndPreprocessBatchItemRequest(
+            @NotNull final Long tenantId,
+            @NotNull BatchItemsRequest request
+    ) {
+        request.setClientId(tenantId);
+        request.setCode(request.getCode().strip());
+        request.setName(request.getName().strip());
+        request.setActorName(request.getActorName().strip());
+        request.setActorRole(request.getActorRole().strip());
+        request.setUnit(request.getUnit().strip());
+        request.setUnitType(request.getUnitType().strip());
+        request.setDescription(request.getDescription().strip());
+        return logWrapper(request, "BatchItemsRequest: {}");
     }
 
     /**

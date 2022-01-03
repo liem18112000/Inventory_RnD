@@ -48,7 +48,7 @@ public class ExpiredSuggestTask extends TimerTask {
             log.info("Expire task activate - suggestion response : {}", suggestResponse);
             suggestResponse.getDetails().forEach(detail -> {
                 final var ingredient = detail.getIngredient();
-                var inventory = inventoryService.get(ingredient.getId());
+                var inventory = inventoryService.getById(ingredient.getId());
                 final var releaseQuantity = detail.getQuantity() * suggestResponse.getTaxonQuantity();
                 if(releaseQuantity > 0) {
                     log.info("Start release expired suggestion of ingredient : {} - {}", ingredient.getId(), ingredient.getName());

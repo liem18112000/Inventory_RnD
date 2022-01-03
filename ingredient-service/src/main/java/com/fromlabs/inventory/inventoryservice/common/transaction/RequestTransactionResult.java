@@ -14,7 +14,7 @@ public class RequestTransactionResult implements TransactionResult {
     protected boolean success;
     protected String message;
     protected final String timestamp    = Instant.now().toString();
-    protected String briefTemplate      = "Brief transaction result :\n\tResult : {}\n\tSuccess : {}\n\tMessage : {}\n\tTimestamp : {}";
+    protected final String briefTemplate      = "Brief transaction result :\n\tResult : {}\n\tSuccess : {}\n\tMessage : {}\n\tTimestamp : {}";
 
     public RequestTransactionResult() {}
 

@@ -39,7 +39,7 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
 
     protected Object handlerResult;
     protected ExceptionHandlerConfiguration configuration;
-    protected Logger logger = LoggerFactory.getLogger(RequestExceptionHandler.class);;
+    protected Logger logger = LoggerFactory.getLogger(RequestExceptionHandler.class);
 
     /**
      * Configuration method
@@ -69,10 +69,9 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
 
     /**
      * Default configuration of exception handler
-     * @return ExceptionHandlerConfiguration
      * @see ExceptionHandlerConfiguration
      */
-    protected ExceptionHandlerConfiguration configByDefault() {
+    protected void configByDefault() {
         this.configuration = new RequestExceptionHandlerConfiguration()
             .status(HttpStatus.BAD_REQUEST, FailTransactionException.class.getName())
                 .instruction("There are bugs which you can find in 'Stack Trace' or 'Stack Frame'", FailTransactionException.class.getName())
@@ -83,7 +82,6 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
             .status(HttpStatus.BAD_REQUEST, RequestNotFoundException.class.getName())
                 .instruction("The request body is missing lead to the transaction would be malfunctioned", RequestNotFoundException.class.getName());
         this.logger.info("Load default configuration : ".concat(this.configuration.toString()));
-        return this.configuration;
     }
 
     /**

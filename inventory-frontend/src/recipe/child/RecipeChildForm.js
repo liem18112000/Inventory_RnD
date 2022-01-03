@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { RecipeService } from '../../service/RecipeService';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
+import { Dropdown } from 'primereact/dropdown';
 
 /**
  * Recipe form for save or update recipe form information
@@ -20,6 +21,8 @@ export class RecipeChildForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            recipeGroup: { value: null, label: "" },
+            recipeGroups: [],
             data: {
                 id: null,
                 parentId: null,
@@ -41,6 +44,13 @@ export class RecipeChildForm extends Component {
      * Function is called after component is required
      */
     componentDidMount() {
+        this.recipeService.getRecipeGroupSimple(this.state.isMock)
+            .then(recipes => {
+                this.setState({
+                    ...this.state,
+                    recipeGroups: recipes
+                })
+            })
     }
 
     /**
@@ -84,6 +94,7 @@ export class RecipeChildForm extends Component {
      */
     setUpdateInformation(id, parentId) {
         this.recipeService.getByID(id, this.state.isMock).then(data => {
+            // const recipe = this.state.recipeGroups.find((item) => item.value === parentId);
             this.setState({
                 data: {
                     id: data ? data.id : null,
@@ -93,6 +104,7 @@ export class RecipeChildForm extends Component {
                     description: data ? data.description : '',
                     code: data ? data.code : ''
                 },
+                recipeGroup: this.state.recipeGroups.find((item) => item.value == parentId),
                 id: data ? data.id : null,
                 visible: true,
                 formHeader: this.state.editTitle
@@ -114,7 +126,7 @@ export class RecipeChildForm extends Component {
      * @returns {boolean}
      */
     isSubmitValid = () => {
-        return !(this.state.errors.name || this.state.errors.code );
+        return !(this.state.errors.name || this.state.errors.code);
     }
 
     /**
@@ -266,6 +278,23 @@ export class RecipeChildForm extends Component {
                         <InputText value={this.state.data.code} placeholder="Enter code"
                             onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
+                    </div>
+                    <div className="p-col-12">
+                        <label>* Group</label>
+                        <Dropdown value={this.state.recipeGroup ? this.state.recipeGroup.label : null}
+                            options={this.state.recipeGroups.map((item) =>
+                                item.label
+                            )}
+                            onChange={(e) => {
+                                    const parent = this.state.recipeGroups.find(
+                                        (item) => item.label === e.target.value
+                                    )
+                                    this.setState({ ...this.state, data: { ...this.state.data, parentId: parent.value } }, () => {
+                                        this.setState({ ...this.state, recipeGroup: parent })
+                                    })
+                                }
+                            }
+                        />
                     </div>
                     <div className="p-col-12">
                         <label>Description</label>

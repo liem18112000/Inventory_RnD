@@ -4,8 +4,8 @@
 
 package com.fromlabs.inventory.recipeservice.client.endpoint;
 
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailDto;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeDto;
+import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
+import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
 
 import java.util.List;
 

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 
 import static com.fromlabs.inventory.inventoryservice.common.transaction.TransactionStatus.*;
 import static java.util.Objects.isNull;
@@ -121,7 +120,7 @@ public class RequestTransactionTemplate<ID extends Serializable> implements Tran
 
     @Getter protected TransactionStatus status;
     @Getter protected String            transactId;
-    @Getter protected String            transactName    = "Transact";
+    @Getter protected String            transactName;
 
     public static final String          VIOLATE_MSG     = "Start process or rollback process is not initialized";
     public static final String          STATUS_MSG      = "Transaction ( step : {} , status : {})";

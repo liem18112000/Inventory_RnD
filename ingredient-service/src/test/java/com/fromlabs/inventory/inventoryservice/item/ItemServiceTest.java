@@ -6,15 +6,15 @@ package com.fromlabs.inventory.inventoryservice.item;
 
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
 import com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess;
-import com.fromlabs.inventory.inventoryservice.item.beans.ItemPageRequest;
-import com.fromlabs.inventory.inventoryservice.item.beans.ItemSpecification;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.mapper.ItemMapper;
+import com.fromlabs.inventory.inventoryservice.item.specification.ItemSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -118,7 +118,7 @@ class ItemServiceTest {
     void getPage_PositiveCase_AllThingIsRight() {
         var request = new ItemPageRequest();
         request.setClientId(1L);
-        var page = this.itemService.getPage(ItemSpecification.filter(ItemEntity.from(request), null), request.getPageable());
+        var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L); } );
     }
@@ -128,7 +128,7 @@ class ItemServiceTest {
         var request = new ItemPageRequest();
         request.setName("New Zealand cow milk");
         request.setClientId(1L);
-        var page = this.itemService.getPage(ItemSpecification.filter(ItemEntity.from(request), null), request.getPageable());
+        var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getName().equals("New Zealand cow milk"); } );
     }
@@ -138,7 +138,7 @@ class ItemServiceTest {
         var request = new ItemPageRequest();
         request.setCode("QLGM01");
         request.setClientId(1L);
-        var page = this.itemService.getPage(ItemSpecification.filter(ItemEntity.from(request), null), request.getPageable());
+        var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getCode().equals("QLGM01"); } );
     }
@@ -148,7 +148,7 @@ class ItemServiceTest {
         var request = new ItemPageRequest();
         request.setUnitType("whole");
         request.setClientId(1L);
-        var page = this.itemService.getPage(ItemSpecification.filter(ItemEntity.from(request), null), request.getPageable());
+        var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getUnitType().equals("whole"); } );
     }

@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface RecipeDetailRepository extends JpaRepository<RecipeDetailEntity, Long>, JpaSpecificationExecutor<RecipeDetailEntity> {
+public interface RecipeDetailRepository extends
+        JpaRepository<RecipeDetailEntity, Long>, JpaSpecificationExecutor<RecipeDetailEntity> {
     RecipeDetailEntity findByCode(String code);
     RecipeDetailEntity findByClientIdAndName(Long clientId, String name);
 }

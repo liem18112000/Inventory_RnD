@@ -4,8 +4,6 @@
 
 package com.fromlabs.inventory.inventoryservice.common.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fromlabs.inventory.inventoryservice.common.view.View;
 import lombok.*;
 import org.hibernate.Hibernate;
 

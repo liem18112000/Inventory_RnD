@@ -3,7 +3,6 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
-import classNames from 'classnames';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
 import { sleep } from "../../core/utility/ComponentUtility";
@@ -26,8 +25,8 @@ export class IngredientCategoryForm extends Component {
                 name: '',
                 tenantId: '',
                 description: '',
-                unit: '',
-                unitType: '',
+                // unit: '',
+                // unitType: '',
                 code: ''
             },
             isMock: false,
@@ -72,8 +71,8 @@ export class IngredientCategoryForm extends Component {
                 name: '',
                 tenantId: '',
                 description: '',
-                unit: '',
-                unitType: '',
+                // unit: '',
+                // unitType: '',
                 code: ''
             },
             id: null,
@@ -94,19 +93,19 @@ export class IngredientCategoryForm extends Component {
                     name: data ? data.name : '',
                     tenantId: data ? data.tenantId : '',
                     description: data ? data.description : '',
-                    unit: data ? data.unit : '',
-                    unitType: data ? data.unitType : '',
+                    // unit: data ? data.unit : '',
+                    // unitType: data ? data.unitType : '',
                     code: data ? data.code : ''
                 },
                 id: data ? data.id : null,
                 visible: true,
                 formHeader: this.state.editTitle
             }, () => {
-                if (data.unitType) {
-                    this.ingredientService.getUnit(data.unitType, false).then(u => this.setState({
-                        units: u
-                    }))
-                }
+                // if (data.unitType) {
+                //     this.ingredientService.getUnit(data.unitType, false).then(u => this.setState({
+                //         units: u
+                //     }))
+                // }
             })
         })
     }
@@ -125,7 +124,12 @@ export class IngredientCategoryForm extends Component {
     * @returns {boolean}
     */
     isSubmitValid = () => {
-        return !(this.state.errors.name || this.state.errors.code || this.state.errors.unitType || this.state.errors.unit);
+        return !(
+            this.state.errors.name
+            || this.state.errors.code
+            // || this.state.errors.unitType
+            // || this.state.errors.unit
+        );
     }
 
     /**
@@ -138,8 +142,8 @@ export class IngredientCategoryForm extends Component {
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Ingredient category name is required" : null,
                 code: !this.requireField(this.state.data.code) ? "Ingredient category code is required" : null,
-                unitType: !this.requireField(this.state.data.unitType) ? "Ingredient category unit type is required" : null,
-                unit: !this.requireField(this.state.data.unit) ? "Ingredient category unit is required" : null,
+                // unitType: !this.requireField(this.state.data.unitType) ? "Ingredient category unit type is required" : null,
+                // unit: !this.requireField(this.state.data.unit) ? "Ingredient category unit is required" : null,
             }
         }, callback);
     }
@@ -162,12 +166,12 @@ export class IngredientCategoryForm extends Component {
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
                     </div>
-                    <div className="p-col-12">
-                        {this.state.errors.unitType ? this.state.errors.unitType : ""}
-                    </div>
-                    <div className="p-col-12">
-                        {this.state.errors.unit ? this.state.errors.unit : ""}
-                    </div>
+                    {/*<div className="p-col-12">*/}
+                    {/*    {this.state.errors.unitType ? this.state.errors.unitType : ""}*/}
+                    {/*</div>*/}
+                    {/*<div className="p-col-12">*/}
+                    {/*    {this.state.errors.unit ? this.state.errors.unit : ""}*/}
+                    {/*</div>*/}
                 </div>
             </div>
         )
@@ -249,7 +253,7 @@ export class IngredientCategoryForm extends Component {
      * @returns {Promise<AxiosResponse<*>|void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getResponseAfterSubmit() {
-        if (this.state.formHeader == this.state.editTitle) {
+        if (this.state.formHeader === this.state.editTitle) {
             console.log('Edit')
             return this.ingredientService.updateIngredient(this.state.data, this.state.isMock);
         } else {
@@ -287,29 +291,29 @@ export class IngredientCategoryForm extends Component {
                             onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
                     </div>
-                    <div className="p-col-12">
-                        <label>* Unit Type </label>
-                        <Dropdown value={this.state.data.unitType}
-                            options={this.state.unitTypes}
-                            onChange={(e) => {
-                                this.setState({
-                                    data: { ...this.state.data, unitType: e.target.value }
-                                },
-                                    () => {
-                                        this.ingredientService.getUnit(this.state.data.unitType, false).then(u => this.setState({
-                                            units: u
-                                        }));
-                                    }
-                                )
-                            }} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
-                    </div>
-                    <div className="p-col-12">
-                        <label>* Unit </label>
-                        <Dropdown value={this.state.data.unit} options={this.state.units}
-                            onChange={(e) => this.setState({ data: { ...this.state.data, unit: e.target.value } })} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unit}</div>
-                    </div>
+                    {/*<div className="p-col-12">*/}
+                    {/*    <label>* Unit Type </label>*/}
+                    {/*    <Dropdown value={this.state.data.unitType}*/}
+                    {/*        options={this.state.unitTypes}*/}
+                    {/*        onChange={(e) => {*/}
+                    {/*            this.setState({*/}
+                    {/*                data: { ...this.state.data, unitType: e.target.value }*/}
+                    {/*            },*/}
+                    {/*                () => {*/}
+                    {/*                    this.ingredientService.getUnit(this.state.data.unitType, false).then(u => this.setState({*/}
+                    {/*                        units: u*/}
+                    {/*                    }));*/}
+                    {/*                }*/}
+                    {/*            )*/}
+                    {/*        }} />*/}
+                    {/*    <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>*/}
+                    {/*</div>*/}
+                    {/*<div className="p-col-12">*/}
+                    {/*    <label>* Unit </label>*/}
+                    {/*    <Dropdown value={this.state.data.unit} options={this.state.units}*/}
+                    {/*        onChange={(e) => this.setState({ data: { ...this.state.data, unit: e.target.value } })} />*/}
+                    {/*    <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unit}</div>*/}
+                    {/*</div>*/}
                     <div className="p-col-12">
                         <label>Description</label>
                         <InputTextarea rows={5} value={this.state.data.description} placeholder="Enter description"

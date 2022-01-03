@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -14,6 +13,7 @@ import 'primeflex/primeflex.css';
 import { RecipeGroupForm } from './RecipeGroupForm';
 import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
+import { confirmDialog } from 'primereact/confirmdialog';
 // import './ToastDemo.css';
 
 export class RecipeGroup extends Component {
@@ -79,6 +79,16 @@ export class RecipeGroup extends Component {
         );
     }
 
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this group?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
+    }
 
     actionBodyTemplate(rowData, form) {
         let items = [
@@ -86,24 +96,31 @@ export class RecipeGroup extends Component {
                 label: 'Edit',
                 icon: 'pi pi-pencil',
                 command: (e) => { form.action(rowData.id, this.state.isMock) }
+            },
+            {
+                label: 'Delete',
+                icon: 'pi pi-trash',
+                command: (e) => { this.confirmDelete(rowData)
+                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
+                    //     .then(this.getPageGroups)
+                }
             }
-            // {
-            //     label: 'Delete',
-            //     icon: 'pi pi-trash',
-            //     command: (e) => {
-            //         this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-            //             .then(this.getPageGroups)
-            //     }
-            // }
         ];
         console.log(rowData.id)
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
-                    <SplitButton label="View" onClick={() => window.location.replace(
-                        `recipe/${rowData.id}`
-                    )} model={items}></SplitButton>
+                    <SplitButton label="View"
+                        // onClick={() => window.location.replace(
+                        //     `recipe/${rowData.id}`
+                        // )} model={items}
+                        onClick={() => this.props.history.push({
+                            pathname: `recipe/${rowData.id}`,
+                            state: { groupName: rowData.name }
+                        })} model={items}
+                    >
+                    </SplitButton>
                 </div>
             </React.Fragment>
         );
@@ -214,8 +231,10 @@ export class RecipeGroup extends Component {
             },
             () => {
                 this.applyFilter();
-                this.toast.show({ severity: 'info', summary: 'Reset page size',
-                    detail: 'Page size is set to ' + l, life: 1000 });
+                this.toast.show({
+                    severity: 'info', summary: 'Reset page size',
+                    detail: 'Page size is set to ' + l, life: 1000
+                });
             }
         );
     };

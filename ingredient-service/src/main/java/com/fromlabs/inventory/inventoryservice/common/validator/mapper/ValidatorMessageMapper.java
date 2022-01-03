@@ -16,7 +16,7 @@ public interface ValidatorMessageMapper {
      * @param message   String of message
      * @return  ValidatorMessageMapper
      */
-    ValidatorMessageMapper map(String criteria, String message);;
+    ValidatorMessageMapper map(String criteria, String message);
 
     /**
      * getMessage

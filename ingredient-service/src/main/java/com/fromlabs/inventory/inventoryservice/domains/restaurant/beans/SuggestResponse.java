@@ -47,5 +47,5 @@ public class SuggestResponse {
 
     // TODO: Reconsider the expired mechanism in somewhere else
     private String expiredTime;
-    private boolean confirmed = false;
+    private boolean confirmed;
 }

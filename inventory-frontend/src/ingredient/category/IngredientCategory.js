@@ -12,6 +12,7 @@ import { IngredientCategoryForm } from './IngredientCategoryForm';
 import 'primeflex/primeflex.css';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export class IngredientCategory extends Component {
 
@@ -40,7 +41,6 @@ export class IngredientCategory extends Component {
             isMock: false,
             loading: false
         };
-        this.history = props.history
         this.ingredientService = new IngredientService();
     }
 
@@ -92,6 +92,21 @@ export class IngredientCategory extends Component {
     }
 
     /**
+     * Confim dialog for delete function
+     * @param {*} rowData 
+     */
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this category?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageCategories),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
+    }
+
+    /**
      * Action body template
      * @param rowData           Ingredient category data row
      * @param form              Ingredient category form
@@ -107,10 +122,7 @@ export class IngredientCategory extends Component {
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => {
-                    this.ingredientService.deleteIngredient(rowData.id, this.state.isMock)
-                        .then(this.getPageCategories)
-                }
+                command: (e) => { this.confirmDelete(rowData) }
             }
         ];
 
@@ -357,6 +369,7 @@ export class IngredientCategory extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <Toast ref={(el) => this.toastBC = el} position="bottom-center" />
                 <IngredientCategoryForm ref={el => this.form = el}
                     refreshData={() => this.getPageCategories()}
                 />

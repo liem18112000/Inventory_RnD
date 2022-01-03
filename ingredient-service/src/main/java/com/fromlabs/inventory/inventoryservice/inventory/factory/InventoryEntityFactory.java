@@ -6,11 +6,8 @@ package com.fromlabs.inventory.inventoryservice.inventory.factory;
 
 import com.fromlabs.inventory.inventoryservice.common.factory.BaseEntityWithLongIDFactory;
 import com.fromlabs.inventory.inventoryservice.common.factory.FactoryCreateType;
-import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 
 @NoArgsConstructor
 public class InventoryEntityFactory extends BaseEntityWithLongIDFactory {

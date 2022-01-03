@@ -4,10 +4,10 @@
 
 package com.fromlabs.inventory.inventoryservice.client.endpoint;
 
-import com.fromlabs.inventory.inventoryservice.config.versions.ApiV1;
-import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
+import com.fromlabs.inventory.inventoryservice.config.ApiV1;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.inventoryservice.config.AppConfig.*;
-import static java.util.Objects.nonNull;
 
 /**
  * Ingredient endpoint implementation for internally expose API to other service
@@ -69,7 +68,7 @@ public class EndPointImpl implements EndPoint {
             @RequestHeader(TENANT_ID) Long tenantId
     ) {
         log.info(path(HttpMethod.GET, "category/all"));
-        return IngredientDto.from(ingredientService.getAll(tenantId));
+        return IngredientMapper.toDto(ingredientService.getAll(tenantId));
     }
 
     /**
@@ -86,7 +85,7 @@ public class EndPointImpl implements EndPoint {
             @RequestParam(PARENT_ID) Long parentId
     ) {
         log.info(path(HttpMethod.GET, "type/all"));
-        return IngredientDto.from(ingredientService.getAll(tenantId, parentId)).stream()
+        return  IngredientMapper.toDto(ingredientService.getAll(tenantId, parentId)).stream()
                 .map(ingredient -> TransactionLogic.setIngredientQuantity(inventoryService, ingredient))
                 .collect(Collectors.toList());
     }

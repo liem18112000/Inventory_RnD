@@ -4,17 +4,41 @@
 
 package com.fromlabs.inventory.inventoryservice.utility;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.inventoryservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.inventoryservice.common.entity.BaseEntity;
 import com.fromlabs.inventory.inventoryservice.common.transaction.*;
 import com.fromlabs.inventory.inventoryservice.ingredient.*;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.response.SaveIngredientResponse;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigEntity;
+import com.fromlabs.inventory.inventoryservice.ingredient.config.mapper.IngredientConfigMapper;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.dto.IngredientEventDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.mapper.IngredientEventMapper;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.status.IngredientEventStatus;
+import com.fromlabs.inventory.inventoryservice.ingredient.specification.IngredientSpecification;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.*;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.IngredientHistoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.mapper.IngredientHistoryMapper;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.specification.IngredientHistorySpecification;
 import com.fromlabs.inventory.inventoryservice.inventory.*;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.*;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.dto.InventoryDto;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
 import com.fromlabs.inventory.inventoryservice.inventory.factory.InventoryEntityFactory;
+import com.fromlabs.inventory.inventoryservice.inventory.mapper.InventoryMapper;
 import com.fromlabs.inventory.inventoryservice.item.*;
-import com.fromlabs.inventory.inventoryservice.item.beans.*;
+import com.fromlabs.inventory.inventoryservice.item.beans.dto.ItemDto;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.BatchItemsRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
+import com.fromlabs.inventory.inventoryservice.item.mapper.BatchItemsMapper;
+import com.fromlabs.inventory.inventoryservice.item.mapper.ItemMapper;
+import com.fromlabs.inventory.inventoryservice.item.specification.ItemSpecification;
 import com.fromlabs.inventory.inventoryservice.item.strategy.DeleteStrategy;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -24,6 +48,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -33,9 +58,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static com.fromlabs.inventory.inventoryservice.common.factory.FactoryCreateType.DEFAULT;
-import static com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity.from;
-import static com.fromlabs.inventory.inventoryservice.inventory.beans.InventorySpecification.filter;
+import static com.fromlabs.inventory.inventoryservice.common.factory.FactoryCreateType.*;
+import static com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper.*;
+import static com.fromlabs.inventory.inventoryservice.inventory.specification.InventorySpecification.filter;
 import static com.fromlabs.inventory.inventoryservice.utility.TransactionWrapper.*;
 import static java.util.Objects.*;
 import static org.springframework.http.HttpStatus.*;
@@ -67,6 +92,62 @@ import static org.springframework.http.ResponseEntity.*;
 @Slf4j
 public class TransactionLogic {
 
+    //<editor-fold desc="getLabelValueStatus">
+
+    // TODO: Using status service
+    /**
+     * Get all status as label-value list
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getLabelValueStatus() {
+        return ok(Arrays.stream(IngredientEventStatus.values())
+                .map(status -> new SimpleDto(status.getName().toLowerCase(), status.getName())));
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="getLabelValueEvent">
+
+    /**
+     * Get all event as label-value list
+     * @param clientId      Client ID
+     * @param eventService  IngredientEventService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getLabelValueEvent(
+            @NotNull final Long clientId,
+            @NotNull final IngredientEventService eventService
+    ) {
+        return  ok(eventService.getAll(clientId).stream()
+                .map(event -> getEventSimpleDto(event, "_", " ")));
+    }
+
+    /**
+     * Process event to simple DTO as label-value
+     * @param event IngredientEventDto
+     * @return SimpleDto
+     */
+    private SimpleDto getEventSimpleDto(
+            @NotNull final IngredientEventDto event,
+            @NotNull final String delimiter,
+            @NotNull final String replacement
+    ) {
+        var dto = new SimpleDto();
+        final var eventName = event.getName().replaceAll(delimiter, replacement);
+        if(eventName.length() <= 1){
+            dto.setLabel(eventName.toUpperCase());
+        } else {
+            final var firstCharacter = eventName.substring(0, 1);
+            final var restCharacter = eventName.substring(firstCharacter.length());
+            final var label = firstCharacter.toUpperCase().concat(restCharacter);
+            dto.setLabel(label);
+        }
+        dto.setValue(event.getName());
+        return dto;
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="getIngredientPageWithFilter">
 
     /**
@@ -77,22 +158,17 @@ public class TransactionLogic {
      * @return Page&lt;IngredientDto&gt;
      */
     public Page<IngredientDto> getIngredientPageWithFilter(
-            IngredientPageRequest   request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService
+            @NotNull final IngredientPageRequest request,
+            @NotNull final IngredientService       ingredientService,
+            @NotNull final InventoryService        inventoryService
     ) {
         log.info("getIngredientPageWithFilter : start");
-
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
-        assert nonNull(inventoryService);
 
         // Get page of Ingredient Entity
         var page = getIngredientDtoPage(request, ingredientService);
 
         // If request parent id is null or there is no ingredient with the ke key return page
-        if (isNull(request.getParentId()) || isNull(ingredientService.get(request.getParentId()))) return page;
+        if (isNull(request.getParentId()) || isNull(ingredientService.getById(request.getParentId()))) return page;
 
         // Otherwise, page is updated as each item's quantity will be retrieved from inventory
         return page.map(ingredient -> setIngredientQuantity(inventoryService, ingredient));
@@ -105,14 +181,10 @@ public class TransactionLogic {
      * @return IngredientDto
      */
     public IngredientDto setIngredientQuantity(
-            InventoryService    inventoryService,
-            IngredientDto       ingredient
+            @NotNull final InventoryService    inventoryService,
+            @NotNull final IngredientDto       ingredient
     ) {
         log.info("setIngredientQuantity");
-
-        // Check pre-condition
-        assert nonNull(inventoryService);
-        assert nonNull(ingredient);
 
         // Get inventory by ingredient
         final var inventory = getInventoryEntity(inventoryService, ingredient);
@@ -130,20 +202,16 @@ public class TransactionLogic {
      * @return InventoryEntity
      */
     private InventoryEntity getInventoryEntity(
-            InventoryService inventoryService,
-            IngredientDto ingredient
+            @NotNull final InventoryService inventoryService,
+            @NotNull final IngredientDto ingredient
     ) {
         log.info("getIngredientPageWithFilter : getInventoryEntity");
 
-        // Check pre-condition
-        assert nonNull(inventoryService);
-        assert nonNull(ingredient);
-
         // Convert ingredient DTO to entity
-        final var entity = IngredientEntity.from(ingredient);
+        final var entity = toEntity(ingredient);
 
         // Get inventory from ingredient and then return
-        return inventoryService.get(entity);
+        return inventoryService.getByIngredient(entity);
     }
 
     /**
@@ -153,20 +221,16 @@ public class TransactionLogic {
      * @return Page&lt;IngredientDto&gt;
      */
     private Page<IngredientDto> getIngredientDtoPage(
-            IngredientPageRequest   request,
-            IngredientService       ingredientService
+            @NotNull final IngredientPageRequest   request,
+            @NotNull final IngredientService       ingredientService
     ) {
         log.info("getIngredientPageWithFilter : getIngredientDtoPage");
 
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
-
         // Get ingredient entity page
-        final var page = requireNonNull(getIngredientEntityPage(request, ingredientService));
+        final var page = getIngredientEntityPage(request, ingredientService);
 
         // Convert ingredient entity page to ingredient DTO page
-        return IngredientDto.from(page);
+        return toDto(page);
     }
 
     /**
@@ -176,19 +240,18 @@ public class TransactionLogic {
      * @return Page&lt;IngredientEntity&gt;
      */
     private Page<IngredientEntity> getIngredientEntityPage(
-            IngredientPageRequest request,
-            IngredientService     ingredientService
+            @NotNull final IngredientPageRequest request,
+            @NotNull final IngredientService     ingredientService
     ) {
         log.info("getIngredientPageWithFilter : getIngredientEntityPage");
 
         // Check pre-condition
         assert nonNull(request.getParentId());
         assert nonNull(request.getPageable());
-        assert nonNull(ingredientService);
 
         // Get ingredient entity and parent
-        final var entity = from(request);
-        final var parent = ingredientService.get(request.getParentId());
+        final var entity = toEntity(request);
+        final var parent = ingredientService.getById(request.getParentId());
 
         // Get specification from entity and parent
         final var specification = IngredientSpecification.filter(entity, parent);
@@ -209,21 +272,17 @@ public class TransactionLogic {
      * @return                  IngredientDto
      */
     public IngredientDto getIngredientByIdWithQuantity(
-            Long                id,
-            IngredientService   ingredientService,
-            InventoryService    inventoryService
+            @NotNull final Long                id,
+            @NotNull final IngredientService   ingredientService,
+            @NotNull final InventoryService    inventoryService
     ) {
         log.info("getIngredientByIdWithQuantity");
 
-        // Check pre-condition
-        assert nonNull(ingredientService);
-        assert nonNull(inventoryService);
-
         // Gwt ingredient by id
-        final var ingredient = requireNonNull(ingredientService.get(id));
+        final var ingredient = ingredientService.getById(id);
 
         // Convert to ingredient entity to DTO
-        var dto = requireNonNull(IngredientDto.from(ingredient));
+        var dto = toDto(ingredient);
 
         // If ingredient is child set ingredient quantity
         if(nonNull(ingredient.getParent())) setIngredientQuantity(inventoryService, dto);
@@ -244,21 +303,17 @@ public class TransactionLogic {
      * @return                  IngredientDto
      */
     public IngredientDto getIngredientByCodeWithQuantity(
-            String              code,
-            IngredientService   ingredientService,
-            InventoryService    inventoryService
+            @NotNull final String              code,
+            @NotNull final IngredientService   ingredientService,
+            @NotNull final InventoryService    inventoryService
     ) {
         log.info("getIngredientByCodeWithQuantity");
 
-        // Check pre-condition
-        assert nonNull(ingredientService);
-        assert nonNull(inventoryService);
-
         // Get ingredient by code
-        final var ingredient = requireNonNull(ingredientService.get(code));
+        final var ingredient = ingredientService.getByCode(code);
 
         // Convert ingredient entity to DTO
-        var dto = requireNonNull(IngredientDto.from(ingredient));
+        var dto = toDto(ingredient);
 
         // If ingredient is child set ingredient quantity
         if(nonNull(ingredient.getParent())) setIngredientQuantity(inventoryService, dto);
@@ -279,22 +334,17 @@ public class TransactionLogic {
      * @return                  Page&lt;InventoryDto&gt;
      */
     public Page<InventoryDto> getInventoryPageWithFilter(
-            InventoryPageRequest    request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService
+            @NotNull final InventoryPageRequest request,
+            @NotNull final IngredientService       ingredientService,
+            @NotNull final InventoryService        inventoryService
     ) {
         log.info("getInventoryPageWithFilter : start");
-
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
-        assert nonNull(inventoryService);
 
         // Get inventory entity page
         final var inventoryPage = requireNonNull(getInventoryEntityPage(request, ingredientService, inventoryService));
 
         // Convert inventory entity page to inventory DTO page and then return
-        return InventoryDto.from(inventoryPage);
+        return InventoryMapper.toDto(inventoryPage);
     }
 
     /**
@@ -305,15 +355,13 @@ public class TransactionLogic {
      * @return Page&lt;InventoryEntity&gt;
      */
     private Page<InventoryEntity> getInventoryEntityPage(
-            InventoryPageRequest    request,
-            IngredientService       ingredientService,
-            InventoryService        inventoryService
+            @NotNull final InventoryPageRequest    request,
+            @NotNull final IngredientService       ingredientService,
+            @NotNull final InventoryService        inventoryService
     ) {
         log.info("getInventoryPageWithFilter : getInventoryEntityPage");
 
         // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
         assert nonNull(request.getPageable());
 
         // Get specification from request
@@ -330,11 +378,11 @@ public class TransactionLogic {
      * @return Specification&lt;InventoryEntity&gt;
      */
     private Specification<InventoryEntity> getInventoryEntitySpecification(
-            InventoryPageRequest request,
-            IngredientService    ingredientService
+            @NotNull final InventoryPageRequest request,
+            @NotNull final IngredientService    ingredientService
     ) {
         log.info("getInventoryPageWithFilter : getInventoryEntitySpecification");
-        return filter(InventoryEntity.from(request), getIngredientEntity(request, ingredientService));
+        return filter(InventoryMapper.toEntity(request), getIngredientEntity(request, ingredientService));
     }
 
     /**
@@ -344,18 +392,14 @@ public class TransactionLogic {
      * @return  IngredientEntity
      */
     private IngredientEntity getIngredientEntity(
-            InventoryPageRequest request,
-            IngredientService    ingredientService
+            @NotNull final InventoryPageRequest request,
+            @NotNull final IngredientService    ingredientService
     ) {
         log.info("getInventoryPageWithFilter : getIngredientEntity");
 
-        // Check pre-condition
-        assert nonNull(ingredientService);
-        assert nonNull(request);
-
         // If ingredient id from request is null return null
         // Otherwise, return the ingredient with provided id from request
-        return isNull(request.getIngredientId()) ? null : ingredientService.get(request.getIngredientId());
+        return isNull(request.getIngredientId()) ? null : ingredientService.getById(request.getIngredientId());
     }
 
     //</editor-fold>
@@ -368,12 +412,12 @@ public class TransactionLogic {
      * @return Page&lt;ItemDto&gt;
      */
     public Page<ItemDto> getItemPageWithFiler(
-            ItemPageRequest     request,
-            IngredientService   ingredientService,
-            ItemService         itemService
+            @NotNull final ItemPageRequest request,
+            @NotNull final IngredientService   ingredientService,
+            @NotNull final ItemService         itemService
     ) {
         log.info("getItemPageWithFiler : start");
-        return ItemDto.from(getItemEntityPage(request, ingredientService, itemService));
+        return ItemMapper.toDto(getItemEntityPage(request, ingredientService, itemService));
     }
 
     /**
@@ -384,16 +428,13 @@ public class TransactionLogic {
      * @return Page&lt;ItemEntity&gt;
      */
     private Page<ItemEntity> getItemEntityPage(
-            ItemPageRequest     request,
-            IngredientService   ingredientService,
-            ItemService         itemService
+            @NotNull final ItemPageRequest     request,
+            @NotNull final IngredientService   ingredientService,
+            @NotNull final ItemService         itemService
     ) {
         log.info("getItemPageWithFiler : getItemEntityPage");
 
         // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
-        assert nonNull(itemService);
         assert nonNull(request.getPageable());
 
         // Get item specification
@@ -410,17 +451,14 @@ public class TransactionLogic {
      * @return Specification&lt;ItemEntity&gt;
      */
     private Specification<ItemEntity> getItemEntitySpecification(
-            ItemPageRequest     request,
-            IngredientService   ingredientService
+            @NotNull final ItemPageRequest     request,
+            @NotNull final IngredientService   ingredientService
     ) {
         log.info("getItemPageWithFiler : getItemEntitySpecification");
 
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
 
         // Get item value and ingredient from request
-        final var item = ItemEntity.from(request);
+        final var item = ItemMapper.toEntity(request);
         final var ingredient = getIngredientEntity(request, ingredientService);
 
         // Get specification and then return
@@ -434,17 +472,15 @@ public class TransactionLogic {
      * @return  IngredientEntity
      */
     private IngredientEntity getIngredientEntity(
-            ItemPageRequest     request,
-            IngredientService   ingredientService
+            @NotNull final ItemPageRequest     request,
+            @NotNull final IngredientService   ingredientService
     ) {
         log.info("getItemPageWithFiler : getIngredientEntity");
 
         // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
         assert nonNull(request.getIngredientId());
 
-        return ingredientService.get(request.getIngredientId());
+        return ingredientService.getById(request.getIngredientId());
     }
 
     //</editor-fold>
@@ -459,7 +495,7 @@ public class TransactionLogic {
      * @return                  ResponseEntity
      */
     public ResponseEntity<?> saveIngredientAndConfig(
-            IngredientRequest   request,
+            IngredientRequest request,
             IngredientService   ingredientService,
             AtomicBoolean       transactFlag
     ) {
@@ -519,20 +555,15 @@ public class TransactionLogic {
      * @param request           IngredientRequest
      * @param ingredientService IngredientService
      * @param ingredient        AtomicReference&lt;IngredientEntity&gt;
-     * @param config            AtomicReference&lt;IngredientConfigEntity>&gt;
+     * @param config            AtomicReference&lt;IngredientConfigEntity&gt;
      * @return                  SaveIngredientResponse
      */
     public SaveIngredientResponse saveConfigTransactionProcess(
-            IngredientRequest                       request,
-            IngredientService                       ingredientService,
-            AtomicReference<IngredientEntity>       ingredient,
-            AtomicReference<IngredientConfigEntity> config
+            @NotNull final IngredientRequest                       request,
+            @NotNull final IngredientService                       ingredientService,
+            @NotNull AtomicReference<IngredientEntity>       ingredient,
+            @NotNull AtomicReference<IngredientConfigEntity> config
     ) {
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredient);
-        assert nonNull(config);
-        assert nonNull(ingredientService);
 
         // Get ingredient entity from atomic reference
         final var ingredientEntity = ingredient.get();
@@ -541,12 +572,13 @@ public class TransactionLogic {
         // Save ingredient config entity if ingredient has a parent
         final var parentId = request.getParentId();
         if(nonNull(parentId) && parentId > 0){
-            final var savedConfig = ingredientService.saveConfig(getIngredientConfigEntity(request, ingredientEntity));
+            final var savedConfig = ingredientService
+                    .saveConfig(getIngredientConfigEntity(request, ingredientEntity));
             config.set(requireNonNull(savedConfig));
         }
 
         // Convert ingredient entity to DTO get config entity
-        final var ingredientDto = IngredientDto.from(ingredientEntity);
+        final var ingredientDto = toDto(ingredientEntity);
         final var configEntity = config.get();
 
         // Build SaveIngredientResponse response and then return
@@ -560,15 +592,13 @@ public class TransactionLogic {
      * @return                  Object
      */
     public Object saveIngredientTransactionRollBack(
-            IngredientService                   ingredientService,
-            AtomicReference<IngredientEntity>   ingredient
+            @NotNull final IngredientService            ingredientService,
+            @NotNull AtomicReference<IngredientEntity>  ingredient
     ) {
         log.info("Rollback saveIngredientTransaction");
 
         // Check pre-condition
-        assert nonNull(ingredient);
         assert nonNull(ingredient.get());
-        assert nonNull(ingredientService);
 
         // Delete ingredient
         ingredientService.delete(ingredient.get());
@@ -585,15 +615,10 @@ public class TransactionLogic {
      * @return                  IngredientEntity
      */
     public IngredientEntity saveIngredientTransactionProcess(
-            IngredientRequest                   request,
-            IngredientService                   ingredientService,
-            AtomicReference<IngredientEntity>   ingredient
+            @NotNull final IngredientRequest            request,
+            @NotNull final IngredientService            ingredientService,
+            @NotNull AtomicReference<IngredientEntity>  ingredient
     ) {
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredient);
-        assert nonNull(ingredientService);
-
         // Save ingredient entity and set to atomic reference and then return
         final var savedIngredient = ingredientService.save(getIngredientEntity(request, ingredientService));
         ingredient.set(savedIngredient);
@@ -609,17 +634,13 @@ public class TransactionLogic {
      * @return              IngredientConfigEntity
      */
     private IngredientConfigEntity getIngredientConfigEntity(
-            IngredientRequest   request,
-            IngredientEntity    ingredient
+            @NotNull final IngredientRequest request,
+            @NotNull final IngredientEntity  ingredient
     ) {
         log.info("saveIngredientAndConfig: getIngredientConfigEntity");
 
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredient);
-
         // Convert config request to entity
-        return IngredientConfigEntity.from(request, ingredient);
+        return IngredientConfigMapper.toEntity(request, ingredient);
     }
 
     /**
@@ -629,17 +650,13 @@ public class TransactionLogic {
      * @return                  IngredientEntity
      */
     private IngredientEntity getIngredientEntity(
-            IngredientRequest request,
-            IngredientService ingredientService
+            @NotNull final IngredientRequest request,
+            @NotNull final IngredientService ingredientService
     ) {
         log.info("saveIngredientAndConfig: getIngredientEntity");
 
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
-
         // Convert request to ingredient entity
-        var ingredient = from(request);
+        var ingredient = toEntity(request);
         final var parentId = request.getParentId();
 
         // If parent id is null or negative return ingredient
@@ -656,20 +673,16 @@ public class TransactionLogic {
      * @return                  IngredientEntity
      */
     private IngredientEntity getIngredientParent(
-            IngredientRequest request,
-            IngredientService ingredientService
+            @NotNull final IngredientRequest request,
+            @NotNull final IngredientService ingredientService
     ) {
         log.info("saveIngredientAndConfig: getIngredientParent");
-
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
 
         // if parent id is null return null
         if(isNull(request.getParentId())) return null;
 
         // Otherwise, get parent ingredient by provide id
-        return ingredientService.get(request.getParentId());
+        return ingredientService.getById(request.getParentId());
     }
 
     //</editor-fold>
@@ -684,21 +697,18 @@ public class TransactionLogic {
      * @return                  ResponseEntity
      */
     public ResponseEntity<ItemDto> saveOrUpdateItem(
-            ItemRequest         request,
-            IngredientService   ingredientService,
-            ItemService         itemService
+            @NotNull final ItemRequest request,
+            @NotNull final IngredientService   ingredientService,
+            @NotNull final ItemService         itemService
     ) {
         // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(ingredientService);
-        assert nonNull(itemService);
         assert nonNull(request.getIngredientId());
 
         // Get ingredient by request ingredient id
-        final var ingredient = requireNonNull(ingredientService.get(request.getIngredientId()));
+        final var ingredient = requireNonNull(ingredientService.getById(request.getIngredientId()));
 
         // Convert item request to item entity
-        var item = ItemEntity.from(request);
+        var item = ItemMapper.toEntity(request);
 
         // Set information for item entity
         item.setIngredient(ingredient);
@@ -708,7 +718,7 @@ public class TransactionLogic {
         final var savedItem = itemService.save(item);
 
         // Convert item entity to DTO and then return
-        return ok(ItemDto.from(savedItem));
+        return ok(ItemMapper.toDto(savedItem));
     }
 
     //</editor-fold>
@@ -726,25 +736,22 @@ public class TransactionLogic {
      * @see ItemDeleteAllRequest
      */
     public ResponseEntity<?> deleteAllItems(
-            ItemDeleteAllRequest    request,
-            IngredientService       ingredientService,
-            ItemService             itemService
+            @NotNull final ItemDeleteAllRequest    request,
+            @NotNull final IngredientService       ingredientService,
+            @NotNull final ItemService             itemService
     ) {
-        // Check pre-condition
-        assert nonNull(request);
-        assert nonNull(itemService);
-
         // Get deleted list of item based on strategy
-        final var ingredient = ingredientService.get(request.getIngredientId());
+        final var ingredient = ingredientService.getById(request.getIngredientId());
         final var items = itemService.getAllByIngredient(request.getClientId(), ingredient)
                 .stream().filter(TransactionLogic::isItemValid).collect(Collectors.toList());
-        final var deleteItems = getAllItemByDeleteStrategy(request.getQuantity(), request.getDeleteStrategy(), items);
+        final var deleteItems = getAllItemByDeleteStrategy(request.getQuantity(),
+                request.getDeleteStrategy(), items);
 
         // Delete list of item
         itemService.deleteAll(deleteItems);
 
         // Return deleted items as DTO
-        return ok(ItemDto.from(items));
+        return ok(ItemMapper.toDto(items));
     }
 
     /**
@@ -752,16 +759,14 @@ public class TransactionLogic {
      * @param quantity  Delete quantity
      * @param strategy  DeleteStrategy
      * @param items     List of items
-     * @return
+     * @return          List of deleted items
      */
     private List<ItemEntity> getAllItemByDeleteStrategy(
-            long                quantity,
-            DeleteStrategy      strategy,
-            List<ItemEntity>    items
+            final long                      quantity,
+            @NotNull final DeleteStrategy   strategy,
+            @NotNull final List<ItemEntity> items
     ) {
         // check pre-condition
-        assert nonNull(strategy);
-        assert nonNull(items);
         assert !items.isEmpty();
 
         // If quantity is zero or less return empty list
@@ -800,19 +805,13 @@ public class TransactionLogic {
      */
     @SneakyThrows
     public InventoryEntity syncIngredientInInventory(
-            Long                clientId,
-            IngredientEntity    ingredient,
-            InventoryService    inventoryService,
-            ItemService         itemService
+            @NotNull final Long                clientId,
+            @NotNull final IngredientEntity    ingredient,
+            @NotNull final InventoryService    inventoryService,
+            @NotNull final ItemService         itemService
     ){
-        // Check pre-condition
-        assert nonNull(ingredient);
-        assert nonNull(clientId);
-        assert nonNull(inventoryService);
-        assert nonNull(itemService);
-
         // Get inventory by ingredient
-        var inventory = inventoryService.get(ingredient);
+        var inventory = inventoryService.getByIngredient(ingredient);
 
         // Set create inventory if it doesn't exist
         if(isNull(inventory)) inventory = createSyncedInventoryInformation(clientId, ingredient);
@@ -833,17 +832,13 @@ public class TransactionLogic {
      * @return              long
      */
     private long countActiveAndUnexpiredIngredientItem(
-            Long                clientId,
-            IngredientEntity    ingredient,
-            ItemService         itemService
+            @NotNull final Long                clientId,
+            @NotNull final IngredientEntity    ingredient,
+            @NotNull final ItemService         itemService
     ) {
-        // Check pre-condition
-        assert nonNull(clientId);
-        assert nonNull(ingredient);
-        assert nonNull(itemService);
-
         // Filter all item satisfy active and not expired and get count
-        return itemService.getAllByIngredient(clientId, ingredient).stream().filter(TransactionLogic::isItemValid).count();
+        return itemService.getAllByIngredient(clientId, ingredient).stream()
+                .filter(TransactionLogic::isItemValid).count();
     }
 
     /**
@@ -851,7 +846,9 @@ public class TransactionLogic {
      * @param item  ItemEntity
      * @return      boolean
      */
-    private boolean isItemValid(ItemEntity item) {
+    private boolean isItemValid(
+            @NotNull final ItemEntity item
+    ) {
         return !item.isExpired() && item.isActive();
     }
 
@@ -862,13 +859,9 @@ public class TransactionLogic {
      * @return              InventoryEntity
      */
     private InventoryEntity createSyncedInventoryInformation(
-            Long                clientId,
-            IngredientEntity    ingredient
+            @NotNull final Long                clientId,
+            @NotNull final IngredientEntity    ingredient
     ) {
-        // Check pre-condition
-        assert nonNull(clientId);
-        assert nonNull(ingredient);
-
         // Set information to inventory entity
         InventoryEntity inventory = InventoryEntityFactory.create(DEFAULT);
         inventory.setIngredient(    ingredient);
@@ -893,17 +886,11 @@ public class TransactionLogic {
      * @return                  List&lt;InventoryEntity&gt;
      */
     public List<InventoryEntity> syncAllIngredientInInventory(
-            Long clientId,
-            IngredientService ingredientService,
-            InventoryService inventoryService,
-            ItemService itemService
+            @NotNull final Long                 clientId,
+            @NotNull final IngredientService    ingredientService,
+            @NotNull final InventoryService     inventoryService,
+            @NotNull final ItemService          itemService
     ) {
-        // Check pre-condition
-        assert nonNull(clientId);
-        assert nonNull(ingredientService);
-        assert nonNull(inventoryService);
-        assert nonNull(itemService);
-
         // Get synced ingredient in inventory as list
         return ingredientService.getAllChild(clientId)
                 // Filter all duplicated items
@@ -925,13 +912,9 @@ public class TransactionLogic {
      * @return                  List&lt;SimpleDto&gt;
      */
     public List<SimpleDto> getSimpleIngredientTypeActiveDto(
-            Long                tenantId,
-            IngredientService   ingredientService
+            @NotNull final Long                tenantId,
+            @NotNull final IngredientService   ingredientService
     ) {
-        // Check pre-condition
-        assert nonNull(tenantId);
-        assert nonNull(ingredientService);
-
         // Get all active children ingredient as Label-Value DTO list
         return ingredientService.getAllChild(tenantId).stream()
                 // Filter to children are active
@@ -940,6 +923,79 @@ public class TransactionLogic {
                 .map(       ingredient -> new SimpleDto(ingredient.getId(), ingredient.getName()))
                 // Convert to list
                 .collect(   Collectors.toList());
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="getPageIngredientHistory">
+
+    /**
+     * Get page ingredient history
+     * @param request           IngredientHistoryPageRequest
+     * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
+     * @return                  ResponseEntity
+     */
+    public ResponseEntity<?> getPageIngredientHistory(
+            @NotNull final IngredientHistoryPageRequest request,
+            @NotNull final IngredientService            ingredientService,
+            @NotNull final IngredientHistoryService     historyService,
+            @NotNull final IngredientEventService       eventService
+    ) {
+        final var ingredient = ingredientService.getById(request.getIngredientId());
+        final var event = eventService.getByName(request.getClientId(), request.getEvent());
+        final var specification = IngredientHistorySpecification.filter(request, ingredient,
+                isNull(event) ?  null : IngredientEventMapper.toEntity(event));
+        final var page = historyService.getPage(specification, request.getPageable());
+        return ok(IngredientHistoryMapper.toDto(page, eventService));
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="getHistoryByIngredient">
+
+    /**
+     * Get all history
+     * @param tenantId          Tenant ID
+     * @param ingredientId      Ingredient Unique ID (optional)
+     * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
+     * @return                  ResponseEntity
+     */
+    public ResponseEntity<?> getAllHistory(
+            @NotNull final Long tenantId,
+            @NotNull final Long ingredientId,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
+    ) {
+        final var histories = isNull(ingredientId) ? historyService.getAll(tenantId) :
+                historyService.getByIngredient(tenantId, ingredientService.getById(ingredientId));
+        final var historyDto = IngredientHistoryMapper.toDto(histories, eventService);
+        return ok(historyDto);
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="getAllHistory">
+
+    /**
+     * Get all history by ingredient
+     * @param tenantId          Tenant ID
+     * @param historyService    IngredientHistoryService
+     * @param eventService      IngredientEventService
+     * @return                  ResponseEntity
+     */
+    public ResponseEntity<?> getAllHistory(
+            @NotNull final Long tenantId,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService   eventService
+    ) {
+        final var histories = historyService.getAll(tenantId);
+        final var historyDto = IngredientHistoryMapper.toDto(histories, eventService);
+        return ok(historyDto);
     }
 
     //</editor-fold>
@@ -953,15 +1009,11 @@ public class TransactionLogic {
      * @return                  ResponseEntity
      */
     public ResponseEntity<?> deleteIngredientEntity(
-            Long                id,
-            IngredientService   ingredientService
+            @NotNull final Long                id,
+            @NotNull final IngredientService   ingredientService
     ) {
-        // Check pre-condition
-        assert nonNull(id);
-        assert nonNull(ingredientService);
-
         // Get ingredient by ID and delete it
-        final var ingredient = requireNonNull(ingredientService.get(id));
+        final var ingredient = requireNonNull(ingredientService.getById(id));
         ingredientService.delete(ingredient);
         return ok(ingredient);
     }
@@ -976,17 +1028,104 @@ public class TransactionLogic {
      * @return              ResponseEntity
      */
     public ResponseEntity<?> deleteItemEntity(
-            Long        id,
-            ItemService itemService
+            @NotNull final Long        id,
+            @NotNull final ItemService itemService
     ) {
-        // Check pre-condition
-        assert nonNull(id);
-        assert nonNull(itemService);
-
         // Get item by id and delete that item
         final var item = requireNonNull(itemService.getById(id));
         itemService.delete(item);
         return ok(item);
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Save item in batch">
+
+    // TODO: Implement saving batch item with transaction
+    /**
+     * Save item in batch
+     * @param request           BatchItemsRequest
+     * @param ingredientService IngredientService
+     * @param itemService       ItemService
+     * @return                  ResponseEntity
+     */
+    public ResponseEntity<?> saveItems(
+            @NotNull BatchItemsRequest request,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final ItemService       itemService
+    ) {
+        final var items = BatchItemsMapper.toEntity(request, ingredientService);
+        final var savedItems = itemService.save(items);
+        final var itemDTOs = ItemMapper.toDto(savedItems);
+        request.setCodes(itemDTOs.stream().map(ItemDto::getCode).collect(Collectors.toSet()));
+        return ok().body(itemDTOs);
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Track event">
+
+    /**
+     * Track event for ingredient
+     * @param request           ItemRequest
+     * @param eventName         IngredientEvent
+     * @param eventStatus       IngredientEventStatus
+     * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     */
+    public void trackEvent(
+            @NotNull final ItemRequest request,
+            @NotNull final IngredientEvent eventName,
+            @NotNull final IngredientEventStatus eventStatus,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
+    ) {
+        final var event = IngredientEventMapper.toEntity(
+                eventService.getByName(request.getClientId(), eventName.getEvent()));
+        final var history = IngredientHistoryMapper.toEntity(
+                request, ingredientService, event, eventStatus);
+        saveTrackHistory(history, historyService);
+    }
+
+    /**
+     * Track event for ingredient
+     * @param request           IngredientRequest
+     * @param eventName         IngredientEvent
+     * @param eventStatus       IngredientEventStatus
+     * @param ingredientService IngredientService
+     * @param historyService    IngredientHistoryService
+     */
+    public void trackEvent(
+            @NotNull final IngredientRequest request,
+            @NotNull final IngredientEvent eventName,
+            @NotNull final IngredientEventStatus eventStatus,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final IngredientHistoryService historyService,
+            @NotNull final IngredientEventService eventService
+    ) {
+        final var event = IngredientEventMapper.toEntity(
+                eventService.getByName(request.getClientId(), eventName.getEvent()));
+        final var history = IngredientHistoryMapper.toEntity(
+                request, ingredientService, event, eventStatus);
+        saveTrackHistory(history, historyService);
+    }
+
+    /**
+     * Save tracked history and log
+     * @param history           IngredientHistoryEntity
+     * @param historyService    IngredientHistoryService
+     */
+    private void saveTrackHistory(
+            @NotNull final IngredientHistoryEntity history,
+            @NotNull final IngredientHistoryService historyService
+    ) {
+        final var trackedHistory = historyService.save(history);
+        try {
+            log.info("History track : {}", new ObjectMapper().writeValueAsString(trackedHistory));
+        } catch (JsonProcessingException e) {
+            log.warn("History log is not available");
+        }
     }
 
     //</editor-fold>

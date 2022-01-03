@@ -17,6 +17,7 @@ public class IngredientUnit {
     static public final String AREA     = "area";
     static public final String WEIGHT   = "weight";
     static public final String WHOLE    = "whole";
+    static public final String GENERIC  = "generic";
 
     public static List<String> unitTypes() {
         return Arrays.asList(LENGTH, VOLUME, AREA, WEIGHT, WHOLE);

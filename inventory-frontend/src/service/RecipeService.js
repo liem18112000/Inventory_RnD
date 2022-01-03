@@ -510,6 +510,24 @@ export class RecipeService {
             .catch(error => console.log(error));
     }
 
+/**
+     * Get recipe group by id
+     * @param isMock        Activate mock if true otherwise use real api call
+     * @returns {Promise<AxiosResponse<any> | void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
+     */
+     getRecipeGroupSimple(isMock = true) {
+        if (isMock) {
+            return Promise.resolve(groupJson.content[0]);
+        }
+
+        return axios
+            .get(`${BaseURL}/group/simple`, {
+                headers: getHeaderByGatewayStatus({})
+            })
+            .then(res => res.data)
+            .catch(error => console.log(error));
+     }
+
     /**
      * Get recipe detail by id
      * @param id            Recipe detail id
@@ -609,5 +627,31 @@ export class RecipeService {
             .delete(`${BaseURL}/${id}`, {
                 headers: getHeaderByGatewayStatus({})
             })
+    }
+
+    getAllRecipeChild(filter, page, rows, sortField, sortOrder, isMock = true) {
+        if (isMock) {
+            return Promise.resolve(childJson);
+        }
+
+        const order = sortOrder === 1 ? 'asc' : 'desc';
+        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+
+        // fetch ingredient type data from api 
+        return axios.post(`${BaseURL}/child/page/all`, {
+            "name": !filter ? "" : filter.name,
+            "description": !filter ? "" : filter.description,
+            "code": !filter ? "" : filter.code,
+            "updatedAt": !filter ? "" : filter.createAt,
+            "parentName": !filter ? "" : filter.parentName,
+
+            "page": page ? page : 0,
+            "size": rows ? rows : 10,
+            "sort": sort
+        }, {
+            headers: getHeaderByGatewayStatus({})
+        }).then(res => {
+            return res.data
+        }).catch(error => console.log(error));
     }
 }

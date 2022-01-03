@@ -29,24 +29,24 @@ public final class BaseSpecification<T> implements Specification<T> {
         final SearchOperation operation = criteria.getOperation();
         if (operation.equals(SearchOperation.GREATER_THAN_OR_EQUAL)) {
             return builder.greaterThanOrEqualTo(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                    root.get(criteria.getKey()), criteria.getValue().toString());
         }
         else if (operation.equals(SearchOperation.GREATER_THAN)){
             return builder.greaterThan(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                    root.get(criteria.getKey()), criteria.getValue().toString());
         }
         else if (operation.equals(SearchOperation.LESS_THAN_OR_EQUAL)) {
             return builder.lessThanOrEqualTo(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                    root.get(criteria.getKey()), criteria.getValue().toString());
         }
         else if (operation.equals(SearchOperation.LESS_THAN)){
             return builder.lessThan(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                    root.get(criteria.getKey()), criteria.getValue().toString());
         }
         else if (operation.equals(SearchOperation.EQUAL)) {
             if (root.get(criteria.getKey()).getJavaType() == String.class) {
                 return builder.like(
-                        root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                        root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
             } else {
                 return builder.equal(root.get(criteria.getKey()), criteria.getValue());
             }
@@ -54,7 +54,7 @@ public final class BaseSpecification<T> implements Specification<T> {
         else if(operation.equals(SearchOperation.NOT_EQUAL)) {
             if (root.get(criteria.getKey()).getJavaType() == String.class) {
                 return builder.notLike(
-                        root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                        root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
             } else {
                 return builder.notEqual(root.get(criteria.getKey()), criteria.getValue());
             }

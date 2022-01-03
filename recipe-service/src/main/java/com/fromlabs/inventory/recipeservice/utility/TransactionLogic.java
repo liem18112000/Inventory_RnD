@@ -1,11 +1,20 @@
 package com.fromlabs.inventory.recipeservice.utility;
 
 import com.fromlabs.inventory.recipeservice.client.ingredient.IngredientClient;
+import com.fromlabs.inventory.recipeservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.recipeservice.detail.*;
-import com.fromlabs.inventory.recipeservice.detail.beans.*;
+import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.detail.mapper.RecipeDetailMapper;
 import com.fromlabs.inventory.recipeservice.detail.specification.RecipeDetailSpecification;
 import com.fromlabs.inventory.recipeservice.recipe.*;
-import com.fromlabs.inventory.recipeservice.recipe.beans.*;
+import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
+import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeWithParentDto;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
+import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeWithParentMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,9 +25,10 @@ import org.springframework.http.HttpMethod;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.recipeservice.recipe.RecipeEntity.update;
-import static com.fromlabs.inventory.recipeservice.recipe.beans.RecipeDto.from;
+
 import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.filter;
 import static java.util.Objects.*;
 
@@ -40,7 +50,7 @@ public class TransactionLogic {
             RecipeService       service
     ) {
         log.info("getRecipeGroupList");
-        return from(service.getAll(tenantId));
+        return RecipeMapper.toDto(service.getAll(tenantId));
     }
 
     //<editor-fold desc="Get Recipe Page With Filter">
@@ -52,11 +62,11 @@ public class TransactionLogic {
      * @return          Page&lt;RecipeDto&gt;
      */
     public Page<RecipeDto> getRecipePageWithFilter(
-            RecipePageRequest   request,
+            RecipePageRequest request,
             RecipeService       service
     ) {
         log.info("getRecipePageWithFilter: start");
-        return from(service.getPage(getFilter(request, service), request.getPageable()));
+        return RecipeMapper.toDto(service.getPage(getFilter(request, service), request.getPageable()));
     }
 
     /**
@@ -89,6 +99,18 @@ public class TransactionLogic {
 
     //</editor-fold>
 
+    //<editor-fold desc="Get recipe extend page with filter">
+
+    public Page<RecipeWithParentDto> getRecipeExtendPageWithFilter(
+            RecipePageRequest   request,
+            RecipeService       service
+    ) {
+        log.info("getRecipeExtendPageWithFilter: start");
+        return RecipeWithParentMapper.toDto(service.getPage(getFilter(request, service), request.getPageable()));
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="Save recipe entity">
 
     /**
@@ -102,7 +124,7 @@ public class TransactionLogic {
             RecipeService service
     ) {
         log.info("saveRecipeEntity");
-        return from(service.save(RecipeEntity.from(request).setParent(nonNull(request.getParentId()) ? service.get(request.getParentId()) : null)));
+        return RecipeMapper.toDto(service.save(RecipeEntity.from(request).setParent(nonNull(request.getParentId()) ? service.get(request.getParentId()) : null)));
     }
 
     //</editor-fold>
@@ -123,8 +145,8 @@ public class TransactionLogic {
             IngredientClient    ingredientClient
     ) {
         log.info("saveRecipeDetailEntity");
-        return RecipeDetailDto.from(recipeDetailService.save(
-                RecipeDetailEntity.from(request, recipeService.get(request.getRecipeId()))),
+        return RecipeDetailMapper.toDto(recipeDetailService.save(
+                RecipeDetailMapper.toEntity(request, recipeService.get(request.getRecipeId()))),
                 ingredientClient);
     }
 
@@ -144,7 +166,7 @@ public class TransactionLogic {
     ) {
         log.info("updateRecipeEntity");
         final var recipe = service.get(request.getId());
-        return from(service.save(
+        return RecipeMapper.toDto(service.save(
                 update(request, recipe)
                         .setParent(isNull(request.getParentId()) || request.getParentId() < 0 ?
                                 null : service.get(request.getParentId()))
@@ -168,8 +190,10 @@ public class TransactionLogic {
             IngredientClient    ingredientClient
     ) {
         log.info("updateRecipeEntity");
-        return RecipeDetailDto.from(service.save(
-                RecipeDetailEntity.update(request, service.get(request.getId()))), ingredientClient);
+        return RecipeDetailMapper.toDto(
+                service.save(service.getById(request.getId()).update(request)),
+                ingredientClient
+        );
     }
 
     //</editor-fold>
@@ -190,7 +214,7 @@ public class TransactionLogic {
             IngredientClient        client
     ) {
         log.info("getRecipeDetailPageWithFilter: start");
-        return RecipeDetailDto.from(recipeDetailService.getPage(
+        return RecipeDetailMapper.toDto(recipeDetailService.getPage(
                 getFilter(request, getRecipeById(request.getRecipeId(), recipeService)), request.getPageable()), client);
     }
 
@@ -207,7 +231,7 @@ public class TransactionLogic {
             RecipeDetailPageRequest request,
             RecipeEntity            recipe
     ) {
-        return RecipeDetailSpecification.filter(RecipeDetailEntity.from(request), recipe);
+        return RecipeDetailSpecification.filter(RecipeDetailMapper.toEntity(request), recipe);
     }
     //</editor-fold>
 
@@ -225,10 +249,39 @@ public class TransactionLogic {
             IngredientClient    ingredientClient
     ) {
         log.info("getAllRecipeDetail");
-        return RecipeDetailDto.from(recipeDetailService.getAll(RecipeDetailSpecification.hasClientId(tenantId)), ingredientClient);
+        return RecipeDetailMapper.toDto(recipeDetailService.getAll(RecipeDetailSpecification.hasClientId(tenantId)), ingredientClient);
     }
 
     //</editor-fold>
+
+    //<editor-fold desc="Get simple label-value recipe group active DTO">
+
+    /**
+     * Get simple label-value recipe group active DTO
+     * @param tenantId      Tenant ID
+     * @param recipeService RecipeService
+     * @return              List&lt;SimpleDto&gt;
+     */
+    public List<SimpleDto> getSimpleRecipeGroupActiveDto(
+            Long            tenantId,
+            RecipeService   recipeService
+    ) {
+        // Check pre-condition
+        assert nonNull(tenantId);
+        assert nonNull(recipeService);
+
+        // Get all active children recipe as Label-Value DTO list
+        return recipeService.getAll(tenantId).stream()
+                // Filter to children are active
+                .filter(    recipe -> recipe.isGroup() && recipe.isActivated())
+                // Map to label as recipe ID and value as recipe name
+                .map(       recipe -> new SimpleDto(recipe.getId(), recipe.getName()))
+                // Convert to list
+                .collect(   Collectors.toList());
+    }
+
+    //</editor-fold>
+
 
     //<editor-fold desc="Get all recipe detail list by tenant id and recipe">
 
@@ -249,7 +302,7 @@ public class TransactionLogic {
             IngredientClient    ingredientClient
     ) {
         log.info("getAllRecipeDetailWithRecipe");
-        return RecipeDetailDto.from(recipeDetailService.getAll(getSpecificationWithTenantAndRecipe(tenantId, recipeId, recipeService)), ingredientClient);
+        return RecipeDetailMapper.toDto(recipeDetailService.getAll(getSpecificationWithTenantAndRecipe(tenantId, recipeId, recipeService)), ingredientClient);
     }
 
     /**
@@ -284,7 +337,7 @@ public class TransactionLogic {
             RecipeService   recipeService
     ) {
         log.info("getAllRecipeChild");
-        return from(recipeService.getAll(tenantId, parentId));
+        return RecipeMapper.toDto(recipeService.getAll(tenantId, parentId));
     }
 
     //</editor-fold>
@@ -302,7 +355,7 @@ public class TransactionLogic {
             RecipeService   recipeService
     ) {
         log.info("getRecipeByCode");
-        return from(recipeService.get(code));
+        return RecipeMapper.toDto(recipeService.get(code));
     }
 
     //</editor-fold>
@@ -322,7 +375,7 @@ public class TransactionLogic {
             IngredientClient    ingredientClient
     ) {
         log.info("getRecipeDetailById");
-        return RecipeDetailDto.from(recipeDetailService.get(id), ingredientClient);
+        return RecipeDetailMapper.toDto(recipeDetailService.getById(id), ingredientClient);
     }
 
     //</editor-fold>
@@ -342,7 +395,7 @@ public class TransactionLogic {
             IngredientClient    ingredientClient
     ) {
         log.info("getRecipeDetailByCode");
-        return RecipeDetailDto.from(recipeDetailService.get(code), ingredientClient);
+        return RecipeDetailMapper.toDto(recipeDetailService.getByCode(code), ingredientClient);
     }
 
     //</editor-fold>

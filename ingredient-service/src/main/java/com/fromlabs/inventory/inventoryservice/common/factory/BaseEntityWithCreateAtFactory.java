@@ -24,7 +24,4 @@ public class BaseEntityWithCreateAtFactory<ID extends Serializable> extends Base
         return entity;
     }
 
-    public String getEntityClassName() {
-        return super.getEntityClassName();
-    }
 }

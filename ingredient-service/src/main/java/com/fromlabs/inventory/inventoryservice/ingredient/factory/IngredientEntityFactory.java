@@ -39,8 +39,10 @@ public class IngredientEntityFactory extends BaseEntityWithCreateAtAndLongIDFact
     static private final IngredientEntityFactory factory = new IngredientEntityFactory();
 
     static public IngredientEntity create(FactoryCreateType createType) {
-        if(createType == FactoryCreateType.DEFAULT) return factory.create();
-        else if(createType == FactoryCreateType.RANDOM) return factory.createRandom();
-        else return factory.createEmpty();
+        switch (createType) {
+            case DEFAULT:   return factory.create();
+            case RANDOM:    return factory.createRandom();
+            default:        return factory.createEmpty();
+        }
     }
 }

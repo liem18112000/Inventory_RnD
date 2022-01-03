@@ -1,7 +1,5 @@
 package com.fromlabs.inventory.inventoryservice.common.template;
 
-import org.springframework.http.ResponseEntity;
-
 import java.util.concurrent.Callable;
 
 /**

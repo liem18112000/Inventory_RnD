@@ -1,7 +1,7 @@
 package com.fromlabs.inventory.recipeservice.client.ingredient;
 
 import com.fromlabs.inventory.recipeservice.client.ingredient.beans.IngredientDto;
-import com.fromlabs.inventory.recipeservice.config.versions.ApiV1;
+import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

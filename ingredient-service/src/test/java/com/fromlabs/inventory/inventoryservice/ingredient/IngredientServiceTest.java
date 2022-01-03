@@ -7,7 +7,7 @@ package com.fromlabs.inventory.inventoryservice.ingredient;
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
 import com.fromlabs.inventory.inventoryservice.common.helper.CustomizePageRequest;
 import com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientPageRequest;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigEntity;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ import java.util.function.Consumer;
 import static com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess.getInput;
 import static com.fromlabs.inventory.inventoryservice.helper.TestKeyIndicator.*;
 import static com.fromlabs.inventory.inventoryservice.helper.TestcaseName.*;
-import static com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity.from;
-import static com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientSpecification.filter;
+import static com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper.*;
+import static com.fromlabs.inventory.inventoryservice.ingredient.specification.IngredientSpecification.filter;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
@@ -95,7 +95,7 @@ class IngredientServiceTest {
     @Order(1)
     void getByID_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(ID)), (ingredient) -> {
+            () -> this.service.getById((Long) getInput(ID)), (ingredient) -> {
             assert Objects.nonNull(ingredient);
             assert Objects.equals(((IngredientEntity)ingredient).getId(), getInput(ID));
         }).run();
@@ -106,7 +106,7 @@ class IngredientServiceTest {
     @Order(2)
     void getByID_NegativeCase_IdIsNegative() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(NEGATIVE_ID)), (ingredient) -> {
+            () -> this.service.getById((Long) getInput(NEGATIVE_ID)), (ingredient) -> {
             assert Objects.isNull(ingredient);
         }).run();
     }
@@ -116,7 +116,7 @@ class IngredientServiceTest {
     @Order(3)
     void getByID_NegativeCase_IdIsNonExist() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(NON_EXIST_ID)), (ingredient) -> {
+            () -> this.service.getById((Long) getInput(NON_EXIST_ID)), (ingredient) -> {
             assert Objects.isNull(ingredient);
         }).run();
     }
@@ -130,7 +130,7 @@ class IngredientServiceTest {
     @Order(4)
     void getByCode_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-        () -> this.service.get((String) getInput(CODE)), (ingredient) -> {
+        () -> this.service.getByCode((String) getInput(CODE)), (ingredient) -> {
             assert Objects.nonNull(ingredient);
             assert Objects.equals(((IngredientEntity) ingredient).getCode(), getInput(CODE));
         }).run();
@@ -141,7 +141,7 @@ class IngredientServiceTest {
     @Order(5)
     void getByCode_NegativeCase_CodeIsNotExist() {
         this.getTemplate(
-                () -> this.service.get((String) getInput(NON_EXIST_CODE)), (ingredient) -> {
+                () -> this.service.getByCode((String) getInput(NON_EXIST_CODE)), (ingredient) -> {
                     assert Objects.isNull(ingredient);
                 }).run();
     }
@@ -155,7 +155,7 @@ class IngredientServiceTest {
     @Order(5)
     void getByName_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(TENANT_ID), (String) getInput(NAME)), (ingredient) -> {
+            () -> this.service.getByName((Long) getInput(TENANT_ID), (String) getInput(NAME)), (ingredient) -> {
             assert Objects.nonNull(ingredient);
             assert Objects.equals(((IngredientEntity) ingredient).getClientId(), getInput(TENANT_ID));
             assert Objects.equals(((IngredientEntity) ingredient).getName(), getInput(NAME));
@@ -167,7 +167,7 @@ class IngredientServiceTest {
     @Order(6)
     void getByName_NegativeCase_NameIsNotExist() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(TENANT_ID), (String) getInput(NON_EXIST_NAME)), (ingredient) -> {
+            () -> this.service.getByName((Long) getInput(TENANT_ID), (String) getInput(NON_EXIST_NAME)), (ingredient) -> {
             assert Objects.isNull(ingredient);
         }).run();
     }
@@ -177,7 +177,7 @@ class IngredientServiceTest {
     @Order(7)
     void getByName_NegativeCase_TenantIsNotExist() {
         this.getTemplate(
-            () -> this.service.get((Long) getInput(TENANT_ID), (String) getInput(NON_EXIST_NAME)), (ingredient) -> {
+            () -> this.service.getByName((Long) getInput(TENANT_ID), (String) getInput(NON_EXIST_NAME)), (ingredient) -> {
             assert Objects.isNull(ingredient);
         }).run();
     }
@@ -187,7 +187,7 @@ class IngredientServiceTest {
     @Order(8)
     void getByName_NegativeCase_TenantIsNegative() {
         this.getTemplate(
-                () -> this.service.get((Long) getInput(NEGATIVE_TENANT_ID), (String) getInput(NAME)), (ingredient) -> {
+                () -> this.service.getByName((Long) getInput(NEGATIVE_TENANT_ID), (String) getInput(NAME)), (ingredient) -> {
                     assert Objects.isNull(ingredient);
                 }).run();
     }
@@ -204,7 +204,7 @@ class IngredientServiceTest {
             () -> {
                 var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                 request.setClientId((Long) getInput(TENANT_ID));
-                return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
             }, bootstrap -> {
                 Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                 assert  ingredientPage.stream().allMatch(item -> {
@@ -223,7 +223,7 @@ class IngredientServiceTest {
                 var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                 request.setClientId((Long) getInput(TENANT_ID));
                 request.setName((String) getInput(NAME));
-                return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
             }, bootstrap -> {
                 Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                 assert  ingredientPage.stream().allMatch(item -> {
@@ -244,7 +244,7 @@ class IngredientServiceTest {
                 var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                 request.setClientId((Long) getInput(TENANT_ID));
                 request.setCode((String) getInput(CODE));
-                return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
             }, bootstrap -> {
                 Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                 assert  ingredientPage.stream().allMatch(item -> {
@@ -265,7 +265,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnitType((String) getInput(UNIT_TYPE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                 Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                 assert  ingredientPage.stream().allMatch(item -> {
@@ -286,7 +286,7 @@ class IngredientServiceTest {
                 var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                 request.setClientId((Long) getInput(TENANT_ID));
                 request.setUnit((String) getInput(UNIT));
-                return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
             }, bootstrap -> {
                 Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                 assert  ingredientPage.stream().allMatch(item -> {
@@ -307,7 +307,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setDescription((String) getInput(DESCRIPTION));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -328,7 +328,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCreateAt((String) getInput(CREATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -349,7 +349,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUpdateAt((String) getInput(UPDATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -370,7 +370,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setName((String) getInput(NON_EXIST_NAME));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -384,7 +384,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCode((String) getInput(NON_EXIST_CODE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -398,7 +398,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnitType((String) getInput(NON_EXIST_UNIT_TYPE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -412,7 +412,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnit((String) getInput(NON_EXIST_UNIT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -426,7 +426,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setDescription((String) getInput(NON_EXIST_DESCRIPTION));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -440,7 +440,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCreateAt((String) getInput(NON_EXIST_CREATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -454,7 +454,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUpdateAt((String) getInput(NON_EXIST_UPDATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -469,7 +469,7 @@ class IngredientServiceTest {
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setPage(1);
                     request.setSize(1);
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), 1);
@@ -489,7 +489,7 @@ class IngredientServiceTest {
                     request.setClientId((Long)getInput(TENANT_ID));
                     request.setPage((Integer) getInput(NEGATIVE_PAGE_NUMBER));
                     request.setSize((Integer) getInput(PAGE_SIZE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), CustomizePageRequest.MIN_PAGE_VALUE);
@@ -509,7 +509,7 @@ class IngredientServiceTest {
                     request.setClientId((Long)getInput(TENANT_ID));
                     request.setPage((Integer) getInput(PAGE_NUMBER));
                     request.setSize((Integer) getInput(NEGATIVE_PAGE_NUMBER));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), getInput(PAGE_NUMBER));
@@ -530,7 +530,7 @@ class IngredientServiceTest {
                     request.setPage((Integer) getInput(PAGE_NUMBER));
                     request.setSize((Integer) getInput(PAGE_SIZE));
                     request.setSort("id, asc");
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), getInput(PAGE_NUMBER));
@@ -551,7 +551,7 @@ class IngredientServiceTest {
                     request.setPage((Integer) getInput(PAGE_NUMBER));
                     request.setSize((Integer) getInput(PAGE_SIZE));
                     request.setSort("id, desc");
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     var page = (Page<?>) bootstrap;
                     assert Objects.equals(page.getNumber(), getInput(PAGE_NUMBER));
@@ -612,7 +612,7 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -632,7 +632,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setName((String)   getInput(CHILD_NAME));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -653,7 +653,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCode((String)  getInput(CHILD_CODE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -674,7 +674,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnit((String)   getInput(UNIT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -695,7 +695,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnitType((String)getInput(UNIT_TYPE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -716,7 +716,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setDescription((String) getInput(DESCRIPTION));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -738,7 +738,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCreateAt((String) getInput(CHILD_CREATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -760,7 +760,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUpdateAt((String) getInput(CHILD_UPDATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
@@ -782,7 +782,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setName((String) getInput(NON_EXIST_NAME));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -797,7 +797,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCode((String) getInput(NON_EXIST_CODE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -812,7 +812,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnitType((String) getInput(NON_EXIST_UNIT_TYPE));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -827,7 +827,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUnit((String) getInput(NON_EXIST_UNIT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -842,7 +842,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setDescription((String) getInput(NON_EXIST_DESCRIPTION));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -857,7 +857,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setCreateAt((String) getInput(NON_EXIST_CREATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -872,7 +872,7 @@ class IngredientServiceTest {
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
                     request.setUpdateAt((String) getInput(NON_EXIST_UPDATED_AT));
-                    return this.service.getPage(filter(from(request), service.get(request.getParentId())), request.getPageable());
+                    return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> assertPageIsNotNullAndEmpty((Page<?>) bootstrap)
         ).run();
     }
@@ -1038,7 +1038,7 @@ class IngredientServiceTest {
     @Order(48)
     void GetConfigByIngredientId_PositiveCase_AllThingIsRight() {
         this.getTemplate(
-                () -> this.service.getConfig((Long) getInput(TENANT_ID), service.get((Long) getInput(ID))), (config) -> {
+                () -> this.service.getConfig((Long) getInput(TENANT_ID), service.getById((Long) getInput(ID))), (config) -> {
                     assert Objects.isNull(config);
                 }).run();
     }
@@ -1048,7 +1048,7 @@ class IngredientServiceTest {
     @Order(49)
     void GetConfigByIngredientId_NegativeCase_TenantIdIsNotExist() {
         this.getTemplate(
-                () -> this.service.getConfig((Long) getInput(NON_EXIST_TENANT_ID), service.get((Long) getInput(ID))), (config) -> {
+                () -> this.service.getConfig((Long) getInput(NON_EXIST_TENANT_ID), service.getById((Long) getInput(ID))), (config) -> {
                     assert Objects.isNull(config);
                 }).run();
     }
@@ -1058,7 +1058,7 @@ class IngredientServiceTest {
     @Order(50)
     void GetConfigByIngredientId_NegativeCase_IngredientIdIsNotExist() {
         this.getTemplate(
-                () -> this.service.getConfig((Long) getInput(TENANT_ID), service.get((Long) getInput(NON_EXIST_ID))), (config) -> {
+                () -> this.service.getConfig((Long) getInput(TENANT_ID), service.getById((Long) getInput(NON_EXIST_ID))), (config) -> {
                     assert Objects.isNull(config);
                 }).run();
     }

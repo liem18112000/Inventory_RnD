@@ -1,12 +1,10 @@
 package com.fromlabs.inventory.recipeservice.detail;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailPageRequest;
-import com.fromlabs.inventory.recipeservice.detail.beans.RecipeDetailRequest;
-import com.fromlabs.inventory.recipeservice.detail.factory.RecipeDetailEntityFactory;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.entity.RecipeBaseEntity;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeEntity;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -55,27 +53,13 @@ public class RecipeDetailEntity extends RecipeBaseEntity<Long> {
         return entity;
     }
 
-    public static RecipeDetailEntity from(RecipeDetailRequest request, RecipeEntity recipe) {
-        var entity = create(EMPTY);
-        entity.setRecipe(recipe);
-        entity.setIngredientId(request.getIngredientId());
-        entity.setClientId(request.getTenantId());
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setQuantity(request.getQuantity());
-        entity.setDescription(request.getDescription());
-        entity.setActivated(request.isActivated());
-        entity.setUpdateAt(request.getUpdateAt());
-        return entity;
-    }
-
-    public static RecipeDetailEntity update(RecipeDetailRequest request, RecipeDetailEntity entity) {
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setQuantity(request.getQuantity());
-        entity.setUpdateAt(request.getUpdateAt());
-        return entity;
+    public RecipeDetailEntity update(RecipeDetailRequest request) {
+        this.setName(request.getName());
+        this.setCode(request.getCode());
+        this.setDescription(request.getDescription());
+        this.setQuantity(request.getQuantity());
+        this.setUpdateAt(request.getUpdateAt());
+        return this;
     }
 
     @Override

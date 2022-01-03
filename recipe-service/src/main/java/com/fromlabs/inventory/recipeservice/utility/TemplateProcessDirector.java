@@ -3,9 +3,11 @@ package com.fromlabs.inventory.recipeservice.utility;
 import com.fromlabs.inventory.recipeservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.recipeservice.common.template.*;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
-import com.fromlabs.inventory.recipeservice.detail.beans.*;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
-import com.fromlabs.inventory.recipeservice.recipe.beans.*;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
 
 import static com.fromlabs.inventory.recipeservice.common.validator.RequestValidator.StringRequestValidator;
@@ -53,7 +55,7 @@ public class TemplateProcessDirector {
      */
     public TemplateProcess buildGetPageRecipeGroupTemplateProcess(
             Long                tenantId,
-            RecipePageRequest   request,
+            RecipePageRequest request,
             RecipeService       recipeService
     ) {
         return WebTemplateProcess.builder()
@@ -63,6 +65,25 @@ public class TemplateProcessDirector {
                 .build();
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Build get label-value recipe child template process">
+
+    /**
+     * Build get label-value recipe child template process
+     * @param tenantId      Tenant ID
+     * @param recipeService RecipeService
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildGetLabelValueRecipeChildTemplateProcess(
+            Long                tenantId,
+            RecipeService       recipeService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(  () -> validateTenant(tenantId))
+                .process(   () -> ok(getSimpleRecipeGroupActiveDto(tenantId, recipeService)))
+                .build();
+    }
     //</editor-fold>
 
     //<editor-fold desc="Build get page recipe page with filter template process">
@@ -98,7 +119,7 @@ public class TemplateProcessDirector {
         return WebTemplateProcess.builder()
                 .bootstrap( () -> bootstrapGetAllRecipeChildPage(tenantId, request))
                 .validate(  () -> validateTenant(tenantId))
-                .process(   () -> ok(getRecipePageWithFilter(request, recipeService)))
+                .process(   () -> ok(getRecipeExtendPageWithFilter(request, recipeService)))
                 .build();
     }
 
@@ -158,7 +179,7 @@ public class TemplateProcessDirector {
      */
     public TemplateProcess buildSaveRecipeTemplateProcess(
             Long            tenantId,
-            RecipeRequest   request,
+            RecipeRequest request,
             RecipeService   recipeService
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()

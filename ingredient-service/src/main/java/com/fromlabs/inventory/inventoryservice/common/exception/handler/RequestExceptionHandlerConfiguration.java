@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class RequestExceptionHandlerConfiguration implements ExceptionHandlerConfiguration {
 
-    protected Map<String, CriteriaImpl.Pair<HttpStatus, Set<String>>> container = new HashMap<>();
+    protected final Map<String, CriteriaImpl.Pair<HttpStatus, Set<String>>> container = new HashMap<>();
 
     /**
      * Get status with Http status and exception name

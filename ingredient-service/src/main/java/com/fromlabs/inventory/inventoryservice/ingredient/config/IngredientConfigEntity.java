@@ -5,8 +5,6 @@
 package com.fromlabs.inventory.inventoryservice.ingredient.config;
 
 import com.fromlabs.inventory.inventoryservice.entity.IngredientReferencedBaseEntity;
-import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.beans.request.IngredientConfigRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -41,24 +39,6 @@ public class IngredientConfigEntity extends IngredientReferencedBaseEntity<Long>
     @Min(value = 1)
     @Column(name="maximum_quantity")
     private Float maximumQuantity = 32767F;
-
-    /**
-     * Convert from request to entity
-     * @param request       IngredientRequest
-     * @param ingredient    IngredientEntity
-     * @return  IngredientConfigEntity
-     */
-    static public IngredientConfigEntity from(IngredientRequest request, IngredientEntity ingredient) {
-        var config = new IngredientConfigEntity();
-        config.setClientId(request.getClientId());
-        config.setName(request.getName());
-        config.setDescription(request.getDescription());
-        config.setIngredient(ingredient);
-        if(Objects.nonNull(request.getMinimumQuantity())) config.setMinimumQuantity(request.getMinimumQuantity());
-        if(Objects.nonNull(request.getMaximumQuantity())) config.setMaximumQuantity(request.getMaximumQuantity());
-        config.setUpdateAt(Instant.now().toString());
-        return config;
-    }
 
     /**
      * Update entity from request

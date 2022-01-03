@@ -1,12 +1,8 @@
 package com.fromlabs.inventory.recipeservice.applications;
 
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipePageRequest;
-import com.fromlabs.inventory.recipeservice.recipe.beans.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
-import static com.fromlabs.inventory.recipeservice.config.AppConfig.CODE;
 
 public interface ApplicationController {
 

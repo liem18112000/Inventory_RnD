@@ -8,7 +8,6 @@ import com.fromlabs.inventory.inventoryservice.common.exception.ConstraintViolat
 import com.fromlabs.inventory.inventoryservice.common.exception.ObjectNotFoundException;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -27,8 +26,12 @@ public class ConstraintWrapper {
         this.check = check;
     }
 
+    @Getter
     protected String name = "Constraint".concat(String.valueOf(System.currentTimeMillis()));
+
+    @Getter
     protected Throwable exception;
+
     protected Callable<Boolean> check;
 
     public Boolean constraintCheck() {

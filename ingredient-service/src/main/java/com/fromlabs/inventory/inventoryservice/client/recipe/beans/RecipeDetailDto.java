@@ -2,7 +2,7 @@ package com.fromlabs.inventory.inventoryservice.client.recipe.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fromlabs.inventory.inventoryservice.common.dto.BaseDto;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { baseAPI } from '../constant'
+import { baseIngredientAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
+import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 
 var categoryJson = {
     "content": [
@@ -183,7 +184,7 @@ var typeJson = {
 }
 
 // Ingredient base URL
-const BaseURL = baseAPI()
+const BaseURL = baseIngredientAPI()
 
 /**
  * Ingredient service
@@ -205,16 +206,16 @@ export class IngredientService {
             return Promise.resolve(categoryJson);
         }
 
-        const order     = sortOrder === 1 ? 'asc' : 'desc';
-        const sort      = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers   = getHeaderByGatewayStatus({})
+        const order = sortOrder === 1 ? 'asc' : 'desc';
+        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const headers = getHeaderByGatewayStatus({})
 
         // fetch ingredient category data from api 
         return axios.post(`${BaseURL}/category/page`, {
-            "name":         !filter ? "" : filter.name,
-            "description":  !filter ? "" : filter.description,
-            "code":         !filter ? "" : filter.code,
-            "createAt":     !filter ? "" : filter.createAt,
+            "name": !filter ? "" : filter.name,
+            "description": !filter ? "" : filter.description,
+            "code": !filter ? "" : filter.code,
+            "createAt": !filter ? "" : filter.createAt,
 
             "page": page ? page : 0,
             "size": rows ? rows : 10,
@@ -231,7 +232,7 @@ export class IngredientService {
      * @returns {Promise<AxiosResponse<any> | void>}
      */
     syncInventory() {
-        const headers   = getHeaderByGatewayStatus({});
+        const headers = getHeaderByGatewayStatus({});
         return axios.post(`${BaseURL}/inventory/sync`, {}, {
             headers: headers
         }).then(res => {
@@ -257,18 +258,18 @@ export class IngredientService {
 
         const order = sortOrder === 1 ? 'asc' : 'desc';
         const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers   = getHeaderByGatewayStatus({})
+        const headers = getHeaderByGatewayStatus({})
 
         // fetch ingredient type data from api 
         return axios.post(`${BaseURL}/type/page`, {
-            "name":         !filter ? "" : filter.name,
-            "description":  !filter ? "" : filter.description,
-            "code":         !filter ? "" : filter.code,
-            "createAt":     !filter ? "" : filter.createAt,
-            "unitType":     !filter ? "" : filter.unitType,
-            "unit":         !filter ? "" : filter.unit,
+            "name": !filter ? "" : filter.name,
+            "description": !filter ? "" : filter.description,
+            "code": !filter ? "" : filter.code,
+            "createAt": !filter ? "" : filter.createAt,
+            "unitType": !filter ? "" : filter.unitType,
+            "unit": !filter ? "" : filter.unit,
 
-            "parentId":     parentId,
+            "parentId": parentId,
 
             "page": page ? page : 0,
             "size": rows ? rows : 10,
@@ -296,9 +297,9 @@ export class IngredientService {
             return Promise.resolve(typeJson);
         }
 
-        const order     = sortOrder === 1 ? 'asc' : 'desc';
-        const sort      = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers   = getHeaderByGatewayStatus({});
+        const order = sortOrder === 1 ? 'asc' : 'desc';
+        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const headers = getHeaderByGatewayStatus({});
 
         // fetch ingredient type data from api 
         return axios.post(`${BaseURL}/item/page`, {
@@ -336,17 +337,17 @@ export class IngredientService {
             return Promise.resolve(typeJson);
         }
 
-        const order     = sortOrder === 1 ? 'asc' : 'desc';
-        const sort      = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers   = getHeaderByGatewayStatus({})
+        const order = sortOrder === 1 ? 'asc' : 'desc';
+        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const headers = getHeaderByGatewayStatus({})
 
         // fetch ingredient type data from api 
         return axios.post(`${BaseURL}/inventory/page`, {
-            "name":         !filter ? "" : filter.name,
-            "description":  !filter ? "" : filter.description,
-            "updateAt":     !filter ? "" : filter.updateAt,
-            "unitType":     !filter ? "" : filter.unitType,
-            "unit":         !filter ? "" : filter.unit,
+            "name": !filter ? "" : filter.name,
+            "description": !filter ? "" : filter.description,
+            "updateAt": !filter ? "" : filter.updateAt,
+            "unitType": !filter ? "" : filter.unitType,
+            "unit": !filter ? "" : filter.unit,
 
             "ingredientId": !filter ? null : filter.ingredientId,
 
@@ -469,8 +470,11 @@ export class IngredientService {
             return Promise.resolve(categoryJson.content[0]);
         }
 
+        // Add actor role and actor name to request body as default
+        const requestBody = addActorNameAndRole(ingredient);
+
         return axios
-            .post(`${BaseURL}`, ingredient, {
+            .post(`${BaseURL}`, requestBody, {
                 headers: getHeaderByGatewayStatus({})
             })
             .then(res => res.data)
@@ -488,8 +492,33 @@ export class IngredientService {
             return Promise.resolve(categoryJson.content[0]);
         }
 
+        // Add actor role and actor name to request body as default
+        const requestBody = addActorNameAndRole(item);
+
         return axios
-            .post(`${BaseURL}/item`, item, {
+            .post(`${BaseURL}/item`, requestBody, {
+                headers: getHeaderByGatewayStatus({})
+            })
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    /**
+     * Save item batch
+     * @param item      Item need to be saved  
+     * @param isMock    Activate mock if true otherwise use real api call
+     * @returns 
+     */
+    saveItemBatch(items, isMock = true) {
+        if (isMock) {
+            return Promise.resolve(categoryJson.content[0]);
+        }
+
+        // Add actor role and actor name to request body as default
+        const requestBody = addActorNameAndRole(items);
+
+        return axios
+            .post(`${BaseURL}/item/batch`, requestBody, {
                 headers: getHeaderByGatewayStatus({})
             })
             .then(res => res.data)
@@ -507,8 +536,11 @@ export class IngredientService {
             return Promise.resolve(categoryJson.content[0]);
         }
 
+        // Add actor role and actor name to request body as default
+        const requestBody = addActorNameAndRole(ingredient);
+
         return axios
-            .put(`${BaseURL}`, ingredient, {
+            .put(`${BaseURL}`, requestBody, {
                 headers: getHeaderByGatewayStatus({})
             })
             .then(res => res.data)
@@ -526,8 +558,11 @@ export class IngredientService {
             return Promise.resolve(categoryJson.content[0]);
         }
 
+        // Add actor role and actor name to request body as default
+        const requestBody = addActorNameAndRole(item);
+
         return axios
-            .put(`${BaseURL}/item/${item.id}`, item, {
+            .put(`${BaseURL}/item/${item.id}`, requestBody, {
                 headers: getHeaderByGatewayStatus({})
             })
             .then(res => res.data)

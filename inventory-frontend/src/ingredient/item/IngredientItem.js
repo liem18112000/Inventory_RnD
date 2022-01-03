@@ -10,7 +10,6 @@ import { Fieldset } from "primereact/fieldset";
 import { IngredientService } from '../../service/IngredientService'
 
 import '../../assets/styles/TableDemo.css'
-import { Dropdown } from 'primereact/dropdown';
 
 import { Link, withRouter } from 'react-router-dom'
 import moment from 'moment';
@@ -31,8 +30,6 @@ class IngredientItem extends Component {
                 code: "",
                 description: "",
                 expiredAt: "",
-                unit: "",
-                unitType: "",
             },
             cateId: props.location.state.cateId,
             // --paginator state--
@@ -43,6 +40,7 @@ class IngredientItem extends Component {
             sortOrder: 0,
             // --paginator state--
             isMock: false,
+            isBatch: false,
             loading: false
         };
         this.ingredientService = new IngredientService();
@@ -94,9 +92,7 @@ class IngredientItem extends Component {
                 name: "",
                 code: "",
                 description: "",
-                expiredAt: "",
-                unit: "",
-                unitType: "",
+                expiredAt: ""
             }
         }, () => {
             this.setState({ loading: true });
@@ -128,7 +124,7 @@ class IngredientItem extends Component {
                     <Button
                         icon="pi pi-pencil"
                         label="Edit"
-                        onClick={(e) => { form.action(rowData.id, this.state.isMock) }} />
+                        onClick={(e) => { form.action(rowData.id, false, false) }} />
                 </div>
             </React.Fragment>
         );
@@ -299,7 +295,15 @@ class IngredientItem extends Component {
                             icon="pi pi-plus"
                             iconPos="left"
                             label="New item"
-                            onClick={() => this.form.action(null, true)}
+                            onClick={() => this.form.action(null, true, false)}
+                        />
+                        <Button
+                            className="blue-btn"
+                            style={{ marginRight: '0.5rem' }}
+                            icon="pi pi-plus"
+                            iconPos="left"
+                            label="New item batch"
+                            onClick={() => this.form.action(null, true, true)}
                         />
                         <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
                             onClick={this.onRefresh} model={tableLengthOptions}>
@@ -318,6 +322,8 @@ class IngredientItem extends Component {
                 <IngredientItemForm ref={el => this.form = el}
                     refreshData={() => this.getPageItems()}
                     id={this.props.match.params.id}
+                    unitType={this.props.location.state.unitType}
+                    unit={this.props.location.state.unit}
                 />
                 <Fieldset legend="Ingredient Item" toggleable>
                     <div className="p-grid p-fluid">
@@ -330,7 +336,7 @@ class IngredientItem extends Component {
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText
-                                placeholder="Category"
+                                placeholder="Name"
                                 value={this.state.filter.name}
                                 onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                             />
@@ -348,31 +354,6 @@ class IngredientItem extends Component {
                                 value={this.state.filter.expiredAt}
                                 onChange={(e) => this.setFilter({ ...this.state.filter, expiredAt: e.target.value })}
                             />
-                        </div>
-                        <div className="p-col-12 p-md-6 p-lg-6">
-                            <Dropdown value={this.state.filter.unitType}
-                                defaultValue=""
-                                placeholder="Unit Types"
-                                options={this.state.unitTypes}
-                                onChange={(e) => {
-                                    this.setState({
-                                        filter: { ...this.state.filter, unitType: e.target.value }
-                                    },
-                                        () => {
-                                            this.ingredientService.getUnit(this.state.filter.unitType, false).then(u => this.setState({
-                                                units: u
-                                            }));
-                                        }
-                                    )
-                                }} />
-                        </div>
-                        <div className="p-col-12 p-md-6 p-lg-6">
-                            <Dropdown value={this.state.filter.unit}
-                                defaultValue=""
-                                placeholder="Unit"
-                                options={this.state.units}
-                                disabled={this.state.filter.unitType === "" ? "true" : ""}
-                                onChange={(e) => this.setState({ filter: { ...this.state.filter, unit: e.target.value } })} />
                         </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
@@ -418,10 +399,9 @@ class IngredientItem extends Component {
                     emptyMessage="No item found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                // rowsPerPageOptions={[2, 5, 10, 25, 50]}
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
-                    <Column sortField="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} />
+                    <Column sortField="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} sortable />
                     <Column sortField="expiredAt" filterField="expiredAt" header="Expired At" body={this.expiredAtBodyTemplate} sortable />
                     <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} sortable />
                     <Column field="unit" header="Unit" body={this.unitBodyTemplate} sortable />

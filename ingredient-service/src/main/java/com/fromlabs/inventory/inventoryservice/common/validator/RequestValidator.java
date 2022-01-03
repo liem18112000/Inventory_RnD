@@ -14,9 +14,9 @@ import java.util.Set;
  */
 public class RequestValidator implements BaseValidator<String, Set<String>>{
 
-    protected Map<String, Set<String>> errorContainer = new HashMap<>();
-    protected Map<CriteriaImpl.Pair<String, Object>, Set<Enum>> criteriaContainer = new HashMap<>();
-    protected Criteria<String> criteria;
+    protected final Map<String, Set<String>> errorContainer = new HashMap<>();
+    protected final Map<CriteriaImpl.Pair<String, Object>, Set<Enum>> criteriaContainer = new HashMap<>();
+    protected final Criteria<String> criteria;
 
     /**
      * Construction

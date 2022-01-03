@@ -17,6 +17,7 @@ import moment from 'moment';
 import { IngredientTypeForm } from './IngredientTypeForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export class IngredientType extends Component {
 
@@ -46,7 +47,7 @@ export class IngredientType extends Component {
         };
 
         this.ingredientService = new IngredientService();
-
+        // console.log(props.location.state);
     }
 
     componentDidMount() {
@@ -123,6 +124,21 @@ export class IngredientType extends Component {
         );
     }
 
+    /**
+     * Confim dialog for delete function
+     * @param {*} rowData 
+     */
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this type?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageTypes),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
+    }
+
     actionBodyTemplate(rowData, form) {
         let items = [
             {
@@ -131,12 +147,23 @@ export class IngredientType extends Component {
                 command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
             },
             {
+                label: 'Ingredient History',
+                icon: 'pi pi-external-link',
+                command: (e) => {
+                    this.props.history.push({
+                        pathname: `history/${rowData.id}`,
+                        state: {
+                            cateId: this.props.match.params.id,
+                            unitType: rowData.unitType,
+                            unit: rowData.unit
+                        }
+                    })
+                }
+            },
+            {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => {
-                    this.ingredientService.deleteIngredient(rowData.id, this.state.isMock)
-                        .then(this.getPageTypes)
-                }
+                command: (e) => { this.confirmDelete(rowData) }
             },
         ];
 
@@ -149,7 +176,11 @@ export class IngredientType extends Component {
                     )} model={items}></SplitButton> */}
                     <SplitButton label="View" onClick={() => this.props.history.push({
                         pathname: `type/${rowData.id}`,
-                        state: { cateId: this.props.match.params.id }
+                        state: {
+                            cateId: this.props.match.params.id,
+                            unitType: rowData.unitType,
+                            unit: rowData.unit
+                        }
                     })} model={items}></SplitButton>
                 </div>
             </React.Fragment>
@@ -260,8 +291,10 @@ export class IngredientType extends Component {
             () => {
                 this.setState({ loading: true });
                 this.getPageTypes();
-                this.toast.show({ severity: 'info', summary: 'Reset page size',
-                    detail: 'Page size is set to ' + l, life: 1000 });
+                this.toast.show({
+                    severity: 'info', summary: 'Reset page size',
+                    detail: 'Page size is set to ' + l, life: 1000
+                });
             }
         );
     };
@@ -443,7 +476,7 @@ export class IngredientType extends Component {
                 // rowsPerPageOptions={[2, 5, 10, 25, 50]}
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
-                    <Column sortField="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} />
+                    <Column sortField="name" filterField="name" header="Name" body={this.categoryBodyTemplate} sortable />
                     <Column sortField="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
                     <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} sortable />

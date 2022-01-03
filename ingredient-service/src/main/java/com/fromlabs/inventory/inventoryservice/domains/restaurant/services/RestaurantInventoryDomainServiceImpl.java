@@ -40,8 +40,7 @@ public class RestaurantInventoryDomainServiceImpl
 
     //<editor-fold desc="SETUP">
 
-    @Autowired
-    protected RecipeClient recipeClient;
+    protected final RecipeClient recipeClient;
 
     /**
      * Constructor
@@ -50,11 +49,12 @@ public class RestaurantInventoryDomainServiceImpl
      * @param itemService       ItemService
      */
     public RestaurantInventoryDomainServiceImpl(
-            IngredientService   ingredientService,
-            InventoryService    inventoryService,
-            ItemService         itemService
-    ) {
+            IngredientService ingredientService,
+            InventoryService inventoryService,
+            ItemService itemService,
+            RecipeClient recipeClient) {
         super(ingredientService, inventoryService, itemService);
+        this.recipeClient = recipeClient;
     }
 
     //</editor-fold>

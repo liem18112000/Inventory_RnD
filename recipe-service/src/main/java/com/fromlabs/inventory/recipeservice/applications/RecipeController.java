@@ -2,11 +2,14 @@ package com.fromlabs.inventory.recipeservice.applications;
 
 import com.fromlabs.inventory.recipeservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.recipeservice.common.template.*;
-import com.fromlabs.inventory.recipeservice.config.versions.*;
+import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
-import com.fromlabs.inventory.recipeservice.detail.beans.*;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
+import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
-import com.fromlabs.inventory.recipeservice.recipe.beans.*;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
+import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.InetAddress;
 
 import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
-import static com.fromlabs.inventory.recipeservice.recipe.beans.RecipeDto.*;
+import static com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto.*;
 import static com.fromlabs.inventory.recipeservice.utility.TemplateProcessDirector.*;
 import static com.fromlabs.inventory.recipeservice.utility.TransactionConstraint.*;
 import static com.fromlabs.inventory.recipeservice.utility.ControllerValidation.*;
@@ -94,6 +97,14 @@ public class RecipeController implements ApplicationController {
         return (ResponseEntity<?>) buildGetPageRecipeGroupTemplateProcess(tenantId, request, recipeService).run();
     }
 
+    @GetMapping("group/simple")
+    public ResponseEntity<?> getGroupLabelValue(
+            @RequestHeader(TENANT_ID) Long tenantId
+    ) {
+        log.info(path(HttpMethod.GET, "group/simple"));
+        return (ResponseEntity<?>) buildGetLabelValueRecipeChildTemplateProcess(tenantId, recipeService).run();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="CHILD">
@@ -156,11 +167,11 @@ public class RecipeController implements ApplicationController {
     public ResponseEntity<?> getById(
             @PathVariable(ID) Long id
     ) {
-        log.info(path(HttpMethod.POST, "id"));
+        log.info(path(HttpMethod.GET, "id"));
         return (ResponseEntity<?>) WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .validate(  () -> validateId(id))
                 .before(    () -> isRecipeExistById(id, recipeService))
-                .process(   () -> ok(from(recipeService.get(id))))
+                .process(   () -> ok(RecipeMapper.toDto(recipeService.get(id))))
                 .build().run();
     }
 
@@ -292,7 +303,7 @@ public class RecipeController implements ApplicationController {
     @PostMapping("detail")
     public ResponseEntity<?> saveDetail(
             @RequestHeader(TENANT_ID) Long      tenantId,
-            @RequestBody RecipeDetailRequest    request
+            @RequestBody RecipeDetailRequest request
     ) {
         log.info(path(HttpMethod.POST, "detail"));
         return (ResponseEntity<?>) buildSaveRecipeDetailTemplateProcess(

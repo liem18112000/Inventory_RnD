@@ -25,7 +25,7 @@ public class ValidatorMessageMapperImpl implements ValidatorMessageMapper {
         this.defaultMessageAssign();
     }
 
-    protected Map<String, String> container;
+    protected final Map<String, String> container;
 
     protected final String DEFAULT_VALIDATE_MESSAGE = "%s does not pass validation";
 

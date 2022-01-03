@@ -35,7 +35,7 @@ public class CriteriaImpl implements Criteria<String>{
         this.messageMapper = Objects.requireNonNullElse(messageMapper, new ValidatorMessageMapperImpl()) ;
     }
 
-    protected ValidatorMessageMapper messageMapper;
+    protected final ValidatorMessageMapper messageMapper;
 
     @Data
     @AllArgsConstructor

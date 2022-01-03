@@ -1,10 +1,7 @@
 package com.fromlabs.inventory.inventoryservice.inventory;
 
 import com.fromlabs.inventory.inventoryservice.entity.IngredientReferencedExtendEntity;
-import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.IngredientPageRequest;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.InventoryPageRequest;
-import com.fromlabs.inventory.inventoryservice.inventory.beans.InventoryRequest;
+import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,7 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
-import java.time.Instant;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -41,22 +38,13 @@ public class InventoryEntity extends IngredientReferencedExtendEntity<Long> {
         return this.ingredient.getId();
     }
 
-    public InventoryEntity update(InventoryRequest request) {
+    public InventoryEntity update(
+            @NotNull final InventoryRequest request
+    ) {
         this.setName(request.getName());
         this.setDescription(request.getDescription());
         this.setUpdateAt(request.getUpdateAt());
         return this;
-    }
-
-    static public InventoryEntity from(InventoryPageRequest request) {
-        var entity = new InventoryEntity();
-        entity.setClientId(request.getClientId());
-        entity.setName(request.getName());
-        entity.setDescription(request.getDescription());
-        entity.setUnit(request.getUnit());
-        entity.setUnitType(request.getUnitType());
-        entity.setUpdateAt(request.getUpdateAt());
-        return entity;
     }
 
     @Override

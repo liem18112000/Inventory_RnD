@@ -80,9 +80,7 @@ public class TransactionGuard<ID extends Serializable> implements TransactionTem
     public void summary() {
         if(!this.transactions.isEmpty()) {
             log.info("TRANSACTION SUMMARY");
-            this.transactions.forEach(trx -> {
-                log.info("Transaction : {} - {} : {}", trx.getTransactId(), trx.getTransactName(), trx);
-            });
+            this.transactions.forEach(trx -> log.info("Transaction : {} - {} : {}", trx.getTransactId(), trx.getTransactName(), trx));
         }
     }
 
