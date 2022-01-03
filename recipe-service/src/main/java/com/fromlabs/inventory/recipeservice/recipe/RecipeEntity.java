@@ -19,6 +19,10 @@ import static com.fromlabs.inventory.recipeservice.common.factory.FactoryCreateT
 import static com.fromlabs.inventory.recipeservice.recipe.factory.RecipeEntityFactory.create;
 import static java.util.Objects.nonNull;
 
+/**
+ * Recipe Entity
+ * @author Liem
+ */
 @Getter
 @Setter
 @ToString
@@ -55,17 +59,7 @@ public class RecipeEntity extends RecipeBaseEntity<Long> {
         return 738380931;
     }
 
-    public static RecipeEntity from(RecipePageRequest request) {
-        var entity = create(EMPTY);
-        entity.setClientId(request.getTenantId());
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setGroup(checkIsGroupFromPageRequest(request));
-        return entity;
-    }
-
-    private static boolean checkIsGroupFromPageRequest(RecipePageRequest request) {
+    public static boolean checkIsGroupFromPageRequest(RecipePageRequest request) {
         if(Objects.nonNull(request.getGroup())) {
             return request.getGroup();
         } else {
@@ -74,23 +68,12 @@ public class RecipeEntity extends RecipeBaseEntity<Long> {
 
     }
 
-    public static RecipeEntity from(RecipeRequest request) {
-        var entity = create(EMPTY);
-        entity.setClientId(request.getTenantId());
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setGroup(Objects.isNull(request.getParentId()));
-        entity.setUpdateAt(request.getCreatedAt());
-        return entity;
-    }
-
-    public static RecipeEntity update(RecipeRequest request, RecipeEntity entity) {
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setUpdateAt(request.getCreatedAt());
-        return entity;
+    public RecipeEntity update(RecipeRequest request) {
+        this.setName(request.getName());
+        this.setCode(request.getCode());
+        this.setDescription(request.getDescription());
+        this.setUpdateAt(request.getCreatedAt());
+        return this;
     }
 
     public RecipeEntity setParent(RecipeEntity parent) {

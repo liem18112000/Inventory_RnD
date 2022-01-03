@@ -2,6 +2,7 @@ package com.fromlabs.inventory.recipeservice.recipe;
 
 import com.fromlabs.inventory.recipeservice.RecipeServiceApplication;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
+import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
 import com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -26,7 +27,7 @@ class RecipeServiceTest {
     @DisplayName("Get recipe by code" + " - positive case : all thing is right")
     @Test
     void getByCode_Postive_AllThingsIsRight() {
-        var recipe = this.recipeService.get(1L,"123123");
+        var recipe = this.recipeService.getByName(1L,"123123");
         assert Objects.nonNull(recipe);
         assert Objects.equals(recipe.getClientId(),1L);
         assert Objects.equals(recipe.getCode(),"123123");
@@ -54,7 +55,7 @@ class RecipeServiceTest {
     void getPage_PositiveCase_AllThingIsRight() {
         var request = new RecipePageRequest();
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L); } );
     }
@@ -64,7 +65,7 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setName("Strawberri yogurt");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getName().equals("Strawberri yogurt"); } );
     }
@@ -74,7 +75,7 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setName("Clown");
         request.setTenantId(2L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().noneMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(2L) && ((RecipeEntity)recipe).getName().equals("Clown"); } );
     }
@@ -84,7 +85,7 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setCode("531531");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getCode().equals("531531"); } );
     }
@@ -94,7 +95,7 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setCode("999DS");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getCode().equals("999DS"); } );
     }
@@ -104,7 +105,7 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setDescription("yorgurt");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getDescription().equals("yorgurt"); } );
     }
@@ -114,7 +115,7 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setDescription("tooHot");
         request.setTenantId(2L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeEntity.from(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
         assert ((Page<?>)page).stream().noneMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(2L) && ((RecipeEntity)recipe).getDescription().equals("tooHot"); } );
     }
