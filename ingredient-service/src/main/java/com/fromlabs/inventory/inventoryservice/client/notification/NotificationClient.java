@@ -4,5 +4,9 @@
 
 package com.fromlabs.inventory.inventoryservice.client.notification;
 
+/**
+ * Notification client to notification module
+ * @author Liem
+ */
 public interface NotificationClient {
 }

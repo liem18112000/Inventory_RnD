@@ -11,6 +11,7 @@ import java.util.Objects;
 
 /**
  * Ingredient page request
+ * @author Liem
  */
 @Data
 @NoArgsConstructor

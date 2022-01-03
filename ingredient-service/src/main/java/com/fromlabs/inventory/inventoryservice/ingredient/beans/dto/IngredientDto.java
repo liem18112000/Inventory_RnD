@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Ingredient Data Transfer Object
+ * @author Liem
  */
 @Builder(toBuilder = true)
 @Data
