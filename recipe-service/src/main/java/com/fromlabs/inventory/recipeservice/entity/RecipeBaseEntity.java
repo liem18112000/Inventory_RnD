@@ -1,7 +1,10 @@
 package com.fromlabs.inventory.recipeservice.entity;
 
 import com.fromlabs.inventory.recipeservice.common.entity.BaseEntity;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;

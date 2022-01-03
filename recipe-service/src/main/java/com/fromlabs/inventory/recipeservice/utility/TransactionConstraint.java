@@ -10,9 +10,11 @@ import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.*;
-import static java.util.Objects.*;
-import static org.springframework.data.jpa.domain.Specification.*;
+import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.hasCode;
+import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.hasName;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @UtilityClass
 @Slf4j

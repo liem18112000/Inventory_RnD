@@ -1,15 +1,12 @@
 package com.fromlabs.inventory.recipeservice.recipe.beans.dto;
 
 import com.fromlabs.inventory.recipeservice.common.dto.BaseDto;
-import com.fromlabs.inventory.recipeservice.recipe.RecipeEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Recipe Data Transfer Object

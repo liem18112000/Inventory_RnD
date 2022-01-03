@@ -1,9 +1,6 @@
 package com.fromlabs.inventory.recipeservice.recipe;
 
 import com.fromlabs.inventory.recipeservice.common.service.RestApiService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 

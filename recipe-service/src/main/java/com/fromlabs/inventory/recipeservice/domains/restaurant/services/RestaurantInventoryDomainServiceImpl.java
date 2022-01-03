@@ -9,8 +9,6 @@ import com.fromlabs.inventory.recipeservice.domains.AbstractDomainService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class RestaurantInventoryDomainServiceImpl
         extends AbstractDomainService

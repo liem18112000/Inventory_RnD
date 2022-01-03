@@ -4,8 +4,6 @@
 
 package com.fromlabs.inventory.recipeservice.domains.restaurant.services;
 
-import java.util.List;
-
 /**
  * Domain service interface for restaurant domain
  */

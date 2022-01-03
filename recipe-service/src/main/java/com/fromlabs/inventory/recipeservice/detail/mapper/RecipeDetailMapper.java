@@ -6,7 +6,6 @@ import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeEntity;
-import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
 import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;

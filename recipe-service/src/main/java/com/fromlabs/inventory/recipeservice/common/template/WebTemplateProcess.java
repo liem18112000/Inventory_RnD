@@ -6,6 +6,7 @@
 package com.fromlabs.inventory.recipeservice.common.template;
 
 import com.fromlabs.inventory.recipeservice.common.exception.FailValidateException;
+import com.fromlabs.inventory.recipeservice.common.exception.handler.RequestExceptionHandler;
 import com.fromlabs.inventory.recipeservice.common.validator.RequestValidator;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 
-import com.fromlabs.inventory.recipeservice.common.exception.handler.RequestExceptionHandler;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
