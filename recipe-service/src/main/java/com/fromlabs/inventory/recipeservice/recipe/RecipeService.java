@@ -29,28 +29,11 @@ public interface RecipeService extends RestApiService<RecipeEntity, Long> {
     RecipeEntity getByName(Long clientId, String name);
 
     /**
-     * Get all page of recipe entity by client ID
-     * @param clientId Client ID
-     * @param pageable Pageable
-     * @return Page of recipe entity
-     */
-    Page<RecipeEntity> getPage(Long clientId, Pageable pageable);
-
-    /**
      * Get all recipe entity by client id
      * @param clientId Client ID
      * @return List of recipe entity
      */
     List<RecipeEntity> getAll(Long clientId);
-
-    /**
-     * Get all recipe page by client ID and parent ID
-     * @param clientId Client ID
-     * @param parentId Parent ID
-     * @param pageable Pageable
-     * @return Page of recipe entity
-     */
-    Page<RecipeEntity> getPage(Long clientId, Long parentId, Pageable pageable);
 
     /**
      * Get all recipe list by client ID and parent ID

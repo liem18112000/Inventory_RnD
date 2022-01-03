@@ -49,24 +49,8 @@ public class RecipeServiceImpl implements RecipeService {
     /**
      * {@inheritDoc}
      */
-    public Page<RecipeEntity> getPage(@NotNull final Long clientId, @NotNull final  Pageable pageable) {
-        return this.repository.findAllByClientIdAndParentIdIsNull(clientId, pageable);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public List<RecipeEntity> getAll(@NotNull final Long clientId) {
         return this.repository.findAllByClientIdAndParentIdIsNull(clientId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Page<RecipeEntity> getPage(
-            @NotNull final Long clientId, @NotNull final Long parentId,
-            @NotNull final Pageable pageable) {
-        return this.repository.findAllByClientIdAndParentId(clientId, parentId, pageable);
     }
 
     /**
