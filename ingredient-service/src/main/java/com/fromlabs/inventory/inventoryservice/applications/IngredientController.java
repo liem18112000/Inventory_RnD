@@ -43,6 +43,7 @@ import static org.springframework.http.ResponseEntity.*;
 /**
  * IngredientController is REST controller which responsible for
  * all C.R.U.D operations of IngredientEntity. InventoryEntity and ItemEntity.
+ * @author Liem
  * @see <a href="https://spring.io/guides/tutorials/rest/">REST Controller example : Building REST services with Spring</a>
  */
 @Slf4j

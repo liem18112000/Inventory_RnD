@@ -21,7 +21,7 @@ import static com.fromlabs.inventory.inventoryservice.config.AppConfig.*;
 
 /**
  * Ingredient endpoint implementation for internally expose API to other service
- * @author Liem 
+ * @author Liem
  */
 @Slf4j
 @RestController

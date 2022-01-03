@@ -16,6 +16,10 @@ import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageReques
 import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Application Controller
+ * @author Liem
+ */
 public interface ApplicationController {
 
     //<editor-fold desc="EVENT">
