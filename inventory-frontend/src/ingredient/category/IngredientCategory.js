@@ -13,6 +13,7 @@ import 'primeflex/primeflex.css';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 
 export class IngredientCategory extends Component {
 
@@ -23,8 +24,7 @@ export class IngredientCategory extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            ingredient: [],
-            selectedStatus: null,
+            content: [],
             // --paginator state--
             page: 0,
             rows: 10,
@@ -42,6 +42,7 @@ export class IngredientCategory extends Component {
             loading: false
         };
         this.ingredientService = new IngredientService();
+        this.mapper = new PagingDataModelMapper();
     }
 
     /**
@@ -56,25 +57,12 @@ export class IngredientCategory extends Component {
      * Call get page ingredient category API
      */
     getPageCategories = () => {
+        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
         this.ingredientService
-            .getPageCategory(
-                this.state.filter,
-                this.state.page,
-                this.state.rows,
-                this.state.sortField,
-                this.state.sortOrder,
-                this.state.isMock
-            )
+            .getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
-            .then(data => this.setState(
-                {
-                    ingredient: data.content,
-                    loading: false,
-                    total: data.totalElements,
-                    page: data.pageable.pageNumber,
-                    rows: data.pageable.pageSize
-                })
-            );
+            .then(data => this.mapper.toModel(data))
+            .then(data => this.setState({ ...this.state, ...data}));
     }
 
     /**
@@ -443,7 +431,7 @@ export class IngredientCategory extends Component {
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.ingredient}
+                    value={this.state.content}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
