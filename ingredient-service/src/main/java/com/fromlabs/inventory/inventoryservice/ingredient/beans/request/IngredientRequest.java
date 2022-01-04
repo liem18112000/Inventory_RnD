@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fromlabs.inventory.inventoryservice.ingredient.unit.IngredientUnit.GENERIC;
+import static com.fromlabs.inventory.inventoryservice.ingredient.beans.unit.IngredientUnit.GENERIC;
 
 /**
  * Ingredient request for both category and type on save and update

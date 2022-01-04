@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.fromlabs.inventory.inventoryservice.config.AppConfig.*;
-import static com.fromlabs.inventory.inventoryservice.ingredient.unit.IngredientUnit.*;
+import static com.fromlabs.inventory.inventoryservice.ingredient.beans.unit.IngredientUnit.*;
 import static com.fromlabs.inventory.inventoryservice.utility.RequestBootstrap.*;
 import static com.fromlabs.inventory.inventoryservice.utility.TemplateProcessDirector.*;
 import static java.util.Objects.nonNull;

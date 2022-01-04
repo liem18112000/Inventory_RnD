@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.inventoryservice.ingredient.unit;
+package com.fromlabs.inventory.inventoryservice.ingredient.beans.unit;
 
 import java.util.Arrays;
 import java.util.List;

@@ -5,7 +5,7 @@
 package com.fromlabs.inventory.inventoryservice.entity;
 
 import com.fromlabs.inventory.inventoryservice.common.entity.BaseEntityWithCreatedAt;
-import com.fromlabs.inventory.inventoryservice.ingredient.unit.IngredientUnit;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.unit.IngredientUnit;
 import lombok.*;
 import org.hibernate.Hibernate;
 

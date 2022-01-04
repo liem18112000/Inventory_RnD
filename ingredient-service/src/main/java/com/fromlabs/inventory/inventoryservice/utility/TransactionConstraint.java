@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.fromlabs.inventory.inventoryservice.ingredient.specification.IngredientSpecification.*;
 import static com.fromlabs.inventory.inventoryservice.ingredient.event.beans.enums.IngredientEvent.*;
 import static com.fromlabs.inventory.inventoryservice.ingredient.event.status.IngredientEventStatus.*;
-import static com.fromlabs.inventory.inventoryservice.ingredient.unit.IngredientUnit.GENERIC;
+import static com.fromlabs.inventory.inventoryservice.ingredient.beans.unit.IngredientUnit.GENERIC;
 import static java.util.Objects.*;
 import static org.springframework.data.jpa.domain.Specification.*;
 
