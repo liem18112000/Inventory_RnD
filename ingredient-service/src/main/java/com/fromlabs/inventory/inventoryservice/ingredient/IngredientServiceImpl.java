@@ -54,13 +54,6 @@ public class IngredientServiceImpl implements IngredientService{
         return this.repository.findByClientIdAndName(clientId, name);
     }
 
-    public Page<IngredientEntity> getPage(
-            @NotNull final Long clientId,
-            @NotNull final Pageable pageable
-    ) {
-        return this.repository.findAllByClientIdAndParentIdIsNull(clientId, pageable);
-    }
-
     public List<IngredientEntity> getAll(
             @NotNull final Long clientId
     ) {
@@ -71,14 +64,6 @@ public class IngredientServiceImpl implements IngredientService{
             @NotNull final Long clientId
     ) {
         return this.repository.findAllByClientIdAndParentIdIsNotNull(clientId);
-    }
-
-    public Page<IngredientEntity> getPage(
-            @NotNull final Long clientId,
-            @NotNull final Long parentId,
-            @NotNull final Pageable pageable
-    ) {
-        return this.repository.findAllByClientIdAndParentId(clientId, parentId, pageable);
     }
 
     public List<IngredientEntity> getAll(
@@ -134,26 +119,6 @@ public class IngredientServiceImpl implements IngredientService{
             @NotNull final Long clientId
     ) {
         return configService.getAll(clientId);
-    }
-
-    public Page<IngredientConfigEntity> getPageConfig(
-            @NotNull final Long clientId,
-            @NotNull final Pageable pageable
-    ) {
-        return configService.getPage(clientId, pageable);
-    }
-
-    public Page<IngredientConfigEntity> getPageConfig(
-            @NotNull final Specification<IngredientConfigEntity> specification,
-            @NotNull final Pageable pageable
-    ) {
-        return configService.getPage(specification, pageable);
-    }
-
-    public List<IngredientConfigEntity> getAllConfig(
-            @NotNull final Specification<IngredientConfigEntity> specification
-    ) {
-        return configService.getAll(specification);
     }
 
     public IngredientConfigEntity saveConfig(
