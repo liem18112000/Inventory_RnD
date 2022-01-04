@@ -17,7 +17,8 @@ import com.fromlabs.inventory.inventoryservice.ingredient.beans.response.SaveIng
 import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigEntity;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.mapper.IngredientConfigMapper;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.*;
-import com.fromlabs.inventory.inventoryservice.ingredient.event.dto.IngredientEventDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.enums.IngredientEvent;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto.IngredientEventDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.mapper.IngredientEventMapper;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.status.IngredientEventStatus;
 import com.fromlabs.inventory.inventoryservice.ingredient.specification.IngredientSpecification;

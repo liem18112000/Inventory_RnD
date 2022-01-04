@@ -5,7 +5,7 @@
 package com.fromlabs.inventory.inventoryservice.ingredient.event.mapper;
 
 import com.fromlabs.inventory.inventoryservice.ingredient.event.IngredientEventEntity;
-import com.fromlabs.inventory.inventoryservice.ingredient.event.dto.IngredientEventDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto.IngredientEventDto;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 

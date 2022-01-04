@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.inventoryservice.ingredient.event;
+package com.fromlabs.inventory.inventoryservice.ingredient.event.beans.enums;
 
 import lombok.Getter;
 

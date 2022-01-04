@@ -9,7 +9,7 @@ import com.fromlabs.inventory.inventoryservice.ingredient.*;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.*;
-import com.fromlabs.inventory.inventoryservice.ingredient.event.dto.IngredientEventDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto.IngredientEventDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.mapper.IngredientEventMapper;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.status.IngredientEventStatus;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;

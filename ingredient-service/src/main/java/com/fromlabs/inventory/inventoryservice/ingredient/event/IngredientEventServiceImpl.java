@@ -4,7 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.ingredient.event;
 
-import com.fromlabs.inventory.inventoryservice.ingredient.event.dto.IngredientEventDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto.IngredientEventDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.status.IngredientEventStatusService;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.status.dto.IngredientEventStatusDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.mapper.IngredientEventMapper;

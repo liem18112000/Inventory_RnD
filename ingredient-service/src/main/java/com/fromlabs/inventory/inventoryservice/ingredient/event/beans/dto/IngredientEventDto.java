@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.inventoryservice.ingredient.event.dto;
+package com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.status.dto.IngredientEventStatusDto;

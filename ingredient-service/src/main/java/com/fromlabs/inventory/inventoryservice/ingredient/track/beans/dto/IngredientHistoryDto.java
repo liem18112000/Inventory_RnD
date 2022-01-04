@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fromlabs.inventory.inventoryservice.common.dto.BaseDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
-import com.fromlabs.inventory.inventoryservice.ingredient.event.dto.IngredientEventDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto.IngredientEventDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
