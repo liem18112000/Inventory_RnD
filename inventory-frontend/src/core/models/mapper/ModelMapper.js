@@ -101,10 +101,10 @@ export class PagingDataModelMapper {
             const contentPageable = data.pageable;
             if(contentPageable) {
                 const pageNumber = contentPageable.pageNumber;
-                if(pageNumber && !isNaN(pageNumber) && pageNumber >= 0) {
+                if(pageNumber && !isNaN(pageNumber)) {
                     return pageNumber
                 } else {
-                    console.warn("Content page number is null or not a number or not non-negative", pageNumber);
+                    console.warn("Content page is null or not a number", pageNumber);
                 }
             } else {
                 console.warn("Content pageable is null", contentPageable)
@@ -118,14 +118,14 @@ export class PagingDataModelMapper {
          * @param data Response data from service
          * @returns {*|number|number}
          */
-        const extractedSize = (data) => {
+        const extractedRows = (data) => {
             const contentPageable = data.pageable;
             if(contentPageable) {
-                const pageSize = contentPageable.pageNumber;
-                if(pageSize && !isNaN(pageSize) && pageSize >= 0) {
+                const pageSize = contentPageable.pageSize;
+                if(pageSize && !isNaN(pageSize)) {
                     return pageSize
                 } else {
-                    console.warn("Content page size is null or not a number or not non-negative", pageSize);
+                    console.warn("Content rows is null or not a number", pageSize);
                 }
             } else {
                 console.warn("Content pageable is null", contentPageable)
@@ -138,7 +138,7 @@ export class PagingDataModelMapper {
         dataModel.content   = extractedContent(data);
         dataModel.total     = extractedTotal(data);
         dataModel.page      = extractedPage(data);
-        dataModel.size      = extractedSize(data);
+        dataModel.rows      = extractedRows(data);
         return dataModel;
     }
 }

@@ -412,7 +412,7 @@ export class IngredientType extends Component {
                                 defaultValue=""
                                 placeholder="Unit"
                                 options={this.state.units}
-                                disabled={this.state.filter.unitType === "" ? "true" : ""}
+                                disabled={this.state.filter.unitType === ""}
                                 onChange={(e) => this.setState({ filter: { ...this.state.filter, unit: e.target.value } })} />
                         </div>
                     </div>

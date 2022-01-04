@@ -63,10 +63,6 @@ export class IngredientHistory extends Component {
             .getPage(ingredientId, filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => {
-                console.log(data)
-                return data
-            })
             .then(data => this.setState({ ...this.state, ...data}));
     };
 
