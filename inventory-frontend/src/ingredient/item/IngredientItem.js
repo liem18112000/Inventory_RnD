@@ -16,13 +16,14 @@ import moment from 'moment';
 import { IngredientItemForm } from './IngredientItemForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
+import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 
 class IngredientItem extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            ingredient: [],
+            content: [],
             selectedUnit: null,
             selectedUnitType: null,
             filter: {
@@ -44,38 +45,22 @@ class IngredientItem extends Component {
             loading: false
         };
         this.ingredientService = new IngredientService();
+        this.mapper = new PagingDataModelMapper();
     }
 
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageItems();
-        this.ingredientService.getUnitTypes(this.state.isMock).then(ut => this.setState({
-            unitTypes: ut
-        }));
     };
 
     getPageItems = () => {
+        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const ingredientId = this.props.match.params.id;
         this.ingredientService
-            .getPageItem(
-                this.props.match.params.id,
-                this.state.filter,
-                this.state.page,
-                this.state.rows,
-                this.state.sortField,
-                this.state.sortOrder,
-                this.state.isMock
-            )
+            .getPageItem(ingredientId, filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
-            .then(data => this.setState(
-                {
-                    ingredient: data.content,
-                    loading: false,
-                    total: data.totalElements,
-                    page: data.pageable.pageNumber,
-                    rows: data.pageable.pageSize
-                }
-            )
-            );
+            .then(data => this.mapper.toModel(data))
+            .then(data => this.setState({ ...this.state, ...data}));
     };
 
     setFilter = (filter) => {
@@ -379,7 +364,7 @@ class IngredientItem extends Component {
                 <DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.ingredient}
+                    value={this.state.content}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"

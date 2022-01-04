@@ -37,7 +37,6 @@ export class IngredientTypeForm extends Component {
             createTitle: 'New Ingredient Detail'
         }
         this.ingredientService = new IngredientService();
-        console.log(props);
     }
 
     /**
@@ -79,7 +78,6 @@ export class IngredientTypeForm extends Component {
                 code: ''
             },
             id: null,
-            // unitType: null,
             visible: true,
             formHeader: this.state.createTitle
         })
@@ -88,6 +86,7 @@ export class IngredientTypeForm extends Component {
     /**
      * Get updated ingredient category and set to update information state
      * @param id    Ingredient Category id
+     * @param parentId Ingredient category id
      */
     setUpdateInformation(id, parentId) {
         this.ingredientService.getByID(id, this.state.isMock).then(data => {
@@ -103,7 +102,6 @@ export class IngredientTypeForm extends Component {
                     code: data ? data.code : ''
                 },
                 id: data ? data.id : null,
-                // unitType: data ? data.unitType : null,
                 visible: true,
                 formHeader: this.state.editTitle
             }, () => {
@@ -250,7 +248,6 @@ export class IngredientTypeForm extends Component {
 
     /**
      * Retrieve response after submit form
-     * @returns {Promise<AxiosResponse<*>|void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getResponseAfterSubmit() {
         if (this.state.formHeader === this.state.editTitle) {

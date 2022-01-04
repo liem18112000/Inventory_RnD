@@ -263,7 +263,6 @@ export class IngredientItemForm extends Component {
 
     /**
      * Retrieve response after submit form
-     * @returns {Promise<AxiosResponse<*>|void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getResponseAfterSubmit() {
         if (this.state.formHeader === this.state.editTitle) {
