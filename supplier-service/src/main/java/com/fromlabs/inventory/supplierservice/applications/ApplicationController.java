@@ -7,6 +7,7 @@ package com.fromlabs.inventory.supplierservice.applications;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface ApplicationController {
@@ -148,6 +149,28 @@ public interface ApplicationController {
     ResponseEntity<?> getPageProvidableMaterialWithFilter(
             Long tenantId,
             ProvidableMaterialPageRequest request
+    );
+
+    /**
+     * Save material with request
+     * @param tenantId  Tenant ID
+     * @param request   ProvidableMaterialRequest
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> saveProvidableMaterial(
+            Long tenantId,
+            ProvidableMaterialRequest request
+    );
+
+    /**
+     * Update material with request
+     * @param tenantId  Tenant ID
+     * @param request   ProvidableMaterialRequest
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> updateProvidableMaterial(
+            Long tenantId,
+            ProvidableMaterialRequest request
     );
 
     //</editor-fold>

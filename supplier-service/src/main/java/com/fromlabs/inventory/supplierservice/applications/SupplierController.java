@@ -7,6 +7,7 @@ import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPag
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import com.fromlabs.inventory.supplierservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -281,6 +282,7 @@ public class SupplierController implements ApplicationController {
     public ResponseEntity<?> getProvidableMaterialById(
             @PathVariable(ID) Long id
     ) {
+        log.info(path(HttpMethod.GET, "providable-material/".concat(String.valueOf(id))));
         return (ResponseEntity<?>) buildGetProvidableMaterialById(id, providableMaterialService, ingredientClient).run();
     }
 
@@ -294,6 +296,7 @@ public class SupplierController implements ApplicationController {
     public ResponseEntity<?> getAllProvidableMaterialByTenantId(
             @RequestHeader(TENANT_ID) Long tenantId
     ) {
+        log.info(path(HttpMethod.GET, "providable-material/all"));
         return (ResponseEntity<?>) buildGetAllProvidableMaterialByTenantId(tenantId, providableMaterialService, ingredientClient).run();
     }
 
@@ -304,10 +307,44 @@ public class SupplierController implements ApplicationController {
      * @param request  ProvidableMaterialPageRequest
      * @return ResponseEntity
      */
+    @PostMapping("providable-material/page")
     public ResponseEntity<?> getPageProvidableMaterialWithFilter(
-            Long                            tenantId,
-            ProvidableMaterialPageRequest   request
+            @RequestHeader(TENANT_ID) Long               tenantId,
+            @RequestBody ProvidableMaterialPageRequest   request
     ) {
+        log.info(path(HttpMethod.POST, "providable-material/page"));
+        return null;
+    }
+
+    /**
+     * Save material with request
+     *
+     * @param tenantId Tenant ID
+     * @param request  ProvidableMaterialRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("providable-material")
+    public ResponseEntity<?> saveProvidableMaterial(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ProvidableMaterialRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "providable-material"));
+        return null;
+    }
+
+    /**
+     * Update material with request
+     *
+     * @param tenantId Tenant ID
+     * @param request  ProvidableMaterialRequest
+     * @return ResponseEntity
+     */
+    @PutMapping("providable-material")
+    public ResponseEntity<?> updateProvidableMaterial(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ProvidableMaterialRequest request
+    ) {
+        log.info(path(HttpMethod.PUT, "providable-material"));
         return null;
     }
 
