@@ -57,7 +57,7 @@ export class IngredientItemForm extends Component {
     action = (id, isSave = true, isBatch = true) => {
         if (id != null) {
             this.setUpdateInformation(id);
-        } else if(isSave) {
+        } else if (isSave) {
             if (isBatch) {
                 this.setSaveBatch();
             } else {
@@ -232,21 +232,8 @@ export class IngredientItemForm extends Component {
         });
 
         sleep(500).then(() => {
-            this.setState({
-                ...this.state,
-                data: {
-                    ...this.state.data,
-                    id: null,
-                    name: '',
-                    tenantId: '',
-                    description: '',
-                    code: '',
-                    expiredAt: '',
-                }
-            }, () => {
-                this.props.refreshData();
-                this.onHide();
-            })
+            this.props.refreshData();
+            this.onHide();
         })
     }
 
@@ -281,7 +268,21 @@ export class IngredientItemForm extends Component {
     * Call on form close
     */
     onHide = () => {
-        this.setState({ visible: false, errors: {} });
+        // this.setState({ visible: false, errors: {} });
+        this.setState({
+            ...this.state,
+            data: {
+                ...this.state.data,
+                id: null,
+                name: '',
+                tenantId: '',
+                description: '',
+                code: '',
+                expiredAt: '',
+            },
+            visible: false,
+            errors: {}
+        })
     }
 
     /**
@@ -309,11 +310,11 @@ export class IngredientItemForm extends Component {
                     </div>
                     <div className="p-col-12">
                         <label>* Unit Type </label>
-                        <InputText value={this.state.data.unitType} disabled={true}/>
+                        <InputText value={this.state.data.unitType} disabled={true} />
                     </div>
                     <div className="p-col-12">
                         <label>* Unit </label>
-                        <InputText value={this.state.data.unit} disabled={true}/>
+                        <InputText value={this.state.data.unit} disabled={true} />
                     </div>
                     <div className="p-field p-col-12">
                         <label>* Expired At</label>
