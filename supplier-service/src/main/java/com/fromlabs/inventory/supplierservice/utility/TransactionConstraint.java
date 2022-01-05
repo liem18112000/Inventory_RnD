@@ -7,7 +7,7 @@ package com.fromlabs.inventory.supplierservice.utility;
 import com.fromlabs.inventory.supplierservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.supplierservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 

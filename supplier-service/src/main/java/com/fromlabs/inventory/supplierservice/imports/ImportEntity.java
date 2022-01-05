@@ -37,7 +37,7 @@ public class ImportEntity extends BaseEntityWithCreatedAt<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     @ToString.Exclude
-    protected SupplierEntity ingredient;
+    protected SupplierEntity supplier;
 
     @Override
     public boolean equals(Object o) {

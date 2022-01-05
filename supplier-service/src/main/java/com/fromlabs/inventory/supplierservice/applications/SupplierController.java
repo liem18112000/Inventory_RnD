@@ -3,9 +3,10 @@ package com.fromlabs.inventory.supplierservice.applications;
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
-import com.fromlabs.inventory.supplierservice.supplier.beans.*;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import com.fromlabs.inventory.supplierservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.fromlabs.inventory.supplierservice.config.AppConfig.*;
-import static com.fromlabs.inventory.supplierservice.config.versions.ApiV1.*;
+import static com.fromlabs.inventory.supplierservice.config.ApiV1.*;
 import static com.fromlabs.inventory.supplierservice.utility.TemplateProcessDirector.*;
 
 /**
@@ -89,7 +90,7 @@ public class SupplierController implements ApplicationController {
     @PostMapping("group/page")
     public ResponseEntity<?> getPageSupplierGroup(
             @RequestHeader(TENANT_ID) Long      tenantId,
-            @RequestBody SupplierPageRequest    request
+            @RequestBody SupplierPageRequest request
     ) {
         log.info(path(HttpMethod.POST, "category/page"));
         return (ResponseEntity<?>) buildGetPageSupplierGroupTemplateProcess(tenantId, request, supplierService).run();
@@ -228,7 +229,7 @@ public class SupplierController implements ApplicationController {
     @PostMapping
     public ResponseEntity<?> saveSupplier(
             @RequestHeader(TENANT_ID) Long  tenantId,
-            @RequestBody SupplierRequest    request
+            @RequestBody SupplierRequest request
     ) {
         log.info(path(HttpMethod.POST, ""));
         return (ResponseEntity<?>) buildSaveSupplierTemplateProcess(tenantId, request, supplierService).run();

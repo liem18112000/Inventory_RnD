@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.supplierservice.config.versions;
+package com.fromlabs.inventory.supplierservice.config;
 
 public class ApiV1{
 

@@ -4,9 +4,9 @@
 
 package com.fromlabs.inventory.supplierservice.applications;
 
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierPageRequest;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierRequest;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface ApplicationController {

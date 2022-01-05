@@ -2,9 +2,9 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.inventoryservice.common.service;
+package com.fromlabs.inventory.supplierservice.common.service;
 
-import com.fromlabs.inventory.inventoryservice.common.entity.BaseEntity;
+import com.fromlabs.inventory.supplierservice.common.entity.BaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

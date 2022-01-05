@@ -6,8 +6,7 @@ package com.fromlabs.inventory.supplierservice.supplier;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fromlabs.inventory.supplierservice.entity.SupplierBaseEntity;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierPageRequest;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,6 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.util.NumberUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -25,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.fromlabs.inventory.supplierservice.common.factory.FactoryCreateType.*;
-import static com.fromlabs.inventory.supplierservice.supplier.factory.SupplierEntityFactory.create;
 import static java.util.Objects.nonNull;
 
 @Entity
@@ -59,50 +55,16 @@ public class SupplierEntity extends SupplierBaseEntity {
     private List<SupplierEntity> children = new ArrayList<>();
 
     /**
-     * Convert request to entity
-     * @param request   SupplierRequest
-     * @return          SupplierEntity
-     */
-    public static SupplierEntity from(SupplierRequest request) {
-        var entity = create(DEFAULT);
-        entity.setClientId(request.getTenantId());
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setGroup(Objects.isNull(request.getParentId()));
-        entity.setCreateAt(request.getCreatedAt());
-        return entity;
-    }
-
-    /**
-     * Convert request to entity
-     * @param request   SupplierRequest
-     * @return          SupplierEntity
-     */
-    public static SupplierEntity from(SupplierPageRequest request) {
-        var entity = create(EMPTY);
-        entity.setClientId(request.getTenantId());
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setGroup(Objects.isNull(request.getParentId()) || request.getParentId() <= 0);
-        entity.setCreateAt(request.getCreateAt());
-        entity.setUpdateAt(request.getUpdateAt());
-        return entity;
-    }
-
-    /**
      * Update information for an existing entity
      * @param request   SupplierRequest
-     * @param entity    SupplierEntity
      * @return          SupplierEntity
      */
-    public static SupplierEntity update(SupplierRequest request, SupplierEntity entity) {
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setDescription(request.getDescription());
-        entity.setUpdateAt(request.getCreatedAt());
-        return entity;
+    public SupplierEntity update(SupplierRequest request) {
+        this.setName(request.getName());
+        this.setCode(request.getCode());
+        this.setDescription(request.getDescription());
+        this.setUpdateAt(request.getCreatedAt());
+        return this;
     }
 
     /**

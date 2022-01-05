@@ -7,9 +7,10 @@ package com.fromlabs.inventory.supplierservice.utility;
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.common.template.*;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
-import com.fromlabs.inventory.supplierservice.supplier.beans.*;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import lombok.experimental.UtilityClass;
 
 import static com.fromlabs.inventory.supplierservice.config.AppConfig.*;

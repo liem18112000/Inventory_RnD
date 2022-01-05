@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.supplierservice.supplier.providable_material.beans;
+package com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request;
 
 import lombok.Data;
 

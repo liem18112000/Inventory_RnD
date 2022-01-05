@@ -1,7 +1,7 @@
 package com.fromlabs.inventory.supplierservice.utility;
 
 import com.fromlabs.inventory.supplierservice.common.validator.RequestValidator;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 

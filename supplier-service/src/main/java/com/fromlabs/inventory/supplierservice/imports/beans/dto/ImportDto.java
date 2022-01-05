@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Liem Doan
  */
 
-package com.fromlabs.inventory.supplierservice.imports.beans;
+package com.fromlabs.inventory.supplierservice.imports.beans.dto;
 
 import com.fromlabs.inventory.supplierservice.common.dto.BaseDto;
 import lombok.Builder;

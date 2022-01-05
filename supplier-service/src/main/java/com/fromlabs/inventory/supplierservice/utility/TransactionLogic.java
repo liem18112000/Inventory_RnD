@@ -3,15 +3,16 @@ package com.fromlabs.inventory.supplierservice.utility;
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.supplierservice.common.entity.BaseEntity;
-import com.fromlabs.inventory.supplierservice.common.exception.FailTransactionException;
 import com.fromlabs.inventory.supplierservice.common.exception.ObjectNotFoundException;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierDto;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierPageRequest;
-import com.fromlabs.inventory.supplierservice.supplier.beans.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.dto.SupplierDto;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.mapper.SupplierMapper;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.ProvidableMaterialDto;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.dto.ProvidableMaterialDto;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.mapper.ProvidableMaterialMapper;
 import com.fromlabs.inventory.supplierservice.supplier.specification.SupplierSpecification;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -22,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.InetAddress;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.*;
@@ -72,7 +72,7 @@ public class TransactionLogic {
         final var supplier = supplierService.getById(id);
 
         // Convert entity to DTO, wrap it in OK status and return it
-        return ok(SupplierDto.from(supplier));
+        return ok(SupplierMapper.toDto(supplier));
     }
 
     /**
@@ -103,7 +103,7 @@ public class TransactionLogic {
     private SupplierDto convertEntityToDTO(
             SupplierEntity supplier
     ) {
-        return isNull(supplier) ? null : SupplierDto.from(supplier);
+        return isNull(supplier) ? null : SupplierMapper.toDto(supplier);
     }
 
     /**
@@ -125,7 +125,7 @@ public class TransactionLogic {
         final var suppliers = supplierService.get(clientId, name);
 
         // Convert list of entity to DTO, wrap it in OK response and return it
-        return ok(SupplierDto.from(suppliers));
+        return ok(SupplierMapper.toDto(suppliers));
     }
 
     /**
@@ -238,7 +238,7 @@ public class TransactionLogic {
 
         // Get filter entity and parent entity
         final var parent = getSupplierParentById(request.getParentId(), supplierService);
-        final var filterEntity = SupplierEntity.from(request);
+        final var filterEntity = SupplierMapper.toEntity(request);
 
         // Get page of entity from filter entity
         final var entityPage = supplierService.getPage(
@@ -248,7 +248,7 @@ public class TransactionLogic {
                 request.getPageable());
 
         // Convert page of entity to page of DTO, wrap it in OK response and return it
-        return ok(SupplierDto.from(entityPage));
+        return ok(SupplierMapper.toDto(entityPage));
     }
 
     /**
@@ -267,7 +267,7 @@ public class TransactionLogic {
 
         // Get filter entity and parent entity
         final var parent = getSupplierParentById(request.getParentId(), supplierService);
-        final var filterEntity = SupplierEntity.from(request);
+        final var filterEntity = SupplierMapper.toEntity(request);
 
         // Get page of entity from filter entity
         final var suppliers = supplierService.getAll(
@@ -275,7 +275,7 @@ public class TransactionLogic {
                 SupplierSpecification.filter(filterEntity, parent));
 
         // Convert list of entity to list of DTO, wrap it in OK response and return it
-        return ok(SupplierDto.from(suppliers));
+        return ok(SupplierMapper.toDto(suppliers));
     }
 
     /**
@@ -307,7 +307,7 @@ public class TransactionLogic {
         assert nonNull(supplierService);
 
         // Convert request to saved entity
-        final var supplier      = SupplierEntity.from(request);
+        final var supplier      = SupplierMapper.toEntity(request);
         final var savedSupplier = supplierService.save(supplier);
 
         // Save supplier with CREATED status
@@ -362,7 +362,7 @@ public class TransactionLogic {
         if(isNull(material)) throw new ObjectNotFoundException("Providable material is not found by id : {}" + id);
 
         // Convert entity to DTO and return it
-        return ProvidableMaterialDto.from(material, ingredientClient);
+        return ProvidableMaterialMapper.toDto(material, ingredientClient);
     }
 
     /**
@@ -384,7 +384,7 @@ public class TransactionLogic {
         final var materials = service.getAll(tenantId);
 
         // Convert entity to DTO and return it
-        return ProvidableMaterialDto.from(materials, ingredientClient);
+        return ProvidableMaterialMapper.toDto(materials, ingredientClient);
     }
 
     //</editor-fold>
