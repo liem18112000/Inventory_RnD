@@ -15,13 +15,14 @@ import moment from 'moment';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import InventoryTrackService from '../../service/InventoryTrackService';
+import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 
 export class IngredientHistory extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            ingredientHistory: [],
+            content: [],
             // --paginator state--
             page: 0,
             rows: 10,
@@ -45,6 +46,7 @@ export class IngredientHistory extends Component {
             loading: false
         };
         this.inventoryTrackService = new InventoryTrackService();
+        this.mapper = new PagingDataModelMapper();
     }
 
     componentDidMount() {
@@ -55,28 +57,13 @@ export class IngredientHistory extends Component {
     };
 
     getPages = () => {
+        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const ingredientId = this.props.match.params.id;
         this.inventoryTrackService
-            .getPage(
-                this.props.match.params.id,
-                this.state.filter,
-                this.state.page,
-                this.state.rows,
-                this.state.sortField,
-                this.state.sortOrder,
-                this.state.isMock,
-            )
+            .getPage(ingredientId, filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
-            .then(data => this.setState(
-                {
-                    ingredientHistory: data.content,
-                    loading: false,
-                    total: data.totalElements,
-                    page: data.pageable.pageNumber,
-                    rows: data.pageable.pageSize
-                }
-            ))
-            .then(() => { console.log(this.state.ingredientHistory); })
-            ;
+            .then(data => this.mapper.toModel(data))
+            .then(data => this.setState({ ...this.state, ...data}));
     };
 
     /**
@@ -382,7 +369,7 @@ export class IngredientHistory extends Component {
                 <DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.ingredientHistory}
+                    value={this.state.content}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { baseRecipeAPI, TENANT_ID } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
+import {FilterRequestMapper} from "../core/models/mapper/ModelMapper";
 
 const groupJson = {
     "content": [
@@ -222,8 +223,7 @@ const childJson = {
     "empty": false
 }
 
-var detailJson =
-{
+const detailJson = {
     "content": [
         {
             "id": 1,
@@ -382,6 +382,13 @@ const BaseURL = baseRecipeAPI()
 export class RecipeService {
 
     /**
+     * Default constructor
+     */
+    constructor() {
+        this.mapper = new FilterRequestMapper();
+    }
+
+    /**
      * Get page of recipe group by filter
      * @param filter        Filter on name, description, code and updateAt
      * @param page          Page
@@ -389,30 +396,20 @@ export class RecipeService {
      * @param sortField     Sorting field (default field is id)
      * @param sortOrder     Sorting order (default order is desc)
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, children: [{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}], tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, children: [{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}], tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, children: [{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}], tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPageGroup(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve(groupJson);
         }
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
 
-        // fetch ingredient category data from api 
-        return axios.post(`${BaseURL}/group/page`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "updatedAt": !filter ? "" : filter.updatedAt,
+        const url       = `${BaseURL}/group/page`;
+        const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: getHeaderByGatewayStatus({})
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        // Fetch recipe group data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -424,34 +421,21 @@ export class RecipeService {
      * @param sortField     Sorting field (default field is id)
      * @param sortOrder     Sorting order (default order is desc)
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPageChild(parentId, filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve(childJson);
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const url       = `${BaseURL}/child/page`;
+        const request   = { ...filter, parentId: parentId };
+        const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        // fetch ingredient type data from api 
-        return axios.post(`${BaseURL}/child/page`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "updatedAt": !filter ? "" : filter.createAt,
-            "parentName": !filter ? "" : filter.parentName,
-
-            "parentId": parentId,
-
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: getHeaderByGatewayStatus({})
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        // fetch recipe child data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -463,39 +447,27 @@ export class RecipeService {
      * @param sortField     Sorting field (default field is id)
      * @param sortOrder     Sorting order (default order is desc)
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{code: string, ingredient: {unitType: string, unit: string, code: string, name: string, description: string, id: number}, quantity: number, tenantId: number, name: string, accessAt: string, recipe: {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, description: string, updateAt: string, id: number, activated: boolean}, {code: string, ingredient: {unitType: string, unit: string, code: string, name: string, description: string, id: number}, quantity: number, tenantId: number, name: string, accessAt: string, recipe: {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, description: string, updateAt: string, id: number, activated: boolean}, {code: string, ingredient: {unitType: string, unit: string, code: string, name: string, description: string, id: number}, quantity: number, tenantId: number, name: string, accessAt: string, recipe: {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, description: string, updateAt: string, id: number, activated: boolean}, {code: string, ingredient: {unitType: string, unit: string, code: string, name: string, description: string, id: number}, quantity: number, tenantId: number, name: string, accessAt: string, recipe: {code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}, description: string, updateAt: string, id: number, activated: boolean}], first: boolean, totalElements: number, empty: boolean}>|Promise<AxiosResponse<any> | void>}
      */
     getPageDetail(recipeId, filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve(detailJson);
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const url       = `${BaseURL}/detail/page`;
+        const request   = { ...filter, recipeId: recipeId };
+        const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        // fetch ingredient type data from api 
-        return axios.post(`${BaseURL}/detail/page`, {
-            "recipeId": recipeId,
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "updatedAt": !filter ? "" : filter.updatedAt,
-
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: getHeaderByGatewayStatus({})
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        // fetch recipe detail data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
      * Get recipe by id
      * @param id            Recipe id
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getByID(id, isMock = true) {
         if (isMock) {
@@ -513,7 +485,6 @@ export class RecipeService {
 /**
      * Get recipe group by id
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
      getRecipeGroupSimple(isMock = true) {
         if (isMock) {
@@ -532,7 +503,6 @@ export class RecipeService {
      * Get recipe detail by id
      * @param id            Recipe detail id
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     getDetailByID(id, isMock = true) {
         if (isMock) {
@@ -551,7 +521,6 @@ export class RecipeService {
      * Update recipe (both group and child)
      * @param recipe        Recipe need to be updated
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     updateRecipe(recipe, isMock = true) {
         if (isMock) {
@@ -570,7 +539,6 @@ export class RecipeService {
      * Save recipe (both group and child)
      * @param recipe        Recipe need to be saved
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>}
      */
     saveRecipe(recipe, isMock = true) {
         if (isMock) {
@@ -616,7 +584,6 @@ export class RecipeService {
      * Delete recipe by id
      * @param id            Recipe ID
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<{code: string, tenantId: number, name: string, accessAt: string, description: string, updateAt: string, id: number, createAt: string, activated: boolean}>|Promise<AxiosResponse<any>>}
      */
     deleteRecipe(id, isMock = true) {
         if (isMock) {
@@ -634,24 +601,14 @@ export class RecipeService {
             return Promise.resolve(childJson);
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const url       = `${BaseURL}/child/page/all`;
+        const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        // fetch ingredient type data from api 
-        return axios.post(`${BaseURL}/child/page/all`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "updatedAt": !filter ? "" : filter.createAt,
-            "parentName": !filter ? "" : filter.parentName,
+        // Fetch all recipe child data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
 
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: getHeaderByGatewayStatus({})
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
     }
 }

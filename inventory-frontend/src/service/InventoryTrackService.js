@@ -2,7 +2,8 @@
 import axios from 'axios'
 import { baseIngredientAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
-import {isNumber} from "../core/utility/ComponentUtility";
+import { isNumber } from "../core/utility/ComponentUtility";
+import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 const BaseURL = baseIngredientAPI()
 
 
@@ -418,10 +419,16 @@ const mockStatus =
 export default class InventoryTrackService {
 
     /**
+     * Default constructor
+     */
+    constructor() {
+        this.mapper = new FilterRequestMapper();
+    }
+
+    /**
      * Get ingredient history by id
      * @param id
      * @param isMock
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{extraInformation: {unitType: string, unit: string, clientId: number, code: string, actorRole: string, name: string, description: string, actorName: string, id: number, minimumQuantity: number, maximumQuantity: number}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}>}
      */
     getById(id, isMock = true) {
 
@@ -444,7 +451,6 @@ export default class InventoryTrackService {
      *
      * @param ingredientId  Ingredient detail id
      * @param isMock
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<[{extraInformation: {unitType: string, unit: string, clientId: number, code: string, actorRole: string, name: string, description: string, actorName: string, id: number, minimumQuantity: number, maximumQuantity: number}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}, {extraInformation: {unitType: string, unit: string, clientId: number, code: string, actorRole: string, name: string, description: string, actorName: string, id: number, minimumQuantity: number, maximumQuantity: number}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}, {extraInformation: {unitType: string, unit: string, clientId: number, code: string, actorRole: string, name: string, description: string, actorName: string, id: number, minimumQuantity: number, maximumQuantity: number}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}]>}
      */
     getAll(ingredientId, isMock = true) {
 
@@ -472,7 +478,6 @@ export default class InventoryTrackService {
      * @param sortField         Sorting field (default field is id)
      * @param sortOrder         Sorting order (default order is desc)
      * @param isMock            Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{extraInformation: {unitType: string, ingredientId: number, expiredAt: string, unit: string, clientId: number, importId: number, code: string, actorRole: string, name: string, description: string, actorName: string}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}, {extraInformation: {codes: string[], clientId: number, code: string, quantity: number, actorRole: string, description: string, actorName: string, unitType: string, ingredientId: number, expiredAt: string, unit: string, importId: number, name: string}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}, {extraInformation: {clientId: number, code: string, actorRole: string, description: string, updateAt: string, actorName: string, unitType: string, ingredientId: number, expiredAt: string, unit: string, importId: number, name: string, id: number}, clientId: number, ingredient: {unitType: string, unit: string, clientId: number, code: string, name: string, description: string, updateAt: string, id: number, createAt: string}, actorRole: string, name: string, accessAt: string, description: string, updateAt: string, actorName: string, id: number, event: {name: string, message: string, status: {name: string, message: string}}, trackTimestamp: string}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPage(ingredientId, filter, page, rows, sortField, sortOrder, isMock = true) {
 
@@ -480,26 +485,12 @@ export default class InventoryTrackService {
             return Promise.resolve(mockPageSample);
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
+        const url       = `${BaseURL}/history/page`;
+        const request   = { ...filter, ingredientId: ingredientId };
+        const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        return axios
-            .post(`${BaseURL}/history/page`, {
-                "ingredientId": ingredientId,
-                "name": !filter ? "" : filter.name,
-                "description": !filter ? "" : filter.description,
-                "actorName": !filter ? "" : filter.actorName,
-                "actorRole": !filter ? "" : filter.actorRole,
-                "event": !filter ? "" : filter.event,
-                "trackTimestamp": !filter ? "" : filter.trackTimestamp,
-                "status": !filter ? "" : filter.status,
-
-                "page": page ? page : 0,
-                "size": rows ? rows : 10,
-                "sort": sort
-            }, {
-                headers: getHeaderByGatewayStatus({})
-            })
+        return axios.post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

@@ -18,15 +18,14 @@ import { IngredientTypeForm } from './IngredientTypeForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { confirmDialog } from 'primereact/confirmdialog';
+import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 
 export class IngredientType extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            ingredient: [],
-            selectedUnit: null,
-            selectedUnitType: null,
+            content: [],
             // --paginator state--
             page: 0,
             rows: 10,
@@ -47,39 +46,26 @@ export class IngredientType extends Component {
         };
 
         this.ingredientService = new IngredientService();
-        // console.log(props.location.state);
+        this.mapper = new PagingDataModelMapper();
     }
 
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageTypes();
-        this.ingredientService.getUnitTypes(this.state.isMock).then(ut => this.setState({
-            unitTypes: ut
-        }));
+        this.ingredientService
+            .getUnitTypes(this.state.isMock)
+            .then(ut => this.setState({ unitTypes: ut }));
     };
 
     getPageTypes = () => {
+        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const parentId = this.props.match.params.id;
         this.ingredientService.syncInventory().then(() => {
             this.ingredientService
-                .getPageType(
-                    this.props.match.params.id,
-                    this.state.filter,
-                    this.state.page,
-                    this.state.rows,
-                    this.state.sortField,
-                    this.state.sortOrder,
-                    this.state.isMock
-                )
+                .getPageType(parentId, filter, page, rows, sortField, sortOrder, isMock)
                 .then(data => handleGetPage(data, this.toast))
-                .then(data => this.setState(
-                    {
-                        ingredient: data.content,
-                        loading: false,
-                        total: data.totalElements,
-                        page: data.pageable.pageNumber,
-                        rows: data.pageable.pageSize
-                    })
-                );
+                .then(data => this.mapper.toModel(data))
+                .then(data => this.setState({ ...this.state, ...data}));
         })
 
     };
@@ -125,7 +111,7 @@ export class IngredientType extends Component {
     }
 
     /**
-     * Confim dialog for delete function
+     * Confirm dialog for delete function
      * @param {*} rowData 
      */
     confirmDelete(rowData) {
@@ -426,7 +412,7 @@ export class IngredientType extends Component {
                                 defaultValue=""
                                 placeholder="Unit"
                                 options={this.state.units}
-                                disabled={this.state.filter.unitType === "" ? "true" : ""}
+                                disabled={this.state.filter.unitType === ""}
                                 onChange={(e) => this.setState({ filter: { ...this.state.filter, unit: e.target.value } })} />
                         </div>
                     </div>
@@ -453,7 +439,7 @@ export class IngredientType extends Component {
                 <DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.ingredient}
+                    value={this.state.content}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"

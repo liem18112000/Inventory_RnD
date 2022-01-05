@@ -2,186 +2,16 @@ import axios from 'axios'
 import { baseIngredientAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
-
-var categoryJson = {
-    "content": [
-        {
-            "id": 28,
-            "clientId": 1,
-            "name": "Mirinda",
-            "code": "88331188",
-            "description": "Mirinda",
-            "unit": "bottle",
-            "unitType": "whole",
-            "quantity": 0,
-            "createAt": "2021-10-07T14:16:52.357651500Z",
-            "updateAt": "2021-10-07T14:16:52.357651500Z"
-        },
-        {
-            "id": 24,
-            "clientId": 1,
-            "name": "Pepsi",
-            "code": "99331133",
-            "description": "Pepsi",
-            "unit": "can",
-            "unitType": "whole",
-            "quantity": 4,
-            "createAt": "2021-10-07T07:00:36.379957900Z",
-            "updateAt": "2021-10-07T07:00:36.380955400Z"
-        },
-        {
-            "id": 23,
-            "clientId": 1,
-            "name": "Coca cola",
-            "code": "00331133",
-            "description": "Coca cola",
-            "unit": "can",
-            "unitType": "whole",
-            "quantity": 3,
-            "createAt": "2021-10-07T02:18:36.061655500Z",
-            "updateAt": "2021-10-07T02:18:36.061655500Z"
-        },
-        {
-            "id": 3,
-            "clientId": 1,
-            "name": "Queen land Goat milk",
-            "code": "QLGM",
-            "description": "Queen land Goat milk",
-            "unit": "bottle",
-            "unitType": "whole",
-            "quantity": 3,
-            "createAt": "2021-10-03 22:27:07",
-            "updateAt": "2021-10-05T15:22:04.989878200Z"
-        },
-        {
-            "id": 2,
-            "clientId": 1,
-            "name": "New Zealand Cow Milk",
-            "code": "NZCM",
-            "description": "New Zealand Cow Milk",
-            "unit": "bottle",
-            "unitType": "whole",
-            "quantity": 4,
-            "createAt": "2021-10-03 22:27:07",
-            "updateAt": "2021-10-05T15:25:04.225930500Z"
-        }
-    ],
-    "pageable": {
-        "sort": {
-            "empty": false,
-            "sorted": true,
-            "unsorted": false
-        },
-        "offset": 0,
-        "pageNumber": 0,
-        "pageSize": 10,
-        "unpaged": false,
-        "paged": true
-    },
-    "last": true,
-    "totalElements": 5,
-    "totalPages": 1,
-    "number": 0,
-    "size": 10,
-    "sort": {
-        "empty": false,
-        "sorted": true,
-        "unsorted": false
-    },
-    "first": true,
-    "numberOfElements": 5,
-    "empty": false
-}
-
-var typeJson = {
-    "content": [
-        {
-            "id": 28,
-            "clientId": 1,
-            "name": "Mirinda",
-            "code": "88331188",
-            "description": "Mirinda",
-            "unit": "bottle",
-            "unitType": "whole",
-            "quantity": 0,
-            "createAt": "2021-10-07T14:16:52.357651500Z",
-            "updateAt": "2021-10-07T14:16:52.357651500Z"
-        },
-        {
-            "id": 24,
-            "clientId": 1,
-            "name": "Pepsi",
-            "code": "99331133",
-            "description": "Pepsi",
-            "unit": "can",
-            "unitType": "whole",
-            "quantity": 4,
-            "createAt": "2021-10-07T07:00:36.379957900Z",
-            "updateAt": "2021-10-07T07:00:36.380955400Z"
-        },
-        {
-            "id": 23,
-            "clientId": 1,
-            "name": "Coca cola",
-            "code": "00331133",
-            "description": "Coca cola",
-            "unit": "can",
-            "unitType": "whole",
-            "quantity": 3,
-            "createAt": "2021-10-07T02:18:36.061655500Z",
-            "updateAt": "2021-10-07T02:18:36.061655500Z"
-        },
-        {
-            "id": 3,
-            "clientId": 1,
-            "name": "Queen land Goat milk",
-            "code": "QLGM",
-            "description": "Queen land Goat milk",
-            "unit": "bottle",
-            "unitType": "whole",
-            "quantity": 3,
-            "createAt": "2021-10-03 22:27:07",
-            "updateAt": "2021-10-05T15:22:04.989878200Z"
-        },
-        {
-            "id": 2,
-            "clientId": 1,
-            "name": "New Zealand Cow Milk",
-            "code": "NZCM",
-            "description": "New Zealand Cow Milk",
-            "unit": "bottle",
-            "unitType": "whole",
-            "quantity": 4,
-            "createAt": "2021-10-03 22:27:07",
-            "updateAt": "2021-10-05T15:25:04.225930500Z"
-        }
-    ],
-    "pageable": {
-        "sort": {
-            "empty": false,
-            "sorted": true,
-            "unsorted": false
-        },
-        "offset": 0,
-        "pageNumber": 0,
-        "pageSize": 10,
-        "unpaged": false,
-        "paged": true
-    },
-    "last": true,
-    "totalElements": 5,
-    "totalPages": 1,
-    "number": 0,
-    "size": 10,
-    "sort": {
-        "empty": false,
-        "sorted": true,
-        "unsorted": false
-    },
-    "first": true,
-    "numberOfElements": 5,
-    "empty": false
-}
+import {
+    mockIngredient,
+    mockIngredientItem,
+    mockIngredientLabelValue,
+    mockPageIngredientCategory,
+    mockPageIngredientItem,
+    mockPageIngredientType,
+    mockPageInventory
+} from "../core/models/MockDataModel";
+import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 
 // Ingredient base URL
 const BaseURL = baseIngredientAPI()
@@ -192,6 +22,13 @@ const BaseURL = baseIngredientAPI()
 export class IngredientService {
 
     /**
+     * Default constructor
+     */
+    constructor() {
+        this.mapper = new FilterRequestMapper();
+    }
+
+    /**
      * Get page of category ingredient by filter
      * @param filter        Filter on name, description, code and createAt
      * @param page          Page
@@ -199,37 +36,24 @@ export class IngredientService {
      * @param sortField     Sorting field (default field is id)
      * @param sortOrder     Sorting order (default order is desc)
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPageCategory(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson);
+            return mockPageIngredientCategory();
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers = getHeaderByGatewayStatus({})
+        const url       = `${BaseURL}/category/page`;
+        const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        // fetch ingredient category data from api 
-        return axios.post(`${BaseURL}/category/page`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "createAt": !filter ? "" : filter.createAt,
-
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: headers
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        // Fetch ingredient category data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
      * Sync items in inventory
-     * @returns {Promise<AxiosResponse<any> | void>}
      */
     syncInventory() {
         const headers = getHeaderByGatewayStatus({});
@@ -249,36 +73,21 @@ export class IngredientService {
      * @param sortField     Sorting field (default field is id)
      * @param sortOrder     Sorting order (default order is desc)
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPageType(parentId, filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
-            return Promise.resolve(typeJson);
+            return mockPageIngredientType();
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers = getHeaderByGatewayStatus({})
+        const url       = `${BaseURL}/type/page`;
+        const request   = { ...filter, parentId: parentId };
+        const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
         // fetch ingredient type data from api 
-        return axios.post(`${BaseURL}/type/page`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "createAt": !filter ? "" : filter.createAt,
-            "unitType": !filter ? "" : filter.unitType,
-            "unit": !filter ? "" : filter.unit,
-
-            "parentId": parentId,
-
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: headers
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -290,36 +99,21 @@ export class IngredientService {
      * @param sortField         Sorting field (default field is id)
      * @param sortOrder         Sorting order (default order is desc)
      * @param isMock            Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPageItem(ingredientId, filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
-            return Promise.resolve(typeJson);
+            return mockPageIngredientItem();
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers = getHeaderByGatewayStatus({});
+        const url       = `${BaseURL}/item/page`;
+        const request   = { ...filter, ingredientId: ingredientId };
+        const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        // fetch ingredient type data from api 
-        return axios.post(`${BaseURL}/item/page`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "code": !filter ? "" : filter.code,
-            "createAt": !filter ? "" : filter.createAt,
-            "unitType": !filter ? "" : filter.unitType,
-            "unit": !filter ? "" : filter.unit,
-
-            "ingredientId": ingredientId,
-
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: headers
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        // fetch ingredient item data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -330,35 +124,20 @@ export class IngredientService {
      * @param sortField         Sorting field (default field is id)
      * @param sortOrder         Sorting order (default order is desc)
      * @param isMock            Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{number: number, last: boolean, size: number, numberOfElements: number, totalPages: number, pageable: {paged: boolean, pageNumber: number, offset: number, pageSize: number, unpaged: boolean, sort: {unsorted: boolean, sorted: boolean, empty: boolean}}, sort: {unsorted: boolean, sorted: boolean, empty: boolean}, content: [{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}, {unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}], first: boolean, totalElements: number, empty: boolean}>}
      */
     getPageInventory(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
-            return Promise.resolve(typeJson);
+            return mockPageInventory();
         }
 
-        const order = sortOrder === 1 ? 'asc' : 'desc';
-        const sort = sortField ? `${sortField}, ${order}` : `id, ${order}`;
-        const headers = getHeaderByGatewayStatus({})
+        const url       = `${BaseURL}/inventory/page`;
+        const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const config    = { headers: getHeaderByGatewayStatus() };
 
-        // fetch ingredient type data from api 
-        return axios.post(`${BaseURL}/inventory/page`, {
-            "name": !filter ? "" : filter.name,
-            "description": !filter ? "" : filter.description,
-            "updateAt": !filter ? "" : filter.updateAt,
-            "unitType": !filter ? "" : filter.unitType,
-            "unit": !filter ? "" : filter.unit,
-
-            "ingredientId": !filter ? null : filter.ingredientId,
-
-            "page": page ? page : 0,
-            "size": rows ? rows : 10,
-            "sort": sort
-        }, {
-            headers: headers
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        // fetch ingredient inventory data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -368,7 +147,7 @@ export class IngredientService {
      */
     getInventoryIngredientDetail(isMock = true) {
         if (isMock) {
-            return Promise.resolve(typeJson.content[0]);
+            return mockIngredientLabelValue();
         }
 
         return axios.get(`${BaseURL}/type/simple`, {
@@ -382,11 +161,10 @@ export class IngredientService {
      * Get ingredient (both category and detail) by id
      * @param id        Ingredient id
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}>}
      */
     getByID(id, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockIngredient();
         }
 
         const headers = getHeaderByGatewayStatus({})
@@ -403,11 +181,10 @@ export class IngredientService {
      * Get item by id
      * @param id        Item id
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}>}
      */
     getItemByID(id, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockIngredientItem();
         }
 
         const headers = getHeaderByGatewayStatus({})
@@ -423,7 +200,6 @@ export class IngredientService {
     /**
      * Get all unit type as list
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<string[]>}
      */
     getUnitTypes(isMock = true) {
         if (isMock) {
@@ -443,7 +219,6 @@ export class IngredientService {
      * Get unit of a specific unit type
      * @param unitType      Measurement unit type
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<string[]>}
      */
     getUnit(unitType, isMock = true) {
         if (isMock) {
@@ -463,11 +238,10 @@ export class IngredientService {
      * Save ingredient (both category and type)
      * @param ingredient    Ingredient need to be saved
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}>}
      */
     saveIngredient(ingredient, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockIngredient();
         }
 
         // Add actor role and actor name to request body as default
@@ -485,11 +259,10 @@ export class IngredientService {
      * Save item
      * @param item      Item need to be saved
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}>}
      */
     saveItem(item, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockPageIngredientItem();
         }
 
         // Add actor role and actor name to request body as default
@@ -505,13 +278,12 @@ export class IngredientService {
 
     /**
      * Save item batch
-     * @param item      Item need to be saved  
+     * @param items     Item need to be saved
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns 
      */
     saveItemBatch(items, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockPageIngredientItem();
         }
 
         // Add actor role and actor name to request body as default
@@ -529,11 +301,10 @@ export class IngredientService {
      * Update ingredient (both category and type)
      * @param ingredient    Ingredient need to be updated
      * @param isMock        Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}>}
      */
     updateIngredient(ingredient, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockIngredient();
         }
 
         // Add actor role and actor name to request body as default
@@ -551,11 +322,10 @@ export class IngredientService {
      * Update item
      * @param item      Item need to be updated
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns {Promise<AxiosResponse<any> | void>|Promise<{unitType: string, unit: string, clientId: number, code: string, quantity: number, name: string, description: string, updateAt: string, id: number, createAt: string}>}
      */
     updateItem(item, isMock = true) {
         if (isMock) {
-            return Promise.resolve(categoryJson.content[0]);
+            return mockIngredientItem();
         }
 
         // Add actor role and actor name to request body as default
@@ -573,7 +343,6 @@ export class IngredientService {
      * Delete ingredient by id
      * @param id        Ingredient ID
      * @param isMock    Activate mock if true otherwise use real api call
-     * @returns {Promise<unknown>|Promise<AxiosResponse<any>>}
      */
     deleteIngredient(id, isMock = true) {
         if (isMock) {

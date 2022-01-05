@@ -14,14 +14,14 @@ import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { RecipeChildForm } from '../child/RecipeChildForm';
 import { confirmDialog } from 'primereact/confirmdialog';
+import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 
 export class Recipes extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            recipe: [],
-            selectedStatus: null,
+            content: [],
             // --paginator state--
             page: 0,
             rows: 10,
@@ -39,9 +39,9 @@ export class Recipes extends Component {
             isMock: false,
             loading: false
         };
-        this.history = props.history
+        this.history = props.history;
         this.recipeService = new RecipeService();
-        console.log(props)
+        this.mapper = new PagingDataModelMapper();
     }
 
     componentDidMount() {
@@ -50,25 +50,12 @@ export class Recipes extends Component {
     };
 
     getAllRecipeChildren = () => {
+        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
         this.recipeService
-            .getAllRecipeChild(
-                this.state.filter,
-                this.state.page,
-                this.state.rows,
-                this.state.sortField,
-                this.state.sortOrder,
-                this.state.isMock
-            )
+            .getAllRecipeChild(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
-            .then(data => this.setState(
-                {
-                    recipe: data.content,
-                    loading: false,
-                    total: data.totalElements,
-                    page: data.pageable.pageNumber,
-                    rows: data.pageable.pageSize
-                })
-            );
+            .then(data => this.mapper.toModel(data))
+            .then(data => this.setState({ ...this.state, ...data}));
     }
 
     descriptionBodyTemplate(rowData) {
@@ -101,7 +88,6 @@ export class Recipes extends Component {
     }
 
     actionBodyTemplate(rowData, form) {
-        console.log(rowData.id)
         let items = [
             {
                 label: 'Edit',
@@ -385,7 +371,7 @@ export class Recipes extends Component {
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.recipe}
+                    value={this.state.content}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
