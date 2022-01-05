@@ -161,12 +161,15 @@ export class FilterRequestMapper {
     static DEFAULT_SIZE = 10
 
     /**
-     * Default value for model request sort
+     * Default value for model request sort field
      * @type {string}
      */
     static DEFAULT_SORT_FIELD = "id";
 
-
+    /**
+     * Default value for model request sort order
+     * @type {number}
+     */
     static DEFAULT_SORT_ORDER = 1;
 
     /**
@@ -185,6 +188,12 @@ export class FilterRequestMapper {
         sortField = FilterRequestMapper.DEFAULT_SORT_FIELD,
         sortOrder = FilterRequestMapper.DEFAULT_SORT_ORDER
     ) {
+        /**
+         * Extract to filter request sort
+         * @param extractedField    filter sort field
+         * @param extractedOrder    filter sort order
+         * @returns {string}
+         */
         const extractedSort = (extractedField, extractedOrder) => {
             const order = extractedOrder === 1 ? 'asc' : 'desc';
             return extractedField.length > 0 ? `${extractedField},${order}` : `id,${order}`;
@@ -193,7 +202,7 @@ export class FilterRequestMapper {
         const filterFields  = filter && isJson(filter) ? filter : {};
         const filterPage    = !isNaN(page) && page >= 0 ? page : FilterRequestMapper.DEFAULT_PAGE;
         const filterSize    = !isNaN(size) && size > 0 ? size : FilterRequestMapper.DEFAULT_SIZE;
-        const filterSort = extractedSort(sortField, sortOrder);
+        const filterSort    = extractedSort(sortField, sortOrder);
 
         return {
             ...filterFields,
