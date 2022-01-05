@@ -19,15 +19,8 @@ const users = [
 ]
 
 const findUserWithUsernameAndPassword = (users, username, password) => {
-    return users.filter(user => user.username === username && user.password === password)
-}
-
-export const getToken = (user, isAuthenticate = false) => {
-    return {
-        actorName: isAuthenticate ? user.username   : "unknown",
-        actorRole: isAuthenticate ? user.role       : "unknown",
-        isAuthenticate: isAuthenticate
-    }
+    console.log(username, password)
+    return users.filter(user => user.username == username && user.password == password)
 }
 
 export const authenticate = (rawUsername, rawPassword) => {
@@ -46,7 +39,13 @@ export const authenticate = (rawUsername, rawPassword) => {
 
     const foundUser = findUserWithUsernameAndPassword(users, username, password);
 
-    const isAuthenticate = !foundUser;
+    const isAuthenticate = foundUser.length > 0;
 
-    return getToken(foundUser, isAuthenticate);
+    console.log(isAuthenticate)
+
+    return {
+        actorName: isAuthenticate ? foundUser.username   : "unknown",
+        actorRole: isAuthenticate ? foundUser.role       : "unknown",
+        isAuthenticate: isAuthenticate
+    }
 }

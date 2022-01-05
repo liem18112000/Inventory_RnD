@@ -1,41 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { Checkbox } from 'primereact/checkbox';
 import { Toast } from 'primereact/toast';
-import { useHistory } from 'react-router-dom';
 import '../assets/styles/FormDemo.css';
+import {authenticate} from "../core/security/Authenticate";
 
-export const Login = () => {
-    const [username, setUsername] = useState([]);
-    const [password, setPassword] = useState([]);
+export const Login = ({onAuthenticate}) => {
     const toast = useRef(null);
-    const history = useHistory();
 
     const handleSubmit = e => {
         e.preventDefault();
-        // console.log(e.target.username);
 
         if (!e.target.username.value) {
             toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'Username is required', life: 1000 });
         } else if (!e.target.password.value) {
             toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'Password is required', life: 1000 });
-        } else if (e.target.username.value === "admin" && e.target.password.value === "1234") {
-            toast.current.show({ severity: 'success', summary: 'Success', detail: 'Login Success', life: 1000 });
-            e.target.username.value = "";
-            e.target.password.value = "";
-            history.push("/");
         } else {
-            toast.current.show({ severity: 'error', summary: 'Failed', detail: 'Wrong username or password combination ', life: 3000 });
+            const username = e.target.username.value;
+            const password = e.target.password.value
+            onAuthenticate(authenticate(username, password))
         }
     };
-
-    // const handleClick = e => {
-    //     e.preventDefault();
-
-    //     alert("Goes to registration page");
-    // };
 
     return (
         <div className="form-demo">
