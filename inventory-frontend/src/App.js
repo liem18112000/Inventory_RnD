@@ -15,6 +15,7 @@ import { RecipeChild } from './recipe/child/RecipeChild';
 import { RecipeDetail } from './recipe/detail/RecipeDetail';
 import { Recipes } from './recipe/recipes/Recipes';
 import { IngredientHistory } from './ingredient/type/IngredientHistory';
+import { Login } from './login/Login';
 // import { IngredientItem } from './ingredient/item/IngredientItem';
 
 export const history = createBrowserHistory();
@@ -23,6 +24,7 @@ function App() {
   return (
     <Router history={history}>
       <Switch>
+        <Login path="/login"/>
         <AdminTemplate path="/" exact Component={Dashboard}/>
         <AdminTemplate path="/ingredient-inventory" exact Component={IngredientInventory}/>
         <AdminTemplate path="/ingredient" exact Component={IngredientCategory} />
