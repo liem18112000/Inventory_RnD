@@ -1,36 +1,42 @@
 import axios from 'axios'
-import { baseIngredientAPI } from '../constant'
+import { baseSupplierAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
-import {
-    mockIngredient,
-    mockIngredientItem,
-    mockIngredientLabelValue,
-    mockPageIngredientCategory,
-    mockPageIngredientItem,
-    mockPageIngredientType,
-    mockPageInventory
-} from "../core/models/MockDataModel";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 
 // Ingredient base URL
-const BaseURL = baseIngredientAPI()
+const BaseURL = baseSupplierAPI()
 
 /**
  * Ingredient service
  */
 export const IngredientService = {
 
-    getPageCategory(filter, page, rows, sortField, sortOrder, isMock = true) {
+    getPageGroup(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
-            return mockPageIngredientCategory();
+            return Promise.resolve([]);
         }
 
-        const url = `${BaseURL}/category/page`;
+        const url = `${BaseURL}/group/page`;
         const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
-        // Fetch ingredient category data from api
+        // Fetch supplier group data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    },
+
+    getPageChild(filter, page, rows, sortField, sortOrder, isMock = true) {
+        if (isMock) {
+            return Promise.resolve([]);
+        }
+
+        const url = `${BaseURL}/child/page`;
+        const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch supplier child data from api
         return axios.post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
@@ -38,7 +44,7 @@ export const IngredientService = {
 
     getByID(id, isMock = true) {
         if (isMock) {
-            return mockIngredient();
+            return Promise.resolve({});
         }
 
         const headers = getHeaderByGatewayStatus({})
@@ -51,9 +57,9 @@ export const IngredientService = {
             .catch(error => console.log(error));
     },
 
-    saveIngredient(ingredient, isMock = true) {
+    saveSupplier(ingredient, isMock = true) {
         if (isMock) {
-            return mockIngredient();
+            return Promise.resolve({});
         }
 
         // Add actor role and actor name to request body as default
@@ -61,6 +67,22 @@ export const IngredientService = {
 
         return axios
             .post(`${BaseURL}`, requestBody, {
+                headers: getHeaderByGatewayStatus({})
+            })
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    },
+
+    uppdateSupplier(ingredient, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        // Add actor role and actor name to request body as default
+        const requestBody = addActorNameAndRole(ingredient);
+
+        return axios
+            .push(`${BaseURL}`, requestBody, {
                 headers: getHeaderByGatewayStatus({})
             })
             .then(res => res.data)

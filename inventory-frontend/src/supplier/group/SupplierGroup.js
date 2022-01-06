@@ -32,13 +32,26 @@ export const SupplierGroup = () => {
     const dt = useRef(null);
     const toast = useRef(null);
 
-    const ingredientService = new IngredientService();
+    // const ingredientService = new IngredientService();
     const mapper = new PagingDataModelMapper();
 
     useEffect(() => {
-        setLoading(true);
-        getPageCategories();
-    }, []); 
+        // setLoading(true);
+        // getPageCategories()
+    const ingredientService = new IngredientService();
+        ingredientService
+            .getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
+            .then(data => handleGetPage(data))
+            .then(data => mapper.toModel(data))
+            .then(data => {
+                console.log(data);
+                setContent(data.content)
+                setLoading(data.loading)
+                setTotal(data.total)
+                setPage(data.page)
+                setRows(data.rows)
+            })
+        }); 
 
     /**
      * Call get page ingredient category API
@@ -49,14 +62,14 @@ export const SupplierGroup = () => {
             .then(data => handleGetPage(data))
             .then(data => mapper.toModel(data))
             // .then(data => this.setState({ ...this.state, ...data}));
-            // .then(data => {
-            //     console.log(data);
-            //     setContent(data.content)
-            //     setLoading(data.loading)
-            //     setTotal(data.total)
-            //     setPage(data.page)
-            //     setRows(data.rows)
-            // })
+            .then(data => {
+                console.log(data);
+                setContent(data.content)
+                setLoading(data.loading)
+                setTotal(data.total)
+                setPage(data.page)
+                setRows(data.rows)
+            })
     }
 
     const nameBodyTemplate = (rowData) => {
