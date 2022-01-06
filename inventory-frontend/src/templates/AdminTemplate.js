@@ -33,7 +33,7 @@ const AdminTemplate = (props) => { //path, exact, Component
 
     })
 
-    return <Route {...restProps} render={(propsRoute) => { //props.location,props.history,props.match
+    return <Route {...restProps} render={(propsRoute) => { //props.location, props.history, props.match
         return <Fragment>
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider theme="light" collapsible collapsed={collapsed} onCollapse={onCollapse}>
@@ -66,7 +66,7 @@ const AdminTemplate = (props) => { //path, exact, Component
                         </SubMenu>
                         <SubMenu key="sub4" title="Supplier Mgt" icon={<TeamOutlined />} >
                             <Menu.Item key="6" >
-                                <NavLink to="/supplier">Supplier Categories</NavLink>
+                                <NavLink to="/supplier">Supplier Group</NavLink>
                             </Menu.Item>
                         </SubMenu>
                         <Menu.Item key="7" icon={<BellOutlined />}>
