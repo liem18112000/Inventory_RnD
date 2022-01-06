@@ -16,31 +16,29 @@ import { RecipeDetail } from './recipe/detail/RecipeDetail';
 import { Recipes } from './recipe/recipes/Recipes';
 import { IngredientHistory } from './ingredient/type/IngredientHistory';
 import { Login } from './login/Login';
-import React, {useRef, useState} from "react";
-import {Toast} from "primereact/toast";
+import React, { useRef } from "react";
+import { Toast } from "primereact/toast";
+import { authenticateService, getAuthenticateToken } from "./core/security/AuthenticateService";
+import { sleep } from "./core/utility/ComponentUtility";
 
 export const history = createBrowserHistory();
 
 function App() {
 
   const toast = useRef(null);
+  const isAuthenticate = getAuthenticateToken()?.isAuthenticate;
 
-  const [token, setToken] = useState({
-    "actorName": null,
-    "actorRole": null,
-    "isAuthenticate": false
-  })
-
-  const handleAuthenticate = (token) => {
-    setToken(token)
-    if(token.isAuthenticate) {
+  const handleAuthenticate = (username, password) => {
+    const isLoginSuccess = authenticateService(username, password);
+    if(isLoginSuccess) {
       toast.current.show({ severity: 'success', summary: 'Login success', detail: 'Login success', life: 1000 });
-    }else {
+      sleep(500).then(() => window.location.reload())
+    } else {
       toast.current.show({ severity: 'error', summary: 'Login failed', detail: 'Login failed', life: 1000 });
     }
   }
 
-  return token.isAuthenticate ? (
+  return isAuthenticate ? (
     <Router history={history}>
       <Switch>
         <AdminTemplate path="/" exact Component={Dashboard}/>
@@ -58,12 +56,10 @@ function App() {
       </Switch>
     </Router>
   ) : (
-    <Router history={history}>
+    <>
       <Toast ref={toast} />
-      <Switch>
-        <Login onAuthenticate={handleAuthenticate} path="/"/>
-      </Switch>
-    </Router>
+      <Login onAuthenticate={handleAuthenticate} path="/"/>
+    </>
   )
 }
 

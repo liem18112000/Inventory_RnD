@@ -5,14 +5,12 @@ import { Password } from 'primereact/password';
 import { Checkbox } from 'primereact/checkbox';
 import { Toast } from 'primereact/toast';
 import '../assets/styles/FormDemo.css';
-import {authenticate} from "../core/security/Authenticate";
 
 export const Login = ({onAuthenticate}) => {
     const toast = useRef(null);
 
     const handleSubmit = e => {
         e.preventDefault();
-
         if (!e.target.username.value) {
             toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'Username is required', life: 1000 });
         } else if (!e.target.password.value) {
@@ -20,7 +18,7 @@ export const Login = ({onAuthenticate}) => {
         } else {
             const username = e.target.username.value;
             const password = e.target.password.value
-            onAuthenticate(authenticate(username, password))
+            onAuthenticate(username, password)
         }
     };
 
