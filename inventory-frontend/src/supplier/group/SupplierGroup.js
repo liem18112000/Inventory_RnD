@@ -12,58 +12,41 @@ import { Fieldset } from 'primereact/fieldset';
 import { IngredientService } from '../../service/IngredientService';
 import { PagingDataModelMapper } from '../../core/models/mapper/ModelMapper';
 import { handleGetPage } from '../../core/handlers/ApiLoadContentHandler';
+import { SupplierService } from "../../service/SupplierService";
 
 export const SupplierGroup = () => {
+
     const [content, setContent] = useState([]);
     const [page, setPage] = useState(0);
     const [rows, setRows] = useState(10);
     const [total, setTotal] = useState(0);
-    const [sortField, setSortField] = useState(null);
+    const [sortField, setSortField] = useState("");
     const [sortOrder, setSortOrder] = useState(0);
     const [filter, setFilter] = useState({
         name: "",
-        code: "",
-        description: "",
-        createAt: "",
+        code: ""
     });
-    const [isMock, setIsMock] = useState(false);
+    const isMock = false;
     const [loading, setLoading] = useState(false);
 
-    const dt = useRef(null);
+    const datatable = useRef(null);
     const toast = useRef(null);
-
-    // const ingredientService = new IngredientService();
     const mapper = new PagingDataModelMapper();
 
     useEffect(() => {
-        // setLoading(true);
-        // getPageCategories()
-    const ingredientService = new IngredientService();
-        ingredientService
-            .getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
-            .then(data => handleGetPage(data))
-            .then(data => mapper.toModel(data))
-            .then(data => {
-                console.log(data);
-                setContent(data.content)
-                setLoading(data.loading)
-                setTotal(data.total)
-                setPage(data.page)
-                setRows(data.rows)
-            })
-        }); 
+        setLoading(true);
+        getPage();
+    }, []);
 
     /**
-     * Call get page ingredient category API
+     * Call get page supplier group API
      */
-    const getPageCategories = () => {
-        ingredientService
-            .getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
+    const getPage = () => {
+        SupplierService
+            .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data))
             .then(data => mapper.toModel(data))
-            // .then(data => this.setState({ ...this.state, ...data}));
             .then(data => {
-                console.log(data);
                 setContent(data.content)
                 setLoading(data.loading)
                 setTotal(data.total)
@@ -123,7 +106,128 @@ export const SupplierGroup = () => {
         );
     }
 
+    /**
+     * Rest stat of ingredient category filter
+     */
+    const resetFilter = () => {
+        setLoading(true);
+        setFilter({
+            name: '',
+            code: ''
+        })
+        getPage();
+        toast.current.show({
+            severity: 'info',
+            summary: 'Clear',
+            detail: 'Clear filter',
+            life: 1000
+        });
+    }
+
+    /**
+     * Apply ingredient category filter fields
+     */
+    const applyFilter = () => {
+        setLoading(true);
+        getPage()
+        toast.current.show({
+            severity: 'info',
+            summary: 'Search',
+            detail: 'Search data content',
+            life: 1000
+        });
+    }
+
+    /**
+     * Reset page length
+     * @param e
+     */
+    const onPage = e => {
+        setLoading(true);
+        setPage(e.page);
+        getPage();
+    };
+
+    /**
+     * Change page on datatable
+     * @param e
+     */
+    const onSort = e => {
+        setLoading(true);
+        setSortField(e.sortField);
+        setSortOrder(e.sortOrder);
+        getPage();
+        toast.current.show({
+            severity: 'info',
+            summary: 'Sort',
+            detail: 'Sort ' + e.sortField + " " + (e.sortOrder === 1 ? "ascending" : "descending"),
+            life: 1000
+        });
+    };
+
+    /**
+     * Refresh data table
+     */
+    const onRefresh = () => {
+        setLoading(true);
+        getPage()
+        toast.current.show({
+            severity: 'info',
+            summary: 'Refresh',
+            detail: 'Refresh datatable',
+            life: 1000
+        });
+    }
+
+    /**
+     * Reset page length
+     * @param l page length
+     */
+    const onChangePageLength = l => {
+        setLoading(true);
+        setRows(l);
+        getPage();
+        toast.current.show({
+            severity: 'info',
+            summary: 'Reset page size',
+            detail: 'Page size is set to ' + l,
+            life: 1000
+        });
+    };
+
     const renderHeader = () => {
+        const tableLengthOptions = [
+            {
+                label: '5',
+                command: () => {
+                    onChangePageLength(5);
+                }
+            },
+            {
+                label: '10',
+                command: () => {
+                    onChangePageLength(10);
+                }
+            },
+            {
+                label: '25',
+                command: () => {
+                    onChangePageLength(25);
+                }
+            },
+            {
+                label: '50',
+                command: () => {
+                    onChangePageLength(50);
+                }
+            },
+            {
+                label: '100',
+                command: () => {
+                    this.onChangePageLength(100);
+                }
+            }
+        ];
         return (
             <div className="table-header">
                 <span className="p-input-icon-left">
@@ -134,46 +238,16 @@ export const SupplierGroup = () => {
                         icon="pi pi-plus"
                         iconPos="left"
                         label="New category"
-                    // onClick={() => this.form.action(null, true)}
+                        // onClick={() => this.form.action(null, true)}
                     />
-                    <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
-                    // onClick={this.onRefresh}
-                    // model={tableLengthOptions}
-                    >
+                    <SplitButton
+                        className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
+                        onClick={onRefresh}
+                        model={tableLengthOptions}>
                     </SplitButton>
                 </span>
             </div>
         );
-    }
-
-    const header = renderHeader();
-
-    /**
-     * Rest stat of ingredient category filter
-     */
-    const resetFilter = () => {
-        // this.setState({
-        //     ...this.state,
-        //     filter: {
-        //         name: "",
-        //         code: "",
-        //         description: "",
-        //         createAt: "",
-        //     }
-        // }, () => {
-        //     this.setState({ loading: true });
-        //     this.getPageCategories();
-        //     this.toast.show({ severity: 'info', summary: 'Clear', detail: 'Clear filter', life: 1000 });
-        // })
-    }
-
-    /**
-     * Apply ingredient category filter fields
-     */
-    const applyFilter = () => {
-        setLoading(true);
-        // getPageCategories();
-        toast.current.show({ severity: 'info', summary: 'Search', detail: 'Search data content', life: 1000 });
     }
 
     return (
@@ -188,8 +262,8 @@ export const SupplierGroup = () => {
                                     <div className="p-inputgroup">
                                         <InputText
                                             placeholder="Name"
-                                            value={filter.code}
-                                            onChange={(e) => setFilter({ ...filter, code: e.target.value })}
+                                            value={filter.name}
+                                            onChange={(e) => setFilter({ ...filter, name: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -201,8 +275,8 @@ export const SupplierGroup = () => {
                                     <div className="p-inputgroup">
                                         <InputText
                                             placeholder="Code"
-                                            value={filter.description}
-                                            onChange={(e) => setFilter({ ...filter, description: e.target.value })}
+                                            value={filter.code}
+                                            onChange={(e) => setFilter({ ...filter, code: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -229,25 +303,25 @@ export const SupplierGroup = () => {
                         </div>
                     </div>
                 </Fieldset>
-                <DataTable ref={dt}
+                <DataTable ref={datatable}
                     lazy={true}
-                    // first={page * rows}
-                    // value={content}
-                    // loading={loading}
-                    header={header}
+                    first={page * rows}
+                    value={content}
+                    loading={loading}
+                    header={renderHeader()}
                     className="p-datatable-customers"
                     dataKey="id"
                     rowHover
 
                     // ---Paginator--- 
-                    // paginator={true}
-                    // onPage={this.onPage}
-                    // onSort={this.onSort}
-                    // rows={this.state.rows}
-                    // totalRecords={this.state.total}
+                    paginator={true}
+                    onPage={onPage}
+                    onSort={onSort}
+                    rows={rows}
+                    totalRecords={total}
                     // ---Paginator--- 
-                    // sortField={this.state.sortField}
-                    // sortOrder={this.state.sortOrder}
+                    sortField={sortField}
+                    sortOrder={sortOrder}
 
                     emptyMessage="No ingredient categories found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"

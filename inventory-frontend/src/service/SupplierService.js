@@ -10,7 +10,7 @@ const BaseURL = baseSupplierAPI()
 /**
  * Ingredient service
  */
-export const IngredientService = {
+export const SupplierService = {
 
     getPageGroup(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
@@ -18,11 +18,12 @@ export const IngredientService = {
         }
 
         const url = `${BaseURL}/group/page`;
-        const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier group data from api
-        return axios.post(url, body, config)
+        return axios
+            .post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     },
@@ -33,11 +34,12 @@ export const IngredientService = {
         }
 
         const url = `${BaseURL}/child/page`;
-        const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
+        const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier child data from api
-        return axios.post(url, body, config)
+        return axios
+            .post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     },
@@ -47,44 +49,41 @@ export const IngredientService = {
             return Promise.resolve({});
         }
 
-        const headers = getHeaderByGatewayStatus({})
+        const url = `${BaseURL}/${id}`
+        const config = { headers: getHeaderByGatewayStatus() };
 
         return axios
-            .get(`${BaseURL}/${id}`, {
-                headers: headers
-            })
+            .get(url, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     },
 
-    saveSupplier(ingredient, isMock = true) {
+    saveSupplier(supplier, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
         }
 
-        // Add actor role and actor name to request body as default
-        const requestBody = addActorNameAndRole(ingredient);
+        const url = `${BaseURL}`;
+        const body = addActorNameAndRole(supplier);
+        const config = { headers: getHeaderByGatewayStatus() };
 
         return axios
-            .post(`${BaseURL}`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     },
 
-    uppdateSupplier(ingredient, isMock = true) {
+    updateSupplier(supplier, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
         }
 
-        // Add actor role and actor name to request body as default
-        const requestBody = addActorNameAndRole(ingredient);
+        const url = `${BaseURL}`;
+        const body = addActorNameAndRole(supplier);
+        const config = { headers: getHeaderByGatewayStatus({}) }
 
         return axios
-            .push(`${BaseURL}`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .put(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

@@ -24,11 +24,14 @@ import java.util.stream.Collectors;
 public class SupplierDto  extends BaseDto<Long> {
 
     protected List<SupplierDto> children;
+    protected String code;
 
     @Builder(builderMethodName = "supplierBuilder")
-    public SupplierDto(Long id, Long tenantId, String name, String description, String updateAt, String createAt,
+    public SupplierDto(Long id, Long tenantId, String name, String code,
+                       String description, String updateAt, String createAt,
                        boolean activated ,List<SupplierDto> children) {
         super(id, tenantId, name, description, updateAt, createAt, activated);
+        this.code = code;
         this.children = children;
     }
 

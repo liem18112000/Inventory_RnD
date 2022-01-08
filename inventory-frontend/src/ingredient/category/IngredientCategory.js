@@ -80,7 +80,7 @@ export class IngredientCategory extends Component {
     }
 
     /**
-     * Confim dialog for delete function
+     * Confirm dialog for delete function
      * @param {*} rowData 
      */
     confirmDelete(rowData) {
