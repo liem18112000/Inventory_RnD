@@ -1,0 +1,64 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: security-service
+  config:
+    import: optional:consul:${SPRING_CLOUD_CONSUL_HOST:localhost}:${SPRING_CLOUD_CONSUL_PORT:8500}/
+  cloud:
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      enabled: true
+      config:
+        format: files
+        prefixes: ${CONSUL_CONFIGS_TAG:app/configs/security-service}
+        watch:
+          delay: 5000
+      discovery:
+        register: true
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}:${random.value}
+        tags:
+          - java
+          - spring
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/security
+    username: root
+    password: root
+application:
+  formatted-version: (v1.0.0)
+  base-url: security
+domain:
+  service-name: FromLabsRestaurantDomainService
+  service-path: restaurant
+services:
+  ingredient-service:
+    name: ingredient-service
+    url: http://localhost:8080
+  recipe-service:
+    name: recipe-service
+    url:  http://localhost:8081
+  supplier-service:
+    name: recipe-service
+    url:  http://localhost:8082
+  notification-service:
+    name: recipe-service
+    url:  http://localhost:8083
+---
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/security
+    username: root
+    password:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+
