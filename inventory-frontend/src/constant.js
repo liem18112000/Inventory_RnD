@@ -10,6 +10,10 @@ export const RECIPE_PATH        = process.env.REACT_APP_RECIPE_PATH.trim()
 export const SUPPLIER_PATH      = process.env.REACT_APP_SUPPLIER_PATH.trim()
 export const NOTIFICATION_PATH  = process.env.REACT_APP_NOTIFICATION_PATH.trim()
 export const ENABLE_GATEWAY     = process.env.REACT_APP_ENABLE_GATEWAY.trim()
+export const API_KEY            = process.env.REACT_APP_API_KEY.trim()
+export const API_PRINCIPAL      = process.env.REACT_APP_API_PRINCIPAL.trim()
+export const API_KEY_HEADER             = "x-api-key"
+export const API_PRINCIPAL_HEADER       = "x-principal"
 
 /**
  * Base api for Ingredient service
