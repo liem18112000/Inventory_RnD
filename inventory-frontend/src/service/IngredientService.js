@@ -12,6 +12,8 @@ import {
     mockPageInventory
 } from "../core/models/MockDataModel";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
+import {compose} from "../core/utility/ComponentUtility";
+import {authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 
 // Ingredient base URL
 const BaseURL = baseIngredientAPI()
@@ -246,11 +248,15 @@ export class IngredientService {
 
         // Add actor role and actor name to request body as default
         const requestBody = addActorNameAndRole(ingredient);
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
-            .post(`${BaseURL}`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .post(`${BaseURL}`, requestBody, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

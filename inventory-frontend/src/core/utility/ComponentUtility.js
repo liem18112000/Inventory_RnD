@@ -27,3 +27,10 @@ export const isJson = (item) => {
 export const isNumber = (number) => {
     return number && !isNaN(number);
 }
+
+export const compose = (...functions) =>
+        argument =>
+            functions.reduce(
+                (composed, func) => func(composed),
+                argument
+            )
