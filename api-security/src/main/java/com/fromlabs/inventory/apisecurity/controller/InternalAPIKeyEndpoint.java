@@ -4,7 +4,6 @@ import com.fromlabs.inventory.apisecurity.config.ApiV1;
 import com.fromlabs.inventory.apisecurity.token.dto.AuthDTO;
 import com.fromlabs.inventory.apisecurity.token.service.InternalAPIKeyService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
