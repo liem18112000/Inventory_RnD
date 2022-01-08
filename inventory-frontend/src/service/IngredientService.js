@@ -13,7 +13,7 @@ import {
 } from "../core/models/MockDataModel";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import {compose} from "../core/utility/ComponentUtility";
-import {authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 
 // Ingredient base URL
 const BaseURL = baseIngredientAPI()
@@ -315,11 +315,15 @@ export class IngredientService {
 
         // Add actor role and actor name to request body as default
         const requestBody = addActorNameAndRole(ingredient);
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
-            .put(`${BaseURL}`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .put(`${BaseURL}`, requestBody, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -355,9 +359,14 @@ export class IngredientService {
             return Promise.resolve(null);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .delete(`${BaseURL}/${id}`, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .delete(`${BaseURL}/${id}`, config)
     }
 }

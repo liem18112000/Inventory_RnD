@@ -5,6 +5,7 @@
 package com.fromlabs.inventory.inventoryservice.applications;
 
 import com.fromlabs.inventory.inventoryservice.client.auth.AuthClient;
+import com.fromlabs.inventory.inventoryservice.client.auth.beans.AuthDTO;
 import com.fromlabs.inventory.inventoryservice.common.template.WebStatefulTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.common.template.manager.TemplateProcessCacheManger;
 import com.fromlabs.inventory.inventoryservice.config.ApiV1;
@@ -185,6 +186,23 @@ public class IngredientController implements ApplicationController {
         log.info(path(HttpMethod.POST, "clear-processes"));
         this.processCache.clearCache();
         return ok().build();
+    }
+
+    private ResponseEntity<AuthDTO> isNotAuthorized(String apiKey) {
+        final var auth = this.authClient.authorize(apiKey);
+        if(!auth.isSuccess()){
+            return status(HttpStatus.UNAUTHORIZED).body(auth);
+        }
+        return null;
+    }
+
+    private ResponseEntity<AuthDTO> isNotAuthenticated(
+            String apiKey, String principal) {
+        final var auth = this.authClient.authenticate(apiKey, principal);
+        if(!auth.isSuccess()){
+            return status(HttpStatus.FORBIDDEN).body(auth);
+        }
+        return null;
     }
 
     // </editor-fold>
@@ -396,10 +414,8 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.POST, ""));
         var transactFlag = new AtomicBoolean(Boolean.TRUE);
-        final var auth = this.authClient.authorize(apiKey);
-        if(!auth.isSuccess()){
-            return status(HttpStatus.UNAUTHORIZED).body(auth);
-        }
+        final var unauthorized = isNotAuthorized(apiKey);
+        if (unauthorized != null) return unauthorized;
         return (ResponseEntity<?>) buildSaveIngredientTemplateProcess(tenantId, request,
                 transactFlag, ingredientService, historyService, eventService).run();
     }
@@ -413,9 +429,13 @@ public class IngredientController implements ApplicationController {
     @PutMapping
     public ResponseEntity<?> updateIngredient(
             @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestHeader(value = X_API_KEY_HEADER, required = false) String apiKey,
+            @RequestHeader(value = X_PRINCIPAL_HEADER, required = false) String principal,
             @RequestBody IngredientRequest request
     ){
         log.info(path(HttpMethod.PUT, ""));
+        final var unauthenticated = this.isNotAuthenticated(apiKey, principal);
+        if (unauthenticated != null) return unauthenticated;
         return (ResponseEntity<?>) buildUpdateIngredientTemplateProcess(tenantId, request,
                 ingredientService, historyService, eventService).run();
     }
@@ -429,9 +449,13 @@ public class IngredientController implements ApplicationController {
     @DeleteMapping("{id:\\d+}")
     public ResponseEntity<?> deleteIngredient(
             @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestHeader(value = X_API_KEY_HEADER, required = false) String apiKey,
+            @RequestHeader(value = X_PRINCIPAL_HEADER, required = false) String principal,
             @PathVariable(ID) Long id
     ){
         log.info(path(HttpMethod.DELETE, String.valueOf(id)));
+        final var unauthenticated = this.isNotAuthenticated(apiKey, principal);
+        if (unauthenticated != null) return unauthenticated;
         return (ResponseEntity<?>) buildDeleteIngredientByIdTemplateProcess(tenantId, id, ingredientService).run();
     }
 

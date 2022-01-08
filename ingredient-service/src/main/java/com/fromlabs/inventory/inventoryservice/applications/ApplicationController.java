@@ -167,6 +167,8 @@ public interface ApplicationController {
      */
     ResponseEntity<?> updateIngredient(
             Long tenantId,
+            String apiKey,
+            String principal,
             IngredientRequest request
     );
 
@@ -178,6 +180,8 @@ public interface ApplicationController {
      */
     ResponseEntity<?> deleteIngredient(
             Long tenantId,
+            String apiKey,
+            String principal,
             Long id
     );
 
