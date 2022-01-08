@@ -155,6 +155,7 @@ public interface ApplicationController {
      */
     ResponseEntity<?> saveIngredient(
             Long tenantId,
+            String apiKey,
             IngredientRequest request
     );
 

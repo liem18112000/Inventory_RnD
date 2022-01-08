@@ -43,6 +43,9 @@ services:
   notification-service:
     name: recipe-service
     url:  http://localhost:8083
+  security-service:
+    name: security-service
+    url:  http://localhost:8084
 ---
 spring:
   profiles: dev

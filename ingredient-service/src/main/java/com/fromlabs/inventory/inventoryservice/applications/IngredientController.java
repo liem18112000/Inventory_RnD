@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.applications;
 
+import com.fromlabs.inventory.inventoryservice.client.auth.AuthClient;
 import com.fromlabs.inventory.inventoryservice.common.template.WebStatefulTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.common.template.manager.TemplateProcessCacheManger;
 import com.fromlabs.inventory.inventoryservice.config.ApiV1;
@@ -24,7 +25,9 @@ import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageReques
 import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +62,9 @@ public class IngredientController implements ApplicationController {
     private final InventoryService              inventoryService;
     private final ItemService                   itemService;
     private final TemplateProcessCacheManger    processCache;
+
+    @Autowired
+    private AuthClient authClient;
 
     public static final String SERVICE_PATH = "/ingredient/";
     protected final String API_VERSION      = ApiV1.VERSION;
@@ -385,10 +391,15 @@ public class IngredientController implements ApplicationController {
     @PostMapping
     public ResponseEntity<?> saveIngredient(
             @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestHeader(value = X_API_KEY_HEADER, required = false) String apiKey,
             @RequestBody IngredientRequest request
     ){
         log.info(path(HttpMethod.POST, ""));
         var transactFlag = new AtomicBoolean(Boolean.TRUE);
+        final var auth = this.authClient.authorize(apiKey);
+        if(!auth.isSuccess()){
+            return status(HttpStatus.UNAUTHORIZED).body(auth);
+        }
         return (ResponseEntity<?>) buildSaveIngredientTemplateProcess(tenantId, request,
                 transactFlag, ingredientService, historyService, eventService).run();
     }

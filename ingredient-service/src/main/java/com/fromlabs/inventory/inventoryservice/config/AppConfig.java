@@ -18,4 +18,6 @@ public class AppConfig {
     static public final String USER_ID          = "userId";
     static public final String USERNAME         = "username";
     static public final String UNIT             = "unit";
+    public static final String X_API_KEY_HEADER = "x-api-key";
+    public static final String X_PRINCIPAL_HEADER = "x-principal";
 }
