@@ -1,6 +1,6 @@
 package com.fromlabs.inventory.apisecurity.token.service;
 
-import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyDTO;
+import com.fromlabs.inventory.apisecurity.token.dto.InternalAPIKeyDTO;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package com.fromlabs.inventory.apisecurity.token.service;
 
-import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyDTO;
+import com.fromlabs.inventory.apisecurity.token.dto.InternalAPIKeyDTO;
 import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyEntityRepository;
-import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyMapper;
+import com.fromlabs.inventory.apisecurity.token.mapper.InternalAPIKeyMapper;
 import com.fromlabs.inventory.apisecurity.token.service.hashstrategy.InternalAPIKeyHashStrategy;
 import com.fromlabs.inventory.apisecurity.token.service.matchstrategy.InternalAPIKeyMatchStrategy;
 import lombok.extern.slf4j.Slf4j;

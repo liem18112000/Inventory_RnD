@@ -1,5 +1,7 @@
-package com.fromlabs.inventory.apisecurity.token;
+package com.fromlabs.inventory.apisecurity.token.mapper;
 
+import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyEntity;
+import com.fromlabs.inventory.apisecurity.token.dto.InternalAPIKeyDTO;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;

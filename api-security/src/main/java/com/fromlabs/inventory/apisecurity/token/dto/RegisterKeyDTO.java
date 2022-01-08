@@ -1,8 +1,7 @@
-package com.fromlabs.inventory.apisecurity.token.auth;
+package com.fromlabs.inventory.apisecurity.token.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

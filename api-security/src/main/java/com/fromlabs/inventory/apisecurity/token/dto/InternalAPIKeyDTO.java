@@ -1,4 +1,4 @@
-package com.fromlabs.inventory.apisecurity.token;
+package com.fromlabs.inventory.apisecurity.token.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

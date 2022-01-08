@@ -1,9 +1,9 @@
 package com.fromlabs.inventory.apisecurity.controller;
 
 import com.fromlabs.inventory.apisecurity.config.ApiV1;
-import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyDTO;
-import com.fromlabs.inventory.apisecurity.token.auth.AuthDTO;
-import com.fromlabs.inventory.apisecurity.token.auth.RegisterKeyDTO;
+import com.fromlabs.inventory.apisecurity.token.dto.InternalAPIKeyDTO;
+import com.fromlabs.inventory.apisecurity.token.dto.AuthDTO;
+import com.fromlabs.inventory.apisecurity.token.dto.RegisterKeyDTO;
 import com.fromlabs.inventory.apisecurity.token.service.InternalAPIKeyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
