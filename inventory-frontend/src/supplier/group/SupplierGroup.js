@@ -32,6 +32,7 @@ export const SupplierGroup = () => {
     const datatable = useRef(null);
     const toast = useRef(null);
     const mapper = new PagingDataModelMapper();
+    const ingredientService = new IngredientService();
 
     useEffect(() => {
         setLoading(true);
@@ -43,15 +44,16 @@ export const SupplierGroup = () => {
      */
     const getPage = () => {
         SupplierService
-            .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
+        .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
+        // ingredientService.getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data))
             .then(data => mapper.toModel(data))
             .then(data => {
-                setContent(data.content)
-                setLoading(data.loading)
-                setTotal(data.total)
-                setPage(data.page)
-                setRows(data.rows)
+                setContent(data.content);
+                setLoading(data.loading);
+                setTotal(data.total);
+                setPage(data.page);
+                setRows(data.rows);
             })
     }
 
@@ -100,21 +102,36 @@ export const SupplierGroup = () => {
         );
     }
 
-    const actionBodyTemplate = () => {
+    const actionBodyTemplate = (rowData, form) => {
+        let items = [
+            {
+                label: 'Edit',
+                icon: 'pi pi-pencil',
+                command: (e) => { form.action(rowData.id, isMock) }
+            },
+        ];
+
         return (
-            <Button type="button" icon="pi pi-cog" className="p-button-secondary"></Button>
+            <React.Fragment>
+                <span className="p-column-title">Action</span>
+                <div className="card">
+                    <SplitButton label="View" onClick={() => window.location.replace(
+                        `supplier/${rowData.id}`
+                    )} model={items}></SplitButton>
+                </div>
+            </React.Fragment>
         );
     }
 
     /**
-     * Rest stat of ingredient category filter
+     * Rest stat of supplier group filter
      */
     const resetFilter = () => {
         setLoading(true);
         setFilter({
             name: '',
             code: ''
-        })
+        });
         getPage();
         toast.current.show({
             severity: 'info',
@@ -125,11 +142,11 @@ export const SupplierGroup = () => {
     }
 
     /**
-     * Apply ingredient category filter fields
+     * Apply supplier group filter fields
      */
     const applyFilter = () => {
         setLoading(true);
-        getPage()
+        getPage();
         toast.current.show({
             severity: 'info',
             summary: 'Search',
@@ -185,7 +202,7 @@ export const SupplierGroup = () => {
      */
     const onChangePageLength = l => {
         setLoading(true);
-        setRows(l);
+        setPage(0);
         getPage();
         toast.current.show({
             severity: 'info',
@@ -200,6 +217,7 @@ export const SupplierGroup = () => {
             {
                 label: '5',
                 command: () => {
+                    setRows(5);
                     onChangePageLength(5);
                 }
             },
@@ -224,10 +242,11 @@ export const SupplierGroup = () => {
             {
                 label: '100',
                 command: () => {
-                    this.onChangePageLength(100);
+                    onChangePageLength(100);
                 }
             }
         ];
+
         return (
             <div className="table-header">
                 <span className="p-input-icon-left">
@@ -237,8 +256,8 @@ export const SupplierGroup = () => {
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
-                        label="New category"
-                        // onClick={() => this.form.action(null, true)}
+                        label="New group"
+                    // onClick={() => this.form.action(null, true)}
                     />
                     <SplitButton
                         className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"

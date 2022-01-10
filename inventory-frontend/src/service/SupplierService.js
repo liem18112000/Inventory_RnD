@@ -4,11 +4,11 @@ import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 
-// Ingredient base URL
+// Supplier base URL
 const BaseURL = baseSupplierAPI()
 
 /**
- * Ingredient service
+ * Supplier service
  */
 export const SupplierService = {
 
