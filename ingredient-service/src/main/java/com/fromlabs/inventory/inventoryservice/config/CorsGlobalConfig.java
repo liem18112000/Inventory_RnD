@@ -23,7 +23,8 @@ public class CorsGlobalConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("Access-Control-Allow-Origin", "Origin", "X-Requested-With", "Content-Type", "Accept",
-                        "X-XSRF-TOKEN", "X-CSRF-TOKEN", "Authentication", "Authorization", "tenantId", "userId", "username");
+                        "X-XSRF-TOKEN", "X-CSRF-TOKEN", "Authentication", "Authorization", "tenantId", "userId", "username",
+                        "x-principal", "x-api-key");
         WebMvcConfigurer.super.addCorsMappings(registry);
     }
 }
