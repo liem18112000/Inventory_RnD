@@ -15,6 +15,8 @@ import { RecipeChild } from './recipe/child/RecipeChild';
 import { RecipeDetail } from './recipe/detail/RecipeDetail';
 import { Recipes } from './recipe/recipes/Recipes';
 import { IngredientHistory } from './ingredient/type/IngredientHistory';
+import { SupplierGroup } from './supplier/group/SupplierGroup';
+// import { IngredientItem } from './ingredient/item/IngredientItem';
 import { Login } from './login/Login';
 import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
@@ -51,7 +53,7 @@ function App() {
         <AdminTemplate path="/recipes" exact Component={Recipes} />
         <AdminTemplate path="/recipe/:id" exact Component={RecipeChild} />
         <AdminTemplate path="/recipe/child/:id" exact Component={RecipeDetail} />
-        <AdminTemplate path="/supplier" exact Component={Dashboard} />
+        <AdminTemplate path="/supplier" exact Component={SupplierGroup} />
         <AdminTemplate path="/notification" exact Component={Dashboard} />
       </Switch>
     </Router>

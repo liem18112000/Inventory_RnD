@@ -148,7 +148,7 @@ export class IngredientCategoryForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
-                    </div>}
+                    </div>
                 </div>
             </div>
         )

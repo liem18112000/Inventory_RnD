@@ -34,6 +34,7 @@ public class SupplierMapper {
                 .id(entity.getId())
                 .tenantId(entity.getClientId())
                 .name(entity.getName())
+                .code(entity.getCode())
                 .description(entity.getDescription())
                 .createAt(entity.getUpdateAt())
                 .updateAt(entity.getUpdateAt())
