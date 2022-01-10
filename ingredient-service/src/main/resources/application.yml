@@ -46,6 +46,9 @@ services:
   security-service:
     name: security-service
     url:  http://localhost:8084
+api-security:
+  enabled: true
+  tolerant: false
 ---
 spring:
   profiles: dev
