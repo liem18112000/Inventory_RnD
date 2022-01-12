@@ -38,10 +38,10 @@ services:
     name: recipe-service
     url:  http://localhost:8081
   supplier-service:
-    name: recipe-service
+    name: supplier-service
     url:  http://localhost:8082
   notification-service:
-    name: recipe-service
+    name: notification-service
     url:  http://localhost:8083
   security-service:
     name: security-service

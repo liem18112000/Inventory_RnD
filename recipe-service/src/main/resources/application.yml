@@ -38,11 +38,14 @@ services:
     name: ingredient-service
     url: http://localhost:8080
   supplier-service:
-    name: recipe-service
-    url: http://localhost:8082
+    name: supplier-service
+    url:  http://localhost:8082
   notification-service:
-    name: recipe-service
-    url: http://localhost:8083
+    name: notification-service
+    url:  http://localhost:8083
+  security-service:
+    name: security-service
+    url:  http://localhost:8084
 ---
 spring:
   profiles: dev

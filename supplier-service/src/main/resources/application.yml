@@ -34,12 +34,18 @@ domain:
   service-name: FromLabsRestaurantDomainService
   service-path: restaurant
 services:
-  recipe-service:
-    name: recipe-service
-    url: http://localhost:8081
   ingredient-service:
     name: ingredient-service
     url: http://localhost:8080
+  recipe-service:
+    name: recipe-service
+    url: http://localhost:8081
+  notification-service:
+    name: notification-service
+    url: http://localhost:8083
+  security-service:
+    name: security-service
+    url: http://localhost:8084
 ---
 spring:
   profiles: dev
