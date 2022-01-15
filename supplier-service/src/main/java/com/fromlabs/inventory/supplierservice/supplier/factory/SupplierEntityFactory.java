@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 /**
  * Factory of SupplierEntity
+ * @author Liem
  */
 public class SupplierEntityFactory extends BaseEntityWithCreateAtAndLongIDFactory {
 

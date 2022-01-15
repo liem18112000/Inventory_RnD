@@ -2,6 +2,8 @@ package com.fromlabs.inventory.supplierservice.applications;
 
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
@@ -94,7 +96,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierPageRequest request
     ) {
         log.info(path(HttpMethod.POST, "category/page"));
-        return (ResponseEntity<?>) buildGetPageSupplierGroupTemplateProcess(tenantId, request, supplierService).run();
+        return (ResponseEntity<?>) buildGetPageSupplierGroupTemplateProcess(
+                tenantId, request, supplierService).run();
     }
 
     /**
@@ -110,7 +113,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierPageRequest    request
     ) {
         log.info(path(HttpMethod.GET, "group/all"));
-        return (ResponseEntity<?>) getListSupplierGroupTemplateProcess(tenantId, request, supplierService).run();
+        return (ResponseEntity<?>) getListSupplierGroupTemplateProcess(
+                tenantId, request, supplierService).run();
     }
 
     @GetMapping("group/all/simple")
@@ -118,7 +122,8 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long      tenantId
     ) {
         log.info(path(HttpMethod.GET, "group/all"));
-        return (ResponseEntity<?>) buildGetSupplierGroupWithLabelValueTemplateProcess(tenantId, supplierService).run();
+        return (ResponseEntity<?>) buildGetSupplierGroupWithLabelValueTemplateProcess(
+                tenantId, supplierService).run();
     }
 
     //</editor-fold>
@@ -138,7 +143,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierPageRequest    request
     ) {
         log.info(path(HttpMethod.POST, "child/page"));
-        return (ResponseEntity<?>) buildGetPageSupplierChildTemplateProcess(tenantId, request, supplierService).run();
+        return (ResponseEntity<?>) buildGetPageSupplierChildTemplateProcess(
+                tenantId, request, supplierService).run();
     }
 
     /**
@@ -154,7 +160,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierPageRequest    request
     ) {
         log.info(path(HttpMethod.GET, "child/all"));
-        return (ResponseEntity<?>) getListSupplierChildTemplateProcess(tenantId, request, supplierService).run();
+        return (ResponseEntity<?>) getListSupplierChildTemplateProcess(
+                tenantId, request, supplierService).run();
     }
 
     /**
@@ -169,7 +176,8 @@ public class SupplierController implements ApplicationController {
             @RequestParam(PARENT_ID)  Long      parentId
     ) {
         log.info(path(HttpMethod.GET, "child/all"));
-        return (ResponseEntity<?>) buildGetSupplierChildWithLabelValueTemplateProcess(tenantId, parentId, supplierService).run();
+        return (ResponseEntity<?>) buildGetSupplierChildWithLabelValueTemplateProcess(
+                tenantId, parentId, supplierService).run();
     }
 
     //</editor-fold>
@@ -189,7 +197,8 @@ public class SupplierController implements ApplicationController {
             @RequestParam(NAME) String      name
     ) {
         log.info(path(HttpMethod.GET, "name/all"));
-        return (ResponseEntity<?>) buildGetSupplierByNameTemplateProcess(tenantId, name, supplierService).run();
+        return (ResponseEntity<?>) buildGetSupplierByNameTemplateProcess(
+                tenantId, name, supplierService).run();
     }
 
     /**
@@ -203,7 +212,8 @@ public class SupplierController implements ApplicationController {
             @RequestParam(CODE) String code
     ) {
         log.info(path(HttpMethod.GET, "code"));
-        return (ResponseEntity<?>) buildGetSupplierByCodeTemplateProcess(code, supplierService).run();
+        return (ResponseEntity<?>) buildGetSupplierByCodeTemplateProcess(
+                code, supplierService).run();
     }
 
     /**
@@ -217,7 +227,8 @@ public class SupplierController implements ApplicationController {
             @PathVariable(ID) Long id
     ) {
         log.info(path(HttpMethod.GET, String.valueOf(id)));
-        return (ResponseEntity<?>) buildGetSupplierByIdTemplateProcess(id, supplierService).run();
+        return (ResponseEntity<?>) buildGetSupplierByIdTemplateProcess(
+                id, supplierService).run();
     }
 
     /**
@@ -233,7 +244,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierRequest request
     ) {
         log.info(path(HttpMethod.POST, ""));
-        return (ResponseEntity<?>) buildSaveSupplierTemplateProcess(tenantId, request, supplierService).run();
+        return (ResponseEntity<?>) buildSaveSupplierTemplateProcess(
+                tenantId, request, supplierService).run();
     }
 
     /**
@@ -249,7 +261,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierRequest    request
     ) {
         log.info(path(HttpMethod.PUT, ""));
-        return (ResponseEntity<?>) buildUpdateSupplierTemplateProcess(tenantId, request, supplierService).run();
+        return (ResponseEntity<?>) buildUpdateSupplierTemplateProcess(
+                tenantId, request, supplierService).run();
     }
 
     /**
@@ -263,7 +276,8 @@ public class SupplierController implements ApplicationController {
             @PathVariable(ID) Long id
     ) {
         log.info(path(HttpMethod.DELETE, String.valueOf(id)));
-        return (ResponseEntity<?>) buildDeleteSupplierTemplateProcess(id, supplierService).run();
+        return (ResponseEntity<?>) buildDeleteSupplierTemplateProcess(
+                id, supplierService).run();
     }
 
     //</editor-fold>
@@ -283,7 +297,8 @@ public class SupplierController implements ApplicationController {
             @PathVariable(ID) Long id
     ) {
         log.info(path(HttpMethod.GET, "providable-material/".concat(String.valueOf(id))));
-        return (ResponseEntity<?>) buildGetProvidableMaterialById(id, providableMaterialService, ingredientClient).run();
+        return (ResponseEntity<?>) buildGetProvidableMaterialById(
+                id, providableMaterialService, ingredientClient).run();
     }
 
     /**
@@ -297,7 +312,8 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId
     ) {
         log.info(path(HttpMethod.GET, "providable-material/all"));
-        return (ResponseEntity<?>) buildGetAllProvidableMaterialByTenantId(tenantId, providableMaterialService, ingredientClient).run();
+        return (ResponseEntity<?>) buildGetAllProvidableMaterialByTenantId(
+                tenantId, providableMaterialService, ingredientClient).run();
     }
 
     /**
@@ -313,7 +329,9 @@ public class SupplierController implements ApplicationController {
             @RequestBody ProvidableMaterialPageRequest   request
     ) {
         log.info(path(HttpMethod.POST, "providable-material/page"));
-        return null;
+        return (ResponseEntity<?>) buildGetPageProvidableTemplateProcess(
+                tenantId, request, supplierService,
+                providableMaterialService, ingredientClient).run();
     }
 
     /**
@@ -345,6 +363,89 @@ public class SupplierController implements ApplicationController {
             @RequestBody ProvidableMaterialRequest request
     ) {
         log.info(path(HttpMethod.PUT, "providable-material"));
+        return null;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT">
+
+    /**
+     * Get page import with filter
+     *
+     * @param tenantId Tenant ID
+     * @param request  ImportPageRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("import/page")
+    public ResponseEntity<?> getPageImport(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportPageRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "import/page"));
+        return (ResponseEntity<?>) buildGetPageImportTemplateProcess(
+                tenantId, request, supplierService, importService).run();
+    }
+
+    /**
+     * Get all import as list with filter
+     *
+     * @param tenantId Tenant ID
+     * @param request  SupplierPageRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("import/all")
+    public ResponseEntity<?> getAllImport(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportPageRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "import/all"));
+        return null;
+    }
+
+    /**
+     * Get import with ID
+     *
+     * @param id Unique Entity ID
+     * @return ResponseEntity
+     */
+    @GetMapping("import/{id:\\d+}")
+    public ResponseEntity<?> getImportById(
+            @PathVariable(ID) Long id) {
+        log.info(path(HttpMethod.GET, "import/".concat(String.valueOf(id))));
+        return (ResponseEntity<?>) buildGetImportByIdTemplateProcess(
+                id, importService).run();
+    }
+
+    /**
+     * Save import by request
+     *
+     * @param tenantId Tenant ID
+     * @param request  ImportRequest
+     * @return ResponseEntity
+     */
+    @PostMapping("import")
+    public ResponseEntity<?> saveImport(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "import"));
+        return null;
+    }
+
+    /**
+     * Update import by request
+     *
+     * @param tenantId Tenant ID
+     * @param request  SupplierRequest
+     * @return ResponseEntity
+     */
+    @PutMapping("import")
+    public ResponseEntity<?> updateImport(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody SupplierRequest request
+    ) {
+        log.info(path(HttpMethod.PUT, "import"));
         return null;
     }
 

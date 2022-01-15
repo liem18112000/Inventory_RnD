@@ -6,12 +6,17 @@ package com.fromlabs.inventory.supplierservice.utility;
 
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.common.template.*;
+import com.fromlabs.inventory.supplierservice.imports.ImportService;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import lombok.experimental.UtilityClass;
+import org.springframework.http.ResponseEntity;
+
+import javax.validation.constraints.NotNull;
 
 import static com.fromlabs.inventory.supplierservice.config.AppConfig.*;
 import static com.fromlabs.inventory.supplierservice.utility.ControllerValidation.*;
@@ -203,6 +208,8 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
+    //<editor-fold desc="buildGetSupplierGroupWithLabelValueTemplateProcess">
+
     /**
      * Build get supplier group with label-value
      * @param tenantId          Tenant ID
@@ -218,6 +225,8 @@ public class TemplateProcessDirector {
                 .process(   () -> getSupplierGroupWithLabelValue(tenantId, supplierService))
                 .build();
     }
+
+    //</editor-fold>
 
     //<editor-fold desc="buildSaveSupplierTemplateProcess">
 
@@ -305,7 +314,7 @@ public class TemplateProcessDirector {
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateId(id))
-                .process(   () -> ok(getProvidableMaterialById(id, providableMaterialService, ingredientClient)))
+                .process(   () -> getProvidableMaterialById(id, providableMaterialService, ingredientClient))
                 .build();
     }
 
@@ -327,18 +336,72 @@ public class TemplateProcessDirector {
     ) {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenant(tenantId))
-                .process(   () -> ok(getAllProvidableMaterialByTenantId(tenantId, providableMaterialService, ingredientClient)))
+                .process(   () -> getAllProvidableMaterialByTenantId(tenantId, providableMaterialService, ingredientClient))
                 .build();
     }
 
     //</editor-fold>
 
-    public TemplateProcess buildGetPageProvidable(
-            Long tenantId,
-            ProvidableMaterialPageRequest request
+    //<editor-fold desc="buildGetPageProvidableTemplateProcess">
+
+    public TemplateProcess buildGetPageProvidableTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ProvidableMaterialPageRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ProvidableMaterialService providableMaterialService,
+            @NotNull final IngredientClient ingredientClient
     ) {
-        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-//                .bootstrap( () -> bootstrapTenantId(tenantId, ))
+        return WebTemplateProcess.builder()
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateTenant(tenantId))
+                .process(   () -> getPageProvidableMaterial(request, supplierService, providableMaterialService, ingredientClient))
                 .build();
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildGetImportByIdTemplateProcess">
+
+    /**
+     * Build get import by id template process
+     * @param id            Import Unique ID
+     * @param importService importService
+     * @return              TemplateProcess
+     */
+    public TemplateProcess buildGetImportByIdTemplateProcess(
+            @NotNull final Long id,
+            @NotNull final ImportService importService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(  () -> validateId(id))
+                .process(   () -> getImportById(id, importService))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildGetPageImportTemplateProcess">
+
+    /**
+     * Build get page import template process
+     * @param tenantId          Tenant ID
+     * @param request           ImportPageRequest
+     * @param supplierService   SupplierService
+     * @param importService     ImportService
+     * @return                  TemplateProcess
+     */
+    public TemplateProcess buildGetPageImportTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ImportPageRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ImportService importService
+    ) {
+        return WebTemplateProcess.builder()
+                .bootstrap(() -> bootstrapTenantId(tenantId, request))
+                .validate(() -> validateTenant(tenantId))
+                .process(() -> getPageImport(request, supplierService, importService))
+                .build();
+    }
+
+    //</editor-fold>
 }

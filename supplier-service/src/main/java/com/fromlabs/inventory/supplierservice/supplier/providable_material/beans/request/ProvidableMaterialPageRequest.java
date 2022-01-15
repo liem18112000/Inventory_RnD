@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 public class ProvidableMaterialPageRequest extends BaseCustomizePageRequest {
     private Long    clientId;
     private Long    supplierId      = -1L;
-    private Long    ingredientId    = -1L;
+    private Long    ingredientId;
     private String  name            = "";
     private String  description     = "";
     private String  updateAt        = "";

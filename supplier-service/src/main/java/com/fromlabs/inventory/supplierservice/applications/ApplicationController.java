@@ -4,6 +4,9 @@
 
 package com.fromlabs.inventory.supplierservice.applications;
 
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
@@ -171,6 +174,63 @@ public interface ApplicationController {
     ResponseEntity<?> updateProvidableMaterial(
             Long tenantId,
             ProvidableMaterialRequest request
+    );
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT">
+
+    /**
+     * Get page import with filter
+     * @param tenantId  Tenant ID
+     * @param request   ImportPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getPageImport(
+            Long                tenantId,
+            ImportPageRequest   request
+    );
+
+    /**
+     * Get all import as list with filter
+     * @param tenantId  Tenant ID
+     * @param request   SupplierPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getAllImport(
+            Long                tenantId,
+            ImportPageRequest   request
+    );
+
+    /**
+     * Get import with ID
+     * @param id        Unique Entity ID
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getImportById(
+            Long id
+    );
+
+    /**
+     * Save import by request
+     * @param tenantId  Tenant ID
+     * @param request   ImportRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> saveImport(
+            Long            tenantId,
+            ImportRequest   request
+    );
+
+    /**
+     * Update import by request
+     * @param tenantId  Tenant ID
+     * @param request   SupplierRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> updateImport(
+            Long tenantId,
+            SupplierRequest request
     );
 
     //</editor-fold>

@@ -66,6 +66,12 @@ public class ControllerValidation {
                 .validate();
     }
 
+    /**
+     * Validate supplier request
+     * @param request   SupplierRequest
+     * @param isUpdate  tru if request for update
+     * @return RequestValidator
+     */
     public RequestValidator validateSupplierRequest(SupplierRequest request, boolean isUpdate) {
         log.info("validateSupplierRequest - is update : {}", isUpdate);
         var validator = StringRequestValidator()

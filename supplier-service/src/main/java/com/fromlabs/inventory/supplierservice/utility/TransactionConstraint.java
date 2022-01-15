@@ -6,10 +6,13 @@ package com.fromlabs.inventory.supplierservice.utility;
 
 import com.fromlabs.inventory.supplierservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.supplierservice.common.wrapper.ConstraintWrapper;
+import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotNull;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -51,13 +54,11 @@ public class TransactionConstraint {
      * @return                  boolean
      */
     public boolean checkSupplierExistById(
-            Long            id,
-            SupplierService supplierService
+            @NotNull final Long            id,
+            @NotNull final SupplierService supplierService
     ) {
-        // Check pre-conditions
-        assert nonNull(supplierService);
-
-        return logWrapper(nonNull(supplierService.getById(id)), "checkSupplierExistById: {}");
+        return logWrapper(nonNull(supplierService.getById(id)),
+                "checkSupplierExistById: {}");
     }
 
     /**
@@ -67,14 +68,12 @@ public class TransactionConstraint {
      * @return                  boolean
      */
     public boolean checkSupplierExistByCode(
-            String          code,
-            SupplierService supplierService
+            @NotNull final String          code,
+            @NotNull final SupplierService supplierService
     ) {
-        // Check pre-conditions
-        assert nonNull(supplierService);
-
         // Log out constraint result and return it
-        return logWrapper(nonNull(supplierService.get(code)), "checkSupplierExistByCode: {}");
+        return logWrapper(nonNull(supplierService.get(code)),
+                "checkSupplierExistByCode: {}");
     }
 
     /**
@@ -84,13 +83,9 @@ public class TransactionConstraint {
      * @return                  boolean
      */
     public boolean checkBeforeSaveSupplier(
-            SupplierRequest request,
-            SupplierService supplierService
+            @NotNull final SupplierRequest request,
+            @NotNull final SupplierService supplierService
     ) {
-        // Check pre-conditions
-        assert nonNull(request);
-        assert nonNull(supplierService);
-
         // Build constrain wrapper and check the constraint
         final boolean result = buildCheckSupplierDuplicateByCodeConstraintWrapper(
                 request.getId(), request.getCode(), supplierService).constraintCheck();
@@ -106,12 +101,10 @@ public class TransactionConstraint {
      * @return                  boolean
      */
     public boolean checkBeforeUpdateSupplier(
-            SupplierRequest request,
-            SupplierService supplierService
+            @NotNull final SupplierRequest request,
+            @NotNull final SupplierService supplierService
     ) {
         // Check pre-conditions
-        assert nonNull(request);
-        assert nonNull(supplierService);
         assert nonNull(request.getId());
 
         // Build constrain wrapper and check the constraint
@@ -133,22 +126,34 @@ public class TransactionConstraint {
      * @return                  ConstraintWrapper
      */
     private ConstraintWrapper buildCheckSupplierDuplicateByCodeConstraintWrapper(
-            Long            supplierId,
-            String          code,
-            SupplierService supplierService
+            @NotNull final Long            supplierId,
+            @NotNull final String          code,
+            @NotNull final SupplierService supplierService
     ) {
-        // Check pre-conditions
-        assert nonNull(supplierService);
-
         // Get supplier by code
         final var supplierWithCode = supplierService.get(code);
 
         // Build constraint wrapper
         return ConstraintWrapper.builder()
                 .name("Check constrain supplier is duplicated by code")
-                .check(() -> (isNull(supplierId) && isNull(supplierWithCode)) || (nonNull(supplierId) && supplierWithCode.getId().equals(supplierId)))
+                .check(() -> (isNull(supplierId) && isNull(supplierWithCode)) ||
+                        (nonNull(supplierId) && supplierWithCode.getId().equals(supplierId)))
                 .exception(new ConstraintViolateException("Supplier code is duplicated : ".concat(code)))
                 .build();
+    }
+
+    public boolean checkImportExistById(
+            @NotNull final Long id,
+            @NotNull final ImportService importService
+    ) {
+        // Get import by id;
+        final var importEntity = importService.getById(id);
+
+        // Build constrain wrapper and check the constraint
+        final boolean result = nonNull(importEntity);
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkImportExistById: {}");
     }
 
     /**
