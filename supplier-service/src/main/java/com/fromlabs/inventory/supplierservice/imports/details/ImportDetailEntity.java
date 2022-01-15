@@ -23,6 +23,10 @@ import java.util.Objects;
 @Table(name="import_detail")
 public class ImportDetailEntity extends ImportReferencedMultiEntity {
 
+    private Long ingredientId;
+
+    private Long quantity;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
