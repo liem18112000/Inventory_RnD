@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -9,7 +8,6 @@ import moment from 'moment';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import { Fieldset } from 'primereact/fieldset';
-import { IngredientService } from '../../service/IngredientService';
 import { PagingDataModelMapper } from '../../core/models/mapper/ModelMapper';
 import { handleGetPage } from '../../core/handlers/ApiLoadContentHandler';
 import { SupplierService } from "../../service/SupplierService";
@@ -32,7 +30,6 @@ export const SupplierGroup = () => {
     const datatable = useRef(null);
     const toast = useRef(null);
     const mapper = new PagingDataModelMapper();
-    const ingredientService = new IngredientService();
 
     useEffect(() => {
         setLoading(true);
@@ -44,8 +41,7 @@ export const SupplierGroup = () => {
      */
     const getPage = () => {
         SupplierService
-        .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
-        // ingredientService.getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
+            .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data))
             .then(data => mapper.toModel(data))
             .then(data => {
@@ -357,3 +353,4 @@ export const SupplierGroup = () => {
         </div>
     );
 }
+

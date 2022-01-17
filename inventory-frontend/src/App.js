@@ -22,6 +22,8 @@ import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
 import { authenticateService, getAuthenticateToken } from "./core/security/AuthenticateService";
 import { sleep } from "./core/utility/ComponentUtility";
+import { SupplierGroupTest } from './supplier/group/SupplierGroupTest';
+import { SupplierChild } from './supplier/child/SupplierChild';
 
 export const history = createBrowserHistory();
 
@@ -53,7 +55,9 @@ function App() {
         <AdminTemplate path="/recipes" exact Component={Recipes} />
         <AdminTemplate path="/recipe/:id" exact Component={RecipeChild} />
         <AdminTemplate path="/recipe/child/:id" exact Component={RecipeDetail} />
-        <AdminTemplate path="/supplier" exact Component={SupplierGroup} />
+        {/* <AdminTemplate path="/supplier" exact Component={SupplierGroup} /> */}
+        <AdminTemplate path="/supplier" exact Component={SupplierGroupTest} />
+        <AdminTemplate path="/supplier/:id" exact Component={SupplierChild} />
         <AdminTemplate path="/notification" exact Component={Dashboard} />
       </Switch>
     </Router>
