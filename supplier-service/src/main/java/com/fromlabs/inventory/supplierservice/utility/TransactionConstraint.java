@@ -136,8 +136,8 @@ public class TransactionConstraint {
         // Build constraint wrapper
         return ConstraintWrapper.builder()
                 .name("Check constrain supplier is duplicated by code")
-                .check(() -> (isNull(supplierId) && isNull(supplierWithCode)) ||
-                        (nonNull(supplierId) && supplierWithCode.getId().equals(supplierId)))
+                .check(() -> isNull(supplierWithCode) ||
+                        (isNull(supplierId) || supplierWithCode.getId().equals(supplierId)))
                 .exception(new ConstraintViolateException("Supplier code is duplicated : ".concat(code)))
                 .build();
     }

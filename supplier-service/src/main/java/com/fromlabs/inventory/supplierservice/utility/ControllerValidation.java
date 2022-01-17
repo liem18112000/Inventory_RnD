@@ -2,8 +2,11 @@ package com.fromlabs.inventory.supplierservice.utility;
 
 import com.fromlabs.inventory.supplierservice.common.validator.RequestValidator;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotNull;
 
 import static com.fromlabs.inventory.supplierservice.common.validator.RequestValidator.StringRequestValidator;
 import static com.fromlabs.inventory.supplierservice.config.AppConfig.*;
@@ -69,7 +72,7 @@ public class ControllerValidation {
     /**
      * Validate supplier request
      * @param request   SupplierRequest
-     * @param isUpdate  tru if request for update
+     * @param isUpdate  true if request for update
      * @return RequestValidator
      */
     public RequestValidator validateSupplierRequest(SupplierRequest request, boolean isUpdate) {
@@ -79,6 +82,22 @@ public class ControllerValidation {
                 .criteriaRequired(NAME, request.getName())
                 .criteriaRequired(CODE, request.getCode())
                 .criteriaRequired(ACTIVE, request.isActivated());
+        return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;
+    }
+
+    /**
+     * Validate material request
+     * @param request   ProvidableMaterialRequest
+     * @param isUpdate  true if request for update
+     * @return RequestValidator
+     */
+    public RequestValidator validateMaterialRequest(
+            @NotNull final ProvidableMaterialRequest request, boolean isUpdate) {
+        log.info("validateMaterialRequest - is update : {}", isUpdate);
+        var validator = StringRequestValidator()
+                .criteriaIsPositiveLong(TENANT_ID, request.getTenantId())
+                .criteriaRequired(NAME, request.getName())
+                .criteriaRequired(ACTIVE, request.isActive());
         return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;
     }
 

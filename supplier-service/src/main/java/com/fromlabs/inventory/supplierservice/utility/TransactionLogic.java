@@ -19,6 +19,7 @@ import com.fromlabs.inventory.supplierservice.supplier.mapper.SupplierMapper;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.dto.ProvidableMaterialDto;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.mapper.ProvidableMaterialMapper;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.specification.ProvidableMaterialSpecification;
 import com.fromlabs.inventory.supplierservice.supplier.specification.SupplierSpecification;
@@ -306,21 +307,37 @@ public class TransactionLogic {
      * @param supplierService   SupplierService
      * @return                  ResponseEntity
      */
-    @SneakyThrows
     public ResponseEntity<?> saveSupplier(
-            SupplierRequest request,
-            SupplierService supplierService
+            @NotNull final SupplierRequest request,
+            @NotNull final SupplierService supplierService
     ) {
-        // Check pre-conditions
-        assert nonNull(request);
-        assert nonNull(supplierService);
-
         // Convert request to saved entity
         final var supplier      = SupplierMapper.toEntity(request);
         final var savedSupplier = supplierService.save(supplier);
 
         // Save supplier with CREATED status
         return status(HttpStatus.CREATED).body(savedSupplier);
+    }
+
+    /**
+     * Update supplier by request
+     * @param request           SupplierRequest
+     * @param supplierService   SupplierService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateSupplier(
+            @NotNull final SupplierRequest request,
+            @NotNull final SupplierService supplierService
+    ) {
+        // Pre-condition
+        assert nonNull(request.getId());
+
+        // Convert request to saved entity
+        final var supplier= supplierService.getById(request.getId()).update(request);
+        final var updatedSupplier = supplierService.save(supplier);
+
+        // Save supplier with CREATED status
+        return ok(updatedSupplier);
     }
 
     /**
@@ -426,6 +443,46 @@ public class TransactionLogic {
 
         // Convert entity to DTO and return it
         return ok(ProvidableMaterialMapper.toDto(materials, ingredientClient));
+    }
+
+    /**
+     * Save material by request
+     * @param request                   ProvidableMaterialRequest
+     * @param supplierService           SupplierService
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> saveProvidableMaterial(
+            @NotNull final ProvidableMaterialRequest    request,
+            @NotNull final SupplierService              supplierService,
+            @NotNull final ProvidableMaterialService    providableMaterialService,
+            @NotNull final IngredientClient             ingredientClient
+    ) {
+        final var supplier = supplierService.getById(request.getSupplierId());
+        final var entity = ProvidableMaterialMapper.toEntity(request, supplier);
+        final var savedEntity = providableMaterialService.save(entity);
+        final var dto = ProvidableMaterialMapper.toDto(savedEntity, ingredientClient);
+        return status(HttpStatus.CREATED).body(dto);
+    }
+
+    /**
+     * Update material by request
+     * @param request                   ProvidableMaterialRequest
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateProvidableMaterial(
+            @NotNull final ProvidableMaterialRequest    request,
+            @NotNull final ProvidableMaterialService    providableMaterialService,
+            @NotNull final IngredientClient             ingredientClient
+    ) {
+        final var entity = providableMaterialService.getById(request.getId())
+                .update(request);
+        final var savedEntity = providableMaterialService.save(entity);
+        final var dto = ProvidableMaterialMapper.toDto(savedEntity, ingredientClient);
+        return status(HttpStatus.CREATED).body(dto);
     }
 
     //</editor-fold>

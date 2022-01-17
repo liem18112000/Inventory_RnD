@@ -13,6 +13,7 @@ import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPag
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.ResponseEntity;
 
@@ -270,7 +271,7 @@ public class TemplateProcessDirector {
                 .bootstrap( () -> bootstrapTenantId(tenantId, request))
                 .validate(  () -> validateSupplierRequest(request, true))
                 .before(    () -> checkBeforeUpdateSupplier(request, supplierService))
-                .process(   () -> saveSupplier(request, supplierService))
+                .process(   () -> updateSupplier(request, supplierService))
                 .build();
     }
 
@@ -397,9 +398,64 @@ public class TemplateProcessDirector {
             @NotNull final ImportService importService
     ) {
         return WebTemplateProcess.builder()
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateTenant(tenantId))
+                .process(   () -> getPageImport(request, supplierService, importService))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildSaveProvidableMaterialTemplateProcess">
+
+    /**
+     * Build save material template process
+     * @param tenantId                  Tenant ID
+     * @param request                   ProvidableMaterialRequest
+     * @param supplierService           SupplierService
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildSaveProvidableMaterialTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ProvidableMaterialRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ProvidableMaterialService providableMaterialService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .bootstrap(() -> bootstrapTenantId(tenantId, request))
-                .validate(() -> validateTenant(tenantId))
-                .process(() -> getPageImport(request, supplierService, importService))
+                .validate(() -> validateMaterialRequest(request, false))
+                .before(() -> true) // TODO: add constrains
+                .process(() -> saveProvidableMaterial(request, supplierService, providableMaterialService, ingredientClient))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildUpdateProvidableMaterialTemplateProcess">
+
+    /**
+     * Build update material template process
+     * @param tenantId                  Tenant ID
+     * @param request                   ProvidableMaterialRequest
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildUpdateProvidableMaterialTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ProvidableMaterialRequest request,
+            @NotNull final ProvidableMaterialService providableMaterialService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .bootstrap(() -> bootstrapTenantId(tenantId, request))
+                .validate(() -> validateMaterialRequest(request, true))
+                .before(() -> true) // TODO: add constrains
+                .process(() -> updateProvidableMaterial(request, providableMaterialService, ingredientClient))
+                .after(() -> true) // TODO: add constraints
                 .build();
     }
 
