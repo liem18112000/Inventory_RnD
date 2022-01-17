@@ -1,6 +1,7 @@
 package com.fromlabs.inventory.supplierservice.applications;
 
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
+import com.fromlabs.inventory.supplierservice.common.template.WebTemplateProcessWithCheckBeforeAfter;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
@@ -347,7 +348,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody ProvidableMaterialRequest request
     ) {
         log.info(path(HttpMethod.POST, "providable-material"));
-        return null;
+        return (ResponseEntity<?>) buildSaveProvidableMaterialTemplateProcess(
+                tenantId, request, supplierService, providableMaterialService, ingredientClient).run();
     }
 
     /**
@@ -363,7 +365,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody ProvidableMaterialRequest request
     ) {
         log.info(path(HttpMethod.PUT, "providable-material"));
-        return null;
+        return (ResponseEntity<?>) buildUpdateProvidableMaterialTemplateProcess(
+                tenantId, request, providableMaterialService, ingredientClient).run();
     }
 
     //</editor-fold>

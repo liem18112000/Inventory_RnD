@@ -19,6 +19,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class SupplierEntity extends SupplierBaseEntity {
         this.setName(request.getName());
         this.setCode(request.getCode());
         this.setDescription(request.getDescription());
-        this.setUpdateAt(request.getCreatedAt());
+        this.setUpdateAt(Instant.now().toString());
         return this;
     }
 
