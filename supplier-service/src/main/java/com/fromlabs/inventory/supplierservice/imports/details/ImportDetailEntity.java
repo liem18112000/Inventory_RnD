@@ -32,7 +32,7 @@ public class ImportDetailEntity extends ImportReferencedMultiEntity {
 
     @Min(value = 0)
     @Column(name="quantity")
-    private Long quantity;
+    private Float quantity;
 
     @Override
     public boolean equals(Object o) {

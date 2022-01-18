@@ -1,16 +1,24 @@
 package com.fromlabs.inventory.supplierservice.imports.details.mapper;
 
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
+import com.fromlabs.inventory.supplierservice.common.factory.FactoryCreateType;
+import com.fromlabs.inventory.supplierservice.imports.ImportEntity;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailEntity;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.dto.ImportDetailDto;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.factory.ImportDetailEntityFactory;
 import com.fromlabs.inventory.supplierservice.imports.mapper.ImportMapper;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.fromlabs.inventory.supplierservice.common.factory.FactoryCreateType.DEFAULT;
+import static com.fromlabs.inventory.supplierservice.imports.details.factory.ImportDetailEntityFactory.*;
 
 /**
  * Import detail mapper
@@ -18,6 +26,8 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class ImportDetailMapper {
+
+    //<editor-fold desc="TO DTO">
 
     /**
      * Convert to DTO
@@ -66,4 +76,32 @@ public class ImportDetailMapper {
                                        @NotNull final IngredientClient ingredientClient) {
         return entities.map(entity -> ImportDetailMapper.toDto(entity, ingredientClient));
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="TO ENTITY">
+
+    /**
+     * Convert to entity
+     * @param request ImportDetailRequest
+     * @param importEntity ImportEntity
+     * @return ImportDetailEntity
+     */
+    public ImportDetailEntity toEntity(
+            final @NotNull ImportDetailRequest request,
+            @NotNull final ImportEntity importEntity) {
+        var entity = create(DEFAULT);
+        entity.setClientId(entity.getClientId());
+        entity.setName(request.getName());
+        entity.setImportEntity(importEntity);
+        entity.setIngredientId(request.getIngredientId());
+        entity.setQuantity(request.getQuantity());
+        entity.setDescription(request.getDescription());
+        entity.setCreateAt(Instant.now().toString());
+        entity.setUpdateAt(Instant.now().toString());
+        entity.setActive(request.isActive());
+        return entity;
+    }
+
+    //</editor-fold>
 }
