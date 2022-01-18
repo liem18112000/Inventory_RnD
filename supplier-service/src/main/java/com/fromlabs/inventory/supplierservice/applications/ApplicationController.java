@@ -4,6 +4,10 @@
 
 package com.fromlabs.inventory.supplierservice.applications;
 
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
@@ -171,6 +175,138 @@ public interface ApplicationController {
     ResponseEntity<?> updateProvidableMaterial(
             Long tenantId,
             ProvidableMaterialRequest request
+    );
+
+    /**
+     * Delete
+     * @param id Entity Unique ID
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> deleteProvidableMaterial(
+            Long id
+    );
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT">
+
+    /**
+     * Get page import with filter
+     * @param tenantId  Tenant ID
+     * @param request   ImportPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getPageImport(
+            Long                tenantId,
+            ImportPageRequest   request
+    );
+
+    /**
+     * Get all import as list with filter
+     * @param tenantId  Tenant ID
+     * @param request   SupplierPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getAllImport(
+            Long                tenantId,
+            ImportPageRequest   request
+    );
+
+    /**
+     * Get import with ID
+     * @param id        Unique Entity ID
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getImportById(
+            Long id
+    );
+
+    /**
+     * Save import by request
+     * @param tenantId  Tenant ID
+     * @param request   ImportRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> saveImport(
+            Long            tenantId,
+            ImportRequest   request
+    );
+
+    /**
+     * Update import by request
+     * @param tenantId  Tenant ID
+     * @param request   SupplierRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> updateImport(
+            Long tenantId,
+            SupplierRequest request
+    );
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT DETAIL">
+
+    /**
+     * Get page import detail with filter
+     * @param tenantId  Tenant ID
+     * @param request   ImportDetailPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getPageImport(
+            Long                    tenantId,
+            ImportDetailPageRequest request
+    );
+
+    /**
+     * Get all import detail as list with filter
+     * @param tenantId  Tenant ID
+     * @param request   ImportDetailPageRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getAllImportDetail(
+            Long                    tenantId,
+            ImportDetailPageRequest request
+    );
+
+    /**
+     * Get import detail with ID
+     * @param id        Unique Entity ID
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> getImportDetailById(
+            Long id
+    );
+
+    /**
+     * Save import by request
+     * @param tenantId  Tenant ID
+     * @param request   ImportDetailRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> saveImportDetail(
+            Long                tenantId,
+            ImportDetailRequest request
+    );
+
+    /**
+     * Update import by request
+     * @param tenantId  Tenant ID
+     * @param request   ImportDetailRequest
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> updateImportDetail(
+            Long                tenantId,
+            ImportDetailRequest request
+    );
+
+    /**
+     * Delete
+     * @param id Entity Unique ID
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> deleteImportDetail(
+            Long id
     );
 
     //</editor-fold>

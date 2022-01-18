@@ -7,6 +7,7 @@ import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierReq
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public class SupplierMapper {
      * @param request   SupplierRequest
      * @return          SupplierEntity
      */
-    public static SupplierEntity toEntity(SupplierRequest request) {
+    public static SupplierEntity toEntity(@NotNull final SupplierRequest request) {
         var entity = create(DEFAULT);
         entity.setClientId(request.getTenantId());
         entity.setName(request.getName());

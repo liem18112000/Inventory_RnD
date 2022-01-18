@@ -1,7 +1,11 @@
 package com.fromlabs.inventory.supplierservice.utility;
 
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,6 +58,62 @@ public class RequestBootstrap {
     public Object bootstrapTenantId(
             Long                tenantId,
             SupplierPageRequest request
+    ) {
+        request.setTenantId(tenantId);
+        return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
+     * Bootstrap tenant for material request
+     * @param tenantId  Tenant Id
+     * @param request   ProvidableMaterialRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantId(
+            Long                      tenantId,
+            ProvidableMaterialRequest request
+    ) {
+        request.setTenantId(tenantId);
+        return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
+     * Bootstrap tenant for material page request
+     * @param tenantId  Tenant Id
+     * @param request   ProvidableMaterialPageRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantId(
+            Long                            tenantId,
+            ProvidableMaterialPageRequest   request
+    ) {
+        request.setClientId(tenantId);
+        return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
+     * Bootstrap tenant for import request
+     * @param tenantId  Tenant Id
+     * @param request   ImportRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantId(
+            Long                tenantId,
+            ImportRequest       request
+    ) {
+        request.setTenantId(tenantId);
+        return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
+     * Bootstrap tenant for import page request
+     * @param tenantId  Tenant Id
+     * @param request   ImportPageRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantId(
+            Long                tenantId,
+            ImportPageRequest   request
     ) {
         request.setTenantId(tenantId);
         return logWrapper(request, "bootstrapTenantId: {}");

@@ -12,7 +12,7 @@ import java.time.Instant;
 public class ImportRequest {
     protected Long id;
     protected Long tenantId;
-    protected Long parentId;
+    protected Long supplierId;
     protected String name;
     protected String description;
     protected String code;

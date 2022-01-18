@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class ProvidableMaterialRequest {
     private Long    id;
-    private Long    clientId;
+    private Long    tenantId;
     private Long    ingredientId;
     private Long    supplierId;
     private String  name;

@@ -10,6 +10,7 @@ import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,14 +82,17 @@ public class ProvidableMaterialMapper {
     /**
      * Covert request to entity
      * @param request   ProvidableMaterialRequest
+     * @param supplier  SupplierEntity
      * @return          ProvidableMaterialEntity
      */
     public static ProvidableMaterialEntity toEntity(
-            ProvidableMaterialRequest request
+            @NotNull final ProvidableMaterialRequest request,
+            @NotNull final SupplierEntity supplier
     ) {
         var entity = create(DEFAULT);
+        entity.setSupplier(supplier);
         entity.setIngredientId(request.getIngredientId());
-        entity.setClientId(request.getClientId());
+        entity.setClientId(request.getTenantId());
         entity.setName(request.getName());
         entity.setDescription(request.getDescription());
         entity.setMinimumQuantity(request.getMinimumQuantity());

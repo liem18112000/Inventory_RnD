@@ -4,6 +4,12 @@ import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient
 import com.fromlabs.inventory.supplierservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.supplierservice.common.entity.BaseEntity;
 import com.fromlabs.inventory.supplierservice.common.exception.ObjectNotFoundException;
+import com.fromlabs.inventory.supplierservice.imports.ImportService;
+import com.fromlabs.inventory.supplierservice.imports.beans.dto.ImportDto;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.mapper.ImportMapper;
+import com.fromlabs.inventory.supplierservice.imports.specification.ImportSpecification;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.dto.SupplierDto;
@@ -12,22 +18,26 @@ import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierReq
 import com.fromlabs.inventory.supplierservice.supplier.mapper.SupplierMapper;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.dto.ProvidableMaterialDto;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.mapper.ProvidableMaterialMapper;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.specification.ProvidableMaterialSpecification;
 import com.fromlabs.inventory.supplierservice.supplier.specification.SupplierSpecification;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.*;
-import static org.springframework.http.ResponseEntity.ok;
-import static org.springframework.http.ResponseEntity.status;
+import static org.springframework.http.ResponseEntity.*;
 
 /**
  * <h1>Transaction Logic Layer</h1>
@@ -297,21 +307,37 @@ public class TransactionLogic {
      * @param supplierService   SupplierService
      * @return                  ResponseEntity
      */
-    @SneakyThrows
     public ResponseEntity<?> saveSupplier(
-            SupplierRequest request,
-            SupplierService supplierService
+            @NotNull final SupplierRequest request,
+            @NotNull final SupplierService supplierService
     ) {
-        // Check pre-conditions
-        assert nonNull(request);
-        assert nonNull(supplierService);
-
         // Convert request to saved entity
         final var supplier      = SupplierMapper.toEntity(request);
         final var savedSupplier = supplierService.save(supplier);
 
         // Save supplier with CREATED status
         return status(HttpStatus.CREATED).body(savedSupplier);
+    }
+
+    /**
+     * Update supplier by request
+     * @param request           SupplierRequest
+     * @param supplierService   SupplierService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateSupplier(
+            @NotNull final SupplierRequest request,
+            @NotNull final SupplierService supplierService
+    ) {
+        // Pre-condition
+        assert nonNull(request.getId());
+
+        // Convert request to saved entity
+        final var supplier= supplierService.getById(request.getId()).update(request);
+        final var updatedSupplier = supplierService.save(supplier);
+
+        // Save supplier with CREATED status
+        return ok(updatedSupplier);
     }
 
     /**
@@ -345,10 +371,10 @@ public class TransactionLogic {
      * @param id                Entity ID
      * @param service           ProvidableMaterialService
      * @param ingredientClient  IngredientClient
-     * @return                  ProvidableMaterialDto
+     * @return                  ResponseEntity
      */
     @SneakyThrows
-    public ProvidableMaterialDto getProvidableMaterialById(
+    public ResponseEntity<?> getProvidableMaterialById(
             Long id,
             ProvidableMaterialService service,
             IngredientClient ingredientClient
@@ -359,10 +385,42 @@ public class TransactionLogic {
         // Get material by id
         final var material = service.getById(id);
 
-        if(isNull(material)) throw new ObjectNotFoundException("Providable material is not found by id : {}" + id);
+        if(isNull(material)) {
+            throw new ObjectNotFoundException(
+                    "Providable material is not found by id : {}" + id);
+        }
 
         // Convert entity to DTO and return it
-        return ProvidableMaterialMapper.toDto(material, ingredientClient);
+        return ok(ProvidableMaterialMapper.toDto(material, ingredientClient));
+    }
+
+    /**
+     * Get page material with request
+     * @param request                   ProvidableMaterialPageRequest
+     * @param supplierService           SupplierService
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getPageProvidableMaterial(
+            @NotNull final ProvidableMaterialPageRequest   request,
+            @NotNull final SupplierService                 supplierService,
+            @NotNull final ProvidableMaterialService       providableMaterialService,
+            @NotNull final IngredientClient                ingredientClient
+    ) {
+        // Prepare for all data
+        final var supplierEntity = nonNull(request.getSupplierId()) ?
+                supplierService.getById(request.getSupplierId()) : null;
+        final var entity = ProvidableMaterialMapper.toEntity(request, supplierEntity);
+        final var specification = ProvidableMaterialSpecification
+                .filter(entity, supplierEntity);
+
+        // Get page entities
+        final var pages = providableMaterialService.getPage(
+                specification, request.getPageable());
+
+        // Convert to DTO and return result
+        return ok(ProvidableMaterialMapper.toDto(pages, ingredientClient));
     }
 
     /**
@@ -370,9 +428,9 @@ public class TransactionLogic {
      * @param tenantId          Tenant id
      * @param service           ProvidableMaterialService
      * @param ingredientClient  IngredientClient
-     * @return                  List&lt;ProvidableMaterialDto&gt;
+     * @return                  ResponseEntity
      */
-    public List<ProvidableMaterialDto> getAllProvidableMaterialByTenantId(
+    public ResponseEntity<?> getAllProvidableMaterialByTenantId(
             Long                        tenantId,
             ProvidableMaterialService   service,
             IngredientClient            ingredientClient
@@ -384,7 +442,134 @@ public class TransactionLogic {
         final var materials = service.getAll(tenantId);
 
         // Convert entity to DTO and return it
-        return ProvidableMaterialMapper.toDto(materials, ingredientClient);
+        return ok(ProvidableMaterialMapper.toDto(materials, ingredientClient));
+    }
+
+    /**
+     * Save material by request
+     * @param request                   ProvidableMaterialRequest
+     * @param supplierService           SupplierService
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> saveProvidableMaterial(
+            @NotNull final ProvidableMaterialRequest    request,
+            @NotNull final SupplierService              supplierService,
+            @NotNull final ProvidableMaterialService    providableMaterialService,
+            @NotNull final IngredientClient             ingredientClient
+    ) {
+        final var supplier = supplierService.getById(request.getSupplierId());
+        final var entity = ProvidableMaterialMapper.toEntity(request, supplier);
+        final var savedEntity = providableMaterialService.save(entity);
+        final var dto = ProvidableMaterialMapper.toDto(savedEntity, ingredientClient);
+        return status(HttpStatus.CREATED).body(dto);
+    }
+
+    /**
+     * Update material by request
+     * @param request                   ProvidableMaterialRequest
+     * @param providableMaterialService ProvidableMaterialService
+     * @param ingredientClient          IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateProvidableMaterial(
+            @NotNull final ProvidableMaterialRequest    request,
+            @NotNull final ProvidableMaterialService    providableMaterialService,
+            @NotNull final IngredientClient             ingredientClient
+    ) {
+        final var entity = providableMaterialService.getById(request.getId())
+                .update(request);
+        final var savedEntity = providableMaterialService.save(entity);
+        final var dto = ProvidableMaterialMapper.toDto(savedEntity, ingredientClient);
+        return status(HttpStatus.CREATED).body(dto);
+    }
+
+    /**
+     * Delete material by id
+     * @param id        Entity id
+     * @param service   ProvidableMaterialService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> deleteProvidableMaterial(
+            @NotNull final Long id,
+            @NotNull final ProvidableMaterialService service
+    ) {
+        // Get entity by id
+        final var entity = service.getById(id);
+
+        // Delete entity
+        service.delete(entity);
+
+        return noContent().build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT">
+
+    /**
+     * Get import by id
+     * @param id            Import Unique ID
+     * @param importService importService
+     * @return              ImportDto
+     * @throws ObjectNotFoundException when import is n ot found with id
+     */
+    public ResponseEntity<?> getImportById(
+            @NotNull final Long id,
+            @NotNull final ImportService importService
+    ) throws ObjectNotFoundException {
+
+        // Get import by id
+        final var importEntity = importService.getByIdWithException(id);
+
+        // Convert to DTO and return
+        return ok(ImportMapper.toDto(importEntity));
+    }
+
+    public ResponseEntity<?> getPageImport(
+            @NotNull final ImportPageRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ImportService importService
+    ) {
+        // Prepare for all data
+        final var supplier = nonNull(request.getSupplierId()) ?
+                supplierService.getById(request.getSupplierId()) : null;
+        final var entity = ImportMapper.toEntity(request);
+        final var specification = ImportSpecification.filter(entity, supplier);
+
+        // Get import page entities
+        final var importPageEntities = importService.getPage(
+                specification, request.getPageable());
+
+        // Convert to DTO and return result
+        return ok(ImportMapper.toDto(importPageEntities));
+    }
+
+    /**
+     * Save import by request
+     * @param request           ImportRequest
+     * @param supplierService   SupplierService
+     * @param importService     ImportService
+     * @return                  ImportDto
+     */
+    public ResponseEntity<?> saveImport(
+            @NotNull final ImportRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ImportService importService
+    ) {
+        // Pre-condition
+        assert nonNull(request.getSupplierId());
+
+        // Obtain supplier and import entity from request
+        final var supplierEntity = supplierService.getById(request.getSupplierId());
+        final var importEntity = ImportMapper.toEntity(request, supplierEntity);
+
+        // Save import entity
+        final var savedImport = importService.save(importEntity);
+
+        // Convert to DTO and return
+        return status(HttpStatus.CREATED).body(ImportMapper.toDto(savedImport));
     }
 
     //</editor-fold>
