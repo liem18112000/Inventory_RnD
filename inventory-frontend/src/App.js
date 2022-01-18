@@ -23,6 +23,7 @@ import { Toast } from "primereact/toast";
 import { authenticateService, getAuthenticateToken } from "./core/security/AuthenticateService";
 import { sleep } from "./core/utility/ComponentUtility";
 import { SupplierChild } from './supplier/child/SupplierChild';
+import { SupplierMaterial } from './supplier/material/SupplierMaterial';
 
 export const history = createBrowserHistory();
 
@@ -57,6 +58,7 @@ function App() {
         {/* <AdminTemplate path="/supplier" exact Component={SupplierGroup} /> */}
         <AdminTemplate path="/supplier" exact Component={SupplierGroup} />
         <AdminTemplate path="/supplier/:id" exact Component={SupplierChild} />
+        <AdminTemplate path="/supplier/material/:id" exact Component={SupplierMaterial} />
         <AdminTemplate path="/notification" exact Component={Dashboard} />
       </Switch>
     </Router>
