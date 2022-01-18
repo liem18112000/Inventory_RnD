@@ -5,6 +5,8 @@ import com.fromlabs.inventory.supplierservice.common.template.WebTemplateProcess
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
@@ -449,6 +451,64 @@ public class SupplierController implements ApplicationController {
             @RequestBody SupplierRequest request
     ) {
         log.info(path(HttpMethod.PUT, "import"));
+        return null;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT DETAIL">
+
+    /**
+     * Get page import detail with filter
+     *
+     * @param tenantId Tenant ID
+     * @param request  ImportDetailPageRequest
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getPageImport(Long tenantId, ImportDetailPageRequest request) {
+        return null;
+    }
+
+    /**
+     * Get all import detail as list with filter
+     *
+     * @param tenantId Tenant ID
+     * @param request  ImportDetailPageRequest
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getAllImportDetail(Long tenantId, ImportDetailPageRequest request) {
+        return null;
+    }
+
+    /**
+     * Get import detail with ID
+     *
+     * @param id Unique Entity ID
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getImportDetailById(Long id) {
+        return null;
+    }
+
+    /**
+     * Save import by request
+     *
+     * @param tenantId Tenant ID
+     * @param request  ImportDetailRequest
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> saveImportDetail(Long tenantId, ImportDetailRequest request) {
+        return null;
+    }
+
+    /**
+     * Update import by request
+     *
+     * @param tenantId Tenant ID
+     * @param request  ImportDetailRequest
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateImportDetail(Long tenantId, ImportDetailRequest request) {
         return null;
     }
 
