@@ -103,7 +103,7 @@ export class RecipeDetailForm extends Component {
                     description: data ? data.description : '',
                     quantity: data ? data.quantity : '',
                     code: data ? data.code : '',
-                    ingredientId: data ? data.ingredientId : '',
+                    ingredientId: data ? data.ingredient.id : '',
                     recipeId: recipeId,
                 },
                 id: data ? data.id : null,
@@ -300,7 +300,6 @@ export class RecipeDetailForm extends Component {
                         <Dropdown value={this.state.data.ingredientId}
                             placeholder="Ingredient"
                             options={this.state.ingredientList}
-                            itemTemplate={this.itemTemplate}
                             onChange={(e) => {
                                 console.log(e.target);
                                 this.setState({ data: { ...this.state.data, ingredientId: e.target.value } })
