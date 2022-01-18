@@ -313,6 +313,12 @@ public class TransactionLogic {
     ) {
         // Convert request to saved entity
         final var supplier      = SupplierMapper.toEntity(request);
+
+        // Set parent for save child supplier
+        if (nonNull(request.getParentId())) {
+            final var parent = supplierService.getById(request.getParentId());
+            supplier.setParent(parent);
+        }
         final var savedSupplier = supplierService.save(supplier);
 
         // Save supplier with CREATED status
