@@ -371,6 +371,21 @@ public class SupplierController implements ApplicationController {
                 tenantId, request, providableMaterialService, ingredientClient).run();
     }
 
+    /**
+     * Delete material by id
+     *
+     * @param id Entity Unique ID
+     * @return ResponseEntity
+     */
+    @DeleteMapping("providable-material/{id:\\d+}")
+    public ResponseEntity<?> deleteProvidableMaterial(
+            @PathVariable(ID) Long id
+    ) {
+        log.info(path(HttpMethod.DELETE, "providable-material"));
+        return (ResponseEntity<?>) buildDeleteProvidableMaterialTemplateProcess(
+                id, providableMaterialService).run();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT">
@@ -416,7 +431,8 @@ public class SupplierController implements ApplicationController {
      */
     @GetMapping("import/{id:\\d+}")
     public ResponseEntity<?> getImportById(
-            @PathVariable(ID) Long id) {
+            @PathVariable(ID) Long id
+    ) {
         log.info(path(HttpMethod.GET, "import/".concat(String.valueOf(id))));
         return (ResponseEntity<?>) buildGetImportByIdTemplateProcess(
                 id, importService).run();
@@ -465,7 +481,12 @@ public class SupplierController implements ApplicationController {
      * @param request  ImportDetailPageRequest
      * @return ResponseEntity
      */
-    public ResponseEntity<?> getPageImport(Long tenantId, ImportDetailPageRequest request) {
+    @PostMapping("import/detail/page")
+    public ResponseEntity<?> getPageImport(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportDetailPageRequest request
+    ) {
+        log.info(path(HttpMethod.POST, "providable-material"));
         return null;
     }
 
@@ -476,7 +497,11 @@ public class SupplierController implements ApplicationController {
      * @param request  ImportDetailPageRequest
      * @return ResponseEntity
      */
-    public ResponseEntity<?> getAllImportDetail(Long tenantId, ImportDetailPageRequest request) {
+    @PostMapping("import/detail/all")
+    public ResponseEntity<?> getAllImportDetail(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportDetailPageRequest request
+    ) {
         return null;
     }
 
@@ -486,7 +511,10 @@ public class SupplierController implements ApplicationController {
      * @param id Unique Entity ID
      * @return ResponseEntity
      */
-    public ResponseEntity<?> getImportDetailById(Long id) {
+    @GetMapping("import/detail/{id:\\d+}")
+    public ResponseEntity<?> getImportDetailById(
+            @PathVariable(ID) Long id
+    ) {
         return null;
     }
 
@@ -497,7 +525,11 @@ public class SupplierController implements ApplicationController {
      * @param request  ImportDetailRequest
      * @return ResponseEntity
      */
-    public ResponseEntity<?> saveImportDetail(Long tenantId, ImportDetailRequest request) {
+    @PostMapping("import/detail")
+    public ResponseEntity<?> saveImportDetail(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportDetailRequest request
+    ) {
         return null;
     }
 
@@ -508,7 +540,22 @@ public class SupplierController implements ApplicationController {
      * @param request  ImportDetailRequest
      * @return ResponseEntity
      */
-    public ResponseEntity<?> updateImportDetail(Long tenantId, ImportDetailRequest request) {
+    @PutMapping("import/detail")
+    public ResponseEntity<?> updateImportDetail(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @RequestBody ImportDetailRequest request
+    ) {
+        return null;
+    }
+
+    /**
+     * Delete
+     *
+     * @param id Entity Unique ID
+     * @return ResponseEntity
+     */
+    @DeleteMapping("import/detail")
+    public ResponseEntity<?> deleteImportDetail(Long id) {
         return null;
     }
 

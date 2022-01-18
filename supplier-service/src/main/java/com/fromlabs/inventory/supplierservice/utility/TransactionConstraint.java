@@ -9,6 +9,7 @@ import com.fromlabs.inventory.supplierservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -142,6 +143,12 @@ public class TransactionConstraint {
                 .build();
     }
 
+    /**
+     * Check entity exist by id
+     * @param id ID
+     * @param importService ImportService
+     * @return boolean
+     */
     public boolean checkImportExistById(
             @NotNull final Long id,
             @NotNull final ImportService importService
@@ -154,6 +161,26 @@ public class TransactionConstraint {
 
         // Log out the check result and return it
         return logWrapper(result, "checkImportExistById: {}");
+    }
+
+    /**
+     * Check material exist by id
+     * @param id ID
+     * @param service ProvidableMaterialService
+     * @return boolean
+     */
+    public boolean checkMaterialExistById(
+            @NotNull final Long id,
+            @NotNull final ProvidableMaterialService service
+    ) {
+        // Get import by id;
+        final var entity = service.getById(id);
+
+        // Build constrain wrapper and check the constraint
+        final boolean result = nonNull(entity);
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkMaterialExistById: {}");
     }
 
     /**

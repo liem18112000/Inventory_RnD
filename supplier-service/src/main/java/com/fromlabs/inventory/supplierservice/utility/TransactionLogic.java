@@ -485,6 +485,25 @@ public class TransactionLogic {
         return status(HttpStatus.CREATED).body(dto);
     }
 
+    /**
+     * Delete material by id
+     * @param id        Entity id
+     * @param service   ProvidableMaterialService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> deleteProvidableMaterial(
+            @NotNull final Long id,
+            @NotNull final ProvidableMaterialService service
+    ) {
+        // Get entity by id
+        final var entity = service.getById(id);
+
+        // Delete entity
+        service.delete(entity);
+
+        return noContent().build();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT">

@@ -15,6 +15,7 @@ import com.fromlabs.inventory.supplierservice.supplier.providable_material.Provi
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.validation.constraints.NotNull;
@@ -456,6 +457,28 @@ public class TemplateProcessDirector {
                 .before(() -> true) // TODO: add constrains
                 .process(() -> updateProvidableMaterial(request, providableMaterialService, ingredientClient))
                 .after(() -> true) // TODO: add constraints
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildDeleteProvidableMaterialTemplateProcess">
+
+    /**
+     * Build providable material by id template process
+     * @param id Entity ID
+     * @param providableMaterialService ProvidableMaterialService
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildDeleteProvidableMaterialTemplateProcess(
+            @NotNull final Long id,
+            @NotNull final ProvidableMaterialService providableMaterialService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .validate(() -> validateId(id))
+                .before(() -> checkMaterialExistById(id, providableMaterialService))
+                .process(() -> deleteProvidableMaterial(id, providableMaterialService))
+                .after(() -> !checkMaterialExistById(id, providableMaterialService))
                 .build();
     }
 

@@ -177,6 +177,15 @@ public interface ApplicationController {
             ProvidableMaterialRequest request
     );
 
+    /**
+     * Delete
+     * @param id Entity Unique ID
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> deleteProvidableMaterial(
+            Long id
+    );
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT">
@@ -290,5 +299,15 @@ public interface ApplicationController {
             Long                tenantId,
             ImportDetailRequest request
     );
+
+    /**
+     * Delete
+     * @param id Entity Unique ID
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> deleteImportDetail(
+            Long id
+    );
+
     //</editor-fold>
 }
