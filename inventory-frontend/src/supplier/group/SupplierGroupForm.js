@@ -6,7 +6,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import classNames from 'classnames';
 import { Toast } from 'primereact/toast';
 import { sleep } from "../../core/utility/ComponentUtility";
-import { SupplierServiceTest } from '../../service/SupplierServiceTest';
+import { SupplierService } from '../../service/SupplierService';
 
 /**
  * supplier form for save or update supplier form information
@@ -33,7 +33,7 @@ export class SupplierGroupForm extends Component {
             editTitle: 'Edit Supplier Group',
             createTitle: 'New Supplier Group'
         }
-        this.supplierService = new SupplierServiceTest();
+        this.supplierService = new SupplierService();
     }
 
     /**

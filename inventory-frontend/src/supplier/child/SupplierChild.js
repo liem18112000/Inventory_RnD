@@ -14,8 +14,8 @@ import moment from 'moment';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
-import { SupplierServiceTest } from '../../service/SupplierServiceTest';
 import { SupplierChildForm } from './SupplierChildForm';
+import { SupplierService } from '../../service/SupplierService';
 
 export class SupplierChild extends Component {
 
@@ -38,7 +38,7 @@ export class SupplierChild extends Component {
             loading: false
         };
 
-        this.supplierService = new SupplierServiceTest();
+        this.supplierService = new SupplierService();
         this.mapper = new PagingDataModelMapper();
     }
 

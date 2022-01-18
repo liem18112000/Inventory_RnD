@@ -1,77 +1,73 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { Component } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
-import '../../assets/styles/TableDemo.css';
-import { SplitButton } from 'primereact/splitbutton';
-import moment from 'moment';
-import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
+import { SplitButton } from 'primereact/splitbutton';
 import { Fieldset } from 'primereact/fieldset';
-import { PagingDataModelMapper } from '../../core/models/mapper/ModelMapper';
-import { handleGetPage } from '../../core/handlers/ApiLoadContentHandler';
-import { SupplierService } from "../../service/SupplierService";
+import '../../assets/styles/TableDemo.css';
+import moment from 'moment';
+import { Button } from "primereact/button";
+import 'primeflex/primeflex.css';
+import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
+import { Toast } from 'primereact/toast';
+import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { SupplierGroupForm } from './SupplierGroupForm';
+import { SupplierService } from '../../service/SupplierService';
 
-export const SupplierGroup = () => {
+export class SupplierGroup extends Component {
 
-    const [content, setContent] = useState([]);
-    const [page, setPage] = useState(0);
-    const [rows, setRows] = useState(10);
-    const [total, setTotal] = useState(0);
-    const [sortField, setSortField] = useState("");
-    const [sortOrder, setSortOrder] = useState(0);
-    const [filter, setFilter] = useState({
-        name: "",
-        code: ""
-    });
-    const isMock = false;
-    const [loading, setLoading] = useState(false);
+    /**
+     * Constructor
+     * @param props
+     */
+    constructor(props) {
+        super(props);
+        this.state = {
+            content: [],
+            // --paginator state--
+            page: 0,
+            rows: 10,
+            total: 0,
+            sortField: "",
+            sortOrder: 0,
+            // --paginator state--
+            filter: {
+                name: "",
+                code: "",
+            },
+            isMock: false,
+            loading: false
+        };
+        this.supplierService = new SupplierService();
+        this.mapper = new PagingDataModelMapper();
+    }
 
-    const datatable = useRef(null);
-    const toast = useRef(null);
-    const mapper = new PagingDataModelMapper();
-
-    useEffect(() => {
-        setLoading(true);
-        getPage();
-    }, []);
+    /**
+     * This function is activated after component is created
+     */
+    componentDidMount() {
+        this.setState({ loading: true });
+        this.getPage()
+    };
 
     /**
      * Call get page supplier group API
      */
-    const getPage = () => {
-        SupplierService
+    getPage = () => {
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
+        this.supplierService
             .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
-            .then(data => handleGetPage(data))
-            .then(data => mapper.toModel(data))
-            .then(data => {
-                setContent(data.content);
-                setLoading(data.loading);
-                setTotal(data.total);
-                setPage(data.page);
-                setRows(data.rows);
-            })
+            .then(data => handleGetPage(data, this.toast))
+            .then(data => this.mapper.toModel(data))
+            .then(data => this.setState({ ...this.state, ...data }));
     }
 
-    const nameBodyTemplate = (rowData) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Name</span>
-                {rowData.name}
-            </React.Fragment>
-        );
-    }
-
-    const codeBodyTemplate = (rowData) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Code</span>
-                {rowData.code}
-            </React.Fragment>
-        );
-    }
-
-    const descriptionBodyTemplate = (rowData) => {
+    /**
+     * Description body
+     * @param rowData           supplier group data row
+     * @returns {JSX.Element}
+     */
+    descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
                 <span className="p-column-title">Description</span>
@@ -80,30 +76,18 @@ export const SupplierGroup = () => {
         );
     }
 
-    const createAtBodyTemplate = (rowData) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Create At</span>
-                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.createAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
-            </React.Fragment>
-        );
-    }
-
-    const updateAtBodyTemplate = (rowData) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Update At</span>
-                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updateAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
-            </React.Fragment>
-        );
-    }
-
-    const actionBodyTemplate = (rowData, form) => {
+    /**
+     * Action body template
+     * @param rowData           supplier group data row
+     * @param form              supplier group form
+     * @returns {JSX.Element}
+     */
+    actionBodyTemplate(rowData, form) {
         let items = [
             {
                 label: 'Edit',
                 icon: 'pi pi-pencil',
-                command: (e) => { form.action(rowData.id, isMock) }
+                command: (e) => { form.action(rowData.id, this.state.isMock) }
             },
         ];
 
@@ -120,130 +104,220 @@ export const SupplierGroup = () => {
     }
 
     /**
+     * Code body template
+     * @param rowData           supplier group data row
+     * @returns {JSX.Element}
+     */
+    codeBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Code</span>
+                {rowData.code}
+            </React.Fragment>
+        );
+    }
+
+    /**
+     * Category name body template
+     * @param rowData           supplier group data row
+     * @returns {JSX.Element}
+     */
+    nameBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Name</span>
+                {rowData.name}
+            </React.Fragment>
+        );
+    }
+
+    /**
+     * Create at timestamp body template
+     * @param rowData           supplier group data row
+     * @returns {JSX.Element}
+     */
+    createAtBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Create At</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+            </React.Fragment>
+        );
+    }
+
+    updateAtBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Update At</span>
+                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updateAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
+            </React.Fragment>
+        );
+    }
+
+    /**
+     * Set state for filter
+     * @param filter    supplier group filter fields
+     */
+    setFilter = (filter) => {
+        this.setState({
+            ...this.state,
+            filter: filter
+        })
+    }
+
+    /**
      * Rest stat of supplier group filter
      */
-    const resetFilter = () => {
-        setLoading(true);
-        setFilter({
-            name: '',
-            code: ''
-        });
-        getPage();
-        toast.current.show({
-            severity: 'info',
-            summary: 'Clear',
-            detail: 'Clear filter',
-            life: 1000
-        });
+    resetFilter = () => {
+        this.setState({
+            ...this.state,
+            filter: {
+                name: "",
+                code: "",
+            }
+        }, () => {
+            this.setState({ loading: true });
+            this.getPage();
+            this.toast.show({ severity: 'info', summary: 'Clear', detail: 'Clear filter', life: 1000 });
+        })
     }
 
     /**
      * Apply supplier group filter fields
      */
-    const applyFilter = () => {
-        setLoading(true);
-        getPage();
-        toast.current.show({
-            severity: 'info',
-            summary: 'Search',
-            detail: 'Search data content',
-            life: 1000
-        });
+    applyFilter = () => {
+        this.setState({ loading: true });
+        this.getPage();
+        this.toast.show({ severity: 'info', summary: 'Search', detail: 'Search data content', life: 1000 });
     }
 
     /**
      * Reset page length
      * @param e
      */
-    const onPage = e => {
-        setLoading(true);
-        setPage(e.page);
-        getPage();
+    onPage = e => {
+        this.setState(
+            {
+                loading: true,
+                page: e.page
+            },
+            () => {
+                this.getPage();
+            }
+        );
     };
 
     /**
      * Change page on datatable
      * @param e
      */
-    const onSort = e => {
-        setLoading(true);
-        setSortField(e.sortField);
-        setSortOrder(e.sortOrder);
-        getPage();
-        toast.current.show({
-            severity: 'info',
-            summary: 'Sort',
-            detail: 'Sort ' + e.sortField + " " + (e.sortOrder === 1 ? "ascending" : "descending"),
-            life: 1000
-        });
+    onSort = e => {
+        this.setState(
+            {
+                loading: true,
+                sortField: e.sortField,
+                sortOrder: e.sortOrder
+            },
+            () => {
+                this.setState({ loading: true });
+                this.getPage();
+                this.toast.show({
+                    severity: 'info',
+                    summary: 'Sort',
+                    detail: 'Sort ' + e.sortField + " " + (e.sortOrder === 1 ? "ascending" : "descending"),
+                    life: 1000
+                });
+            }
+        );
     };
 
     /**
      * Refresh data table
      */
-    const onRefresh = () => {
-        setLoading(true);
-        getPage()
-        toast.current.show({
-            severity: 'info',
-            summary: 'Refresh',
-            detail: 'Refresh datatable',
-            life: 1000
-        });
+    onRefresh = () => {
+        this.setState({
+            ...this.state,
+            loading: true
+        }, () => {
+            this.getPage()
+            this.toast.show({ severity: 'info', summary: 'Refresh', detail: 'Refresh datatable', life: 1000 });
+        })
     }
 
     /**
      * Reset page length
      * @param l page length
      */
-    const onChangePageLength = l => {
-        setLoading(true);
-        setPage(0);
-        getPage();
-        toast.current.show({
-            severity: 'info',
-            summary: 'Reset page size',
-            detail: 'Page size is set to ' + l,
-            life: 1000
-        });
+    onChangePageLength = l => {
+        this.setState(
+            {
+                rows: l,
+                page: 0
+            },
+            () => {
+                this.setState({ loading: true });
+                this.getPage();
+                this.toast.show({ severity: 'info', summary: 'Reset page size', detail: 'Page size is set to ' + l, life: 1000 });
+            }
+        );
     };
 
-    const renderHeader = () => {
+    /**
+     * Brief datatable description
+     * @param page          Page
+     * @param rows          Size
+     * @param total         Total element
+     * @returns {string}    Datatable description
+     */
+    getTablePageReport = (page, rows, total) => {
+        if (total > 0) {
+            let first = (page * rows) + 1;
+            let last = page * rows + rows;
+            if (last > total) last = total;
+            return `Showing ${first} to ${last} of ${total} entries`;
+        }
+        return ''
+    };
+
+    /**
+     * Render component
+     * @returns {JSX.Element}
+     */
+    render() {
         const tableLengthOptions = [
             {
                 label: '5',
                 command: () => {
-                    setRows(5);
-                    onChangePageLength(5);
+                    this.onChangePageLength(5);
                 }
             },
             {
                 label: '10',
                 command: () => {
-                    onChangePageLength(10);
+                    this.onChangePageLength(10);
                 }
             },
             {
                 label: '25',
                 command: () => {
-                    onChangePageLength(25);
+                    this.onChangePageLength(25);
                 }
             },
             {
                 label: '50',
                 command: () => {
-                    onChangePageLength(50);
+                    this.onChangePageLength(50);
                 }
             },
             {
                 label: '100',
                 command: () => {
-                    onChangePageLength(100);
+                    this.onChangePageLength(100);
                 }
             }
         ];
 
-        return (
+        const header = (
             <div className="table-header">
                 <span className="p-input-icon-left">
                     <i className="pi pi-plus" />
@@ -253,22 +327,23 @@ export const SupplierGroup = () => {
                         icon="pi pi-plus"
                         iconPos="left"
                         label="New group"
-                    // onClick={() => this.form.action(null, true)}
+                        onClick={() => this.form.action(null, true)}
                     />
-                    <SplitButton
-                        className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
-                        onClick={onRefresh}
-                        model={tableLengthOptions}>
+                    <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
+                        onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
+                <div style={{}}>
+                </div>
             </div>
-        );
-    }
+        )
 
-    return (
-        <div className="datatable-doc-demo">
-            <Toast ref={toast} />
-            <div className="card">
+        return (
+            <div className="datatable-doc-demo">
+                <Toast ref={(el) => this.toast = el} />
+                <SupplierGroupForm ref={el => this.form = el}
+                    refreshData={() => this.getPage()}
+                />
                 <Fieldset legend="Supplier Group" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -276,9 +351,9 @@ export const SupplierGroup = () => {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Name"
-                                            value={filter.name}
-                                            onChange={(e) => setFilter({ ...filter, name: e.target.value })}
+                                            placeholder="Code"
+                                            value={this.state.filter.code}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -289,9 +364,9 @@ export const SupplierGroup = () => {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Code"
-                                            value={filter.code}
-                                            onChange={(e) => setFilter({ ...filter, code: e.target.value })}
+                                            placeholder="Name"
+                                            value={this.state.filter.name}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -305,7 +380,7 @@ export const SupplierGroup = () => {
                                 icon="pi pi-filter"
                                 iconPos="left"
                                 label="Search"
-                                onClick={() => applyFilter()} />
+                                onClick={() => this.applyFilter()} />
                         </div>
                         <div>
                             <Button
@@ -313,44 +388,43 @@ export const SupplierGroup = () => {
                                 icon="pi pi-trash"
                                 iconPos="left"
                                 label="Clear"
-                                onClick={() => resetFilter()}
+                                onClick={() => this.resetFilter()}
                             />
                         </div>
                     </div>
                 </Fieldset>
-                <DataTable ref={datatable}
+                < DataTable ref={(el) => this.dt = el}
                     lazy={true}
-                    first={page * rows}
-                    value={content}
-                    loading={loading}
-                    header={renderHeader()}
+                    first={this.state.page * this.state.rows}
+                    value={this.state.content}
+                    loading={this.state.loading}
+                    header={header}
                     className="p-datatable-customers"
                     dataKey="id"
                     rowHover
 
                     // ---Paginator--- 
                     paginator={true}
-                    onPage={onPage}
-                    onSort={onSort}
-                    rows={rows}
-                    totalRecords={total}
+                    onPage={this.onPage}
+                    onSort={this.onSort}
+                    rows={this.state.rows}
+                    totalRecords={this.state.total}
                     // ---Paginator--- 
-                    sortField={sortField}
-                    sortOrder={sortOrder}
+                    sortField={this.state.sortField}
+                    sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No ingredient categories found"
+                    emptyMessage="No supplier group found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="name" header="Name" body={nameBodyTemplate} sortable />
-                    <Column field="code" header="Code" body={codeBodyTemplate} sortable />
-                    <Column field="description" header="Description" body={descriptionBodyTemplate} sortable />
-                    <Column field="createAt" header="Create At" body={createAtBodyTemplate} sortable />
-                    <Column field="updateAt" header="Update At" body={updateAtBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => actionBodyTemplate(rowData)} />
+                    <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
+                    <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
+                    <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
+                    <Column sortField="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column sortField="updateAt" filterField="updateAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
-            </div>
-        </div>
-    );
+            </div >
+        );
+    }
 }
-
