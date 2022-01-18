@@ -11,8 +11,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
@@ -23,8 +26,12 @@ import java.util.Objects;
 @Table(name="import_detail")
 public class ImportDetailEntity extends ImportReferencedMultiEntity {
 
+    @NotNull
+    @Column(name="ingredient_id")
     private Long ingredientId;
 
+    @Min(value = 0)
+    @Column(name="quantity")
     private Long quantity;
 
     @Override

@@ -4,7 +4,6 @@
 
 package com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request;
 
-
 import com.fromlabs.inventory.supplierservice.common.helper.BaseCustomizePageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
