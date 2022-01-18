@@ -5,10 +5,13 @@
 package com.fromlabs.inventory.supplierservice.imports.details.specification;
 
 import com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification;
+import com.fromlabs.inventory.supplierservice.imports.ImportEntity;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailEntity;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.validation.constraints.NotNull;
 
 import static com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaEqual;
@@ -28,6 +31,15 @@ public class ImportDetailSpecification {
      */
     public static BaseSpecification<ImportDetailEntity> hasClientId(Long clientId) {
         return Spec(criteriaEqual("clientId", clientId));
+    }
+
+    /**
+     * Filter for import entity
+     * @param importEntity ImportEntity
+     * @return   BaseSpecification&lt;ImportDetailEntity&gt;
+     */
+    public static BaseSpecification<ImportDetailEntity> hasImport(ImportEntity importEntity) {
+        return Spec(criteriaEqual("importEntity", importEntity));
     }
 
     /**
@@ -77,15 +89,18 @@ public class ImportDetailSpecification {
 
     /**
      * Filter for all ingredient
-     * @param entity    SupplierEntity
+     * @param request           SupplierEntity
+     * @param importEntity      ImportEntity
      * @return          Specification&lt;SupplierEntity&gt;
      */
-    public static Specification<ImportDetailEntity> filter(ImportDetailPageRequest entity) {
-        var spec = hasClientId(entity.getClientId())
-                .and(hasName(entity.getName()))
-                .and(hasDescription(entity.getDescription()))
-                .and(hasUpdatedAt(entity.getUpdateAt()))
-                .and(hasCreatedAt(entity.getCreateAt()));
-        return isNull(entity.getIngredientId()) ? spec : spec.and(hasIngredientId(entity.getIngredientId()));
+    public static Specification<ImportDetailEntity> filter(
+            @NotNull final ImportDetailPageRequest request, ImportEntity importEntity) {
+        var spec = hasClientId(request.getClientId())
+                .and(hasName(request.getName()))
+                .and(hasDescription(request.getDescription()))
+                .and(hasUpdatedAt(request.getUpdateAt()))
+                .and(hasCreatedAt(request.getCreateAt()));
+        spec = isNull(request.getIngredientId()) ? spec : spec.and(hasIngredientId(request.getIngredientId()));
+        return isNull(importEntity) ? spec : spec.and(hasImport(importEntity));
     }
 }

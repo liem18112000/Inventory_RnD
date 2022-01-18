@@ -8,6 +8,10 @@ import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.dto.ImportDto;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.mapper.ImportDetailMapper;
+import com.fromlabs.inventory.supplierservice.imports.details.specification.ImportDetailSpecification;
 import com.fromlabs.inventory.supplierservice.imports.mapper.ImportMapper;
 import com.fromlabs.inventory.supplierservice.imports.specification.ImportSpecification;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
@@ -576,6 +580,50 @@ public class TransactionLogic {
 
         // Convert to DTO and return
         return status(HttpStatus.CREATED).body(ImportMapper.toDto(savedImport));
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="IMPORT DETAIL">
+
+    /**
+     * Get import detail by id
+     * @param id Import detail ID
+     * @param importDetailService  ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getImportDetailById(
+            @NotNull final Long id,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        final var entity = importDetailService.getById(id);
+        final var dto = ImportDetailMapper.toDto(entity, ingredientClient);
+        return ok(dto);
+    }
+
+    /**
+     * Get page import detail by request
+     * @param request ImportDetailPageRequest
+     * @param importService ImportService
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getImportDetailPage(
+            @NotNull final ImportDetailPageRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        final var importEntity = importService.getById(request.getImportId());
+        final var specification = ImportDetailSpecification
+                .filter(request, importEntity);
+        final var importDetails = importDetailService.getPage(
+                specification, request.getPageable());
+        final var dto = ImportDetailMapper.toDto(importDetails, ingredientClient);
+        return ok(dto);
     }
 
     //</editor-fold>
