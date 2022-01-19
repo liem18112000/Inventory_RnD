@@ -252,8 +252,8 @@ export class SupplierMaterial extends Component {
     goBack = (isParent) => {
         return (
             !isParent
-                ? <Link to={`../${this.state.groupId}`}> Back to Recipe</Link>
-                : <Link to={`../../recipes`}> Back to Recipes</Link>
+                ? <Link to={`../${this.state.parentId}`}> Back to Supplier Child</Link>
+                : <Link to={`../../supplier`}> Back to Supplier Child</Link>
         )
     }
 
@@ -300,7 +300,7 @@ export class SupplierMaterial extends Component {
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
-                        label="New detail"
+                        label="New material"
                         onClick={() => this.form.action(null, this.props.match.params.id, true)}
                     />
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
@@ -316,33 +316,20 @@ export class SupplierMaterial extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <Fieldset legend="Recipe Detail" toggleable>
+                <Fieldset legend="Material" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Code"
+                                            placeholder="Ingredient Name"
                                             value={this.state.filter.code}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
                                         />
                                     </div>
                                 </div>
-                                <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Name"
-                                            value={this.state.filter.name}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-col-12 p-md-6">
-                            <div className="p-grid">
-                                <div className="p-col-12">
+                                {/* <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
                                             placeholder="Description"
@@ -350,8 +337,21 @@ export class SupplierMaterial extends Component {
                                             onChange={(e) => this.setFilter({ ...this.state.filter, description: e.target.value })}
                                         />
                                     </div>
-                                </div>
+                                </div> */}
+                            </div>
+                        </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
                                 <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <InputText
+                                            placeholder="Name"
+                                            value={this.state.filter.name}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
+                                        />
+                                    </div>  
+                                </div>
+                                {/* <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
                                             placeholder="Updated At"
@@ -359,7 +359,7 @@ export class SupplierMaterial extends Component {
                                             onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })}
                                         />
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -407,11 +407,12 @@ export class SupplierMaterial extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
+                    <Column field="code" header="Ingredient ID" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
-                    <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
+                    <Column field="quantity" header="Minimum Quantity" body={this.quantityBodyTemplate} sortable />
+                    <Column field="quantity2" header="Maximum Quantity" body={this.quantityBodyTemplate} sortable />
+                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >
