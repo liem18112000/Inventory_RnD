@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
+import { SupplierImportForm } from './SupplierImportForm';
 
 export class SupplierImport extends Component {
     constructor(props) {
@@ -314,6 +315,10 @@ export class SupplierImport extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <SupplierImportForm ref={el => this.form = el}
+                    refreshData={() => this.getPageDetails()}
+                    id={this.props.match.params.id}
+                />
                 <Fieldset legend="Supplier Import" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
