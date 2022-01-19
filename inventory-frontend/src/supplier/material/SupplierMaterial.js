@@ -252,8 +252,8 @@ export class SupplierMaterial extends Component {
     goBack = (isParent) => {
         return (
             !isParent
-                ? <Link to={`../${this.state.parentId}`}> Back to Supplier Child</Link>
-                : <Link to={`../../supplier`}> Back to Supplier Child</Link>
+                ? <Link to={`../${this.state.parentId}`}> Back to Supplier</Link>
+                : <Link to={`../../supplier`}> Back to Supplier</Link>
         )
     }
 
@@ -316,14 +316,14 @@ export class SupplierMaterial extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <Fieldset legend="Material" toggleable>
+                <Fieldset legend="Supplier Material" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Ingredient Name"
+                                            placeholder="Ingredient"
                                             value={this.state.filter.code}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
                                         />
@@ -403,15 +403,15 @@ export class SupplierMaterial extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No recipe categories found"
+                    emptyMessage="No supplier material found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="code" header="Ingredient ID" body={this.codeBodyTemplate} sortable />
+                    <Column field="code" header="Ingredient" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column field="quantity" header="Minimum Quantity" body={this.quantityBodyTemplate} sortable />
-                    <Column field="quantity2" header="Maximum Quantity" body={this.quantityBodyTemplate} sortable />
+                    <Column field="quantity" header="Min Quant" body={this.quantityBodyTemplate} sortable />
+                    <Column field="quantity2" header="Max Quant" body={this.quantityBodyTemplate} sortable />
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
