@@ -40,6 +40,7 @@ export class SupplierChild extends Component {
 
         this.supplierService = new SupplierService();
         this.mapper = new PagingDataModelMapper();
+        console.log(this.state);
     }
 
     componentDidMount() {
@@ -96,22 +97,41 @@ export class SupplierChild extends Component {
     actionBodyTemplate(rowData, form) {
         let items = [
             {
-                label: 'Edit',
-                icon: 'pi pi-pencil',
-                command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
+                label: 'Material',
+                icon: 'pi pi-list',
+                command: () => this.props.history.push({
+                    pathname: `material/${rowData.id}`,
+                    state: {
+                        parentId: this.props.match.params.id,
+                    }
+                })
+                // command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
             },
+            {
+                label: 'Import',
+                icon: 'pi pi-pencil',
+                command: () => this.props.history.push({
+                    pathname: `import/${rowData.id}`,
+                    state: {
+                        parentId: this.props.match.params.id,
+                    }
+                })
+            }
         ];
 
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
-                    <SplitButton label="View" onClick={() => this.props.history.push({
-                        pathname: `type/${rowData.id}`,
-                        state: {
-                            cateId: this.props.match.params.id,
-                        }
-                    })} model={items}></SplitButton>
+                    <SplitButton label="Edit"
+                        onClick={(e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }}
+                        // onClick={() => this.props.history.push({
+                        //     pathname: `type/${rowData.id}`,
+                        //     state: {
+                        //         cateId: this.props.match.params.id,
+                        //     }
+                        // })} 
+                        model={items}></SplitButton>
                 </div>
             </React.Fragment>
         );
