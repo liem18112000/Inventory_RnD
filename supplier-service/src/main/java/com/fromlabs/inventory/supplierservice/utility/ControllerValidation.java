@@ -1,6 +1,8 @@
 package com.fromlabs.inventory.supplierservice.utility;
 
 import com.fromlabs.inventory.supplierservice.common.validator.RequestValidator;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
@@ -96,6 +98,31 @@ public class ControllerValidation {
         log.info("validateMaterialRequest - is update : {}", isUpdate);
         var validator = StringRequestValidator()
                 .criteriaIsPositiveLong(TENANT_ID, request.getTenantId())
+                .criteriaRequired(NAME, request.getName())
+                .criteriaRequired(ACTIVE, request.isActive());
+        return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;
+    }
+
+    public RequestValidator validateImportRequest(
+            @NotNull final ImportRequest request, final boolean isUpdate) {
+        log.info("validateImport - is update : {}", isUpdate);
+        var validator = StringRequestValidator()
+                .criteriaIsPositiveLong(TENANT_ID, request.getTenantId())
+                .criteriaIsPositiveLong(SUPPLIER_ID, request.getSupplierId())
+                .criteriaRequired(NAME, request.getName())
+                .criteriaRequired(CODE, request.getCode())
+                .criteriaRequired(ACTIVE, request.isActivated());
+        return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;
+    }
+
+    public RequestValidator validateImportDetailRequest(
+            @NotNull final ImportDetailRequest request, final boolean isUpdate) {
+        log.info("validateImportDetail - is update : {}", isUpdate);
+        var validator = StringRequestValidator()
+                .criteriaIsPositiveLong(TENANT_ID, request.getClientId())
+                .criteriaIsPositiveLong(IMPORT_ID, request.getImportId())
+                .criteriaIsPositiveLong(INGREDIENT_ID, request.getIngredientId())
+                .criteriaIsPositiveFloat(QUANTITY, request.getQuantity())
                 .criteriaRequired(NAME, request.getName())
                 .criteriaRequired(ACTIVE, request.isActive());
         return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;

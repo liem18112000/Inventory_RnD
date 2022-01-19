@@ -7,6 +7,8 @@ package com.fromlabs.inventory.supplierservice.utility;
 import com.fromlabs.inventory.supplierservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.supplierservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
@@ -143,6 +145,49 @@ public class TransactionConstraint {
     }
 
     /**
+     * Check before save supplier
+     * @param request           ImportRequest
+     * @param importService     ImportService
+     * @return                  boolean
+     */
+    public boolean checkBeforeSaveImport(
+            @NotNull final ImportRequest request,
+            @NotNull final ImportService importService
+    ) {
+        // Build constrain wrapper and check the constraint
+        final boolean result = buildCheckImportDuplicateByCodeConstraintWrapper(
+                request.getId(), request.getCode(), importService).constraintCheck();
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkBeforeSaveImport: {}");
+    }
+
+    /**
+     * Build check import duplicate by code
+     * If import id is provided, it will be checked as update mode
+     * Otherwise, it will be checked as default mode
+     * @param id            Import Unique ID
+     * @param code          Import code
+     * @param importService ImportService
+     * @return ConstraintWrapper
+     */
+    private ConstraintWrapper buildCheckImportDuplicateByCodeConstraintWrapper(
+            @NotNull final Long            id,
+            @NotNull final String          code,
+            @NotNull final ImportService   importService
+    ) {
+        // Get import by code
+        final var entityWithCode = importService.getByCode(code);
+
+        // Build constraint wrapper
+        return ConstraintWrapper.builder()
+                .name("Check constrain supplier is duplicated by code")
+                .check(() -> isNull(entityWithCode) || entityWithCode.getId().equals(id))
+                .exception(new ConstraintViolateException("Import code is duplicated : ".concat(code)))
+                .build();
+    }
+
+    /**
      * Check entity exist by id
      * @param id ID
      * @param importService ImportService
@@ -180,6 +225,20 @@ public class TransactionConstraint {
 
         // Log out the check result and return it
         return logWrapper(result, "checkMaterialExistById: {}");
+    }
+
+    public boolean checkImportDetailExistById(
+            @NotNull final Long id,
+            @NotNull final ImportDetailService service
+    ) {
+        // Get import detail by id;
+        final var entity = service.getById(id);
+
+        // Build constrain wrapper and check the constraint
+        final boolean result = nonNull(entity);
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkImportDetailExistById: {}");
     }
 
     /**

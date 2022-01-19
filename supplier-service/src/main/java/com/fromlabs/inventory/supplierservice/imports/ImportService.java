@@ -23,4 +23,11 @@ public interface ImportService extends RestApiService<ImportEntity, Long> {
      * @throws ObjectNotFoundException throw if entity is not found
      */
     ImportEntity getByIdWithException(Long id) throws ObjectNotFoundException;
+
+    /**
+     * Get import entity by code
+     * @param code Entity Code
+     * @return ImportEntity
+     */
+    ImportEntity getByCode(String code);
 }

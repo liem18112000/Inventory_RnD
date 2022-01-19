@@ -6,6 +6,7 @@ package com.fromlabs.inventory.supplierservice.imports;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fromlabs.inventory.supplierservice.common.entity.BaseEntityWithCreatedAt;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -38,6 +40,20 @@ public class ImportEntity extends BaseEntityWithCreatedAt<Long> {
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     @ToString.Exclude
     protected SupplierEntity supplier;
+
+    /**
+     * Update entity by request
+     * @param request ImportRequest
+     * @return ImportEntity
+     */
+    public ImportEntity update(@NotNull final ImportRequest request) {
+        this.setName(request.getName());
+        this.setCode(request.getCode());
+        this.setDescription(request.getDescription());
+        this.setActive(request.isActivated());
+        this.setUpdateAt(Instant.now().toString());
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {

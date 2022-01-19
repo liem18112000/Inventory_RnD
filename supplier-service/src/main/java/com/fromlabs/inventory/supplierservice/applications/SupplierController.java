@@ -5,6 +5,7 @@ import com.fromlabs.inventory.supplierservice.common.template.WebTemplateProcess
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
@@ -37,6 +38,7 @@ public class SupplierController implements ApplicationController {
 
     private final SupplierService           supplierService;
     private final ImportService             importService;
+    private final ImportDetailService       importDetailService;
     private final ProvidableMaterialService providableMaterialService;
     private final IngredientClient          ingredientClient;
 
@@ -49,16 +51,19 @@ public class SupplierController implements ApplicationController {
     public SupplierController(
             SupplierService             supplierService,
             ImportService               importService,
+            ImportDetailService         importDetailService,
             ProvidableMaterialService   providableMaterialService,
             IngredientClient            ingredientClient
     ) {
         this.supplierService            = supplierService;
         this.importService              = importService;
+        this.importDetailService        = importDetailService;
         this.providableMaterialService  = providableMaterialService;
         this.ingredientClient           = ingredientClient;
         this.trackControllerDependencyInjectionInformation(
                 supplierService,
                 importService,
+                importDetailService,
                 providableMaterialService
         );
     }
@@ -67,15 +72,18 @@ public class SupplierController implements ApplicationController {
      * Track dependency injection information
      * @param supplierService           SupplierService
      * @param importService             ImportService
+     * @param importDetailService       ImportDetailService
      * @param providableMaterialService ProvidableMaterialService
      */
     private void trackControllerDependencyInjectionInformation(
             SupplierService             supplierService,
             ImportService               importService,
+            ImportDetailService         importDetailService,
             ProvidableMaterialService   providableMaterialService
     ) {
         log.info("Supplier service : {}",           supplierService.getClass().getName());
         log.info("Import service : {}",             importService.getClass().getName());
+        log.info("Import detail service : {}",      importDetailService.getClass().getName());
         log.info("Providable Material service : {}",providableMaterialService.getClass().getName());
         log.info("Application controller : {}",     this.getClass().getName());
     }
@@ -451,7 +459,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody ImportRequest request
     ) {
         log.info(path(HttpMethod.POST, "import"));
-        return null;
+        return (ResponseEntity<?>) buildSaveImportTemplateProcess(
+                tenantId, request, importService, supplierService).run();
     }
 
     /**
@@ -486,8 +495,9 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId,
             @RequestBody ImportDetailPageRequest request
     ) {
-        log.info(path(HttpMethod.POST, "providable-material"));
-        return null;
+        log.info(path(HttpMethod.POST, "import/detail/page"));
+        return (ResponseEntity<?>) buildGetImportDetailPageTemplateProcess(
+                tenantId, request, importService, importDetailService, ingredientClient).run();
     }
 
     /**
@@ -502,6 +512,7 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId,
             @RequestBody ImportDetailPageRequest request
     ) {
+        log.info(path(HttpMethod.POST, "import/detail/all"));
         return null;
     }
 
@@ -515,7 +526,9 @@ public class SupplierController implements ApplicationController {
     public ResponseEntity<?> getImportDetailById(
             @PathVariable(ID) Long id
     ) {
-        return null;
+        log.info(path(HttpMethod.GET, "import/detail/".concat(String.valueOf(id))));
+        return (ResponseEntity<?>) buildGetImportDetailByIdTemplateProcess(
+                id, importDetailService, ingredientClient).run();
     }
 
     /**
@@ -530,7 +543,9 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId,
             @RequestBody ImportDetailRequest request
     ) {
-        return null;
+        log.info(path(HttpMethod.POST, "import/detail"));
+        return (ResponseEntity<?>) buildSaveImportDetailTemplateProcess(
+                tenantId, request, importService, importDetailService, ingredientClient).run();
     }
 
     /**
@@ -545,6 +560,7 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId,
             @RequestBody ImportDetailRequest request
     ) {
+        log.info(path(HttpMethod.PUT, "import/detail"));
         return null;
     }
 
@@ -554,8 +570,11 @@ public class SupplierController implements ApplicationController {
      * @param id Entity Unique ID
      * @return ResponseEntity
      */
-    @DeleteMapping("import/detail")
-    public ResponseEntity<?> deleteImportDetail(Long id) {
+    @DeleteMapping("import/detail/{id:\\d+}")
+    public ResponseEntity<?> deleteImportDetail(
+            @PathVariable(ID) Long id
+    ) {
+        log.info(path(HttpMethod.POST, "import/detail/".concat(String.valueOf(id))));
         return null;
     }
 

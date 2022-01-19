@@ -2,6 +2,8 @@ package com.fromlabs.inventory.supplierservice.utility;
 
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
@@ -106,6 +108,20 @@ public class RequestBootstrap {
     }
 
     /**
+     * Bootstrap tenant for import request
+     * @param tenantId  Tenant Id
+     * @param request   ImportDetailRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantId(
+            Long                tenantId,
+            ImportDetailRequest       request
+    ) {
+        request.setClientId(tenantId);
+        return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
      * Bootstrap tenant for import page request
      * @param tenantId  Tenant Id
      * @param request   ImportPageRequest
@@ -116,6 +132,20 @@ public class RequestBootstrap {
             ImportPageRequest   request
     ) {
         request.setTenantId(tenantId);
+        return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
+     * Bootstrap tenant for import detail page request
+     * @param tenantId  Tenant Id
+     * @param request   ImportDetailPageRequest
+     * @return          Object
+     */
+    public Object bootstrapTenantId(
+            Long                    tenantId,
+            ImportDetailPageRequest request
+    ) {
+        request.setClientId(tenantId);
         return logWrapper(request, "bootstrapTenantId: {}");
     }
 
