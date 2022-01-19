@@ -102,7 +102,7 @@ export class SupplierChild extends Component {
                 command: () => this.props.history.push({
                     pathname: `material/${rowData.id}`,
                     state: {
-                        parentId: this.props.match.params.id,
+                        supplierGroupId: this.props.match.params.id,
                     }
                 })
                 // command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
@@ -113,7 +113,7 @@ export class SupplierChild extends Component {
                 command: () => this.props.history.push({
                     pathname: `import/${rowData.id}`,
                     state: {
-                        parentId: this.props.match.params.id,
+                        supplierGroupId: this.props.match.params.id,
                     }
                 })
             }

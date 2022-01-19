@@ -4,7 +4,6 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { SplitButton } from 'primereact/splitbutton';
 import { Fieldset } from 'primereact/fieldset';
-import { RecipeService } from '../../service/RecipeService'
 
 import '../../assets/styles/TableDemo.css';
 import moment from 'moment';
@@ -15,12 +14,13 @@ import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { SupplierImportForm } from './SupplierImportForm';
+import { SupplierService } from '../../service/SupplierService';
 
 export class SupplierImport extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            recipe: [],
+            supplierImport: [],
             selectedStatus: null,
             // --paginator state--
             page: 0,
@@ -33,23 +33,22 @@ export class SupplierImport extends Component {
                 name: "",
                 code: "",
             },
-            parentId: props.location.state.parentId,
-            // isParent: props.location.state.isParent,
+            supplierGroupId: props.location.state.supplierGroupId,
             isMock: false,
             loading: false
         };
-        this.recipeService = new RecipeService();
+        this.supplierService = new SupplierService();
         console.log(props);
     }
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageDetails()
+        this.getPageImports()
     };
 
-    getPageDetails = () => {
-        this.recipeService
-            .getPageDetail(
+    getPageImports = () => {
+        this.supplierService
+            .getPageImport(
                 this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
@@ -61,7 +60,7 @@ export class SupplierImport extends Component {
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.setState(
                 {
-                    recipe: data.content,
+                    supplierImport: data.content,
                     loading: false,
                     total: data.totalElements,
                     page: data.pageable.pageNumber,
@@ -98,7 +97,7 @@ export class SupplierImport extends Component {
                 command: (e) => {
                     this.confirmDelete(rowData)
                     // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                    //     .then(this.getPageDetails)
+                    //     .then(this.getPageImports)
                 }
             }
         ];
@@ -169,14 +168,14 @@ export class SupplierImport extends Component {
             }
         }, () => {
             this.setState({ loading: true });
-            this.getPageDetails()
+            this.getPageImports()
             this.toast.show({ severity: 'info', summary: 'Clear', detail: 'Clear filter', life: 1000 });
         })
     }
 
     applyFilter = () => {
         this.setState({ loading: true });
-        this.getPageDetails()
+        this.getPageImports()
         this.toast.show({ severity: 'info', summary: 'Search', detail: 'Search data content', life: 1000 });
     }
 
@@ -187,7 +186,7 @@ export class SupplierImport extends Component {
                 page: e.page
             },
             () => {
-                this.getPageDetails();
+                this.getPageImports();
             }
         );
     };
@@ -200,7 +199,7 @@ export class SupplierImport extends Component {
                 sortOrder: e.sortOrder
             },
             () => {
-                this.getPageDetails();
+                this.getPageImports();
                 this.toast.show({
                     severity: 'info',
                     summary: 'Sort',
@@ -216,7 +215,7 @@ export class SupplierImport extends Component {
             ...this.state,
             loading: true
         }, () => {
-            this.getPageDetails()
+            this.getPageImports()
             this.toast.show({ severity: 'info', summary: 'Refresh', detail: 'Refresh datatable', life: 1000 });
         })
     }
@@ -229,7 +228,7 @@ export class SupplierImport extends Component {
             },
             () => {
                 this.setState({ loading: true });
-                this.getPageDetails()
+                this.getPageImports()
                 this.toast.show({
                     severity: 'info', summary: 'Reset page size',
                     detail: 'Page size is set to ' + l, life: 1000
@@ -247,14 +246,6 @@ export class SupplierImport extends Component {
         }
         return ''
     };
-
-    goBack = (isParent) => {
-        return (
-            !isParent
-                ? <Link to={`../${this.state.groupId}`}> Back to Recipe</Link>
-                : <Link to={`../../recipes`}> Back to Recipes</Link>
-        )
-    }
 
     render() {
         let tableLengthOptions = [
@@ -307,7 +298,7 @@ export class SupplierImport extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    <Link to={`../${this.state.parentId}`}>Back to Supplier</Link>
+                    <Link to={`../${this.state.supplierGroupId}`}>Back to Supplier</Link>
                 </span>
             </div>
         )
@@ -316,7 +307,7 @@ export class SupplierImport extends Component {
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
                 <SupplierImportForm ref={el => this.form = el}
-                    refreshData={() => this.getPageDetails()}
+                    refreshData={() => this.getPageImports()}
                     id={this.props.match.params.id}
                 />
                 <Fieldset legend="Supplier Import" toggleable>
@@ -371,7 +362,7 @@ export class SupplierImport extends Component {
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.recipe}
+                    value={this.state.supplierImport}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
@@ -388,7 +379,7 @@ export class SupplierImport extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No recipe categories found"
+                    emptyMessage="No supplier import found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >

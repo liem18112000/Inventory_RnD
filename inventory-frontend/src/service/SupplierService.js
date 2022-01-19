@@ -104,4 +104,38 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
+
+    getPageMaterial(supplierGroupId, filter, page, rows, sortField, sortOrder, isMock = true) {
+        if (isMock) {
+            return Promise.resolve([]);
+        }
+
+        const url = `${BaseURL}/providable-material/page`;
+        const request = { ...filter, supplierGroupId: supplierGroupId };
+        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch supplier child data from api
+        return axios
+            .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    getPageImport(supplierGroupId, filter, page, rows, sortField, sortOrder, isMock = true) {
+        if (isMock) {
+            return Promise.resolve([]);
+        }
+
+        const url = `${BaseURL}/import/page`;
+        const request = { ...filter, supplierGroupId: supplierGroupId };
+        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch supplier child data from api
+        return axios
+            .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
 }

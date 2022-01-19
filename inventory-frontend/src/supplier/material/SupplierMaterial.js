@@ -4,7 +4,6 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { SplitButton } from 'primereact/splitbutton';
 import { Fieldset } from 'primereact/fieldset';
-import { RecipeService } from '../../service/RecipeService'
 
 import '../../assets/styles/TableDemo.css';
 import moment from 'moment';
@@ -14,12 +13,13 @@ import { Link } from 'react-router-dom';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
+import { SupplierService } from '../../service/SupplierService';
 
 export class SupplierMaterial extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            recipe: [],
+            supplierMaterial: [],
             selectedStatus: null,
             // --paginator state--
             page: 0,
@@ -31,26 +31,23 @@ export class SupplierMaterial extends Component {
             filter: {
                 name: "",
                 code: "",
-                description: "",
-                updatedAt: "",
             },
-            parentId: props.location.state.parentId,
-            // isParent: props.location.state.isParent,
+            supplierGroupId: props.location.state.supplierGroupId,
             isMock: false,
             loading: false
         };
-        this.recipeService = new RecipeService();
+        this.supplierService = new SupplierService();
         console.log(props);
     }
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageDetails()
+        this.getPageMaterials()
     };
 
-    getPageDetails = () => {
-        this.recipeService
-            .getPageDetail(
+    getPageMaterials = () => {
+        this.supplierService
+            .getPageMaterial(
                 this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
@@ -62,7 +59,7 @@ export class SupplierMaterial extends Component {
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.setState(
                 {
-                    recipe: data.content,
+                    supplierMaterial: data.content,
                     loading: false,
                     total: data.totalElements,
                     page: data.pageable.pageNumber,
@@ -98,8 +95,8 @@ export class SupplierMaterial extends Component {
                 icon: 'pi pi-trash',
                 command: (e) => {
                     this.confirmDelete(rowData)
-                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                    //     .then(this.getPageDetails)
+                    // this.supplierService.deleteRecipe(rowData.id, this.state.isMock)
+                    //     .then(this.getPageMaterials)
                 }
             }
         ];
@@ -170,14 +167,14 @@ export class SupplierMaterial extends Component {
             }
         }, () => {
             this.setState({ loading: true });
-            this.getPageDetails()
+            this.getPageMaterials()
             this.toast.show({ severity: 'info', summary: 'Clear', detail: 'Clear filter', life: 1000 });
         })
     }
 
     applyFilter = () => {
         this.setState({ loading: true });
-        this.getPageDetails()
+        this.getPageMaterials()
         this.toast.show({ severity: 'info', summary: 'Search', detail: 'Search data content', life: 1000 });
     }
 
@@ -188,7 +185,7 @@ export class SupplierMaterial extends Component {
                 page: e.page
             },
             () => {
-                this.getPageDetails();
+                this.getPageMaterials();
             }
         );
     };
@@ -201,7 +198,7 @@ export class SupplierMaterial extends Component {
                 sortOrder: e.sortOrder
             },
             () => {
-                this.getPageDetails();
+                this.getPageMaterials();
                 this.toast.show({
                     severity: 'info',
                     summary: 'Sort',
@@ -217,7 +214,7 @@ export class SupplierMaterial extends Component {
             ...this.state,
             loading: true
         }, () => {
-            this.getPageDetails()
+            this.getPageMaterials()
             this.toast.show({ severity: 'info', summary: 'Refresh', detail: 'Refresh datatable', life: 1000 });
         })
     }
@@ -230,7 +227,7 @@ export class SupplierMaterial extends Component {
             },
             () => {
                 this.setState({ loading: true });
-                this.getPageDetails()
+                this.getPageMaterials()
                 this.toast.show({
                     severity: 'info', summary: 'Reset page size',
                     detail: 'Page size is set to ' + l, life: 1000
@@ -248,14 +245,6 @@ export class SupplierMaterial extends Component {
         }
         return ''
     };
-
-    goBack = (isParent) => {
-        return (
-            !isParent
-                ? <Link to={`../${this.state.parentId}`}> Back to Supplier</Link>
-                : <Link to={`../../supplier`}> Back to Supplier</Link>
-        )
-    }
 
     render() {
         let tableLengthOptions = [
@@ -308,7 +297,7 @@ export class SupplierMaterial extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    {this.goBack(this.state.isParent)}
+                    <Link to={`../${this.state.supplierGroupId}`}> Back to Supplier</Link>
                 </span>
             </div>
         )
@@ -349,7 +338,7 @@ export class SupplierMaterial extends Component {
                                             value={this.state.filter.name}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                                         />
-                                    </div>  
+                                    </div>
                                 </div>
                                 {/* <div className="p-col-12">
                                     <div className="p-inputgroup">
@@ -386,7 +375,7 @@ export class SupplierMaterial extends Component {
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.recipe}
+                    value={this.state.supplierMaterial}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
@@ -410,8 +399,8 @@ export class SupplierMaterial extends Component {
                     <Column field="code" header="Ingredient" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column field="quantity" header="Min Quant" body={this.quantityBodyTemplate} sortable />
-                    <Column field="quantity2" header="Max Quant" body={this.quantityBodyTemplate} sortable />
+                    <Column field="min" header="Min Quant" body={this.quantityBodyTemplate} sortable />
+                    <Column field="max" header="Max Quant" body={this.quantityBodyTemplate} sortable />
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
