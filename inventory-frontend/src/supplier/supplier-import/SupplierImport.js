@@ -11,12 +11,12 @@ import moment from 'moment';
 import { Button } from "primereact/button";
 import 'primeflex/primeflex.css';
 import { Link } from 'react-router-dom';
-import { RecipeDetailForm } from './RecipeDetailForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
+import { SupplierImportForm } from './SupplierImportForm';
 
-export class RecipeDetail extends Component {
+export class SupplierImport extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -32,11 +32,9 @@ export class RecipeDetail extends Component {
             filter: {
                 name: "",
                 code: "",
-                description: "",
-                updatedAt: "",
             },
-            groupId: props.location.state.groupId,
-            isParent: props.location.state.isParent,
+            parentId: props.location.state.parentId,
+            // isParent: props.location.state.isParent,
             isMock: false,
             loading: false
         };
@@ -97,7 +95,8 @@ export class RecipeDetail extends Component {
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => { this.confirmDelete(rowData)
+                command: (e) => {
+                    this.confirmDelete(rowData)
                     // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
                     //     .then(this.getPageDetails)
                 }
@@ -134,20 +133,20 @@ export class RecipeDetail extends Component {
         );
     }
 
-    updatedAtBodyTemplate(rowData) {
+    createAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Updated At</span>
+                <span className="p-column-title">Create At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
 
-    quantityBodyTemplate(rowData) {
+    updateAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Quantity</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.quantity}</span>
+                <span className="p-column-title">Update At</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
@@ -300,7 +299,7 @@ export class RecipeDetail extends Component {
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
-                        label="New detail"
+                        label="New import"
                         onClick={() => this.form.action(null, this.props.match.params.id, true)}
                     />
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
@@ -308,7 +307,7 @@ export class RecipeDetail extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    {this.goBack(this.state.isParent)}
+                    <Link to={`../${this.state.parentId}`}>Back to Supplier</Link>
                 </span>
             </div>
         )
@@ -316,23 +315,14 @@ export class RecipeDetail extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <RecipeDetailForm ref={el => this.form = el}
+                <SupplierImportForm ref={el => this.form = el}
                     refreshData={() => this.getPageDetails()}
                     id={this.props.match.params.id}
                 />
-                <Fieldset legend="Recipe Detail" toggleable>
+                <Fieldset legend="Supplier Import" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
-                                <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Code"
-                                            value={this.state.filter.code}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
@@ -349,18 +339,9 @@ export class RecipeDetail extends Component {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Description"
-                                            value={this.state.filter.description}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, description: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Updated At"
-                                            value={this.state.filter.updatedAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })}
+                                            placeholder="Code"
+                                            value={this.state.filter.code}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -413,8 +394,8 @@ export class RecipeDetail extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
-                    <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
+                    <Column field="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column field="updateAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
