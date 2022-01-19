@@ -81,4 +81,14 @@ public class ImportServiceImpl implements ImportService {
                 .orElseThrow(() -> new ObjectNotFoundException(
                         "Import is not found with id : ".concat(String.valueOf(id))));
     }
+
+    /**
+     * Get import entity by code
+     *
+     * @param code Entity Code
+     * @return ImportEntity
+     */
+    public ImportEntity getByCode(final String code) {
+        return this.repository.findByCode(code);
+    }
 }

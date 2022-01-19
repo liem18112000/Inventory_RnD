@@ -14,4 +14,6 @@ public interface ImportRepository
         extends JpaRepository<ImportEntity, Long>, JpaSpecificationExecutor<ImportEntity> {
 
     List<ImportEntity> findAllBySupplier(SupplierEntity supplier);
+
+    ImportEntity findByCode(String code);
 }
