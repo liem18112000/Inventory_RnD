@@ -459,7 +459,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody ImportRequest request
     ) {
         log.info(path(HttpMethod.POST, "import"));
-        return null;
+        return (ResponseEntity<?>) buildSaveImportTemplateProcess(
+                tenantId, request, importService, supplierService).run();
     }
 
     /**
@@ -543,7 +544,8 @@ public class SupplierController implements ApplicationController {
             @RequestBody ImportDetailRequest request
     ) {
         log.info(path(HttpMethod.POST, "import/detail"));
-        return null;
+        return (ResponseEntity<?>) buildSaveImportDetailTemplateProcess(
+                tenantId, request, importService, importDetailService, ingredientClient).run();
     }
 
     /**

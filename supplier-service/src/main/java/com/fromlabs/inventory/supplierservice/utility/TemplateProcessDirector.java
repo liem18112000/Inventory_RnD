@@ -8,8 +8,10 @@ import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient
 import com.fromlabs.inventory.supplierservice.common.template.*;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
@@ -17,8 +19,6 @@ import com.fromlabs.inventory.supplierservice.supplier.providable_material.Provi
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +27,6 @@ import static com.fromlabs.inventory.supplierservice.utility.ControllerValidatio
 import static com.fromlabs.inventory.supplierservice.utility.RequestBootstrap.*;
 import static com.fromlabs.inventory.supplierservice.utility.TransactionConstraint.*;
 import static com.fromlabs.inventory.supplierservice.utility.TransactionLogic.*;
-import static org.springframework.http.ResponseEntity.*;
 
 /**
  * <h1>Template process builder director</h1>
@@ -486,6 +485,33 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
+    //<editor-fold desc="buildSaveImportTemplateProcess">
+
+    /**
+     * Build save import detail template process
+     * @param tenantId Tenant ID
+     * @param request   ImportRequest
+     * @param importService ImportService
+     * @param supplierService SupplierService
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildSaveImportTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ImportRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final SupplierService supplierService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .bootstrap(() -> bootstrapTenantId(tenantId, request))
+                .validate(() -> validateImportRequest(request, false))
+                .before(() -> checkBeforeSaveImport(request, importService))
+                .process(() -> saveImport(request, supplierService, importService))
+                .after(() -> true) // TODO: add constrains
+                .build();
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="buildGetImportDetailByIdTemplateProcess">
 
     public TemplateProcess buildGetImportDetailByIdTemplateProcess (
@@ -523,6 +549,55 @@ public class TemplateProcessDirector {
                 .validate(() -> validateTenant(tenantId))
                 .bootstrap(() -> bootstrapTenantId(tenantId, request))
                 .process(() -> getImportDetailPage(request, importService, importDetailService, ingredientClient))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildSaveImportDetailTemplateProcess">
+
+    /**
+     * Build save import detail template process
+     * @param tenantId Tenant ID
+     * @param request   ImportDetailRequest
+     * @param importService ImportService
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildSaveImportDetailTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ImportDetailRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .bootstrap(() -> bootstrapTenantId(tenantId, request))
+                .validate(() -> validateImportDetailRequest(request, false))
+                .before(() -> true) // TODO: add constrains
+                .process(() -> saveImportDetail(request, importService, importDetailService, ingredientClient))
+                .after(() -> true) // TODO: add constrains
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildDeleteImportDetailByIdTemplateProcess">
+
+    /**
+     * Build delete import detail by id template process
+     * @param id Import detail id
+     * @param importDetailService ImportDetailService
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildDeleteImportDetailByIdTemplateProcess(
+            @NotNull final Long id,
+            @NotNull final ImportDetailService importDetailService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(() -> validateId(id))
+                .process(() -> null) // TODO: add process to delete import detail
                 .build();
     }
 

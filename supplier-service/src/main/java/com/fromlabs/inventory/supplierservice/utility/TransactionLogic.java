@@ -10,6 +10,7 @@ import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRe
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.mapper.ImportDetailMapper;
 import com.fromlabs.inventory.supplierservice.imports.details.specification.ImportDetailSpecification;
 import com.fromlabs.inventory.supplierservice.imports.mapper.ImportMapper;
@@ -582,6 +583,25 @@ public class TransactionLogic {
         return status(HttpStatus.CREATED).body(ImportMapper.toDto(savedImport));
     }
 
+    public ResponseEntity<?> updateImport(
+            @NotNull final ImportRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ImportService importService
+    ) {
+        // Pre-condition
+        assert nonNull(request.getId());
+        assert nonNull(request.getSupplierId());
+
+        // Update import information from request
+        final var importEntity = importService.getById(request.getId()).update(request);
+
+        // Update import entity
+        final var updatedImport = importService.save(importEntity);
+
+        // Convert to DTO and return
+        return ok(ImportMapper.toDto(updatedImport));
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT DETAIL">
@@ -624,6 +644,75 @@ public class TransactionLogic {
                 specification, request.getPageable());
         final var dto = ImportDetailMapper.toDto(importDetails, ingredientClient);
         return ok(dto);
+    }
+
+    /**
+     * Save import detail by request
+     * @param request ImportDetailRequest
+     * @param importService ImportService
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> saveImportDetail(
+            @NotNull final ImportDetailRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        // Check pre-condition
+        assert nonNull(request.getImportId());
+
+        // Build entity for saving
+        final var importEntity = importService.getById(request.getImportId());
+        final var entity = ImportDetailMapper.toEntity(request, importEntity);
+
+        // Save entity and convent result to DTO
+        final var savedEntity = importDetailService.save(entity);
+        final var dto = ImportDetailMapper.toDto(savedEntity, ingredientClient);
+        return status(HttpStatus.CREATED).body(dto);
+    }
+
+    /**
+     * Update import detail by request
+     * @param request ImportDetailRequest
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateImportDetail(
+            @NotNull final ImportDetailRequest request,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        // Check pre-condition
+        assert nonNull(request.getId());
+        assert nonNull(request.getImportId());
+
+        // Build entity for update
+        final var entity = importDetailService.getById(request.getId())
+                .update(request);
+
+        // Update entity and convent result to DTO
+        final var updatedEntity = importDetailService.save(entity);
+        final var dto = ImportDetailMapper.toDto(updatedEntity, ingredientClient);
+
+        return ok(dto);
+    }
+
+    /**
+     * Delete import detail by id
+     * @param id Import detail id
+     * @param importDetailService ImportDetailService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> deleteImportDetailById(
+            @NotNull final Long id,
+            @NotNull final ImportDetailService importDetailService
+    ) {
+        final var importDetail = importDetailService.getById(id);
+        importDetailService.delete(importDetail);
+        return noContent().build();
     }
 
     //</editor-fold>

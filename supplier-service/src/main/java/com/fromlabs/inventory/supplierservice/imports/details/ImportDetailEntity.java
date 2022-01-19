@@ -5,6 +5,9 @@
 package com.fromlabs.inventory.supplierservice.imports.details;
 
 import com.fromlabs.inventory.supplierservice.entity.ImportReferencedMultiEntity;
+import com.fromlabs.inventory.supplierservice.imports.ImportEntity;
+import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,6 +19,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Objects;
 
 @Getter
@@ -33,6 +37,20 @@ public class ImportDetailEntity extends ImportReferencedMultiEntity {
     @Min(value = 0)
     @Column(name="quantity")
     private Float quantity;
+
+    /**
+     * Update entity by request
+     * @param request ImportRequest
+     * @return ImportEntity
+     */
+    public ImportDetailEntity update(@NotNull final ImportDetailRequest request) {
+        this.setName(request.getName());
+        this.setQuantity(request.getQuantity());
+        this.setDescription(request.getDescription());
+        this.setActive(request.isActive());
+        this.setUpdateAt(Instant.now().toString());
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {

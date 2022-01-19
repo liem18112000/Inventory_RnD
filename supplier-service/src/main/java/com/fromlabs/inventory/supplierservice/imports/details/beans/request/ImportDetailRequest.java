@@ -18,6 +18,6 @@ public class ImportDetailRequest {
     private Long    ingredientId;
     private String  name;
     private String  description;
-    private float   quantity;
+    private float   quantity = 0f;
     private boolean active = true;
 }
