@@ -4,7 +4,6 @@ import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { RecipeService } from '../../service/RecipeService';
-// import { Dropdown } from 'primereact/dropdown';
 import { IngredientService } from '../../service/IngredientService';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';

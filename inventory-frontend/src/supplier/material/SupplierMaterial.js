@@ -79,17 +79,6 @@ export class SupplierMaterial extends Component {
         );
     }
 
-    confirmDelete(rowData) {
-        confirmDialog({
-            message: 'Do you want to delete this detail?',
-            header: 'Delete Confirmation',
-            icon: 'pi pi-info-circle',
-            acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
-        });
-    }
-
     actionBodyTemplate(rowData, form) {
         let items = [
             {
@@ -97,8 +86,6 @@ export class SupplierMaterial extends Component {
                 icon: 'pi pi-trash',
                 command: (e) => {
                     this.confirmDelete(rowData)
-                    // this.supplierService.deleteRecipe(rowData.id, this.state.isMock)
-                    //     .then(this.getPageMaterials)
                 }
             }
         ];
@@ -307,6 +294,10 @@ export class SupplierMaterial extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <SupplierMaterialForm ref={el => this.form = el}
+                    refreshData={() => this.getPageMaterials()}
+                    id={this.props.match.params.id}
+                />
                 <Fieldset legend="Supplier Material" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -320,15 +311,6 @@ export class SupplierMaterial extends Component {
                                         />
                                     </div>
                                 </div>
-                                {/* <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Description"
-                                            value={this.state.filter.description}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, description: e.target.value })}
-                                        />
-                                    </div>
-                                </div> */}
                             </div>
                         </div>
                         <div className="p-col-12 p-md-6">
@@ -342,15 +324,6 @@ export class SupplierMaterial extends Component {
                                         />
                                     </div>
                                 </div>
-                                {/* <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Updated At"
-                                            value={this.state.filter.updatedAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })}
-                                        />
-                                    </div>
-                                </div> */}
                             </div>
                         </div>
                     </div>
