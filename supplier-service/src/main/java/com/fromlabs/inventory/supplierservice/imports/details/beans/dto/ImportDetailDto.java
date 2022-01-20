@@ -27,15 +27,18 @@ public class ImportDetailDto extends BaseDto<Long> implements Serializable {
 
     private ImportDto imports;
 
+    private float quantity;
+
     @Builder(builderMethodName = "importDetailBuilder")
     public ImportDetailDto(
-            Long id, Long tenantId, String name,
+            Long id, Long tenantId, String name, float quantity,
             String description, String updateAt, String createAt,
             boolean activated, IngredientDto ingredient, ImportDto imports
     ) {
         super(id, tenantId, name, description, updateAt, createAt, activated);
         this.ingredient = ingredient;;
         this.imports    = imports;
+        this.quantity = quantity;
     }
 
     public ImportDetailDto() {

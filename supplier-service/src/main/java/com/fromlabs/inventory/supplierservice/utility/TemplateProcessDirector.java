@@ -488,7 +488,7 @@ public class TemplateProcessDirector {
     //<editor-fold desc="buildSaveImportTemplateProcess">
 
     /**
-     * Build save import detail template process
+     * Build save import template process
      * @param tenantId Tenant ID
      * @param request   ImportRequest
      * @param importService ImportService
@@ -502,11 +502,36 @@ public class TemplateProcessDirector {
             @NotNull final SupplierService supplierService
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap(() -> bootstrapTenantId(tenantId, request))
-                .validate(() -> validateImportRequest(request, false))
-                .before(() -> checkBeforeSaveImport(request, importService))
-                .process(() -> saveImport(request, supplierService, importService))
-                .after(() -> true) // TODO: add constrains
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateImportRequest(request, false))
+                .before(    () -> checkBeforeSaveImport(request, importService))
+                .process(   () -> saveImport(request, supplierService, importService))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildUpdateImportTemplateProcess">
+
+    /**
+     * Build update import template process
+     * @param tenantId Tenant ID
+     * @param request   ImportRequest
+     * @param importService ImportService
+     * @param supplierService SupplierService
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildUpdateImportTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ImportRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final SupplierService supplierService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateImportRequest(request, false))
+                .before(    () -> checkBeforeUpdateImport(request, importService))
+                .process(   () -> updateImport(request, supplierService, importService))
                 .build();
     }
 
@@ -573,11 +598,39 @@ public class TemplateProcessDirector {
             @NotNull final IngredientClient ingredientClient
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateImportDetailRequest(request, false))
+                .before(    () -> true) // TODO: add constrains
+                .process(   () -> saveImportDetail(request, importService, importDetailService, ingredientClient))
+                .after(     () -> true) // TODO: add constrains
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="buildUpdateImportDetailTemplateProcess">
+
+    /**
+     * Build update import detail template process
+     * @param tenantId Tenant ID
+     * @param request   ImportDetailRequest
+     * @param importService ImportService
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return TemplateProcess
+     */
+    public TemplateProcess buildUpdateImportDetailTemplateProcess(
+            @NotNull final Long tenantId,
+            @NotNull final ImportDetailRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .bootstrap(() -> bootstrapTenantId(tenantId, request))
-                .validate(() -> validateImportDetailRequest(request, false))
-                .before(() -> true) // TODO: add constrains
-                .process(() -> saveImportDetail(request, importService, importDetailService, ingredientClient))
-                .after(() -> true) // TODO: add constrains
+                .validate(() -> validateImportDetailRequest(request, true))
+                .before(() -> checkImportDetailExistById(request.getId(), importDetailService))
+                .process(() -> updateImportDetail(request, importDetailService, ingredientClient))
                 .build();
     }
 
@@ -595,9 +648,11 @@ public class TemplateProcessDirector {
             @NotNull final Long id,
             @NotNull final ImportDetailService importDetailService
     ) {
-        return WebTemplateProcess.builder()
-                .validate(() -> validateId(id))
-                .process(() -> null) // TODO: add process to delete import detail
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .validate(  () -> validateId(id))
+                .before(    () -> checkImportDetailExistById(id, importDetailService))
+                .process(   () -> deleteImportDetailById(id, importDetailService))
+                .after(     () -> !checkImportDetailExistById(id, importDetailService))
                 .build();
     }
 

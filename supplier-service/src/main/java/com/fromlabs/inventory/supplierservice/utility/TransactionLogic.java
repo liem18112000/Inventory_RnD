@@ -583,6 +583,13 @@ public class TransactionLogic {
         return status(HttpStatus.CREATED).body(ImportMapper.toDto(savedImport));
     }
 
+    /**
+     * Update import
+     * @param request ImportRequest
+     * @param supplierService SupplierService
+     * @param importService ImportService
+     * @return ResponseEntity
+     */
     public ResponseEntity<?> updateImport(
             @NotNull final ImportRequest request,
             @NotNull final SupplierService supplierService,

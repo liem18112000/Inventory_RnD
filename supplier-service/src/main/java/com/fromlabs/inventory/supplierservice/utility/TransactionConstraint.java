@@ -163,6 +163,28 @@ public class TransactionConstraint {
     }
 
     /**
+     * Check before update supplier
+     * @param request           ImportRequest
+     * @param importService     ImportService
+     * @return                  boolean
+     */
+    public boolean checkBeforeUpdateImport(
+            @NotNull final ImportRequest request,
+            @NotNull final ImportService importService
+    ) {
+        // Check pre-conditions
+        assert nonNull(request.getId());
+
+        // Build constrain wrapper and check the constraint
+        final boolean result = checkImportExistById(request.getId(), importService) &&
+                buildCheckImportDuplicateByCodeConstraintWrapper(
+                request.getId(), request.getCode(), importService).constraintCheck();
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkBeforeUpdateImport: {}");
+    }
+
+    /**
      * Build check import duplicate by code
      * If import id is provided, it will be checked as update mode
      * Otherwise, it will be checked as default mode

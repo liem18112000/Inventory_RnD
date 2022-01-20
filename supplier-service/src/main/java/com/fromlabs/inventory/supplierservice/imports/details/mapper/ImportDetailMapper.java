@@ -48,6 +48,7 @@ public class ImportDetailMapper {
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .ingredient(ingredientClient.getIngredientById(entity.getClientId(), entity.getIngredientId()))
+                .quantity(entity.getQuantity())
                 .activated(entity.isActive())
                 .createAt(entity.getCreateAt())
                 .updateAt(entity.getUpdateAt())
@@ -91,7 +92,7 @@ public class ImportDetailMapper {
             final @NotNull ImportDetailRequest request,
             @NotNull final ImportEntity importEntity) {
         var entity = create(DEFAULT);
-        entity.setClientId(entity.getClientId());
+        entity.setClientId(request.getClientId());
         entity.setName(request.getName());
         entity.setImportEntity(importEntity);
         entity.setIngredientId(request.getIngredientId());

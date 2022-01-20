@@ -473,10 +473,11 @@ public class SupplierController implements ApplicationController {
     @PutMapping("import")
     public ResponseEntity<?> updateImport(
             @RequestHeader(TENANT_ID) Long tenantId,
-            @RequestBody SupplierRequest request
+            @RequestBody ImportRequest request
     ) {
         log.info(path(HttpMethod.PUT, "import"));
-        return null;
+        return (ResponseEntity<?>) buildUpdateImportTemplateProcess(
+                tenantId, request, importService, supplierService).run();
     }
 
     //</editor-fold>
@@ -532,7 +533,7 @@ public class SupplierController implements ApplicationController {
     }
 
     /**
-     * Save import by request
+     * Save import detail by request
      *
      * @param tenantId Tenant ID
      * @param request  ImportDetailRequest
@@ -549,7 +550,7 @@ public class SupplierController implements ApplicationController {
     }
 
     /**
-     * Update import by request
+     * Update import detail by request
      *
      * @param tenantId Tenant ID
      * @param request  ImportDetailRequest
@@ -561,11 +562,12 @@ public class SupplierController implements ApplicationController {
             @RequestBody ImportDetailRequest request
     ) {
         log.info(path(HttpMethod.PUT, "import/detail"));
-        return null;
+        return (ResponseEntity<?>) buildUpdateImportDetailTemplateProcess(
+                tenantId, request, importService, importDetailService, ingredientClient).run();
     }
 
     /**
-     * Delete
+     * Delete import detail
      *
      * @param id Entity Unique ID
      * @return ResponseEntity
@@ -574,8 +576,9 @@ public class SupplierController implements ApplicationController {
     public ResponseEntity<?> deleteImportDetail(
             @PathVariable(ID) Long id
     ) {
-        log.info(path(HttpMethod.POST, "import/detail/".concat(String.valueOf(id))));
-        return null;
+        log.info(path(HttpMethod.DELETE, "import/detail/".concat(String.valueOf(id))));
+        return (ResponseEntity<?>) buildDeleteImportDetailByIdTemplateProcess(
+                id, importDetailService).run();
     }
 
     //</editor-fold>
