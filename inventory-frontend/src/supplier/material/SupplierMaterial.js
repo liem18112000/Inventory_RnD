@@ -13,7 +13,9 @@ import { Link } from 'react-router-dom';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
+import { SupplierMaterialForm } from './SupplierMaterialForm';
 import { SupplierService } from '../../service/SupplierService';
+
 
 export class SupplierMaterial extends Component {
     constructor(props) {
