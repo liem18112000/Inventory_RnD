@@ -107,7 +107,7 @@ export class SupplierImport extends Component {
                 <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="Edit"
-                        onClick={() => form.action(rowData.id, this.props.match.params.id, this.state.isMock)}
+                        onClick={(e) => form.action(rowData.id, this.props.match.params.id, this.state.isMock)}
                         model={items}></SplitButton>
                 </div>
             </React.Fragment>
@@ -308,7 +308,7 @@ export class SupplierImport extends Component {
                 <Toast ref={(el) => this.toast = el} />
                 <SupplierImportForm ref={el => this.form = el}
                     refreshData={() => this.getPageImports()}
-                    id={this.props.match.params.id}
+                    // id={this.props.match.params.id}
                 />
                 <Fieldset legend="Supplier Import" toggleable>
                     <div className="p-grid p-fluid">

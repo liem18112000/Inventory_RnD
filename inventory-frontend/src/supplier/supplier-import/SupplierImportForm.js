@@ -3,11 +3,9 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { RecipeService } from '../../service/RecipeService';
-import { Dropdown } from 'primereact/dropdown';
-import { IngredientService } from '../../service/IngredientService';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
+import { SupplierService } from '../../service/SupplierService';
 
 /**
  * Recipe form for save or update recipe form information
@@ -31,12 +29,10 @@ export class SupplierImportForm extends Component {
             isMock: false,
             visible: false,
             errors: {},
-            editTitle: 'Edit Recipe Detail',
-            createTitle: 'New Recipe Detail',
-            ingredientList: []
+            editTitle: 'Edit Supplier Import',
+            createTitle: 'New Supplier Import',
         }
-        this.recipeService = new RecipeService();
-        this.ingredientService = new IngredientService();
+        this.supplierService = new SupplierService();
     }
 
     /**
@@ -47,22 +43,22 @@ export class SupplierImportForm extends Component {
     }
 
     /**
-     * Form action is activated when the form need to save or update recipe child information
-     * @param id        Recipe Detail ID
-     * @param recipeId  ID of corresponding Recipe Child
+     * Form action is activated when the form need to save or update recipe import information
+     * @param id        Supplier Import ID
+     * @param parentId  ID of corresponding Supplier Child
      * @param isSave    True if save otherwise false
      */
-    action = (id, recipeId, isSave = true) => {
+    action = (id, parentId, isSave = true) => {
         if (!isSave && id != null) {
-            this.setUpdateInformation(id, recipeId);
+            this.setUpdateInformation(id, parentId);
         } else {
-            this.setSaveInformation(recipeId);
+            this.setSaveInformation(parentId);
         }
     }
 
     /**
      * Set up information to state
-     * @param parentId  ID of corresponding Recipe Child
+     * @param parentId  ID of corresponding Supplier Child
      */
     setSaveInformation(parentId) {
         this.setState({
@@ -81,9 +77,9 @@ export class SupplierImportForm extends Component {
     }
 
     /**
-     * Get updated recipe group and set to update information state
-     * @param parentId  ID of corresponding Recipe Child
-     * @param id    Recipe detail ID
+     * Get updated supplier group and set to update information state
+     * @param parentId  ID of corresponding Supplier Child
+     * @param id    Supplier import ID
      */
     setUpdateInformation(id, parentId) {
         this.recipeService.getDetailByID(id, this.state.isMock).then(data => {
@@ -158,7 +154,7 @@ export class SupplierImportForm extends Component {
     }
 
     /**
-     * Handler all submit of save or update recipe form information
+     * Handler all submit of save or update supplier import form information
      * @param e
      */
     handleSubmit = (e) => {
