@@ -718,3 +718,44 @@ export const mockPageInventory = () => {
     }
     return Promise.resolve(mock);
 }
+
+export const mockSuggestTaxon = () => {
+    const mock = [
+        {
+            "recipe": {
+                "id": 19,
+                "name": "Binomo Recipe",
+                "description": "Binomo_Recipe_01",
+                "updateAt": "2021-12-19T03:02:53.136035400Z",
+                "createAt": "2021-12-19T03:02:53.136035400Z",
+                "accessAt": "2022-01-12T08:48:23.254674200Z",
+                "active": true
+            },
+            "details": [
+                {
+                    "id": 8,
+                    "name": "Binomo_Recipe_01_detail",
+                    "description": "Binomo_Recipe_01_detail",
+                    "updateAt": "2021-12-10T15:38:02.524862500Z",
+                    "accessAt": "2022-01-12T08:48:23.275763300Z",
+                    "code": "Binomo_Recipe_01_detail",
+                    "ingredient": {
+                        "id": 23,
+                        "name": "Coca cola",
+                        "code": "00331133",
+                        "description": "Coca cola",
+                        "unit": "can",
+                        "unitType": "whole"
+                    },
+                    "quantity": 1.0,
+                    "active": true
+                }
+            ],
+            "taxonQuantity": 1,
+            "expiredTime": "2022-01-12T14:45:21.085078100",
+            "confirmed": false
+        }
+    ]
+
+    return Promise.resolve(mock);
+}
