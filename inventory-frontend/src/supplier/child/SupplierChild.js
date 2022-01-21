@@ -125,12 +125,6 @@ export class SupplierChild extends Component {
                 <div className="card">
                     <SplitButton label="Edit"
                         onClick={(e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }}
-                        // onClick={() => this.props.history.push({
-                        //     pathname: `type/${rowData.id}`,
-                        //     state: {
-                        //         cateId: this.props.match.params.id,
-                        //     }
-                        // })} 
                         model={items}></SplitButton>
                 </div>
             </React.Fragment>
