@@ -1,5 +1,6 @@
 package com.fromlabs.inventory.recipeservice.recipe;
 
+import com.fromlabs.inventory.recipeservice.common.exception.ObjectNotFoundException;
 import com.fromlabs.inventory.recipeservice.common.service.RestApiService;
 
 import java.util.List;
@@ -9,6 +10,14 @@ import java.util.List;
  * @author Liem
  */
 public interface RecipeService extends RestApiService<RecipeEntity, Long> {
+
+    /**
+     * Get entity by id with exception
+     * @param id Entity id
+     * @return RecipeEntity
+     * @throws ObjectNotFoundException Entity is not found with exception
+     */
+    RecipeEntity getByIdWithException(Long id) throws ObjectNotFoundException;
 
     /**
      * Get recipe by code
