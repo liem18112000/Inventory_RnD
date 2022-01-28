@@ -75,7 +75,7 @@ public class TransactionConstraint {
             @NotNull final SupplierService supplierService
     ) {
         // Log out constraint result and return it
-        return logWrapper(nonNull(supplierService.get(code)),
+        return logWrapper(nonNull(supplierService.getByCode(code)),
                 "checkSupplierExistByCode: {}");
     }
 
@@ -134,7 +134,7 @@ public class TransactionConstraint {
             @NotNull final SupplierService supplierService
     ) {
         // Get supplier by code
-        final var supplierWithCode = supplierService.get(code);
+        final var supplierWithCode = supplierService.getByCode(code);
 
         // Build constraint wrapper
         return ConstraintWrapper.builder()

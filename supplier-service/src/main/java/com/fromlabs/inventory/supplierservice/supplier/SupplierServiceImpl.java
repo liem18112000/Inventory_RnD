@@ -4,8 +4,7 @@
 
 package com.fromlabs.inventory.supplierservice.supplier;
 
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialEntity;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialRepository;
+import com.fromlabs.inventory.supplierservice.common.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,20 +19,16 @@ import java.util.List;
 @Slf4j
 public class SupplierServiceImpl implements SupplierService {
 
-    private final SupplierRepository            supplierRepository;
-    private final ProvidableMaterialRepository  materialRepository;
+    private final SupplierRepository supplierRepository;
 
     /**
      * Constructor
      * @param supplierRepository            SupplierRepository
-     * @param materialRepository    ProvidableMaterialRepository
      */
     public SupplierServiceImpl(
-            SupplierRepository supplierRepository,
-            ProvidableMaterialRepository    materialRepository
+            SupplierRepository supplierRepository
     ) {
         this.supplierRepository = supplierRepository;
-        this.materialRepository = materialRepository;
     }
 
     /**
@@ -47,12 +42,23 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     /**
+     * Get supplier by id
+     *
+     * @param id Entity ID
+     * @return SupplierEntity
+     * @throws ObjectNotFoundException when entity is not found by id
+     */
+    public SupplierEntity getByIdWithException(Long id) throws ObjectNotFoundException {
+        return null;
+    }
+
+    /**
      * Get supplier by code
      *
      * @param code Entity Code
      * @return SupplierEntity
      */
-    public SupplierEntity get(String code) {
+    public SupplierEntity getByCode(String code) {
         return this.supplierRepository.findByCode(code);
     }
 
@@ -63,7 +69,7 @@ public class SupplierServiceImpl implements SupplierService {
      * @param name     Entity name
      * @return SupplierEntity
      */
-    public List<SupplierEntity> get(Long clientId, String name) {
+    public List<SupplierEntity> getByName(Long clientId, String name) {
         return this.supplierRepository.findByClientIdAndName(clientId, name);
     }
 
@@ -126,83 +132,5 @@ public class SupplierServiceImpl implements SupplierService {
      */
     public void delete(SupplierEntity entity) {
         this.supplierRepository.delete(entity);
-    }
-
-    /**
-     * Get ProvidableMaterial by id
-     *
-     * @param id Entity ID
-     * @return ProvidableMaterialEntity
-     */
-    public ProvidableMaterialEntity getProvidableMaterialById(Long id) {
-        return this.materialRepository.findById(id).orElse(null);
-    }
-
-    /**
-     * Get all Providable Material by client id
-     *
-     * @param clientId Client ID
-     * @return List&lt;ProvidableMaterialEntity&gt;
-     */
-    public List<ProvidableMaterialEntity> getAllProvidableMaterial(Long clientId) {
-        return this.materialRepository.findAllByClientId(clientId);
-    }
-
-    /**
-     * Get all Providable Material by name
-     *
-     * @param clientId Client ID
-     * @param name     Name of entity
-     * @return List&lt;ProvidableMaterialEntity&gt;
-     */
-    public List<ProvidableMaterialEntity> getProvidableMaterialByName(Long clientId, String name) {
-        return this.materialRepository.findAllByClientIdAndName(clientId, name);
-    }
-
-    /**
-     * Get all Providable Material by filter
-     *
-     * @param specification Specification&lt;ProvidableMaterialEntity&gt;
-     * @return List&lt;ProvidableMaterialEntity&gt;
-     */
-    public List<ProvidableMaterialEntity> getAllProvidableMaterial(
-            Specification<ProvidableMaterialEntity> specification
-    ) {
-        return this.materialRepository.findAll(specification);
-    }
-
-    /**
-     * Get page Providable Material by filter
-     *
-     * @param specification Specification&lt;ProvidableMaterialEntity&gt;
-     * @param pageable      Pageable
-     * @return Page&lt;ProvidableMaterialEntity&gt;
-     */
-    public Page<ProvidableMaterialEntity> getPageProvidableMaterial(
-            Specification<ProvidableMaterialEntity> specification,
-            Pageable                                pageable
-    ) {
-        return this.materialRepository.findAll(specification, pageable);
-    }
-
-    /**
-     * Save Providable Material entity
-     *
-     * @param entity ProvidableMaterialEntity
-     * @return ProvidableMaterialEntity
-     */
-    public ProvidableMaterialEntity saveProvidableMaterial(
-            ProvidableMaterialEntity entity
-    ) {
-        return this.materialRepository.save(entity);
-    }
-
-    /**
-     * Delete Providable Material entity
-     *
-     * @param entity ProvidableMaterialEntity
-     */
-    public void deleteProvidableMaterial(ProvidableMaterialEntity entity) {
-        this.materialRepository.delete(entity);
     }
 }

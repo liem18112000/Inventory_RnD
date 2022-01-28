@@ -60,7 +60,7 @@ class SupplierServiceTest {
     @DisplayName("Positive: get supplier by code")
     @Test
     void getByValidCode() {
-        final var supplier = this.service.get("API_Group_01");
+        final var supplier = this.service.getByCode("API_Group_01");
         assertNotNull(supplier);
         assertEquals(supplier.getCode(), "API_Group_01");
     }
@@ -69,7 +69,7 @@ class SupplierServiceTest {
     @DisplayName("Negative: get supplier by not exist code")
     @Test
     void getByNotExistCode() {
-        final var supplier = this.service.get(String.valueOf(System.currentTimeMillis()));
+        final var supplier = this.service.getByCode(String.valueOf(System.currentTimeMillis()));
         assertNull(supplier);
     }
 
@@ -82,7 +82,7 @@ class SupplierServiceTest {
     @Test
     void getByNameAndClientId() {
         final var name = "API_Group_01";
-        final var supplier = this.service.get(1L, name);
+        final var supplier = this.service.getByName(1L, name);
         assertTrue(supplier.stream().allMatch(s -> s.getClientId().equals(1L) && s.getName().equals(name)));
     }
 
@@ -91,7 +91,7 @@ class SupplierServiceTest {
     @Test
     void getByNotExistNameAndClientId() {
         final var name = String.valueOf(System.currentTimeMillis());
-        final var supplier = this.service.get(1L, name);
+        final var supplier = this.service.getByName(1L, name);
         assertTrue(supplier.isEmpty());
     }
 
@@ -100,7 +100,7 @@ class SupplierServiceTest {
     @Test
     void getByNameAndNegativeClientId() {
         final var name = "API_Group_01";
-        final var supplier = this.service.get(-1L, name);
+        final var supplier = this.service.getByName(-1L, name);
         assertTrue(supplier.isEmpty());
     }
 
@@ -109,7 +109,7 @@ class SupplierServiceTest {
     @Test
     void getByNameAndNotExistClientId() {
         final var name = "API_Group_01";
-        final var supplier = this.service.get((long) Integer.MAX_VALUE, name);
+        final var supplier = this.service.getByName((long) Integer.MAX_VALUE, name);
         assertTrue(supplier.isEmpty());
     }
 
