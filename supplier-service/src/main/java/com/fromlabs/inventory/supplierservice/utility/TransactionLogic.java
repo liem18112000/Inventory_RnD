@@ -76,12 +76,12 @@ public class TransactionLogic {
     public ResponseEntity<?> getSupplierById(
             Long            id,
             SupplierService supplierService
-    ) {
+    ) throws ObjectNotFoundException {
         // Check pre-condition
         assert nonNull(supplierService);
 
         // Get entity by id
-        final var supplier = supplierService.getById(id);
+        final var supplier = supplierService.getByIdWithException(id);
 
         // Convert entity to DTO, wrap it in OK status and return it
         return ok(SupplierMapper.toDto(supplier));
