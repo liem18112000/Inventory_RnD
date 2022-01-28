@@ -235,12 +235,12 @@ public interface ApplicationController {
     /**
      * Update import by request
      * @param tenantId  Tenant ID
-     * @param request   SupplierRequest
+     * @param request   ImportRequest
      * @return          ResponseEntity
      */
     ResponseEntity<?> updateImport(
             Long tenantId,
-            SupplierRequest request
+            ImportRequest request
     );
 
     //</editor-fold>

@@ -1,5 +1,6 @@
 package com.fromlabs.inventory.recipeservice.recipe;
 
+import com.fromlabs.inventory.recipeservice.common.exception.ObjectNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +32,18 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeEntity getById(@NotNull final Long id) {
         return this.repository.findById(id).orElse(null);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RecipeEntity getByIdWithException(Long id) throws ObjectNotFoundException {
+        return this.repository.findById(id).orElseThrow(() ->
+                new ObjectNotFoundException("Recipe is not found id: "
+                        .concat(String.valueOf(id))));
+    }
+
+
 
     /**
      * {@inheritDoc}

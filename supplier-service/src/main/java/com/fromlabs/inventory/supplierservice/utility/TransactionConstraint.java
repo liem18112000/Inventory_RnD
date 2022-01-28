@@ -75,7 +75,7 @@ public class TransactionConstraint {
             @NotNull final SupplierService supplierService
     ) {
         // Log out constraint result and return it
-        return logWrapper(nonNull(supplierService.get(code)),
+        return logWrapper(nonNull(supplierService.getByCode(code)),
                 "checkSupplierExistByCode: {}");
     }
 
@@ -134,7 +134,7 @@ public class TransactionConstraint {
             @NotNull final SupplierService supplierService
     ) {
         // Get supplier by code
-        final var supplierWithCode = supplierService.get(code);
+        final var supplierWithCode = supplierService.getByCode(code);
 
         // Build constraint wrapper
         return ConstraintWrapper.builder()
@@ -160,6 +160,28 @@ public class TransactionConstraint {
 
         // Log out the check result and return it
         return logWrapper(result, "checkBeforeSaveImport: {}");
+    }
+
+    /**
+     * Check before update supplier
+     * @param request           ImportRequest
+     * @param importService     ImportService
+     * @return                  boolean
+     */
+    public boolean checkBeforeUpdateImport(
+            @NotNull final ImportRequest request,
+            @NotNull final ImportService importService
+    ) {
+        // Check pre-conditions
+        assert nonNull(request.getId());
+
+        // Build constrain wrapper and check the constraint
+        final boolean result = checkImportExistById(request.getId(), importService) &&
+                buildCheckImportDuplicateByCodeConstraintWrapper(
+                request.getId(), request.getCode(), importService).constraintCheck();
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkBeforeUpdateImport: {}");
     }
 
     /**

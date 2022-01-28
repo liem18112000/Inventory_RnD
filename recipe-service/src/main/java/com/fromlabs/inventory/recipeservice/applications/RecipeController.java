@@ -170,8 +170,7 @@ public class RecipeController implements ApplicationController {
         log.info(path(HttpMethod.GET, "id"));
         return (ResponseEntity<?>) WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .validate(  () -> validateId(id))
-                .before(    () -> isRecipeExistById(id, recipeService))
-                .process(   () -> ok(RecipeMapper.toDto(recipeService.getById(id))))
+                .process(   () -> ok(RecipeMapper.toDto(recipeService.getByIdWithException(id))))
                 .build().run();
     }
 

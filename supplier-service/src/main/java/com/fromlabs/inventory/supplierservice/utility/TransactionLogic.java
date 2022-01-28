@@ -5,7 +5,6 @@ import com.fromlabs.inventory.supplierservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.supplierservice.common.entity.BaseEntity;
 import com.fromlabs.inventory.supplierservice.common.exception.ObjectNotFoundException;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
-import com.fromlabs.inventory.supplierservice.imports.beans.dto.ImportDto;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
@@ -22,7 +21,6 @@ import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierPag
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.mapper.SupplierMapper;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.dto.ProvidableMaterialDto;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.mapper.ProvidableMaterialMapper;
@@ -31,7 +29,6 @@ import com.fromlabs.inventory.supplierservice.supplier.specification.SupplierSpe
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,7 +101,7 @@ public class TransactionLogic {
         assert nonNull(supplierService);
 
         // Get entity by code
-        final var supplier = supplierService.get(code);
+        final var supplier = supplierService.getByCode(code);
 
         // Convert entity to DTO, wrap it in OK status and return it
         return ok(convertEntityToDTO(supplier));
@@ -137,7 +134,7 @@ public class TransactionLogic {
         assert nonNull(supplierService);
 
         // Get list of supplier by name and client id
-        final var suppliers = supplierService.get(clientId, name);
+        final var suppliers = supplierService.getByName(clientId, name);
 
         // Convert list of entity to DTO, wrap it in OK response and return it
         return ok(SupplierMapper.toDto(suppliers));
@@ -583,6 +580,13 @@ public class TransactionLogic {
         return status(HttpStatus.CREATED).body(ImportMapper.toDto(savedImport));
     }
 
+    /**
+     * Update import
+     * @param request ImportRequest
+     * @param supplierService SupplierService
+     * @param importService ImportService
+     * @return ResponseEntity
+     */
     public ResponseEntity<?> updateImport(
             @NotNull final ImportRequest request,
             @NotNull final SupplierService supplierService,
