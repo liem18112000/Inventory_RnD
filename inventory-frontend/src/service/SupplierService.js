@@ -122,19 +122,63 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
-    getPageImport(supplierGroupId, filter, page, rows, sortField, sortOrder, isMock = true) {
+    getPageImport(supplierId, filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve([]);
         }
 
         const url = `${BaseURL}/import/page`;
-        const request = { ...filter, supplierGroupId: supplierGroupId };
+        const request = { ...filter, supplierId: supplierId };
         const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier child data from api
         return axios
             .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    getImportByID(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/import/${id}`
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    saveSupplierImport(imports, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/import`;
+        const body = addActorNameAndRole(imports);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    updateSupplierImport(imports, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/import`;
+        const body = addActorNameAndRole(imports);
+        const config = { headers: getHeaderByGatewayStatus({}) }
+
+        return axios
+            .put(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
