@@ -49,7 +49,9 @@ public class SupplierServiceImpl implements SupplierService {
      * @throws ObjectNotFoundException when entity is not found by id
      */
     public SupplierEntity getByIdWithException(Long id) throws ObjectNotFoundException {
-        return null;
+        return this.supplierRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException(
+                        "Supplier is not found id: ".concat(String.valueOf(id))));
     }
 
     /**

@@ -140,7 +140,6 @@ public class TemplateProcessDirector {
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .validate(  () -> validateId(id))
-                .before(    () -> checkSupplierExistById(id, supplierService))
                 .process(   () -> getSupplierById(id, supplierService))
                 .build();
     }
