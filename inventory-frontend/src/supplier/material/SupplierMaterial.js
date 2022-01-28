@@ -102,15 +102,6 @@ export class SupplierMaterial extends Component {
         );
     }
 
-    codeBodyTemplate(rowData) {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Code</span>
-                {rowData.code}
-            </React.Fragment>
-        );
-    }
-
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
@@ -129,11 +120,20 @@ export class SupplierMaterial extends Component {
         );
     }
 
-    quantityBodyTemplate(rowData) {
+    maxQuantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
                 <span className="p-column-title">Quantity</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.quantity}</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.maximumQuantity}</span>
+            </React.Fragment>
+        );
+    }
+
+    minQuantityBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Quantity</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.minimumQuantity}</span>
             </React.Fragment>
         );
     }
@@ -371,11 +371,10 @@ export class SupplierMaterial extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="code" header="Ingredient" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column field="min" header="Min Quant" body={this.quantityBodyTemplate} sortable />
-                    <Column field="max" header="Max Quant" body={this.quantityBodyTemplate} sortable />
+                    <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />
+                    <Column field="maximumQuantity" header="Max Quant" body={this.maxQuantityBodyTemplate} sortable />
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
