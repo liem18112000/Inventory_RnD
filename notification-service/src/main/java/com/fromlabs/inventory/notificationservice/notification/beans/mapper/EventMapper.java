@@ -42,7 +42,8 @@ public class EventMapper {
      * @param dto EventDTO
      * @return EventEntity
      */
-    public EventEntity toEntity(final EventDTO dto) {
+    public EventEntity toEntity(final EventDTO dto)
+            throws IllegalArgumentException  {
         if (Objects.isNull(dto)) {
             throw new IllegalArgumentException("DTO is null");
         }
