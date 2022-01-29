@@ -1,4 +1,9 @@
 package com.fromlabs.inventory.notificationservice.notification.event;
 
-public interface EventRepository extends org.springframework.data.jpa.repository.JpaRepository<com.fromlabs.inventory.notificationservice.notification.event.EventEntity, java.lang.Long> ,org.springframework.data.jpa.repository.JpaSpecificationExecutor<com.fromlabs.inventory.notificationservice.notification.event.EventEntity> {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface EventRepository extends
+        JpaRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
+
 }

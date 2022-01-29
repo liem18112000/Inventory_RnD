@@ -4,7 +4,7 @@
 
 package com.fromlabs.inventory.notificationservice.domains.restaurant.controller;
 
-import com.fromlabs.inventory.notificationservice.config.versions.ApiV1;
+import com.fromlabs.inventory.notificationservice.config.ApiV1;
 import com.fromlabs.inventory.notificationservice.domains.restaurant.services.RestaurantInventoryDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

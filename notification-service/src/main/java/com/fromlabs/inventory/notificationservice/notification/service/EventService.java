@@ -1,2 +1,8 @@
-package com.fromlabs.inventory.notificationservice.notification.service;public interface EventService {
+package com.fromlabs.inventory.notificationservice.notification.service;
+
+/**
+ * Event service
+ * @author Liem
+ */
+public interface EventService {
 }

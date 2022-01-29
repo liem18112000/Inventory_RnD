@@ -1,9 +1,7 @@
 package com.fromlabs.inventory.notificationservice.applications;
 
-import com.fromlabs.inventory.notificationservice.config.versions.ApiV1;
-import com.fromlabs.inventory.notificationservice.utility.TransactionLogic;
+import com.fromlabs.inventory.notificationservice.config.ApiV1;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,15 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API, produces = ApiV1.MIME_API)
-public class NotificationController implements ApplicationController {
+public class NotificationController {
 
     //<editor-fold desc="SETUP">
 
     public static final String SERVICE_PATH = "/notification/";
-
-    private String path(HttpMethod method, String subPath) {
-        return TransactionLogic.path(method, SERVICE_PATH, subPath, ApiV1.VERSION);
-    }
 
     public NotificationController() {
         this.trackControllerDependencyInjectionInformation();

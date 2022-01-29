@@ -1,4 +1,4 @@
-package com.fromlabs.inventory.notificationservice.notification;
+package com.fromlabs.inventory.notificationservice.notification.service;
 
 public interface NotificationService {
 
