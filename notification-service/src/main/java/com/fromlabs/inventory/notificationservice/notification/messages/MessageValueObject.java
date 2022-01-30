@@ -1,9 +1,11 @@
 package com.fromlabs.inventory.notificationservice.notification.messages;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import javax.validation.constraints.NotBlank;
@@ -14,19 +16,20 @@ import java.io.Serializable;
  * @author Liem
  */
 @Data
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageValueObject implements Serializable {
     private static final long serialVersionUID = -7759702696942353240L;
 
-    protected final String subject;
+    protected String subject;
 
-    protected final String body;
+    protected String body;
 
-    protected final String sendAt;
+    protected String sendAt;
 
-    protected final String from;
+    protected String from;
 
-    protected final String to;
+    protected String to;
 
     @Builder(builderMethodName = "messageBuilder")
     public MessageValueObject(

@@ -38,7 +38,8 @@ public class NotificationDTO implements Serializable {
 
     private String status;
 
-    private boolean active;
+    @Builder.Default
+    private boolean active = true;
 
     private final String accessAt = Instant.now().toString();
 }

@@ -2,7 +2,6 @@ package com.fromlabs.inventory.notificationservice.notification.service;
 
 import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,7 +33,8 @@ public interface EventService {
      * @return EventDTO
      * @throws EntityNotFoundException entity not found with id
      */
-    EventDTO getByIdWithException(Long id) throws EntityNotFoundException, IllegalArgumentException;
+    EventDTO getByIdWithException(Long id)
+            throws EntityNotFoundException, IllegalArgumentException;
 
     /**
      * Get page with event DTO
@@ -42,7 +42,8 @@ public interface EventService {
      * @param pageable Pageable
      * @return Page of event DTO
      */
-    Page<EventDTO> getPageWithFilter(EventDTO eventDTO, Pageable pageable) throws IllegalArgumentException;
+    Page<EventDTO> getPageWithFilter(EventDTO eventDTO, Pageable pageable)
+            throws IllegalArgumentException;
 
     /**
      * Save event by DTO
@@ -50,12 +51,14 @@ public interface EventService {
      * @return EventDTO
      * @throws IllegalArgumentException event DTO is null
      */
-    EventDTO save(EventDTO dto) throws IllegalArgumentException;
+    EventDTO save(EventDTO dto)
+            throws IllegalArgumentException, EntityNotFoundException;
 
     /**
      * Delete event by id
      * @param id Event id
      * @throws EntityNotFoundException entity not found with id
      */
-    void delete(Long id) throws EntityNotFoundException, IllegalArgumentException;
+    void delete(Long id)
+            throws IllegalArgumentException, EntityNotFoundException;
 }

@@ -1,5 +1,6 @@
 package com.fromlabs.inventory.notificationservice.notification.event;
 
+import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,4 +40,21 @@ public class EventEntity {
     @Column(name = "is_active")
     private boolean active = true;
 
+    public void updateAfterCreated() {
+        this.setOccurAt(Instant.now().toString());
+    }
+
+    public void deactivate() {
+        this.setActive(false);
+    }
+
+    public void activate() {
+        this.setActive(true);
+    }
+
+    public void updateBasicInformation(EventDTO dto) {
+        this.setName(dto.getName());
+        this.setEventType(dto.getEventType());
+        this.setDescription(dto.getDescription());
+    }
 }

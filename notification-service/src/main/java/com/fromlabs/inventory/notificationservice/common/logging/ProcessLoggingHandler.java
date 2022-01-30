@@ -17,7 +17,9 @@ import java.lang.reflect.Modifier;
 @Slf4j
 public class ProcessLoggingHandler {
 
-	private static final String LOG_SERVICE = "execution(* com.fromlabs..*Controller.*(..))";
+	private static final String CONTROLLER_LOG_SERVICE = "execution(* com.fromlabs..*Controller.*(..))";
+
+	private static final String ENDPOINT_LOG_SERVICE = "execution(* com.fromlabs..*EndPoint.*(..))";
 
 	/**
 	 * Advise. Logs the advised method.
@@ -25,8 +27,19 @@ public class ProcessLoggingHandler {
 	 * @return 				method execution result
 	 * @throws Throwable	in case of exception
 	 */
-	@Around(LOG_SERVICE)
-	public Object logProcess(ProceedingJoinPoint joinPoint) throws Throwable {
+	@Around(CONTROLLER_LOG_SERVICE)
+	public Object logControllerProcess(ProceedingJoinPoint joinPoint) throws Throwable {
+		return process(joinPoint, new StopWatch(), getPackageName(joinPoint, extractMethod(joinPoint)));
+	}
+
+	/**
+	 * Advise. Logs the advised method.
+	 * @param joinPoint 	represents advised method
+	 * @return 				method execution result
+	 * @throws Throwable	in case of exception
+	 */
+	@Around(ENDPOINT_LOG_SERVICE)
+	public Object logEndpointProcess(ProceedingJoinPoint joinPoint) throws Throwable {
 		return process(joinPoint, new StopWatch(), getPackageName(joinPoint, extractMethod(joinPoint)));
 	}
 

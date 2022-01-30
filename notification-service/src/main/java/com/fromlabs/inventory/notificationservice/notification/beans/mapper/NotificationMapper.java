@@ -53,7 +53,6 @@ public class NotificationMapper {
     /**
      * Convert to entity
      * @param dto NotificationDTO
-     * @param event EventEntity
      * @return NotificationEntity
      * @throws JsonProcessingException convert message failed
      */
@@ -73,7 +72,7 @@ public class NotificationMapper {
         entity.setType(dto.getType());
         entity.setStatus(dto.getStatus());
         entity.setNotifyAt(dto.getNotifyAt());
-        entity.setActive(true);
+        entity.setActive(dto.isActive());
         return entity;
     }
 }

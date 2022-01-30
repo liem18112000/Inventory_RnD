@@ -2,6 +2,7 @@ package com.fromlabs.inventory.notificationservice.applications;
 
 import com.fromlabs.inventory.notificationservice.config.ApiV1;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
+import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.service.EventService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityNotFoundException;
 
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.*;
 
 /**
  * SupplierController is REST controller which responsible for
@@ -67,6 +68,36 @@ public class NotificationController {
         }
     }
 
+    @PostMapping("event")
+    public ResponseEntity<?> saveEvent(@RequestBody EventDTO request) {
+        try {
+            return status(CREATED).body(this.eventService.save(request));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PutMapping("event/{id:\\d+}")
+    public ResponseEntity<?> updateEvent(
+            @PathVariable Long id, @RequestBody EventDTO request) {
+        try {
+            request.setId(id);
+            return ok(this.eventService.save(request));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @DeleteMapping("event/{id:\\d+}")
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
+        try {
+            this.eventService.delete(id);
+            return noContent().build();
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="NOTIFICATION">
@@ -79,6 +110,85 @@ public class NotificationController {
     @GetMapping("types")
     public ResponseEntity<?> getNotificationTypes() {
         return ok(this.notificationService.getTypes());
+    }
+
+    @GetMapping("{id:\\d+}")
+    public ResponseEntity<?> getNotificationById(@PathVariable Long id) {
+        try {
+            return ok(this.notificationService.getByIdWithException(id));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @GetMapping("page")
+    public ResponseEntity<?> getPageNotification(
+            @RequestBody(required = false) EventDTO dto, Pageable pageable) {
+        try {
+            return ok(this.eventService.getPageWithFilter(dto, pageable));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> saveNotification(@RequestBody NotificationDTO request) {
+        try {
+            return status(CREATED).body(this.notificationService.save(request));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PutMapping("all/send-message")
+    public ResponseEntity<?> sendNotificationMessage(
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+        try {
+            return ok(this.notificationService.sendAllNotification(limit));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PutMapping("{id:\\d+}/send-message")
+    public ResponseEntity<?> sendNotificationMessage(@PathVariable Long id) {
+        try {
+            return ok(this.notificationService.sendNotification(id));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PutMapping("{id:\\d+}/message")
+    public ResponseEntity<?> updateNotificationMessage(
+            @PathVariable Long id, @RequestBody NotificationDTO request) {
+        try {
+            request.setId(id);
+            return ok(this.notificationService.updateMessage(request));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PutMapping("{id:\\d+}")
+    public ResponseEntity<?> updateNotification(
+            @PathVariable Long id, @RequestBody NotificationDTO request) {
+        try {
+            request.setId(id);
+            return ok(this.notificationService.save(request));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @DeleteMapping("{id:\\d+}")
+    public ResponseEntity<?> deleteNotification(@PathVariable Long id) {
+        try {
+            this.eventService.delete(id);
+            return noContent().build();
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
     }
 
     //</editor-fold>

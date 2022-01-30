@@ -3,10 +3,18 @@ package com.fromlabs.inventory.notificationservice.notification.beans.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 
 /**
  * Message value object mapper
@@ -25,6 +33,29 @@ public class MessageValueObjectMapper {
     public String toJSON(final @NotNull MessageValueObject object)
             throws JsonProcessingException {
         return this.mapper.writeValueAsString(object);
+    }
+
+    public SimpleMailMessage toSimpleMailMessage(
+            final @NotNull MessageValueObject message) {
+        final var mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(message.getFrom());
+        mailMessage.setTo(message.getTo());
+        mailMessage.setText(message.getBody());
+        mailMessage.setSubject(message.getSubject());
+        return mailMessage;
+    }
+
+    public MimeMessage toMimeMessage(
+            final MimeMessage mimeMessage,
+            final @NotNull MessageValueObject message)
+            throws MessagingException {
+        MimeMessageHelper helper = new MimeMessageHelper(
+                mimeMessage, true, "UTF-8");
+        helper.setFrom(message.getFrom());
+        helper.setTo(message.getTo());
+        helper.setText(message.getBody(), true);
+        helper.setSubject(message.getSubject());
+        return mimeMessage;
     }
 
     /**

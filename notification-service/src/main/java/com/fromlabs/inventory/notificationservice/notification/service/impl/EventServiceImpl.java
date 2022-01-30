@@ -1,13 +1,16 @@
 package com.fromlabs.inventory.notificationservice.notification.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
+import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.EventMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.EventValidator;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
 import com.fromlabs.inventory.notificationservice.notification.event.EventRepository;
 import com.fromlabs.inventory.notificationservice.notification.event.EventType;
+import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import com.fromlabs.inventory.notificationservice.notification.service.EventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -99,7 +103,6 @@ public class EventServiceImpl implements EventService {
      */
     public EventDTO getById(final Long id) throws IllegalArgumentException{
         log.info("Start get event by id: {}", id);
-        this.eventValidator.validateEventId(id);
         final var entity = this.eventRepository.findById(id).orElse(null);
         final var dto = this.eventMapper.toDto(entity);
         log.info("End get event by id: {}", dto);
@@ -113,25 +116,48 @@ public class EventServiceImpl implements EventService {
             throws EntityNotFoundException, IllegalArgumentException {
         log.info("Start get event by id: {}", id);
         this.eventValidator.validateEventId(id);
-        final var entity = this.eventRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Entity is not found by id : %x", id)));
+        final var entity = getRawEntityById(id);
         final var dto = this.eventMapper.toDto(entity);
         log.info("End get event by id: {}", dto);
         return dto;
     }
 
+    private EventEntity getRawEntityById(
+            final @NotNull Long id) throws EntityNotFoundException {
+        return this.eventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Entity is not found by id : %s", id.toString())));
+    }
+
     /**
      * {@inheritDoc}
      */
-    public EventDTO save(final EventDTO dto) throws IllegalArgumentException {
+    public EventDTO save(final EventDTO dto)
+            throws IllegalArgumentException, EntityNotFoundException {
         log.info("Start save event: {}", dto);
         this.eventValidator.validateSaveEvent(dto);
-        final var entity = this.eventMapper.toEntity(dto);
+        final var entity = this.createOrModifyBasicInformation(dto);
         final var savedEntity = this.eventRepository.save(entity);
         final var savedDto = this.eventMapper.toDto(savedEntity);
         log.info("End save event: {}", savedDto);
         return savedDto;
+    }
+
+    private EventEntity createOrModifyBasicInformation(
+            @NotNull final EventDTO dto) throws EntityNotFoundException {
+        EventEntity entity;
+        final var entityId = dto.getId();
+        if (Objects.isNull(entityId)) {
+            entity = this.eventMapper.toEntity(dto);
+            entity.updateAfterCreated();
+            entity.activate();
+            log.info("A new event is created");
+        } else {
+            entity = getRawEntityById(entityId);
+            entity.updateBasicInformation(dto);
+            log.info("An exist event is updated");
+        }
+        return entity;
     }
 
     /**
@@ -141,9 +167,7 @@ public class EventServiceImpl implements EventService {
             throws EntityNotFoundException, IllegalArgumentException {
         log.info("Start delete event by id: {}", id);
         this.eventValidator.validateEventId(id);
-        final var entity = this.eventRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Entity is not found by id : %x", id)));
+        final var entity = getRawEntityById(id);
         this.eventRepository.delete(entity);
         log.info("End delete event by id");
     }
