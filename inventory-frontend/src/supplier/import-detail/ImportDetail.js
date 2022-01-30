@@ -13,14 +13,14 @@ import { Link } from 'react-router-dom';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
-import { SupplierImportForm } from './SupplierImportForm';
 import { SupplierService } from '../../service/SupplierService';
 
-export class SupplierImport extends Component {
+
+export class ImportDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            supplierImport: [],
+            supplierMaterial: [],
             selectedStatus: null,
             // --paginator state--
             page: 0,
@@ -43,12 +43,12 @@ export class SupplierImport extends Component {
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageImports()
+        this.getPageMaterials()
     };
 
-    getPageImports = () => {
+    getPageMaterials = () => {
         this.supplierService
-            .getPageImport(
+            .getPageMaterial(
                 this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
@@ -60,7 +60,7 @@ export class SupplierImport extends Component {
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.setState(
                 {
-                    supplierImport: data.content,
+                    supplierMaterial: data.content,
                     loading: false,
                     total: data.totalElements,
                     page: data.pageable.pageNumber,
@@ -78,24 +78,8 @@ export class SupplierImport extends Component {
         );
     }
 
-    confirmDelete(rowData) {
-        confirmDialog({
-            message: 'Do you want to delete this detail?',
-            header: 'Delete Confirmation',
-            icon: 'pi pi-info-circle',
-            acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
-        });
-    }
-
     actionBodyTemplate(rowData, form) {
         let items = [
-            {
-                label: 'Edit',
-                icon: 'pi pi-pencil',
-                command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
-            },
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
@@ -109,24 +93,19 @@ export class SupplierImport extends Component {
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
-                    <SplitButton label="View"
-                        onClick={() => this.props.history.push({
-                            pathname: `detail/${rowData.id}`,
-                            state: {
-                                supplierGroupId: this.props.match.params.id,
-                            }
-                        })}
+                    <SplitButton label="Edit"
+                        onClick={() => form.action(rowData.id, this.props.match.params.id, this.state.isMock)}
                         model={items}></SplitButton>
                 </div>
             </React.Fragment>
         );
     }
 
-    codeBodyTemplate(rowData) {
+    ingredientIdBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
-                {rowData.code}
+                <span className="p-column-title">Ingredient ID</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.ingredientId}</span>
             </React.Fragment>
         );
     }
@@ -140,20 +119,29 @@ export class SupplierImport extends Component {
         );
     }
 
-    createAtBodyTemplate(rowData) {
+    updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Create At</span>
+                <span className="p-column-title">Updated At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
 
-    updateAtBodyTemplate(rowData) {
+    maxQuantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Update At</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+                <span className="p-column-title">Quantity</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.maximumQuantity}</span>
+            </React.Fragment>
+        );
+    }
+
+    minQuantityBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Quantity</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.minimumQuantity}</span>
             </React.Fragment>
         );
     }
@@ -176,14 +164,14 @@ export class SupplierImport extends Component {
             }
         }, () => {
             this.setState({ loading: true });
-            this.getPageImports()
+            this.getPageMaterials()
             this.toast.show({ severity: 'info', summary: 'Clear', detail: 'Clear filter', life: 1000 });
         })
     }
 
     applyFilter = () => {
         this.setState({ loading: true });
-        this.getPageImports()
+        this.getPageMaterials()
         this.toast.show({ severity: 'info', summary: 'Search', detail: 'Search data content', life: 1000 });
     }
 
@@ -194,7 +182,7 @@ export class SupplierImport extends Component {
                 page: e.page
             },
             () => {
-                this.getPageImports();
+                this.getPageMaterials();
             }
         );
     };
@@ -207,7 +195,7 @@ export class SupplierImport extends Component {
                 sortOrder: e.sortOrder
             },
             () => {
-                this.getPageImports();
+                this.getPageMaterials();
                 this.toast.show({
                     severity: 'info',
                     summary: 'Sort',
@@ -223,7 +211,7 @@ export class SupplierImport extends Component {
             ...this.state,
             loading: true
         }, () => {
-            this.getPageImports()
+            this.getPageMaterials()
             this.toast.show({ severity: 'info', summary: 'Refresh', detail: 'Refresh datatable', life: 1000 });
         })
     }
@@ -236,7 +224,7 @@ export class SupplierImport extends Component {
             },
             () => {
                 this.setState({ loading: true });
-                this.getPageImports()
+                this.getPageMaterials()
                 this.toast.show({
                     severity: 'info', summary: 'Reset page size',
                     detail: 'Page size is set to ' + l, life: 1000
@@ -298,7 +286,7 @@ export class SupplierImport extends Component {
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
-                        label="New import"
+                        label="New material"
                         onClick={() => this.form.action(null, this.props.match.params.id, true)}
                     />
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
@@ -306,7 +294,7 @@ export class SupplierImport extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    <Link to={`../${this.state.supplierGroupId}`}>Back to Supplier</Link>
+                    <Link to={`../${this.state.supplierGroupId}`}> Back to Supplier Import</Link>
                 </span>
             </div>
         )
@@ -314,11 +302,11 @@ export class SupplierImport extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <SupplierImportForm ref={el => this.form = el}
-                    refreshData={() => this.getPageImports()}
-                // id={this.props.match.params.id}
-                />
-                <Fieldset legend="Supplier Import" toggleable>
+                {/* <supplierMaterialForm ref={el => this.form = el}
+                    refreshData={() => this.getPageMaterials()}
+                    id={this.props.match.params.id}
+                /> */}
+                <Fieldset legend="Import Detail" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
@@ -370,7 +358,7 @@ export class SupplierImport extends Component {
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.supplierImport}
+                    value={this.state.supplierMaterial}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
@@ -387,15 +375,16 @@ export class SupplierImport extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No supplier import found"
+                    emptyMessage="No import detail found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
+                    <Column field="ingredientId" header="Ingredient ID" body={this.ingredientIdBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column field="updateAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
+                    <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />
+                    <Column field="maximumQuantity" header="Max Quant" body={this.maxQuantityBodyTemplate} sortable />
+                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >
