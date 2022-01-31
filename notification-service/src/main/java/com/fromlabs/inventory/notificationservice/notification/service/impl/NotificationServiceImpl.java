@@ -5,7 +5,6 @@ import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.BatchSendNotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
-import com.fromlabs.inventory.notificationservice.notification.beans.mapper.MessageValueObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.NotificationMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.NotificationValidator;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
@@ -187,40 +186,72 @@ public class NotificationServiceImpl implements NotificationService {
             EntityNotFoundException, IllegalStateException {
         log.info("Start save notification: {}", dto);
         this.notificationValidator.validateSaveNotification(dto);
-        final var entity = createOrModifyBasicInformation(dto);
+        final var entity = this.createNewNotification(dto);
         final var savedEntity = this.notificationRepository.save(entity);
         final var savedDto = this.notificationMapper.toDto(savedEntity);
         log.info("End save notification: {}", savedDto);
         return savedDto;
     }
 
-    /**
-     * Create or update basic information of notification based on request
-     * @param dto NotificationDTO
-     * @return NotificationEntity
-     * @throws JsonProcessingException when convert to DTO failed
-     */
-    private NotificationEntity createOrModifyBasicInformation(
-            @NotNull final NotificationDTO dto)
+    private NotificationEntity createNewNotification(
+            final @NotNull NotificationDTO dto)
             throws JsonProcessingException {
         NotificationEntity entity;
+        final var event = getEventEntity(dto.getEvent().getId());
+        entity = this.notificationMapper.toEntity(dto, event);
+        entity.updateAfterCreated();
+        entity.activate();
+        log.info("A new notification is created: {}", entity);
+        return entity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    @Override
+    public NotificationDTO updateBasicInformation(final NotificationDTO dto)
+            throws IllegalStateException, JsonProcessingException,
+            EntityNotFoundException, IllegalArgumentException {
+        log.info("Start update notification basic information: {}", dto);
+        this.notificationValidator.validateUpdateBasicInformation(dto);
+        final var savedEntity = this.updateNotificationBasicInformation(dto);
+        final var savedDto = this.notificationMapper.toDto(savedEntity);
+        log.info("End update notification basic information: {}", savedDto);
+        return savedDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    @Override
+    public NotificationDTO updateType(final NotificationDTO dto)
+            throws IllegalArgumentException, JsonProcessingException,
+            EntityNotFoundException, IllegalStateException {
+        log.info("Start update notification type: {}", dto);
+        this.notificationValidator.validateUpdateType(dto);
         final var entityId = dto.getId();
-
-        // Create new notification
-        if (Objects.isNull(entityId)) {
-            final var event = getEventEntity(dto.getEvent().getId());
-            entity = this.notificationMapper.toEntity(dto, event);
-            entity.updateAfterCreated();
-            entity.activate();
-            log.info("A new notification is created");
+        final var type = dto.getType();
+        final var entity = this.getRawEntityById(entityId);
+        if (Objects.nonNull(entity.getType()) && entity.getType().equals(type)) {
+            log.warn("End update notification type as there is no change");
+            return this.notificationMapper.toDto(entity);
         }
+        entity.updateType(type);
+        final var savedEntity = this.notificationRepository.save(entity);
+        final var savedDto = this.notificationMapper.toDto(savedEntity);
+        log.info("End update notification type: {}", savedDto);
+        return savedDto;
+    }
 
-        // Update basic information of notification
-        else {
-            entity = getRawEntityById(entityId);
-            entity.updateBasicInformation(dto);
-            log.info("An exist notification is updated");
-        }
+    private NotificationEntity updateNotificationBasicInformation(
+            final @NotNull NotificationDTO dto) {
+        NotificationEntity entity;
+        final var entityId = dto.getId();
+        entity = getRawEntityById(entityId);
+        entity.updateBasicInformation(dto);
+        log.info("An exist notification is updated: {}", entity);
         return entity;
     }
 

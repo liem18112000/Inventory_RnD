@@ -130,4 +130,13 @@ public class NotificationEntity {
         final var stringMessage = mapper.writeValueAsString(message);
         this.setMessage(stringMessage);
     }
+
+    public void updateType(final @NotNull String type) throws IllegalStateException {
+        if (nonNull(this.getStatus()) && !this.getStatus().equals(NEW.getStatus())) {
+            throw new IllegalStateException(String.format(
+                    "Notification type cannot be updated as its status is %s",
+                    this.getStatus()));
+        }
+        this.setType(type);
+    }
 }

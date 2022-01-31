@@ -123,79 +123,9 @@ public class NotificationController {
 
     @GetMapping("page")
     public ResponseEntity<?> getPageNotification(
-            @RequestBody(required = false) EventDTO dto, Pageable pageable) {
+            @RequestBody(required = false) NotificationDTO dto, Pageable pageable) {
         try {
-            return ok(this.eventService.getPageWithFilter(dto, pageable));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @PostMapping
-    public ResponseEntity<?> saveNotification(@RequestBody NotificationDTO request) {
-        try {
-            return status(CREATED).body(this.notificationService.save(request));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @PutMapping("all/send-message")
-    public ResponseEntity<?> sendNotificationMessage(
-            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
-        try {
-            return ok(this.notificationService.sendAllNotification(limit));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @PutMapping("{id:\\d+}/status/sending")
-    public ResponseEntity<?> updateNotificationStatusToSending(
-            @PathVariable Long id) {
-        try {
-            return ok(this.notificationService.updateStatusToSending(id));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @PutMapping("{id:\\d+}/send-message")
-    public ResponseEntity<?> sendNotificationMessage(@PathVariable Long id) {
-        try {
-            return ok(this.notificationService.sendNotification(id));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @PutMapping("{id:\\d+}/message")
-    public ResponseEntity<?> updateNotificationMessage(
-            @PathVariable Long id, @RequestBody NotificationDTO request) {
-        try {
-            request.setId(id);
-            return ok(this.notificationService.updateMessage(request));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @PutMapping("{id:\\d+}")
-    public ResponseEntity<?> updateNotification(
-            @PathVariable Long id, @RequestBody NotificationDTO request) {
-        try {
-            request.setId(id);
-            return ok(this.notificationService.save(request));
-        } catch (Exception exception) {
-            return this.handleException(exception);
-        }
-    }
-
-    @DeleteMapping("{id:\\d+}")
-    public ResponseEntity<?> deleteNotification(@PathVariable Long id) {
-        try {
-            this.eventService.delete(id);
-            return noContent().build();
+            return ok(this.notificationService.getPageWithFilter(dto, pageable));
         } catch (Exception exception) {
             return this.handleException(exception);
         }

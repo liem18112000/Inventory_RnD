@@ -65,7 +65,7 @@ public class EndPoint {
         }
     }
 
-    @PutMapping("event/{id}")
+    @PutMapping("event/{id:\\d+}")
     public EventDTO updateEvent(
             @PathVariable Long id, @RequestBody EventDTO request) {
         try {
@@ -76,7 +76,7 @@ public class EndPoint {
         }
     }
 
-    @DeleteMapping("event/{id}")
+    @DeleteMapping("event/{id:\\d+}")
     public void deleteEvent(@PathVariable Long id) {
         try {
             this.eventService.delete(id);
@@ -146,6 +146,17 @@ public class EndPoint {
         }
     }
 
+    @PutMapping("{id:\\d+}/type")
+    public NotificationDTO updateNotificationType(
+            @PathVariable Long id, @RequestBody NotificationDTO request) {
+        try {
+            request.setId(id);
+            return this.notificationService.updateType(request);
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
     @PutMapping("{id:\\d+}/message")
     public NotificationDTO updateNotificationMessage(
             @PathVariable Long id, @RequestBody NotificationDTO request) {
@@ -157,12 +168,12 @@ public class EndPoint {
         }
     }
 
-    @PutMapping("{id:\\d+}")
-    public NotificationDTO updateNotification(
+    @PutMapping("{id:\\d+}/basic-information")
+    public NotificationDTO updateNotificationBasicInformation(
             @PathVariable Long id, @RequestBody NotificationDTO request) {
         try {
             request.setId(id);
-            return this.notificationService.save(request);
+            return this.notificationService.updateBasicInformation(request);
         } catch (Exception exception) {
             return this.handleException(exception);
         }

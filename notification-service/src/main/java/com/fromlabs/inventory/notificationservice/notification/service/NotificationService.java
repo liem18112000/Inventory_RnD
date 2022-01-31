@@ -60,6 +60,24 @@ public interface NotificationService {
      */
     NotificationDTO save(NotificationDTO dto)
             throws IllegalArgumentException, JsonProcessingException,
+            IllegalStateException;
+
+    /**
+     * Update basic information of notification
+     * @param dto NotificationDTO
+     * @return NotificationDTO
+     */
+    NotificationDTO updateBasicInformation(NotificationDTO dto)
+            throws IllegalStateException, JsonProcessingException,
+            EntityNotFoundException, IllegalArgumentException;
+
+    /**
+     * Update notification type
+     * @param dto NotificationDTO
+     * @return NotificationDTO
+     */
+    NotificationDTO updateType(NotificationDTO dto)
+            throws IllegalArgumentException, JsonProcessingException,
             EntityNotFoundException, IllegalStateException;
 
     /**

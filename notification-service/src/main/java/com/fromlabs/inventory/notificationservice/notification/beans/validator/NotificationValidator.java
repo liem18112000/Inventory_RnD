@@ -46,6 +46,30 @@ public class NotificationValidator {
     }
 
     /**
+     * Validate basic information
+     * @param dto NotificationDTO
+     * @throws IllegalArgumentException when it is not valid
+     */
+    public void validateUpdateBasicInformation(final NotificationDTO dto)
+            throws IllegalArgumentException {
+        this.validateRequest(dto);
+        this.validateNotificationId(dto.getId());
+        this.validateNotificationName(dto.getName());
+    }
+
+    /**
+     * Validate update notification type
+     * @param dto NotificationDTO
+     * @throws IllegalArgumentException when it is not valid
+     */
+    public void validateUpdateType(final NotificationDTO dto)
+            throws IllegalArgumentException {
+        this.validateRequest(dto);
+        this.validateNotificationId(dto.getId());
+        this.validateNotificationType(dto.getType());
+    }
+
+    /**
      * Validate event id or id is null
      * @param id event id
      * @throws IllegalArgumentException when it is not valid
