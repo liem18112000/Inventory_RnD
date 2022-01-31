@@ -97,7 +97,7 @@ public class NotificationEntity {
         this.setStatus(SENDING.getStatus());
     }
 
-    public void updateAfterSendMessage(final @NotNull String message)
+    public void updateAfterSendMessage()
             throws IllegalStateException {
         if (this.getStatus().equals(COMPLETE.getStatus())) {
             throw new IllegalStateException("Notification is re-send");
@@ -106,8 +106,6 @@ public class NotificationEntity {
         if (Objects.nonNull(this.getNotifyAt())) {
             throw new IllegalStateException("Notification notify timestamp is already assigned");
         }
-
-        this.setMessage(message);
         this.setNotifyAt(Instant.now().toString());
         this.setStatus(COMPLETE.getStatus());
     }

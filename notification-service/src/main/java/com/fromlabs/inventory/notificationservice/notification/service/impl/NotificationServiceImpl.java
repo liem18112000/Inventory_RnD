@@ -19,6 +19,7 @@ import com.fromlabs.inventory.notificationservice.notification.notfication.Notif
 import com.fromlabs.inventory.notificationservice.notification.service.MessageService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -264,16 +265,14 @@ public class NotificationServiceImpl implements NotificationService {
         final var originalMessageBody = message.getBody();
         applyMessageTemplate(dto, message);
         try {
+            final var messageType = dto.getType();
             try {
-                final var sentMessage = this.messageService.send(message);
-                dto.setMessage(sentMessage);
+                final var sentMessage = sendMessageWithType(message, messageType);
                 log.info("Sent notification message success: {}", sentMessage);
             } catch (MessagingException exception) {
                 message.setBody(originalMessageBody);
-                final var sentMessage = this.messageService.sendDefault(message);
-                dto.setMessage(sentMessage);
-                log.warn("Sent notification message with HTML failed, send raw message: {}",
-                        sentMessage);
+                final var sentMessage = sentDefaultMessageWithType(message, messageType);
+                log.warn("Sent notification message with HTML failed, send raw message: {}", sentMessage);
             }
             final var updatedMessageDto = this.updateAfterSendMessageSuccess(dto);
             log.info("End send notification by id: {}", updatedMessageDto);
@@ -284,6 +283,114 @@ public class NotificationServiceImpl implements NotificationService {
             log.info("End send notification by id: {}", updatedMessageDto);
             return updatedMessageDto;
         }
+    }
+
+    /**
+     * Send default message with notification type.
+     * This function is invoked when the primary
+     * send method is failed with mail exception.
+     * @param message MessageValueObject
+     * @param type Notification type
+     * @return MessageValueObject
+     * @throws JsonProcessingException when to convert message from string to value object
+     * @throws IllegalArgumentException when message type is not valid
+     */
+    private MessageValueObject sentDefaultMessageWithType(
+            @NotNull final MessageValueObject message, @NotNull final String type)
+            throws JsonProcessingException, IllegalArgumentException {
+        if (type.equals(NotificationType.EMAIL.getType())) {
+            log.info("Send email message");
+            return this.messageService.sendDefault(message);
+        } else if (type.equals(NotificationType.SMS.getType())) {
+            // TODO: add sms message method
+            log.info("Send SMS message");
+            return new MessageValueObject();
+        } else {
+            log.error("Message type is not valid: {}", type);
+            throw new IllegalArgumentException(
+                    String.format("Message type is not valid: %s", type));
+        }
+    }
+
+    /**
+     * Send message with notification type.
+     * @param message MessageValueObject
+     * @param type Notification type
+     * @return MessageValueObject
+     * @throws JsonProcessingException when to convert message from string to value object
+     * @throws MessagingException when message manipulation is failed
+     * @throws IllegalArgumentException when message type is not valid
+     */
+    private MessageValueObject sendMessageWithType(
+            final @NotNull MessageValueObject message, @NotNull final String type)
+            throws JsonProcessingException, MessagingException, IllegalArgumentException {
+        if (type.equals(NotificationType.EMAIL.getType())) {
+            log.info("Send email message");
+            return this.messageService.send(message);
+        } else if (type.equals(NotificationType.SMS.getType())) {
+            // TODO: add sms message method
+            log.info("Send SMS message");
+            throw new NotImplementedException("Feature is under implemented");
+        } else {
+            log.error("Message type is not valid: {}", type);
+            throw new IllegalArgumentException(
+                    String.format("Message type is not valid: %s", type));
+        }
+    }
+
+    /**
+     * Apply message template
+     * @param dto NotificationDTO
+     * @param message MessageValueObject
+     */
+    private void applyMessageTemplate(
+            final @NotNull NotificationDTO dto,
+            @NotNull MessageValueObject message) {
+        final var messageTemplate =
+                this.templateRepository.findByName(dto.getEvent().getEventType());
+        if (messageTemplate.isPresent()) {
+            log.info("Notification template message applied");
+            // TODO: Try to use template engine
+//            final var templateString = String.format(
+//                    messageTemplate.get().getContent(),
+//                    message.getBody());
+            final var templateString = messageTemplate.get().getContent();
+            message.setBody(templateString);
+        } else {
+            log.warn("Notification template message is not found");
+        }
+    }
+
+    /**
+     * Update notification after send message successfully
+     * @param dto NotificationDTO
+     * @return NotificationDTO
+     * @throws EntityNotFoundException when entity is not found with dto id
+     * @throws JsonProcessingException when convert entity to dto failed
+     */
+    private NotificationDTO updateAfterSendMessageSuccess(
+            final @NotNull NotificationDTO dto)
+            throws EntityNotFoundException, JsonProcessingException {
+        var entity = this.getRawEntityById(dto.getId());
+        entity.updateAfterSendMessage();
+        final var savedEntity = this.notificationRepository.save(entity);
+        return this.notificationMapper.toDto(savedEntity);
+    }
+
+    /**
+     * Update notification after send message failed
+     * @param dto NotificationDTO
+     * @return NotificationDTO
+     * @throws EntityNotFoundException when entity is not found with dto id
+     * @throws JsonProcessingException when convert entity to dto failed
+     */
+    private NotificationDTO updateAfterSendMessageFailed(
+            final @NotNull NotificationDTO dto)
+            throws EntityNotFoundException, JsonProcessingException {
+        var entity = this.getRawEntityById(dto.getId());
+        entity.updateStatusToFailed();
+        final var savedEntity = this.notificationRepository.save(entity);
+        return this.notificationMapper.toDto(savedEntity);
     }
 
     /**
@@ -319,41 +426,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Apply message template
-     * @param dto NotificationDTO
-     * @param message MessageValueObject
+     * Get raw notification entity (without convert to DTO)
+     * @param entityId Entity id
+     * @return NotificationEntity
+     * @throws EntityNotFoundException when entity is not found by id
      */
-    private void applyMessageTemplate(
-            final @NotNull NotificationDTO dto,
-            final @NotNull MessageValueObject message) {
-        final var messageTemplate =
-                this.templateRepository.findByName(dto.getEvent().getEventType());
-        if (messageTemplate.isPresent()) {
-            log.info("Notification template message applied");
-            message.setBody(messageTemplate.get().getContent());
-        } else {
-            log.warn("Notification template message is not found");
-        }
-    }
-
-    private NotificationDTO updateAfterSendMessageSuccess(
-            final @NotNull NotificationDTO dto)
-            throws EntityNotFoundException, JsonProcessingException {
-        var entity = this.getRawEntityById(dto.getId());
-        entity.updateAfterSendMessage(this.messageMapper.toJSON(dto.getMessage()));
-        final var savedEntity = this.notificationRepository.save(entity);
-        return this.notificationMapper.toDto(savedEntity);
-    }
-
-    private NotificationDTO updateAfterSendMessageFailed(
-            final @NotNull NotificationDTO dto)
-            throws EntityNotFoundException, JsonProcessingException {
-        var entity = this.getRawEntityById(dto.getId());
-        entity.updateStatusToFailed();
-        final var savedEntity = this.notificationRepository.save(entity);
-        return this.notificationMapper.toDto(savedEntity);
-    }
-
     private NotificationEntity getRawEntityById(
             final @NotNull Long entityId)
             throws EntityNotFoundException {
@@ -362,6 +439,12 @@ public class NotificationServiceImpl implements NotificationService {
                         String.format("Entity is not found by id : %s", entityId.toString())));
     }
 
+    /**
+     * Gte raw event entity (without convert to DTO)
+     * @param eventId Entity id
+     * @return EventEntity
+     * @throws EntityNotFoundException when entity is not found by id
+     */
     private EventEntity getEventEntity(final @NotNull Long eventId)
             throws EntityNotFoundException {
         return this.eventRepository.findById(eventId)
