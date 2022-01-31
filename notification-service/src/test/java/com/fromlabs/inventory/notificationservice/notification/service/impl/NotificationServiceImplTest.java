@@ -83,7 +83,28 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void getById() {
+    void given_getById_when_idIsNegative_then_returnNull()
+            throws JsonProcessingException {
+        final var entity = this.notificationService.getById(-1L);
+        assertNull(entity);
+    }
+
+    @Test
+    void given_getById_when_idIsNull_then_returnNull()
+            throws JsonProcessingException {
+        final var entity = this.notificationService.getById(null);
+        assertNull(entity);
+    }
+
+    @Test
+    void given_getById_when_idIsValid_then_returnDto()
+            throws JsonProcessingException {
+        final var actualEntity = this.notificationRepository.findAll().get(0);
+        final var actualDto = assertDoesNotThrow(() ->
+                this.notificationService.getById(actualEntity.getId()));
+        final var expectedDto = this.notificationMapper.toDto(actualEntity);
+        assertEquals(actualDto.getId(), expectedDto.getId());
+        assertEquals(actualDto.getName(), expectedDto.getName());
     }
 
     @Test
