@@ -2,6 +2,7 @@ package com.fromlabs.inventory.notificationservice.notification.beans.validator;
 
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -10,13 +11,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NotificationValidator {
 
-    @Autowired
-    private MessageValidator messageValidator;
+    private final MessageValidator messageValidator;
 
-    @Autowired
-    private EventValidator eventValidator;
+    private final EventValidator eventValidator;
 
     /**
      * Validate notification when save

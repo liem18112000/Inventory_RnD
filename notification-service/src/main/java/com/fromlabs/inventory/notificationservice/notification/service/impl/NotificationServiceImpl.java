@@ -18,6 +18,7 @@ import com.fromlabs.inventory.notificationservice.notification.notfication.Notif
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationType;
 import com.fromlabs.inventory.notificationservice.notification.service.MessageService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,10 @@ import org.springframework.util.StringUtils;
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification.Spec;
@@ -45,28 +49,20 @@ import static com.fromlabs.inventory.notificationservice.common.specifications.S
 @Slf4j
 @Service
 @Transactional(rollbackFor = {Exception.class, Throwable.class})
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NotificationServiceImpl implements NotificationService {
 
-    @Autowired
-    private NotificationRepository notificationRepository;
+    private final NotificationRepository notificationRepository;
 
-    @Autowired
-    private NotificationMapper notificationMapper;
+    private final NotificationMapper notificationMapper;
 
-    @Autowired
-    private NotificationValidator notificationValidator;
+    private final NotificationValidator notificationValidator;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
-    @Autowired
-    private MessageValueObjectMapper messageMapper;
-
-    @Autowired
-    private MessageTemplateRepository templateRepository;
+    private final MessageTemplateRepository templateRepository;
 
     /**
      * {@inheritDoc}

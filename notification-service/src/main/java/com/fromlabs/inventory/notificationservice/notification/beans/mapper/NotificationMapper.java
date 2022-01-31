@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -13,17 +15,12 @@ import java.util.Objects;
  * @author Liem
  */
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NotificationMapper {
 
     private final EventMapper eventMapper;
 
     private final MessageValueObjectMapper messageValueObjectMapper;
-
-    public NotificationMapper(
-            EventMapper eventMapper, MessageValueObjectMapper messageValueObjectMapper) {
-        this.eventMapper = eventMapper;
-        this.messageValueObjectMapper = messageValueObjectMapper;
-    }
 
     /**
      * Convert to DTO

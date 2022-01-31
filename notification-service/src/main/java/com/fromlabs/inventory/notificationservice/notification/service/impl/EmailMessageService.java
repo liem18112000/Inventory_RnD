@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.MessageValueObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
 import com.fromlabs.inventory.notificationservice.notification.service.MessageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.validation.constraints.NotNull;
@@ -20,14 +22,13 @@ import java.util.Date;
 /**
  * {@inheritDoc}
  */
-@Component
+@Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EmailMessageService implements MessageService {
 
-    @Autowired
-    private JavaMailSender sender;
+    private final JavaMailSender sender;
 
-    @Autowired
-    private MessageValueObjectMapper mapperMapper;
+    private final MessageValueObjectMapper mapperMapper;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -1,17 +1,15 @@
 package com.fromlabs.inventory.notificationservice.notification.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
-import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.EventMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.EventValidator;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
 import com.fromlabs.inventory.notificationservice.notification.event.EventRepository;
 import com.fromlabs.inventory.notificationservice.notification.event.EventType;
-import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import com.fromlabs.inventory.notificationservice.notification.service.EventService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,10 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
@@ -34,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification.Spec;
-import static com.fromlabs.inventory.notificationservice.common.specifications.SearchCriteria.*;
+import static com.fromlabs.inventory.notificationservice.common.specifications.SearchCriteria.criteriaEqual;
 
 /**
  * {@inheritDoc}
@@ -42,16 +36,14 @@ import static com.fromlabs.inventory.notificationservice.common.specifications.S
 @Slf4j
 @Service
 @Transactional(rollbackFor = {Exception.class, Throwable.class})
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventServiceImpl implements EventService {
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private EventMapper eventMapper;
+    private final EventMapper eventMapper;
 
-    @Autowired
-    private EventValidator eventValidator;
+    private final EventValidator eventValidator;
 
     /**
      * {@inheritDoc}
