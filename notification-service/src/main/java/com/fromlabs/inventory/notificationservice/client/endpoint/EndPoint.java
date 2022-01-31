@@ -1,5 +1,6 @@
 package com.fromlabs.inventory.notificationservice.client.endpoint;
 
+import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.config.ApiV1;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.BatchSendNotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
+
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.*;
@@ -37,6 +40,11 @@ public class EndPoint {
     }
 
     //<editor-fold desc="EVENT">
+
+    @GetMapping("event/types")
+    public Set<SimpleDto> getEventTypes() {
+        return this.eventService.getTypes();
+    }
 
     @GetMapping("event/{id:\\d+}")
     public EventDTO getEventById(@PathVariable Long id) {
@@ -81,6 +89,16 @@ public class EndPoint {
 
     //<editor-fold desc="NOTIFICATION">
 
+    @GetMapping("statuses")
+    public Set<SimpleDto> getNotificationStatuses() {
+        return this.notificationService.getStatuses();
+    }
+
+    @GetMapping("types")
+    public Set<SimpleDto> getNotificationTypes() {
+        return this.notificationService.getTypes();
+    }
+
     @GetMapping("{id:\\d+}")
     public NotificationDTO getNotificationById(@PathVariable Long id) {
         try {
@@ -104,6 +122,16 @@ public class EndPoint {
             @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         try {
             return this.notificationService.sendAllNotification(limit);
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
+    @PutMapping("{id:\\d+}/status/sending")
+    public NotificationDTO updateNotificationStatusToSending(
+            @PathVariable Long id) {
+        try {
+            return this.notificationService.updateStatusToSending(id);
         } catch (Exception exception) {
             return this.handleException(exception);
         }
