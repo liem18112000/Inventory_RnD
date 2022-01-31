@@ -252,14 +252,33 @@ public class NotificationServiceImpl implements NotificationService {
      */
     @Transactional(rollbackFor = {Exception.class, Throwable.class})
     @Override
+    public NotificationDTO updateStatusToSending(final Long id)
+            throws IllegalStateException, JsonProcessingException,
+            EntityNotFoundException, IllegalArgumentException {
+        log.info("Start update status to sending by id: {}", id);
+        this.notificationValidator.validateNotificationId(id);
+        final var entity = this.getRawEntityById(id);
+        entity.updateStatusToSending();
+        final var savedEntity = this.notificationRepository.save(entity);
+        final var savedDto = this.notificationMapper.toDto(savedEntity);
+        log.info("End update status to sending by id: {} - {}", id, savedDto);
+        return savedDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    @Override
     public NotificationDTO sendNotification(final Long id)
             throws JsonProcessingException, IllegalArgumentException,
             IllegalStateException, MailException {
         log.info("Start send notification by id: {}", id);
         this.notificationValidator.validateNotificationId(id);
         var dto = this.getByIdWithException(id);
-        if (dto.getStatus().equals(NotificationStatus.COMPLETE.getStatus())) {
-            throw new IllegalArgumentException("Notification message already sent");
+        if (!dto.getStatus().equals(NotificationStatus.SENDING.getStatus())) {
+            throw new IllegalArgumentException(String.format(
+                    "Notification message is not set to be sent: %s", dto.getStatus()));
         }
         var message = dto.getMessage();
         final var originalMessageBody = message.getBody();

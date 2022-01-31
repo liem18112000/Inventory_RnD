@@ -150,6 +150,16 @@ public class NotificationController {
         }
     }
 
+    @PutMapping("{id:\\d+}/status/sending")
+    public ResponseEntity<?> updateNotificationStatusToSending(
+            @PathVariable Long id) {
+        try {
+            return ok(this.notificationService.updateStatusToSending(id));
+        } catch (Exception exception) {
+            return this.handleException(exception);
+        }
+    }
+
     @PutMapping("{id:\\d+}/send-message")
     public ResponseEntity<?> sendNotificationMessage(@PathVariable Long id) {
         try {

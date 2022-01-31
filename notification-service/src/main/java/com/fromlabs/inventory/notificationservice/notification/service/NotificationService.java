@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.BatchSendNotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -69,6 +70,15 @@ public interface NotificationService {
     NotificationDTO updateMessage(NotificationDTO dto)
             throws IllegalArgumentException, EntityNotFoundException,
             JsonProcessingException, IllegalStateException;
+
+    /**
+     * Update notification status to sending by id
+     * @param id Entity id
+     * @return NotificationDTO
+     */
+    NotificationDTO updateStatusToSending(Long id)
+            throws IllegalStateException, JsonProcessingException,
+            EntityNotFoundException, IllegalArgumentException;
 
     /**
      * Send notification by id

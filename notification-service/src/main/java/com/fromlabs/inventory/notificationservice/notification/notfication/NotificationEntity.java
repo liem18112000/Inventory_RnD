@@ -93,12 +93,19 @@ public class NotificationEntity {
         this.setActive(true);
     }
 
-    public void updateStatusToSending() {
+    public void updateStatusToSending() throws IllegalStateException {
+        if (this.getStatus().equals(COMPLETE.getStatus())) {
+            throw new IllegalStateException("Notification has been sent successfully");
+        }
+
+        if (this.getStatus().equals(FAILED.getStatus())) {
+            throw new IllegalStateException("Notification has been sent failed");
+        }
+
         this.setStatus(SENDING.getStatus());
     }
 
-    public void updateAfterSendMessage()
-            throws IllegalStateException {
+    public void updateAfterSendMessage() throws IllegalStateException {
         if (this.getStatus().equals(COMPLETE.getStatus())) {
             throw new IllegalStateException("Notification is re-send");
         }
