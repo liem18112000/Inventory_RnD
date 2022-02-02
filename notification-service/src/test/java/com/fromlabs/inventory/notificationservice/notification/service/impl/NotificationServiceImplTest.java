@@ -3,10 +3,13 @@ package com.fromlabs.inventory.notificationservice.notification.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fromlabs.inventory.notificationservice.NotificationserviceApplication;
 import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
+import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
+import com.fromlabs.inventory.notificationservice.notification.beans.mapper.MessageValueObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.NotificationMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.NotificationValidator;
 import com.fromlabs.inventory.notificationservice.notification.event.EventRepository;
+import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
 import com.fromlabs.inventory.notificationservice.notification.messages.template.MessageTemplateRepository;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationRepository;
@@ -18,16 +21,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles({"dev","liem-local"})
 @SpringBootTest(
@@ -43,6 +53,21 @@ class NotificationServiceImplTest {
 
     @Autowired
     private NotificationMapper notificationMapper;
+
+    @Autowired
+    private NotificationValidator notificationValidator;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private MessageTemplateRepository templateRepository;
+
+    @Autowired
+    private MessageValueObjectMapper messageMapper;
 
     @Test
     void given_getStatuses_when_allThingIsRight() {
@@ -90,10 +115,10 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void given_getById_when_idIsNull_then_returnNull()
-            throws JsonProcessingException {
-        final var entity = this.notificationService.getById(null);
-        assertNull(entity);
+    void given_getById_when_idIsNull_then_returnNull() {
+        assertThrows(InvalidDataAccessApiUsageException.class,
+                () -> this.notificationService.getById(null),
+                "The given id must not be null!");
     }
 
     @Test
@@ -125,15 +150,115 @@ class NotificationServiceImplTest {
     void given_getByIdWithException_when_idIsValid_then_getDTO()
             throws JsonProcessingException {
         final var entity = this.notificationRepository.findAll().get(0);
-        var expectedDto = this.notificationMapper.toDto(entity);
-        var actualDto = assertDoesNotThrow(() -> this.notificationService
+        var expectedDto = assertDoesNotThrow(
+                () -> this.notificationMapper.toDto(entity));
+        var actualDto = assertDoesNotThrow(() ->  this.notificationService
                 .getByIdWithException(entity.getId()));
         assertEquals(expectedDto.getId(), actualDto.getId());
         assertEquals(expectedDto.getName(), actualDto.getName());
     }
 
     @Test
-    void getPageWithFilter() {
+    void given_getPageWithFilter_when_pageableIsNull_then_getPageDefault() {
+        final var dto = NotificationDTO.builder()
+                .name("").description("").type("").status("").build();
+        final var pages = this.notificationService
+                .getPageWithFilter(dto, null);
+        assertNotNull(pages);
+        assertEquals(10, pages.getSize());
+        assertEquals(0, pages.getNumber());
+    }
+
+    @Test
+    void given_getPageWithFilter_when_dtoIsNull_then_getPageDefault() {
+        final var pageable = PageRequest.of(1, 5, Sort.Direction.DESC, "name");
+        final var pages = this.notificationService
+                .getPageWithFilter(null, pageable);
+        assertNotNull(pages);
+        assertEquals(5, pages.getSize());
+        assertEquals(1, pages.getNumber());
+        assertEquals(pages.getPageable().getSort(), Sort.by(Sort.Direction.DESC, "name"));
+    }
+
+    @Test
+    void given_getPageWithFilter_when_filterByName_then_getPageWithFilteredName() {
+        final var pageable = PageRequest.of(0, 10);
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var dto = NotificationDTO.builder().name(entity.getName()).build();
+        final var pages = this.notificationService
+                .getPageWithFilter(dto, pageable);
+        assertNotNull(pages);
+        assertTrue(pages.getTotalElements() > 0);
+        assertEquals(10, pages.getSize());
+        assertEquals(0, pages.getNumber());
+        assertTrue(pages.stream().allMatch(page ->
+                Objects.equals(page.getName(), entity.getName()) ||
+                page.getName().contains(entity.getName())));
+    }
+
+    @Test
+    void given_getPageWithFilter_when_filterByDescription_then_getPageWithFilteredDescription() {
+        final var pageable = PageRequest.of(0, 10);
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var dto = NotificationDTO.builder()
+                .description(entity.getDescription()).build();
+        final var pages = this.notificationService
+                .getPageWithFilter(dto, pageable);
+        assertNotNull(pages);
+        assertTrue(pages.getTotalElements() > 0);
+        assertEquals(10, pages.getSize());
+        assertEquals(0, pages.getNumber());
+        assertTrue(pages.stream().allMatch(page ->
+                Objects.equals(page.getDescription(), entity.getDescription()) ||
+                page.getDescription().contains(entity.getDescription())));
+    }
+
+    @Test
+    void given_getPageWithFilter_when_filterByStatus_then_getPageWithFilteredStatus() {
+        final var pageable = PageRequest.of(0, 10);
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var dto = NotificationDTO.builder().status(entity.getStatus()).build();
+        final var pages = this.notificationService
+                .getPageWithFilter(dto, pageable);
+        assertNotNull(pages);
+        assertTrue(pages.getTotalElements() > 0);
+        assertEquals(10, pages.getSize());
+        assertEquals(0, pages.getNumber());
+        assertTrue(pages.stream().allMatch(page ->
+                Objects.equals(page.getStatus(), entity.getStatus()) ||
+                        page.getStatus().contains(entity.getStatus())));
+    }
+
+    @Test
+    void given_getPageWithFilter_when_filterByEvent_then_getPageWithFilteredEvent() {
+        final var pageable = PageRequest.of(0, 10);
+        final var entity = this.notificationRepository.findAll().get(0);
+            final var dto = NotificationDTO.builder()
+                    .event(EventDTO.builder().id(entity.getEvent().getId()).build()).build();
+        final var pages = this.notificationService
+                .getPageWithFilter(dto, pageable);
+        assertNotNull(pages);
+        assertTrue(pages.getTotalElements() > 0);
+        assertEquals(10, pages.getSize());
+        assertEquals(0, pages.getNumber());
+        assertTrue(pages.stream().allMatch(page ->
+                Objects.equals(page.getEvent().getId(), entity.getEvent().getId())));
+    }
+
+    @Test
+    void given_getPageWithFilter_when_filterByType_then_getPageWithFilteredType() {
+        final var pageable = PageRequest.of(0, 10);
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var dto = NotificationDTO.builder().type(entity.getType()).build();
+        final var pages = this.notificationService
+                .getPageWithFilter(dto, pageable);
+        assertNotNull(pages);
+        assertTrue(pages.getTotalElements() > 0);
+        assertEquals(10, pages.getSize());
+        assertEquals(0, pages.getNumber());
+        assertTrue(pages.stream().allMatch(page ->
+                Objects.equals(page.getType(), entity.getType()) ||
+                        page.getType().contains(entity.getType())));
     }
 
     @Test
@@ -189,11 +314,168 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void updateMessage() {
+    void given_updateMessage_when_allThingIsRight_then_updateMessageWithNoException() {
+        final var mockRepo = mock(NotificationRepository.class);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        when(mockRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertDoesNotThrow(() -> mockService.updateMessage(dto));
     }
 
     @Test
-    void updateStatusToSending() {
+    void given_updateMessage_when_messageIsNull_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var dto = NotificationDTO.builder()
+                .message(null).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message is null");
+    }
+
+    @Test
+    void given_updateMessage_when_messageSubjectIsNull_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject(null).body("Body").from("From").to("To").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message subject is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageSubjectIsBlank_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("").body("Body").from("From").to("To").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message subject is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageBodyIsNull_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body(null).from("From").to("To").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message body is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageBodyIsBlank_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("").from("From").to("To").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message body is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageFromIsNull_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from(null).to("To").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message from is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageFromIsBlank_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("").to("To").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message from is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageToIsNull_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to(null).build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message to is null or blank");
+    }
+
+    @Test
+    void given_updateMessage_when_messageToIsBlank_then_throwException() {
+        final var entity = this.notificationRepository.findAll().get(0);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("").build();
+        final var dto = NotificationDTO.builder()
+                .message(messageObject).id(entity.getId()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateMessage(dto),
+                "Message to is null or blank");
+    }
+
+    @Test
+    void given_updateStatusToSending_when_allThingIsRight_then_updateStatusWithNoException() {
+        final var mockRepo = mock(NotificationRepository.class);
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setStatus(NotificationStatus.NEW.getStatus());
+        when(mockRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        assertDoesNotThrow(() -> mockService.updateStatusToSending(entity.getId()));
+    }
+
+    @Test
+    void given_updateStatusToSending_when_statusIsCompleted_then_updateStatusWithNoException() {
+        final var mockRepo = mock(NotificationRepository.class);
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setStatus(NotificationStatus.COMPLETE.getStatus());
+        when(mockRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        assertThrows(IllegalStateException.class,
+                () -> mockService.updateStatusToSending(entity.getId()),
+                "Notification has been sent successfully");
+    }
+
+    @Test
+    void given_updateStatusToSending_when_statusIsFailed_then_updateStatusWithNoException() {
+        final var mockRepo = mock(NotificationRepository.class);
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setStatus(NotificationStatus.FAILED.getStatus());
+        when(mockRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        assertThrows(IllegalStateException.class,
+                () -> mockService.updateStatusToSending(entity.getId()),
+                "Notification has been sent failed");
     }
 
     @Test
@@ -205,6 +487,36 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void given_delete_when_entityIsNotExist_then_throwException() {
+        final var entityId = System.currentTimeMillis();
+        assertThrows(EntityNotFoundException.class,
+                () -> this.notificationService.delete(entityId),
+                String.format("Entity is not found by id : %s", String.valueOf(entityId)));
+    }
+
+    @Test
+    void given_delete_when_idIsNegative_then_throwException() {
+        final var entityId = -1L;
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.delete(entityId),
+                "Notification id is not positive");
+    }
+
+    @Test
+    void given_delete_when_idIsNull_then_throwException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.delete(null),
+                "Notification id is null");
+    }
+
+    @Test
+    void given_delete_when_allThingIsRight_then_deleteEntityById() {
+        final var mockRepo = mock(NotificationRepository.class);
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        final var entity = this.notificationRepository.findAll().get(0);
+        when(mockRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+        assertDoesNotThrow(() -> mockService.delete(entity.getId()));
     }
 }

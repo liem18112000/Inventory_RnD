@@ -170,7 +170,7 @@ public class NotificationServiceImpl implements NotificationService {
             final var event = this.eventRepository
                     .findById(dto.getEvent().getId()).orElse(null);
             if (Objects.nonNull(event)) {
-                spec.and(Spec(criteriaEqual("event", event)));
+                return spec.and(Spec(criteriaEqual("event", event)));
             }
         }
         return spec;
