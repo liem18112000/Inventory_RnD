@@ -12,6 +12,7 @@ import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
+import { Dropdown } from "primereact/dropdown";
 
 export class Event extends Component {
 
@@ -34,6 +35,7 @@ export class Event extends Component {
                 name: "",
                 eventType: "",
             },
+            eventTypes: [],
             isMock: false,
             loading: false
         };
@@ -46,13 +48,23 @@ export class Event extends Component {
      */
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPage()
+        this.getPage();
+        this.getEventTypes();
     };
+
+    getEventTypes() {
+        this.notificationService.getEventTypes(this.state.isMock).then(types => {
+            this.setState({
+                ...this.state,
+                eventTypes: types
+            })
+        });
+    }
 
     /**
      * Call get page supplier group API
      */
-    getPage = () => {
+    getPage() {
         const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         this.notificationService
             .getPageEvent(filter, page, rows, sortField, sortOrder, isMock)
@@ -115,7 +127,7 @@ export class Event extends Component {
     eventTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Type</span>
+                <span className="p-column-title">Event Type</span>
                 {rowData.eventType}
             </React.Fragment>
         );
@@ -322,7 +334,7 @@ export class Event extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <Fieldset legend="Supplier Group" toggleable>
+                <Fieldset legend="Notification Event" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
@@ -341,8 +353,10 @@ export class Event extends Component {
                             <div className="p-grid">
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Event Type"
+                                        <Dropdown
+                                            placeholder={"Event Type"}
+                                            itemTemplates={item => item.label}
+                                            options={this.state.eventTypes}
                                             value={this.state.filter.eventType}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, eventType: e.target.value })}
                                         />
@@ -371,7 +385,7 @@ export class Event extends Component {
                         </div>
                     </div>
                 </Fieldset>
-                < DataTable ref={(el) => this.dt = el}
+                <DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
                     value={this.state.content}
@@ -398,7 +412,7 @@ export class Event extends Component {
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column sortField="occurAt" filterField="createAt" header="Occur At" body={this.occurAtBodyTemplate} sortable />
-                    <Column sortField="eventType" filterField="eventType" header="Event Type" body={this.eventTypeBodyTemplate()} sortable />
+                    <Column sortField="eventType" filterField="eventType" header="Event Type" body={this.eventTypeBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData)} />
                 </DataTable>
             </div >

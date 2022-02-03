@@ -6,7 +6,8 @@ import {
     mockGetPageNotification,
     mockGetPageEvent,
     mockGetEventById,
-    mockGetNotificationById
+    mockGetNotificationById,
+    mockGetEventTypes
 } from "../core/models/MockDataModel";
 import {addActorNameAndRole} from "../core/utility/RequestActorConfig";
 
@@ -23,6 +24,22 @@ export class NotificationService {
      */
     constructor() {
         this.mapper = new FilterRequestMapper();
+    }
+
+    getEventTypes(isMock = true) {
+        if (isMock) {
+            return mockGetEventTypes();
+        }
+
+        const url = `${BaseURL}/event/types`;
+        const config = {
+            headers: getHeaderByGatewayStatus()
+        };
+
+        // Fetch notification event types data from api
+        return axios.get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -42,12 +59,16 @@ export class NotificationService {
         const url = `${BaseURL}/event/page`;
         const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
         const config = {
-            data: JSON.parse(body),
+            params: {
+                page: body.page,
+                size: body.size,
+                sort: body.sort
+            },
             headers: getHeaderByGatewayStatus()
         };
 
         // Fetch notification event data from api
-        return axios.get(url, config)
+        return axios.post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -69,12 +90,16 @@ export class NotificationService {
         const url = `${BaseURL}/notification/page`;
         const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
         const config = {
-            data: JSON.parse(body),
+            params: {
+                page: body.page,
+                size: body.size,
+                sort: body.sort
+            },
             headers: getHeaderByGatewayStatus()
         };
 
         // Fetch notification event data from api
-        return axios.get(url, config)
+        return axios.post(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

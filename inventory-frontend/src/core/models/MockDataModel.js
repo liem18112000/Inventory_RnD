@@ -1163,3 +1163,18 @@ export const mockGetEventById = () => {
 
     return Promise.resolve(mockData);
 }
+
+export const mockGetEventTypes = () => {
+    const mockData = [
+        {
+            "value": "Notification of mail sending",
+            "label": "NOTIFICATION OF MAIL SENDING"
+        },
+        {
+            "value": "Ingredient item quantity is low",
+            "label": "INGREDIENT ITEM QUANTITY IS LOW"
+        }
+    ];
+
+    return Promise.resolve(mockData);
+}

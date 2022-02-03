@@ -58,7 +58,7 @@ public class NotificationController {
         }
     }
 
-    @GetMapping("event/page")
+    @PostMapping("event/page")
     public ResponseEntity<?> getPageEvent(
             @RequestBody(required = false) EventDTO dto, Pageable pageable) {
         try {
@@ -121,7 +121,7 @@ public class NotificationController {
         }
     }
 
-    @GetMapping("page")
+    @PostMapping("page")
     public ResponseEntity<?> getPageNotification(
             @RequestBody(required = false) NotificationDTO dto, Pageable pageable) {
         try {
