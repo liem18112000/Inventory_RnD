@@ -8,8 +8,11 @@ import com.fromlabs.inventory.notificationservice.notification.beans.dto.Notific
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.MessageValueObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.mapper.NotificationMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.NotificationValidator;
+import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
 import com.fromlabs.inventory.notificationservice.notification.event.EventRepository;
+import com.fromlabs.inventory.notificationservice.notification.event.EventType;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
+import com.fromlabs.inventory.notificationservice.notification.messages.template.MessageTemplateEntity;
 import com.fromlabs.inventory.notificationservice.notification.messages.template.MessageTemplateRepository;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationRepository;
@@ -17,6 +20,8 @@ import com.fromlabs.inventory.notificationservice.notification.notfication.Notif
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationType;
 import com.fromlabs.inventory.notificationservice.notification.service.MessageService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
+import org.apache.commons.lang3.NotImplementedException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +30,16 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StringUtils;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityNotFoundException;
+import javax.xml.transform.Templates;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -122,14 +133,12 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void given_getById_when_idIsValid_then_returnDto()
-            throws JsonProcessingException {
-        final var actualEntity = this.notificationRepository.findAll().get(0);
+    void given_getById_when_idIsValid_then_returnDto() {
+        final var entity = this.notificationRepository.findAll().get(0);
         final var actualDto = assertDoesNotThrow(() ->
-                this.notificationService.getById(actualEntity.getId()));
-        final var expectedDto = this.notificationMapper.toDto(actualEntity);
-        assertEquals(actualDto.getId(), expectedDto.getId());
-        assertEquals(actualDto.getName(), expectedDto.getName());
+                this.notificationService.getById(entity.getId()));
+        assertEquals(actualDto.getId(), entity.getId());
+        assertEquals(actualDto.getName(), entity.getName());
     }
 
     @Test
@@ -147,8 +156,7 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void given_getByIdWithException_when_idIsValid_then_getDTO()
-            throws JsonProcessingException {
+    void given_getByIdWithException_when_idIsValid_then_getDTO() {
         final var entity = this.notificationRepository.findAll().get(0);
         var expectedDto = assertDoesNotThrow(
                 () -> this.notificationMapper.toDto(entity));
@@ -479,7 +487,190 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void sendNotification() {
+    void given_sendNotification_when_allThingIsRightAndTypeIsEmail_then_sendEmailNotificationWithNoException() {
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setType(NotificationType.EMAIL.getType());
+        entity.setStatus(NotificationStatus.SENDING.getStatus());
+        entity.setMessage(assertDoesNotThrow(() -> this.messageMapper.toJSON(messageObject)));
+        var event = new EventEntity();
+        event.setId(3L);
+        event.setName("Event");
+        event.setEventType(EventType.INGREDIENT_ITEM_LOW_STOCK.name());
+        entity.setEvent(event);
+        final var mockNotificationRepo = mock(NotificationRepository.class);
+        when(mockNotificationRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+
+        var messageTemplate = new MessageTemplateEntity();
+        messageTemplate.setContent("HTML Mail content");
+        messageTemplate.setId(2L);
+        messageTemplate.setName(event.getEventType());
+        final var mockTemplateRepo = mock(MessageTemplateRepository.class);
+        when(mockTemplateRepo.findByName(messageTemplate.getName()))
+                .thenReturn(Optional.of(messageTemplate));
+
+        final var mockMailSender = mock(JavaMailSender.class);
+        final var mimeMessage = new JavaMailSenderImpl().createMimeMessage();
+        when(mockMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        final var mockMessageService = new EmailMessageService(mockMailSender, this.messageMapper);
+        final var mockService = new NotificationServiceImpl(
+                mockNotificationRepo, notificationMapper, notificationValidator,
+                eventRepository, mockMessageService, mockTemplateRepo);
+
+        assertDoesNotThrow(() -> mockService.sendNotification(entity.getId()));
+    }
+
+    @Test
+    void given_sendNotification_when_notificationTypeNotExist_then_throwException() {
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setType("Unknown");
+        entity.setStatus(NotificationStatus.SENDING.getStatus());
+        entity.setMessage(assertDoesNotThrow(() -> this.messageMapper.toJSON(messageObject)));
+        var event = new EventEntity();
+        event.setId(3L);
+        event.setName("Event");
+        event.setEventType(EventType.INGREDIENT_ITEM_LOW_STOCK.name());
+        entity.setEvent(event);
+        final var mockNotificationRepo = mock(NotificationRepository.class);
+        when(mockNotificationRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+
+        var messageTemplate = new MessageTemplateEntity();
+        messageTemplate.setContent("HTML Mail content");
+        messageTemplate.setId(2L);
+        messageTemplate.setName(event.getEventType());
+        final var mockTemplateRepo = mock(MessageTemplateRepository.class);
+        when(mockTemplateRepo.findByName(messageTemplate.getName()))
+                .thenReturn(Optional.of(messageTemplate));
+
+        final var mockMailSender = mock(JavaMailSender.class);
+        final var mimeMessage = new JavaMailSenderImpl().createMimeMessage();
+        when(mockMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        final var mockMessageService = new EmailMessageService(mockMailSender, this.messageMapper);
+        final var mockService = new NotificationServiceImpl(
+                mockNotificationRepo, notificationMapper, notificationValidator,
+                eventRepository, mockMessageService, mockTemplateRepo);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> mockService.sendNotification(entity.getId()),
+                String.format("Message type is not valid: %s", entity.getType()));
+    }
+
+    @Test
+    void given_sendNotification_when_notificationTypeIsSms_then_throwException() {
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setType(NotificationType.SMS.getType());
+        entity.setStatus(NotificationStatus.SENDING.getStatus());
+        entity.setMessage(assertDoesNotThrow(() -> this.messageMapper.toJSON(messageObject)));
+        var event = new EventEntity();
+        event.setId(3L);
+        event.setName("Event");
+        event.setEventType(EventType.INGREDIENT_ITEM_LOW_STOCK.name());
+        entity.setEvent(event);
+        final var mockNotificationRepo = mock(NotificationRepository.class);
+        when(mockNotificationRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+
+        var messageTemplate = new MessageTemplateEntity();
+        messageTemplate.setContent("HTML Mail content");
+        messageTemplate.setId(2L);
+        messageTemplate.setName(event.getEventType());
+        final var mockTemplateRepo = mock(MessageTemplateRepository.class);
+        when(mockTemplateRepo.findByName(messageTemplate.getName()))
+                .thenReturn(Optional.of(messageTemplate));
+
+        final var mockMailSender = mock(JavaMailSender.class);
+        final var mimeMessage = new JavaMailSenderImpl().createMimeMessage();
+        when(mockMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        final var mockMessageService = new EmailMessageService(mockMailSender, this.messageMapper);
+        final var mockService = new NotificationServiceImpl(
+                mockNotificationRepo, notificationMapper, notificationValidator,
+                eventRepository, mockMessageService, mockTemplateRepo);
+
+        assertThrows(NotImplementedException.class,
+                () -> mockService.sendNotification(entity.getId()),
+                "Feature is under implemented");
+    }
+
+    @Test
+    void given_sendNotification_when_notApplyTemplate_then_continueSendTemplate() {
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setType(NotificationType.EMAIL.getType());
+        entity.setStatus(NotificationStatus.SENDING.getStatus());
+        entity.setMessage(assertDoesNotThrow(() -> this.messageMapper.toJSON(messageObject)));
+        var event = new EventEntity();
+        event.setId(3L);
+        event.setName("Event");
+        event.setEventType(EventType.INGREDIENT_ITEM_LOW_STOCK.name());
+        entity.setEvent(event);
+        final var mockNotificationRepo = mock(NotificationRepository.class);
+        when(mockNotificationRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+
+        var messageTemplate = new MessageTemplateEntity();
+        messageTemplate.setContent("HTML Mail content");
+        messageTemplate.setId(2L);
+        messageTemplate.setName(event.getEventType());
+        final var mockTemplateRepo = mock(MessageTemplateRepository.class);
+        when(mockTemplateRepo.findByName(messageTemplate.getName()))
+                .thenReturn(Optional.empty());
+
+        final var mockMailSender = mock(JavaMailSender.class);
+        final var mimeMessage = new JavaMailSenderImpl().createMimeMessage();
+        when(mockMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        final var mockMessageService = new EmailMessageService(mockMailSender, this.messageMapper);
+        final var mockService = new NotificationServiceImpl(
+                mockNotificationRepo, notificationMapper, notificationValidator,
+                eventRepository, mockMessageService, mockTemplateRepo);
+
+        assertDoesNotThrow(() -> mockService.sendNotification(entity.getId()));
+    }
+
+    @Disabled
+    @Test
+    void given_sendNotification_when_mailExceptionOccur_then_updateAfterSendMessageFailed()
+            throws MessagingException, JsonProcessingException {
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        var entity = new NotificationEntity();
+        entity.setId(1L);
+        entity.setType(NotificationType.EMAIL.getType());
+        entity.setStatus(NotificationStatus.SENDING.getStatus());
+        entity.setMessage(assertDoesNotThrow(() -> this.messageMapper.toJSON(messageObject)));
+        var event = new EventEntity();
+        event.setId(3L);
+        event.setName("Event");
+        event.setEventType(EventType.INGREDIENT_ITEM_LOW_STOCK.name());
+        entity.setEvent(event);
+        final var mockNotificationRepo = mock(NotificationRepository.class);
+        when(mockNotificationRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+
+        var messageTemplate = new MessageTemplateEntity();
+        messageTemplate.setContent("HTML Mail content");
+        messageTemplate.setId(2L);
+        messageTemplate.setName(event.getEventType());
+        final var mockTemplateRepo = mock(MessageTemplateRepository.class);
+        when(mockTemplateRepo.findByName(messageTemplate.getName()))
+                .thenReturn(Optional.empty());
+
+        final var mockMailSender = mock(JavaMailSender.class);
+        final var mimeMessage = new JavaMailSenderImpl().createMimeMessage();
+        when(mockMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        final var mockMessageService = new EmailMessageService(mockMailSender, this.messageMapper);
+        when(mockMessageService.send(messageObject)).thenThrow(MailException.class);
+        final var mockService = new NotificationServiceImpl(
+                mockNotificationRepo, notificationMapper, notificationValidator,
+                eventRepository, mockMessageService, mockTemplateRepo);
+
+        assertDoesNotThrow(() -> mockService.sendNotification(entity.getId()));
     }
 
     @Test
