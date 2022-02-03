@@ -86,6 +86,7 @@ public class EventServiceImpl implements EventService {
 
     private Specification<EventEntity> getSpecification(final EventDTO eventDTO) {
         return BaseSpecification.<EventEntity>Spec(criteriaEqual("name", getStringDefault(eventDTO.getName())))
+                .and(Spec(criteriaEqual("eventType", getStringDefault(eventDTO.getEventType()))))
                 .and(Spec(criteriaEqual("description", getStringDefault(eventDTO.getDescription()))))
                 .and(Spec(criteriaEqual("occurAt", getStringDefault(eventDTO.getOccurAt()))));
     }
