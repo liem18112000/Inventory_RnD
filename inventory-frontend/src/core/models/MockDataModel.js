@@ -759,3 +759,407 @@ export const mockSuggestTaxon = () => {
 
     return Promise.resolve(mock);
 }
+
+export const mockGetPageEvent = () => {
+    const mockData = {
+        "content": [
+            {
+                "id": 2,
+                "name": "Event 02",
+                "description": "{}",
+                "occurAt": "2022-01-29 21:05:33",
+                "eventType": "Ingredient item quantity is low",
+                "active": true,
+                "accessAt": "2022-02-03T09:08:48.502925500Z"
+            },
+            {
+                "id": 1,
+                "name": "Event 01",
+                "description": "{}",
+                "occurAt": "2022-01-29 21:05:33",
+                "eventType": "Notification of mail sending",
+                "active": true,
+                "accessAt": "2022-02-03T09:08:48.503922Z"
+            }
+        ],
+        "pageable": {
+            "sort": {
+                "empty": false,
+                "unsorted": false,
+                "sorted": true
+            },
+            "offset": 0,
+            "pageNumber": 0,
+            "pageSize": 2,
+            "paged": true,
+            "unpaged": false
+        },
+        "totalElements": 2,
+        "totalPages": 1,
+        "last": true,
+        "number": 0,
+        "size": 2,
+        "sort": {
+            "empty": false,
+            "unsorted": false,
+            "sorted": true
+        },
+        "first": true,
+        "numberOfElements": 2,
+        "empty": false
+    }
+
+    return Promise.resolve(mockData);
+}
+
+export const mockGetPageNotification = () => {
+    const mockData = {
+        "content": [
+            {
+                "id": 21,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 1,
+                    "name": "Event 01",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Notification of mail sending",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.152693800Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T03:13:46.971377900Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 22,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T03:13:46.723386100Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 23,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 1,
+                    "name": "Event 01",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Notification of mail sending",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "sms",
+                "status": "created",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 24,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "sms",
+                "notifyAt": "",
+                "status": "created",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 25,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 1,
+                    "name": "Event 01",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Notification of mail sending",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T02:25:12.950518100Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 26,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 1,
+                    "name": "Event 01",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Notification of mail sending",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T03:13:01.581288400Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 27,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T03:50:37.903577Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 28,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "status": "created",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.156220Z"
+            },
+            {
+                "id": 29,
+                "name": "New notification edited",
+                "description": "Notification description edited",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.156220Z"
+                },
+                "message": {
+                    "subject": "Test message edited",
+                    "body": "JSON parse error edited",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T13:20:48.344639800Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.157216600Z"
+            },
+            {
+                "id": 30,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.157216600Z"
+                },
+                "message": {
+                    "subject": "Test message edited",
+                    "body": "JSON parse error edited",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T15:03:40.933744600Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.157216600Z"
+            },
+            {
+                "id": 31,
+                "name": "New notification",
+                "description": "Notification description",
+                "event": {
+                    "id": 2,
+                    "name": "Event 02",
+                    "description": "{}",
+                    "occurAt": "2022-01-29 21:05:33",
+                    "eventType": "Ingredient item quantity is low",
+                    "active": true,
+                    "accessAt": "2022-02-03T09:11:27.157216600Z"
+                },
+                "message": {
+                    "subject": "Test message",
+                    "body": "JSON parse error",
+                    "from": "noreply@rim.com",
+                    "to": "liem18112000@gmail.com"
+                },
+                "type": "email",
+                "notifyAt": "2022-01-31T15:06:02.460707200Z",
+                "status": "complete",
+                "active": true,
+                "accessAt": "2022-02-03T09:11:27.157216600Z"
+            }
+        ],
+        "pageable": {
+            "sort": {
+                "empty": true,
+                "unsorted": true,
+                "sorted": false
+            },
+            "offset": 0,
+            "pageNumber": 0,
+            "pageSize": 20,
+            "paged": true,
+            "unpaged": false
+        },
+        "totalElements": 11,
+        "totalPages": 1,
+        "last": true,
+        "number": 0,
+        "size": 20,
+        "sort": {
+            "empty": true,
+            "unsorted": true,
+            "sorted": false
+        },
+        "first": true,
+        "numberOfElements": 11,
+        "empty": false
+    }
+
+    return Promise.resolve(mockData);
+}
+
+export const mockGetNotificationById = () => {
+    const mockData = {
+        "id": 8,
+        "name": "New notification",
+        "description": "Notification description",
+        "event": {
+            "id": 1,
+            "name": "Event 01",
+            "description": "{}",
+            "occurAt": "2022-01-29 21:05:33",
+            "eventType": "Notification of mail sending",
+            "active": true,
+            "accessAt": "2022-01-30T12:48:03.754968400Z"
+        },
+        "message": {
+            "subject": "Test message",
+            "body": "JSON parse error",
+            "sendAt": "2022-01-30T12:47:23.652473300Z",
+            "from": "noreply@rim.com",
+            "to": "liem18112000@gmail.com"
+        },
+        "type": "email",
+        "notifyAt": "2022-01-30T12:47:36.276748400Z",
+        "status": "complete",
+        "active": true,
+        "accessAt": "2022-01-30T12:48:03.754968400Z"
+    };
+
+    return Promise.resolve(mockData);
+}
+
+export const mockGetEventById = () => {
+    const mockData = {
+        "id": 1,
+        "name": "Event 01",
+        "description": "{}",
+        "occurAt": "2022-01-29 21:05:33",
+        "eventType": "Notification of mail sending",
+        "active": true,
+        "accessAt": "2022-02-03T09:23:03.066421100Z"
+    }
+
+    return Promise.resolve(mockData);
+}
