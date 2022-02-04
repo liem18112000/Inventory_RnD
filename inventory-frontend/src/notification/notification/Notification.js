@@ -13,8 +13,9 @@ import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
+import {Link} from "react-router-dom";
 
-export class Event extends Component {
+export class Notification extends Component {
 
     /**
      * Constructor
@@ -33,10 +34,15 @@ export class Event extends Component {
             // --paginator state--
             filter: {
                 name: "",
-                eventType: "",
-                description: ""
+                description: "",
+                type: "",
+                status: "",
+                event: {
+                    id: props.match.params.id
+                }
             },
-            eventTypes: [],
+            notificationTypes: [],
+            notificationStatuses: [],
             isMock: false,
             loading: false
         };
@@ -50,16 +56,26 @@ export class Event extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPage();
-        this.getEventTypes();
+        this.getNotificationTypes();
+        this.getNotificationStatuses();
     };
 
-    getEventTypes() {
-        this.notificationService.getEventTypes(this.state.isMock).then(types => {
+    getNotificationTypes() {
+        this.notificationService.getNotificationTypes(this.state.isMock).then(types => {
             this.setState({
                 ...this.state,
-                eventTypes: types
+                notificationTypes: types
             })
         });
+    }
+
+    getNotificationStatuses() {
+        this.notificationService.getNotificationStatuses(this.state.isMock).then(statuses => {
+            this.setState({
+                ...this.state,
+                notificationStatuses: statuses
+            })
+        })
     }
 
     /**
@@ -68,7 +84,7 @@ export class Event extends Component {
     getPage() {
         const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         this.notificationService
-            .getPageEvent(filter, page, rows, sortField, sortOrder, isMock)
+            .getPageNotification(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
             .then(data => this.setState({ ...this.state, ...data }));
@@ -90,7 +106,7 @@ export class Event extends Component {
 
     /**
      * Action body template
-     * @param rowData event data row
+     * @param rowData data row
      * @returns {JSX.Element}
      */
     actionBodyTemplate(rowData) {
@@ -98,17 +114,19 @@ export class Event extends Component {
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
-                    <Button label="View" onClick={() => this.props.history.push({
-                        pathname: `event/${rowData.id}`
-                    })}></Button>
+                    <Button label="View"
+                    //         onClick={() => window.location.replace(
+                    //     `supplier/${rowData.id}`
+                    // )}
+                    ></Button>
                 </div>
             </React.Fragment>
         );
     }
 
     /**
-     * Category name body template
-     * @param rowData event data row
+     * Notification name body template
+     * @param rowData data row
      * @returns {JSX.Element}
      */
     nameBodyTemplate(rowData) {
@@ -121,29 +139,45 @@ export class Event extends Component {
     }
 
     /**
-     * Category name body template
-     * @param rowData event data row
+     * Notification type body template
+     * @param rowData data row
      * @returns {JSX.Element}
      */
-    eventTypeBodyTemplate(rowData) {
+    notificationTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Event Type</span>
-                {rowData.eventType}
+                <span className="p-column-title">Type</span>
+                {rowData.type}
             </React.Fragment>
         );
     }
 
     /**
-     * Occur at timestamp body template
+     * Notification status body template
+     * @param rowData data row
+     * @returns {JSX.Element}
+     */
+    notificationStatusBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Status</span>
+                {rowData.status}
+            </React.Fragment>
+        );
+    }
+
+    /**
+     * Notify at timestamp body template
      * @param rowData event data row
      * @returns {JSX.Element}
      */
     occurAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Occur At</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.occurAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+                <span className="p-column-title">Notify At</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>
+                    {rowData.notifyAt ? moment(rowData.notifyAt).format('HH:mm-A-ddd-DD/MMM/YYYY') : "Not Available"}
+                </span>
             </React.Fragment>
         );
     }
@@ -167,8 +201,12 @@ export class Event extends Component {
             ...this.state,
             filter: {
                 name: "",
-                eventType: "",
-                description: ""
+                description: "",
+                type: "",
+                status: "",
+                event: {
+                    id: this.state.filter.event.id
+                }
             }
         }, () => {
             this.setState({ loading: true });
@@ -315,19 +353,21 @@ export class Event extends Component {
         const header = (
             <div className="table-header">
                 <span className="p-input-icon-left">
+                    <i className="pi pi-plus" />
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
-                <div style={{}}>
-                </div>
+                <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                    <Link to='/notification/event'>Back to Notification Event</Link>
+                </span>
             </div>
         )
 
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <Fieldset legend="Notification Event" toggleable>
+                <Fieldset legend="Notification" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
@@ -360,11 +400,26 @@ export class Event extends Component {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <Dropdown
-                                            placeholder={"Event Type"}
+                                            placeholder={"Notification Type"}
                                             itemTemplates={item => item.label}
-                                            options={this.state.eventTypes}
-                                            value={this.state.filter.eventType}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, eventType: e.target.value })}
+                                            options={this.state.notificationTypes}
+                                            value={this.state.filter.type}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, type: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Dropdown
+                                            placeholder={"Notification Status"}
+                                            itemTemplates={item => item.label}
+                                            options={this.state.notificationStatuses}
+                                            value={this.state.filter.type}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, status: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -417,8 +472,9 @@ export class Event extends Component {
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column sortField="occurAt" filterField="createAt" header="Occur At" body={this.occurAtBodyTemplate} sortable />
-                    <Column sortField="eventType" filterField="eventType" header="Event Type" body={this.eventTypeBodyTemplate} sortable />
+                    <Column sortField="notifyAt" filterField="notifyAt" header="Notify At" body={this.occurAtBodyTemplate} sortable />
+                    <Column sortField="type" filterField="type" header="Type" body={this.notificationTypeBodyTemplate} sortable />
+                    <Column sortField="status" filterField="status" header="Status" body={this.notificationStatusBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData)} />
                 </DataTable>
             </div >

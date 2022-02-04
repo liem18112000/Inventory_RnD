@@ -1178,3 +1178,41 @@ export const mockGetEventTypes = () => {
 
     return Promise.resolve(mockData);
 }
+
+export const mockGetNotificationTypes = () => {
+    const mockData = [
+        {
+            "value": "email",
+            "label": "EMAIL"
+        },
+        {
+            "value": "sms",
+            "label": "SMS"
+        }
+    ];
+
+    return Promise.resolve(mockData);
+}
+
+export const mockGetNotificationStatuses = () => {
+    const mockData = [
+        {
+            "value": "created",
+            "label": "CREATED"
+        },
+        {
+            "value": "failed",
+            "label": "FAILED"
+        },
+        {
+            "value": "sending",
+            "label": "SENDING"
+        },
+        {
+            "value": "complete",
+            "label": "COMPLETE"
+        }
+    ];
+
+    return Promise.resolve(mockData);
+}

@@ -7,7 +7,7 @@ import {
     mockGetPageEvent,
     mockGetEventById,
     mockGetNotificationById,
-    mockGetEventTypes
+    mockGetEventTypes, mockGetNotificationTypes
 } from "../core/models/MockDataModel";
 import {addActorNameAndRole} from "../core/utility/RequestActorConfig";
 
@@ -26,6 +26,10 @@ export class NotificationService {
         this.mapper = new FilterRequestMapper();
     }
 
+    /**
+     * Get event types
+     * @param isMock
+     */
     getEventTypes(isMock = true) {
         if (isMock) {
             return mockGetEventTypes();
@@ -37,6 +41,46 @@ export class NotificationService {
         };
 
         // Fetch notification event types data from api
+        return axios.get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    /**
+     * Get notification types
+     * @param isMock
+     */
+    getNotificationTypes(isMock = true) {
+        if (isMock) {
+            return mockGetNotificationTypes();
+        }
+
+        const url = `${BaseURL}/types`;
+        const config = {
+            headers: getHeaderByGatewayStatus()
+        };
+
+        // Fetch notification types data from api
+        return axios.get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    /**
+     * Get notification statuses
+     * @param isMock
+     */
+    getNotificationStatuses(isMock = true) {
+        if (isMock) {
+            return mockGetNotificationTypes();
+        }
+
+        const url = `${BaseURL}/statuses`;
+        const config = {
+            headers: getHeaderByGatewayStatus()
+        };
+
+        // Fetch notification types data from api
         return axios.get(url, config)
             .then(res => res.data)
             .catch(error => console.log(error));
@@ -87,7 +131,7 @@ export class NotificationService {
             return mockGetPageNotification();
         }
 
-        const url = `${BaseURL}/notification/page`;
+        const url = `${BaseURL}/page`;
         const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
         const config = {
             params: {
