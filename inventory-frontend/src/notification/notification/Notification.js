@@ -64,7 +64,7 @@ export class Notification extends Component {
         this.notificationService.getNotificationTypes(this.state.isMock).then(types => {
             this.setState({
                 ...this.state,
-                notificationTypes: types
+                notificationTypes: types.content
             })
         });
     }
@@ -73,7 +73,7 @@ export class Notification extends Component {
         this.notificationService.getNotificationStatuses(this.state.isMock).then(statuses => {
             this.setState({
                 ...this.state,
-                notificationStatuses: statuses
+                notificationStatuses: statuses.content
             })
         })
     }

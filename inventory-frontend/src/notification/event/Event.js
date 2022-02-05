@@ -57,7 +57,7 @@ export class Event extends Component {
         this.notificationService.getEventTypes(this.state.isMock).then(types => {
             this.setState({
                 ...this.state,
-                eventTypes: types
+                eventTypes: types.content
             })
         });
     }
