@@ -33,10 +33,7 @@ import org.springframework.util.StringUtils;
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification.Spec;
@@ -135,6 +132,29 @@ public class NotificationServiceImpl implements NotificationService {
                 return null;
             }
         });
+    }
+
+    @Override
+    public List<NotificationDTO> getAllWithFilter(
+            final NotificationDTO notificationDTO)
+            throws IllegalArgumentException {
+        log.info("Start get list notification: {}", notificationDTO);
+        List<NotificationEntity> list;
+        if (Objects.isNull(notificationDTO)) {
+            list = this.notificationRepository.findAll();
+        } else {
+            final var specification = getSpecification(notificationDTO);
+            list = this.notificationRepository.findAll(specification);
+        }
+        log.info("End get page notification");
+        return list.stream().map(entity -> {
+            try {
+                return this.notificationMapper.toDto(entity);
+            } catch (JsonProcessingException e) {
+                log.error("Notification DTO conversion failed: {}", e.getMessage());
+                return null;
+            }
+        }).collect(Collectors.toList());
     }
 
     /**

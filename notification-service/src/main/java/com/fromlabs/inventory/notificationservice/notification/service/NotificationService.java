@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Set;
 
 public interface NotificationService {
@@ -50,6 +51,15 @@ public interface NotificationService {
      */
     Page<NotificationDTO> getPageWithFilter(
             NotificationDTO notificationDTO, Pageable pageable)
+            throws IllegalArgumentException;
+
+    /**
+     * Get list with notification DTO
+     * @param notificationDTO NotificationDTO
+     * @return List of notification DTO
+     */
+    List<NotificationDTO> getAllWithFilter(
+            NotificationDTO notificationDTO)
             throws IllegalArgumentException;
 
     /**
