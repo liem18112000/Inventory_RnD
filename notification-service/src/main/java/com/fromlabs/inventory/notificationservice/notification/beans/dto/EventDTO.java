@@ -25,8 +25,7 @@ public class EventDTO implements Serializable {
 
     private String description;
 
-    @Builder.Default
-    private String occurAt = Instant.now().toString();
+    private String occurAt;
 
     private String eventType;
 
