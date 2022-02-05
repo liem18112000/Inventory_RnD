@@ -109,7 +109,7 @@ export class SupplierChild extends Component {
             },
             {
                 label: 'Import',
-                icon: 'pi pi-pencil',
+                icon: 'pi pi-upload',
                 command: () => this.props.history.push({
                     pathname: `import/${rowData.id}`,
                     state: {

@@ -139,6 +139,23 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    getPageImportDetail(supplierId, filter, page, rows, sortField, sortOrder, isMock = true) {
+        if (isMock) {
+            return Promise.resolve([]);
+        }
+
+        const url = `${BaseURL}/import/detail/page`;
+        const request = { ...filter, supplierId: supplierId };
+        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch supplier child data from api
+        return axios
+            .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
     getImportByID(id, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -174,6 +191,50 @@ export class SupplierService {
         }
 
         const url = `${BaseURL}/import`;
+        const body = addActorNameAndRole(imports);
+        const config = { headers: getHeaderByGatewayStatus({}) }
+
+        return axios
+            .put(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    getImportDetailByID(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/import/detail/${id}`
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    saveSupplierImportDetail(imports, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/import/detail`;
+        const body = addActorNameAndRole(imports);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    updateSupplierImportDetail(imports, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/import/detail`;
         const body = addActorNameAndRole(imports);
         const config = { headers: getHeaderByGatewayStatus({}) }
 

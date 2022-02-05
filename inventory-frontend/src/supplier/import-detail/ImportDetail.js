@@ -9,18 +9,19 @@ import '../../assets/styles/TableDemo.css';
 import moment from 'moment';
 import { Button } from "primereact/button";
 import 'primeflex/primeflex.css';
-import { Link } from 'react-router-dom';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { SupplierService } from '../../service/SupplierService';
-
+import { IngredientService } from '../../service/IngredientService';
+import { Dropdown } from 'primereact/dropdown';
+import { ImportDetailForm } from './ImportDetailForm';
 
 export class ImportDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            supplierMaterial: [],
+            importDetail: [],
             selectedStatus: null,
             // --paginator state--
             page: 0,
@@ -31,24 +32,31 @@ export class ImportDetail extends Component {
             // --paginator state--
             filter: {
                 name: "",
-                code: "",
+                ingredientId: null
             },
-            supplierGroupId: props.location.state.supplierGroupId,
+            supplierId: props.location.state.supplierId,
             isMock: false,
-            loading: false
+            loading: false,
+            ingredientList: []
         };
         this.supplierService = new SupplierService();
+        this.ingredientService = new IngredientService();
         console.log(props);
     }
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageMaterials()
+        this.getPageDetail();
+        this.ingredientService.getInventoryIngredientDetail(this.state.isMock).then(data => {
+            this.setState({
+                ...this.state, ingredientList: data
+            })
+        })
     };
 
-    getPageMaterials = () => {
+    getPageDetail = () => {
         this.supplierService
-            .getPageMaterial(
+            .getPageImportDetail(
                 this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
@@ -60,7 +68,7 @@ export class ImportDetail extends Component {
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.setState(
                 {
-                    supplierMaterial: data.content,
+                    importDetail: data.content,
                     loading: false,
                     total: data.totalElements,
                     page: data.pageable.pageNumber,
@@ -101,11 +109,11 @@ export class ImportDetail extends Component {
         );
     }
 
-    ingredientIdBodyTemplate(rowData) {
+    ingredientBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Ingredient ID</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.ingredientId}</span>
+                <span className="p-column-title">Ingredient</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.ingredient.name}</span>
             </React.Fragment>
         );
     }
@@ -119,6 +127,15 @@ export class ImportDetail extends Component {
         );
     }
 
+    createAtBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Create At</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+            </React.Fragment>
+        );
+    }
+
     updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
@@ -128,20 +145,11 @@ export class ImportDetail extends Component {
         );
     }
 
-    maxQuantityBodyTemplate(rowData) {
+    quantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
                 <span className="p-column-title">Quantity</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.maximumQuantity}</span>
-            </React.Fragment>
-        );
-    }
-
-    minQuantityBodyTemplate(rowData) {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Quantity</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.minimumQuantity}</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.quantity}</span>
             </React.Fragment>
         );
     }
@@ -158,20 +166,18 @@ export class ImportDetail extends Component {
             ...this.state,
             filter: {
                 name: "",
-                code: "",
-                description: "",
-                updatedAt: "",
+                ingredientId: null,
             }
         }, () => {
             this.setState({ loading: true });
-            this.getPageMaterials()
+            this.getPageDetail()
             this.toast.show({ severity: 'info', summary: 'Clear', detail: 'Clear filter', life: 1000 });
         })
     }
 
     applyFilter = () => {
         this.setState({ loading: true });
-        this.getPageMaterials()
+        this.getPageDetail()
         this.toast.show({ severity: 'info', summary: 'Search', detail: 'Search data content', life: 1000 });
     }
 
@@ -182,7 +188,7 @@ export class ImportDetail extends Component {
                 page: e.page
             },
             () => {
-                this.getPageMaterials();
+                this.getPageDetail();
             }
         );
     };
@@ -195,7 +201,7 @@ export class ImportDetail extends Component {
                 sortOrder: e.sortOrder
             },
             () => {
-                this.getPageMaterials();
+                this.getPageDetail();
                 this.toast.show({
                     severity: 'info',
                     summary: 'Sort',
@@ -211,7 +217,7 @@ export class ImportDetail extends Component {
             ...this.state,
             loading: true
         }, () => {
-            this.getPageMaterials()
+            this.getPageDetail()
             this.toast.show({ severity: 'info', summary: 'Refresh', detail: 'Refresh datatable', life: 1000 });
         })
     }
@@ -224,7 +230,7 @@ export class ImportDetail extends Component {
             },
             () => {
                 this.setState({ loading: true });
-                this.getPageMaterials()
+                this.getPageDetail()
                 this.toast.show({
                     severity: 'info', summary: 'Reset page size',
                     detail: 'Page size is set to ' + l, life: 1000
@@ -286,7 +292,7 @@ export class ImportDetail extends Component {
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
-                        label="New material"
+                        label="New import detail"
                         onClick={() => this.form.action(null, this.props.match.params.id, true)}
                     />
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
@@ -294,7 +300,12 @@ export class ImportDetail extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    <Link to={`../${this.state.supplierGroupId}`}> Back to Supplier Import</Link>
+                    <a onClick={() => this.props.history.push({
+                        pathname: `../${this.state.supplierId}`,
+                        state: {
+                            supplierGroupId: this.props.location.state.supplierGroupId,
+                        }
+                    })}>Back to Supplier Import</a>
                 </span>
             </div>
         )
@@ -302,22 +313,23 @@ export class ImportDetail extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                {/* <supplierMaterialForm ref={el => this.form = el}
-                    refreshData={() => this.getPageMaterials()}
+                <ImportDetailForm ref={el => this.form = el}
+                    refreshData={() => this.getPageDetail()}
                     id={this.props.match.params.id}
-                /> */}
+                />
                 <Fieldset legend="Import Detail" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
                                 <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Name"
-                                            value={this.state.filter.name}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
-                                        />
-                                    </div>
+                                    <Dropdown value={this.state.filter.ingredientId}
+                                        placeholder="Ingredient"
+                                        itemTemplate={item => item.label}
+                                        options={this.state.ingredientList}
+                                        onChange={(e) => {
+                                            this.setFilter({ ...this.state.filter, ingredientId: e.target.value })
+                                        }}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -326,9 +338,9 @@ export class ImportDetail extends Component {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Code"
-                                            value={this.state.filter.code}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
+                                            placeholder="Name"
+                                            value={this.state.filter.name}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -358,7 +370,7 @@ export class ImportDetail extends Component {
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
-                    value={this.state.supplierMaterial}
+                    value={this.state.importDetail}
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
@@ -379,12 +391,12 @@ export class ImportDetail extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="ingredientId" header="Ingredient ID" body={this.ingredientIdBodyTemplate} sortable />
+                    <Column field="ingredient" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />
-                    <Column field="maximumQuantity" header="Max Quant" body={this.maxQuantityBodyTemplate} sortable />
-                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
+                    <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
+                    <Column field="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column field="updateAt" header="Update At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >

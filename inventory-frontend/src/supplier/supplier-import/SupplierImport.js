@@ -113,7 +113,8 @@ export class SupplierImport extends Component {
                         onClick={() => this.props.history.push({
                             pathname: `detail/${rowData.id}`,
                             state: {
-                                supplierGroupId: this.props.match.params.id,
+                                supplierId: this.props.match.params.id,
+                                supplierGroupId: this.state.supplierGroupId
                             }
                         })}
                         model={items}></SplitButton>
