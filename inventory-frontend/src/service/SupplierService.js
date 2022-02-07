@@ -243,4 +243,19 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
+
+    deleteSupplierImportDetail(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve(null);
+        }
+
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+            )()
+        }
+
+        return axios
+            .delete(`${BaseURL}/import/detail/${id}`, config)
+    }
 }

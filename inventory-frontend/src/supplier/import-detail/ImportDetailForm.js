@@ -25,7 +25,7 @@ export class ImportDetailForm extends Component {
                 tenantId: null,
                 name: '',
                 description: '',
-                supplierId: null,
+                importId: null,
                 ingredientId: null,
                 quantity: 1,
             },
@@ -54,29 +54,29 @@ export class ImportDetailForm extends Component {
     /**
      * Form action is activated when the form need to save or update supplier import information
      * @param id        Supplier Import detail ID
-     * @param supplierId  ID of corresponding Supplier Child
+     * @param importId  ID of corresponding Supplier Child
      * @param isSave    True if save otherwise false
      */
-    action = (id, supplierId, isSave = true) => {
+    action = (id, importId, isSave = true) => {
         if (!isSave && id != null) {
-            this.setUpdateInformation(id, supplierId);
+            this.setUpdateInformation(id, importId);
         } else {
-            this.setSaveInformation(supplierId);
+            this.setSaveInformation(importId);
         }
     }
 
     /**
      * Set up information to state
-     * @param supplierId  ID of corresponding Supplier Import
+     * @param importId  ID of corresponding Supplier Import
      */
-    setSaveInformation(supplierId) {
+    setSaveInformation(importId) {
         this.setState({
             data: {
                 id: null,
                 tenantId: null,
                 name: '',
                 description: '',
-                supplierId: supplierId,
+                importId: importId,
                 quantity: 1,
                 ingredientId: null
             },
@@ -88,10 +88,10 @@ export class ImportDetailForm extends Component {
 
     /**
      * Get updated supplier group and set to update information state
-     * @param supplierId  ID of corresponding Supplier Import
+     * @param importId  ID of corresponding Supplier Import
      * @param id    Supplier import detail ID
      */
-    setUpdateInformation(id, supplierId) {
+    setUpdateInformation(id, importId) {
         this.supplierService.getImportDetailByID(id, this.state.isMock).then(data => {
             this.setState({
                 data: {
@@ -99,7 +99,7 @@ export class ImportDetailForm extends Component {
                     tenantId: data ? data.tenantId : '',
                     name: data ? data.name : '',
                     description: data ? data.description : '',
-                    supplierId: supplierId,
+                    importId: importId,
                     quantity: data ? data.quantity : '',
                     ingredientId: data ? data.ingredient.id : '',
                 },
@@ -117,6 +117,10 @@ export class ImportDetailForm extends Component {
      */
     requireField = (field) => {
         return field && field.length > 0;
+    }
+
+    requireNumberField = (field) => {
+        return field !== null;
     }
 
     /**
@@ -137,7 +141,8 @@ export class ImportDetailForm extends Component {
             ...this.state,
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Supplier import detail name is required" : null,
-                ingredientId: !this.requireField(this.state.data.ingredientId) ? "Supplier import detail ingredient is required" : null,
+                ingredientId: !this.requireNumberField(this.state.data.ingredientId)
+                    ? "Supplier import detail ingredient is required" : null,
             }
         }, callback)
     }
