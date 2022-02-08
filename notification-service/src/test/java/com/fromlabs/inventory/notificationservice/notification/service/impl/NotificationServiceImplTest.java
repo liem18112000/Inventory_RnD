@@ -354,6 +354,24 @@ class NotificationServiceImplTest {
     }
 
     @Test
+    void given_updateBasicInformation_when_requestIsValid_then_updateWithNoException() {
+        final var mockRepo = mock(NotificationRepository.class);
+        final var request = NotificationDTO.builder()
+                .id(1L).name("name").description("desc").build();
+        var entity = new NotificationEntity();
+        entity.setId(request.getId());
+        entity.setName(request.getName());
+        entity.setDescription(request.getDescription());
+        entity.setMessage("{\"subject\":\"Test message\",\"body\":\"JSON parse error\"," +
+                "\"from\":\"noreply@rim.com\",\"to\":\"liem18112000@gmail.com\"}");
+        when(mockRepo.findById(entity.getId())).thenReturn(Optional.of(entity));
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        assertDoesNotThrow(() -> mockService.updateBasicInformation(request));
+    }
+
+    @Test
     void given_updateType_when_typeIsNull_then_throwException() {
         final var dto = NotificationDTO.builder().id(1L).type(null).build();
         assertNull(dto.getType());
@@ -373,6 +391,18 @@ class NotificationServiceImplTest {
 
     @Test
     void given_updateType_when_typeIsNotExist_then_throwException() {
+        final var dto = NotificationDTO.builder().id(1L)
+                .type("not_exist").build();
+        assertTrue(StringUtils.hasText(dto.getType()));
+        assertTrue(Arrays.stream(NotificationType.values())
+                .noneMatch(s -> s.getType().equals("not_exist")));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.updateType(dto),
+                "Notification type is not exist");
+    }
+
+    @Test
+    void given_updateType_when_requestIsValid_then_updateWithNoException() {
         final var dto = NotificationDTO.builder().id(1L)
                 .type("not_exist").build();
         assertTrue(StringUtils.hasText(dto.getType()));
