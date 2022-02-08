@@ -371,6 +371,7 @@ export class SupplierMaterial extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
+                    <Column field="ingredient" header="Ingredient" body={this.nameBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />

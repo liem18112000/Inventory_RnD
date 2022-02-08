@@ -9,6 +9,7 @@ import { Toast } from 'primereact/toast';
 import { SupplierService } from '../../service/SupplierService';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
+import { InputNumber } from 'primereact/inputnumber';
 /**
  * Recipe form for save or update recipe form information
  */
@@ -265,18 +266,6 @@ export class SupplierMaterialForm extends Component {
                 <h2>{this.state.formHeader}</h2>
                 <div className="p-grid p-fluid">
                     <div className="p-col-12">
-                        <label>* Name</label>
-                        <InputText value={this.state.data.name} placeholder="Enter name"
-                            onChange={(e) => this.setState({ data: { ...this.state.data, name: e.target.value } })} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.name}</div>
-                    </div>
-                    <div className="p-col-12">
-                        <label>* Code</label>
-                        <InputText value={this.state.data.code} placeholder="Enter code"
-                            onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
-                    </div>
-                    <div className="p-col-12">
                         <label>* Ingredient Name </label>
                         <Dropdown value={this.state.data.ingredientId}
                             itemTemplate={item => item.label}
@@ -293,9 +282,29 @@ export class SupplierMaterialForm extends Component {
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
                     </div>
                     <div className="p-col-12">
+                        <label>* Name</label>
+                        <InputText value={this.state.data.name} placeholder="Enter name"
+                            onChange={(e) => this.setState({ data: { ...this.state.data, name: e.target.value } })} />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.name}</div>
+                    </div>
+                    {/* <div className="p-col-12">
+                        <label>* Code</label>
+                        <InputText value={this.state.data.code} placeholder="Enter code"
+                            onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
+                    </div> */}
+                    <div className="p-col-12">
                         <label>Description</label>
                         <InputTextarea rows={5} value={this.state.data.description} placeholder="Enter description"
                             onChange={(e) => this.setState({ data: { ...this.state.data, description: e.target.value } })} />
+                    </div>
+                    <div className="p-col-12">
+                        <label htmlFor="integeronly">* Minimum Quatity</label>
+                        <InputNumber inputId="integeronly" value={this.state.value1} onValueChange={(e) => this.setState({value1: e.value})} />
+                    </div>
+                    <div className="p-col-12">
+                        <label htmlFor="integeronly">* Maximum Quatity</label>
+                        <InputNumber inputId="integeronly" value={this.state.value1} onValueChange={(e) => this.setState({value1: e.value})} />
                     </div>
                 </div>
                 <div className="p-grid">
