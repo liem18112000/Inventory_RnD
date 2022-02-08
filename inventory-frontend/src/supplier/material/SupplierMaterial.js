@@ -15,13 +15,15 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { SupplierMaterialForm } from './SupplierMaterialForm';
 import { SupplierService } from '../../service/SupplierService';
-
+import { IngredientService } from '../../service/IngredientService';
+import { Dropdown } from 'primereact/dropdown';
 
 export class SupplierMaterial extends Component {
     constructor(props) {
         super(props);
         this.state = {
             supplierMaterial: [],
+            ingredientList: [],
             selectedStatus: null,
             // --paginator state--
             page: 0,
@@ -36,15 +38,21 @@ export class SupplierMaterial extends Component {
             },
             supplierGroupId: props.location.state.supplierGroupId,
             isMock: false,
-            loading: false
+            loading: false,
         };
         this.supplierService = new SupplierService();
+        this.ingredientService = new IngredientService();
         console.log(props);
     }
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageMaterials()
+        this.getPageMaterials();
+        this.ingredientService.getInventoryIngredientDetail(this.state.isMock).then(data => {
+            this.setState({
+                ...this.state, ingredientList: data
+            })
+        })
     };
 
     getPageMaterials = () => {
@@ -95,9 +103,18 @@ export class SupplierMaterial extends Component {
                 <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="Edit"
-                        onClick={() => form.action(rowData.id, this.props.match.params.id, this.state.isMock)}
+                        onClick={() => form.action(rowData.id, this.props.match.params.id, false)}
                         model={items}></SplitButton>
                 </div>
+            </React.Fragment>
+        );
+    }
+
+    ingredientBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Ingredient</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.ingredient.name}</span>
             </React.Fragment>
         );
     }
@@ -304,10 +321,13 @@ export class SupplierMaterial extends Component {
                             <div className="p-grid">
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
-                                        <InputText
+                                        <Dropdown value={this.state.filter.ingredientId}
                                             placeholder="Ingredient"
-                                            value={this.state.filter.code}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
+                                            itemTemplate={item => item.label}
+                                            options={this.state.ingredientList}
+                                            onChange={(e) => {
+                                                this.setFilter({ ...this.state.filter, ingredientId: e.target.value })
+                                            }}
                                         />
                                     </div>
                                 </div>
@@ -371,7 +391,7 @@ export class SupplierMaterial extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="ingredient" header="Ingredient" body={this.nameBodyTemplate} sortable />
+                    <Column field="ingredient" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />

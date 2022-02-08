@@ -26,9 +26,10 @@ export class SupplierMaterialForm extends Component {
                 tenantId: null,
                 name: '',
                 description: '',
-                code: '',
                 supplierId: null,
-                ingredientId: null
+                ingredientId: null,
+                minimumQuantity: 1,
+                maximumQuantity: 1,
             },
             isMock: false,
             visible: false,
@@ -45,9 +46,9 @@ export class SupplierMaterialForm extends Component {
      * Function is called after component is required
      */
     componentDidMount() {
-        this.ingredientService.getInventoryIngredientDetail(this.state.isMock).then(data =>{ 
+        this.ingredientService.getInventoryIngredientDetail(this.state.isMock).then(data => {
             this.setState({
-                ...this.state, ingredientList:data
+                ...this.state, ingredientList: data
             })
         })
     }
@@ -79,6 +80,9 @@ export class SupplierMaterialForm extends Component {
                 description: '',
                 code: '',
                 supplierId: supplierId,
+                ingredientId: null,
+                minimumQuantity: 1,
+                maximumQuantity: 1,
             },
             id: null,
             visible: true,
@@ -101,6 +105,9 @@ export class SupplierMaterialForm extends Component {
                     description: data ? data.description : '',
                     code: data ? data.code : '',
                     supplierId: supplierId,
+                    ingredientId: data ? data.ingredient.id : '',
+                    minimumQuantity: data ? data.minimumQuantity : '',
+                    maximumQuantity: data ? data.maximumQuantity : '',
                 },
                 id: data ? data.id : null,
                 visible: true,
@@ -117,7 +124,12 @@ export class SupplierMaterialForm extends Component {
     requireField = (field) => {
         return field && field.length > 0;
     }
-
+    requireNumberField = (field) => {
+        return field !== null;
+    }
+    checkMinMax = (min, max) => {
+       return min <= max
+    }
     /**
      * Check the submit validation is valid
      * @returns {boolean}
@@ -135,7 +147,9 @@ export class SupplierMaterialForm extends Component {
             ...this.state,
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Supplier material name is required" : null,
-                code: !this.requireField(this.state.data.code) ? "Supplier material code is required" : null,
+                code: !this.requireNumberField(this.state.data.code) ? "Supplier material code is required" : null,
+                minimumQuantity: !this.checkMinMax(this.state.data.minimumQuantity, this.state.data.maximumQuantity) ? "Min must be less than or equal max" : null,
+                maximumQuantity: !this.checkMinMax(this.state.data.minimumQuantity, this.state.data.maximumQuantity) ? "Max must be more than or equal min" : null,
             }
         }, callback)
     }
@@ -156,6 +170,12 @@ export class SupplierMaterialForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.minimumQuantity ? this.state.errors.minimumQuantity : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.maximumQuantity ? this.state.errors.maximumQuantity : ""}
                     </div>
                 </div>
             </div>
@@ -266,22 +286,6 @@ export class SupplierMaterialForm extends Component {
                 <h2>{this.state.formHeader}</h2>
                 <div className="p-grid p-fluid">
                     <div className="p-col-12">
-                        <label>* Ingredient Name </label>
-                        <Dropdown value={this.state.data.ingredientId}
-                            itemTemplate={item => item.label}
-                            options={this.state.ingredientList}
-                            onChange={(e) => {
-                               this.setState({
-                                   ...this.state, data:{
-                                       ...this.state.data, 
-                                       ingredientId: e.value
-                                   }
-                               })
-                            }} 
-                            />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
-                    </div>
-                    <div className="p-col-12">
                         <label>* Name</label>
                         <InputText value={this.state.data.name} placeholder="Enter name"
                             onChange={(e) => this.setState({ data: { ...this.state.data, name: e.target.value } })} />
@@ -294,17 +298,47 @@ export class SupplierMaterialForm extends Component {
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
                     </div> */}
                     <div className="p-col-12">
+                        <label>* Minimum Quatity</label>
+                        <InputText
+                            value={this.state.data.minimumQuantity}
+                            placeholder="Enter min quantity"
+                            type="number"
+                            min="1"
+                            max="1000"
+                            onChange={(e) => this.setState({ data: { ...this.state.data, minimumQuantity: e.target.value } })} />
+                             <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.minimumQuantity}</div>
+                    </div>
+                    <div className="p-col-12">
+                        <label>* Maximum Quatity</label>
+                        <InputText
+                            value={this.state.data.maximumQuantity}
+                            placeholder="Enter max quantity"
+                            type="number"
+                            min="1"
+                            max="1000"
+                            onChange={(e) => this.setState({ data: { ...this.state.data, maximumQuantity: e.target.value } })} />
+                             <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.maximumQuantity}</div>
+                    </div>
+                    <div className="p-col-12">
+                        <label>* Ingredient Name </label>
+                        <Dropdown value={this.state.data.ingredientId}
+                            itemTemplate={item => item.label}
+                            options={this.state.ingredientList}
+                            onChange={(e) => {
+                                this.setState({
+                                    ...this.state, data: {
+                                        ...this.state.data,
+                                        ingredientId: e.value
+                                    }
+                                })
+                            }}
+                        />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
+                    </div>
+                    <div className="p-col-12">
                         <label>Description</label>
                         <InputTextarea rows={5} value={this.state.data.description} placeholder="Enter description"
                             onChange={(e) => this.setState({ data: { ...this.state.data, description: e.target.value } })} />
-                    </div>
-                    <div className="p-col-12">
-                        <label htmlFor="integeronly">* Minimum Quatity</label>
-                        <InputNumber inputId="integeronly" value={this.state.value1} onValueChange={(e) => this.setState({value1: e.value})} />
-                    </div>
-                    <div className="p-col-12">
-                        <label htmlFor="integeronly">* Maximum Quatity</label>
-                        <InputNumber inputId="integeronly" value={this.state.value1} onValueChange={(e) => this.setState({value1: e.value})} />
                     </div>
                 </div>
                 <div className="p-grid">
