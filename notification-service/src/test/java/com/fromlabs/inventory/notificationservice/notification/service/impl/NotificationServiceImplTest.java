@@ -270,7 +270,69 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void save() {
+    void given_save_when_requestIsNull_then_thenThrowException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.save(null),
+                "Notification DTO is null");
+    }
+
+    @Test
+    void given_save_when_requestNameIsNull_then_thenThrowException() {
+        final var request = NotificationDTO.builder()
+                .name(null).description("desc").event(EventDTO.builder().id(1L).build())
+                .message(MessageValueObject.messageBuilder().build())
+                .type(NotificationType.EMAIL.getType()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.save(request),
+                "Notification name is null or blank");
+    }
+
+    @Test
+    void given_save_when_requestMessageIsNull_then_thenThrowException() {
+        final var request = NotificationDTO.builder()
+                .name("name").description("desc").event(EventDTO.builder().id(1L).build())
+                .message(null).type(NotificationType.EMAIL.getType()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.save(request),
+                "Message is null");
+    }
+
+    @Test
+    void given_save_when_requestEventIdIsNull_then_thenThrowException() {
+        final var request = NotificationDTO.builder()
+                .name("name").description("desc").event(EventDTO.builder().build())
+                .message(MessageValueObject.messageBuilder().build())
+                .type(NotificationType.EMAIL.getType()).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.save(request),
+                "Event id is null");
+    }
+
+    @Test
+    void given_save_when_requestEventIdTypeNot_then_thenThrowException() {
+        final var request = NotificationDTO.builder()
+                .name("name").description("desc").event(EventDTO.builder().build())
+                .message(MessageValueObject.messageBuilder().build())
+                .type(null).build();
+        assertThrows(IllegalArgumentException.class,
+                () -> this.notificationService.save(request),
+                "Notification type is not exist");
+    }
+
+    @Test
+    void given_save_when_requestIsValid_then_saveWithNoException() {
+        final var mockRepo = mock(NotificationRepository.class);
+        final var messageObject = MessageValueObject.messageBuilder()
+                .subject("Subject").body("Body").from("From").to("To").build();
+        final var event = EventDTO.builder().id(1L).build();
+        final var type = NotificationType.EMAIL.getType();
+        final var request = NotificationDTO.builder()
+                .name("name").description("desc").event(event)
+                .message(messageObject).type(type).build();
+        final var mockService = new NotificationServiceImpl(
+                mockRepo, notificationMapper, notificationValidator,
+                eventRepository, messageService, templateRepository);
+        assertDoesNotThrow(() -> mockService.save(request));
     }
 
     @Test
@@ -634,7 +696,6 @@ class NotificationServiceImplTest {
         assertDoesNotThrow(() -> mockService.sendNotification(entity.getId()));
     }
 
-    @Disabled
     @Test
     void given_sendNotification_when_mailExceptionOccur_then_updateAfterSendMessageFailed()
             throws MessagingException, JsonProcessingException {
