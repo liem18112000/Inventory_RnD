@@ -3,11 +3,13 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { RecipeService } from '../../service/RecipeService';
-import { IngredientService } from '../../service/IngredientService';
+
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
-
+import { SupplierService } from '../../service/SupplierService';
+import { IngredientService } from '../../service/IngredientService';
+import { Dropdown } from 'primereact/dropdown';
+import { InputNumber } from 'primereact/inputnumber';
 /**
  * Recipe form for save or update recipe form information
  */
@@ -24,17 +26,19 @@ export class SupplierMaterialForm extends Component {
                 tenantId: null,
                 name: '',
                 description: '',
-                code: '',
-                parentId: null
+                supplierId: null,
+                ingredientId: null,
+                minimumQuantity: 1,
+                maximumQuantity: 1,
             },
             isMock: false,
             visible: false,
             errors: {},
-            editTitle: 'Edit Recipe Detail',
-            createTitle: 'New Recipe Detail',
+            editTitle: 'Edit Supplier Material',
+            createTitle: 'New Supplier Material',
             ingredientList: []
         }
-        this.recipeService = new RecipeService();
+        this.supplierService = new SupplierService();
         this.ingredientService = new IngredientService();
     }
 
@@ -42,7 +46,11 @@ export class SupplierMaterialForm extends Component {
      * Function is called after component is required
      */
     componentDidMount() {
-
+        this.ingredientService.getInventoryIngredientDetail(this.state.isMock).then(data => {
+            this.setState({
+                ...this.state, ingredientList: data
+            })
+        })
     }
 
     /**
@@ -51,19 +59,19 @@ export class SupplierMaterialForm extends Component {
      * @param recipeId  ID of corresponding Recipe Child
      * @param isSave    True if save otherwise false
      */
-    action = (id, recipeId, isSave = true) => {
+    action = (id, supplierId, isSave = true) => {
         if (!isSave && id != null) {
-            this.setUpdateInformation(id, recipeId);
+            this.setUpdateInformation(id, supplierId);
         } else {
-            this.setSaveInformation(recipeId);
+            this.setSaveInformation(supplierId);
         }
     }
 
     /**
      * Set up information to state
-     * @param parentId  ID of corresponding Recipe Child
+     * @param supplierId  ID of corresponding Recipe Child
      */
-    setSaveInformation(parentId) {
+    setSaveInformation(supplierId) {
         this.setState({
             data: {
                 id: null,
@@ -71,7 +79,10 @@ export class SupplierMaterialForm extends Component {
                 name: '',
                 description: '',
                 code: '',
-                parentId: parentId,
+                supplierId: supplierId,
+                ingredientId: null,
+                minimumQuantity: 1,
+                maximumQuantity: 1,
             },
             id: null,
             visible: true,
@@ -81,11 +92,11 @@ export class SupplierMaterialForm extends Component {
 
     /**
      * Get updated recipe group and set to update information state
-     * @param parentId  ID of corresponding Recipe Child
+     * @param supplierId  ID of corresponding Recipe Child
      * @param id    Recipe detail ID
      */
-    setUpdateInformation(id, parentId) {
-        this.recipeService.getDetailByID(id, this.state.isMock).then(data => {
+    setUpdateInformation(id, supplierId) {
+        this.supplierService.getMaterialById(id, this.state.isMock).then(data => {
             this.setState({
                 data: {
                     id: data ? data.id : null,
@@ -93,7 +104,10 @@ export class SupplierMaterialForm extends Component {
                     name: data ? data.name : '',
                     description: data ? data.description : '',
                     code: data ? data.code : '',
-                    parentId: parentId,
+                    supplierId: supplierId,
+                    ingredientId: data ? data.ingredient.id : '',
+                    minimumQuantity: data ? data.minimumQuantity : '',
+                    maximumQuantity: data ? data.maximumQuantity : '',
                 },
                 id: data ? data.id : null,
                 visible: true,
@@ -110,7 +124,12 @@ export class SupplierMaterialForm extends Component {
     requireField = (field) => {
         return field && field.length > 0;
     }
-
+    requireNumberField = (field) => {
+        return field !== null;
+    }
+    checkMinMax = (min, max) => {
+       return min <= max
+    }
     /**
      * Check the submit validation is valid
      * @returns {boolean}
@@ -127,9 +146,10 @@ export class SupplierMaterialForm extends Component {
         this.setState({
             ...this.state,
             errors: {
-                name: !this.requireField(this.state.data.name) ? "Recipe detail name is required" : null,
-                code: !this.requireField(this.state.data.code) ? "Recipe detail code is required" : null,
-                ingredientId: !this.state.data.ingredientId ? "Ingredient is required" : null,
+                name: !this.requireField(this.state.data.name) ? "Supplier material name is required" : null,
+                code: !this.requireNumberField(this.state.data.code) ? "Supplier material code is required" : null,
+                minimumQuantity: !this.checkMinMax(this.state.data.minimumQuantity, this.state.data.maximumQuantity) ? "Min must be less than or equal max" : null,
+                maximumQuantity: !this.checkMinMax(this.state.data.minimumQuantity, this.state.data.maximumQuantity) ? "Max must be more than or equal min" : null,
             }
         }, callback)
     }
@@ -150,6 +170,12 @@ export class SupplierMaterialForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.minimumQuantity ? this.state.errors.minimumQuantity : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.maximumQuantity ? this.state.errors.maximumQuantity : ""}
                     </div>
                 </div>
             </div>
@@ -234,10 +260,10 @@ export class SupplierMaterialForm extends Component {
     getResponseAfterSubmit() {
         if (this.state.formHeader === this.state.editTitle) {
             console.log('Edit')
-            return this.recipeService.updateDetail(this.state.data, this.state.isMock);
+            return this.supplierService.updateSupplierMaterial(this.state.data, this.state.isMock);
         } else {
             console.log('Save')
-            return this.recipeService.saveDetail(this.state.data, this.state.isMock);
+            return this.supplierService.saveSupplierMaterial(this.state.data, this.state.isMock);
         }
     }
 
@@ -265,11 +291,49 @@ export class SupplierMaterialForm extends Component {
                             onChange={(e) => this.setState({ data: { ...this.state.data, name: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.name}</div>
                     </div>
-                    <div className="p-col-12">
+                    {/* <div className="p-col-12">
                         <label>* Code</label>
                         <InputText value={this.state.data.code} placeholder="Enter code"
                             onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
+                    </div> */}
+                    <div className="p-col-12">
+                        <label>* Minimum Quatity</label>
+                        <InputText
+                            value={this.state.data.minimumQuantity}
+                            placeholder="Enter min quantity"
+                            type="number"
+                            min="1"
+                            max="1000"
+                            onChange={(e) => this.setState({ data: { ...this.state.data, minimumQuantity: e.target.value } })} />
+                             <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.minimumQuantity}</div>
+                    </div>
+                    <div className="p-col-12">
+                        <label>* Maximum Quatity</label>
+                        <InputText
+                            value={this.state.data.maximumQuantity}
+                            placeholder="Enter max quantity"
+                            type="number"
+                            min="1"
+                            max="1000"
+                            onChange={(e) => this.setState({ data: { ...this.state.data, maximumQuantity: e.target.value } })} />
+                             <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.maximumQuantity}</div>
+                    </div>
+                    <div className="p-col-12">
+                        <label>* Ingredient Name </label>
+                        <Dropdown value={this.state.data.ingredientId}
+                            itemTemplate={item => item.label}
+                            options={this.state.ingredientList}
+                            onChange={(e) => {
+                                this.setState({
+                                    ...this.state, data: {
+                                        ...this.state.data,
+                                        ingredientId: e.value
+                                    }
+                                })
+                            }}
+                        />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
                     </div>
                     <div className="p-col-12">
                         <label>Description</label>

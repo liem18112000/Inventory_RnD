@@ -169,6 +169,20 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
+    
+    getMaterialById(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/providable-material/${id}`
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
 
     saveSupplierImport(imports, isMock = true) {
         if (isMock) {
@@ -184,6 +198,21 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
+    
+    saveSupplierMaterial(material, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/providable-material`;
+        const body = addActorNameAndRole(material);
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
 
     updateSupplierImport(imports, isMock = true) {
         if (isMock) {
@@ -192,6 +221,21 @@ export class SupplierService {
 
         const url = `${BaseURL}/import`;
         const body = addActorNameAndRole(imports);
+        const config = { headers: getHeaderByGatewayStatus({}) }
+
+        return axios
+            .put(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+    
+    updateSupplierMaterial(material, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/providable-material`;
+        const body = addActorNameAndRole(material);
         const config = { headers: getHeaderByGatewayStatus({}) }
 
         return axios
