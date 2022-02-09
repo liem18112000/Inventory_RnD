@@ -3,6 +3,8 @@ package com.fromlabs.inventory.notificationservice.notification.beans.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
+import com.fromlabs.inventory.notificationservice.notification.messages.utils.EmailTemplateEngineGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -11,10 +13,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Message value object mapper
@@ -23,6 +23,9 @@ import java.util.Date;
 @Component
 public class MessageValueObjectMapper {
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private EmailTemplateEngineGenerator templateModelUtil;
 
     /**
      * Convert message to JSON-like string
@@ -51,11 +54,30 @@ public class MessageValueObjectMapper {
             throws MessagingException {
         MimeMessageHelper helper = new MimeMessageHelper(
                 mimeMessage, true, "UTF-8");
+        final var model = this.toMap(message);
+        final var htmlBody = this.templateModelUtil
+                .generateHTMLBody(message.getBody(), model);
+        helper.setSubject(message.getSubject());
         helper.setFrom(message.getFrom());
         helper.setTo(message.getTo());
-        helper.setText(message.getBody(), true);
-        helper.setSubject(message.getSubject());
+        helper.setText(htmlBody, true);
         return mimeMessage;
+    }
+
+    public Map<String, Object> toMap(
+            final MessageValueObject message)
+            throws IllegalArgumentException {
+        if (Objects.isNull(message)) {
+            throw new IllegalArgumentException("messageValueObject is null");
+        }
+
+        return Map.of(
+                "subject", message.getSubject(),
+                "body", message.getBody(),
+                "sendAt", message.getSendAt(),
+                "from", message.getFrom(),
+                "to", message.getTo()
+        );
     }
 
     /**
