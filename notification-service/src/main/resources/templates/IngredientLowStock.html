@@ -217,6 +217,25 @@
                                                 </tr>
                                             </table>
 
+                                            <table class="table table-bordered" style="width: 80%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Code</th>
+                                                        <th>Name</th>
+                                                        <th>Min quantity</th>
+                                                        <th>Current quantity</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr th:each="detail : ${details}">
+                                                        <td th:text="${detail.ingredientCode}">Code</td>
+                                                        <td th:text="${detail.ingredientName}">Name</td>
+                                                        <td th:text="${detail.minQuantity}">Min quantity</td>
+                                                        <td th:text="${detail.currentQuantity}">Current quantity</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
                                             <table cellspacing="0" cellpadding="0" width="100%">
                                                 <tr>
                                                     <td class="mobile-center" align="left" style="padding:10px 0;">
