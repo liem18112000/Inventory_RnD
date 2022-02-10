@@ -22,10 +22,10 @@ import java.util.Objects;
  */
 @Component
 public class MessageValueObjectMapper {
-    private final ObjectMapper mapper = new ObjectMapper();
+    protected final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    private EmailTemplateEngineGenerator templateModelUtil;
+    protected EmailTemplateEngineGenerator templateModelUtil;
 
     /**
      * Convert message to JSON-like string
@@ -54,7 +54,7 @@ public class MessageValueObjectMapper {
             throws MessagingException {
         MimeMessageHelper helper = new MimeMessageHelper(
                 mimeMessage, true, "UTF-8");
-        final var model = this.toMap(message);
+        final var model = message.toMap();
         final var htmlBody = this.templateModelUtil
                 .generateHTMLBody(message.getBody(), model);
         helper.setSubject(message.getSubject());
@@ -64,30 +64,14 @@ public class MessageValueObjectMapper {
         return mimeMessage;
     }
 
-    public Map<String, Object> toMap(
-            final MessageValueObject message)
-            throws IllegalArgumentException {
-        if (Objects.isNull(message)) {
-            throw new IllegalArgumentException("messageValueObject is null");
-        }
-
-        return Map.of(
-                "subject", message.getSubject(),
-                "body", message.getBody(),
-                "sendAt", message.getSendAt(),
-                "from", message.getFrom(),
-                "to", message.getTo()
-        );
-    }
-
     /**
      * Convert message to object
      * @param json JSON string
      * @return MessageValueObject
      * @throws JsonProcessingException when it failed to covert JSON string to object
      */
-    public MessageValueObject toObject(final @NotBlank String json)
+    public <T extends MessageValueObject> T toObject(final @NotBlank String json, Class<T> clazz)
             throws JsonProcessingException {
-        return this.mapper.readValue(json, MessageValueObject.class);
+        return this.mapper.readValue(json, clazz);
     }
 }

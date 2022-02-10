@@ -1,6 +1,8 @@
 package com.fromlabs.inventory.notificationservice.notification.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.notificationservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.BatchSendNotificationDTO;
@@ -9,7 +11,10 @@ import com.fromlabs.inventory.notificationservice.notification.beans.mapper.Noti
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.NotificationValidator;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
 import com.fromlabs.inventory.notificationservice.notification.event.EventRepository;
+import com.fromlabs.inventory.notificationservice.notification.event.EventType;
+import com.fromlabs.inventory.notificationservice.notification.messages.LowStockMessageValueObject;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
+import com.fromlabs.inventory.notificationservice.notification.messages.models.LowStockDetails;
 import com.fromlabs.inventory.notificationservice.notification.messages.template.MessageTemplateRepository;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationRepository;
@@ -213,11 +218,38 @@ public class NotificationServiceImpl implements NotificationService {
         return savedDto;
     }
 
+    private MessageValueObject getMessageDetailFromEvent(
+            final @NotNull EventEntity event, final @NotNull MessageValueObject oldMessage) {
+        final var eventType = event.getEventType();
+        if (EventType.INGREDIENT_ITEM_LOW_STOCK.getType().equals(eventType)) {
+            var message =  LowStockMessageValueObject
+                    .lowStockMessageBuilder()
+                    .from(oldMessage.getFrom())
+                    .to(oldMessage.getTo())
+                    .body(oldMessage.getBody())
+                    .sendAt(oldMessage.getSendAt())
+                    .subject(oldMessage.getSubject())
+                    .link("")
+                    .build();
+            try {
+                final var descriptions = new ObjectMapper().readValue(
+                        event.getDescription(), new TypeReference<List<LowStockDetails>>(){});
+                message.setDetails(descriptions);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                message.setDetails(List.of());
+            }
+            return message;
+        }
+        return oldMessage;
+    }
+
     private NotificationEntity createNewNotification(
-            final @NotNull NotificationDTO dto)
+            @NotNull NotificationDTO dto)
             throws JsonProcessingException {
         NotificationEntity entity;
         final var event = getEventEntity(dto.getEvent().getId());
+        dto.setMessage(this.getMessageDetailFromEvent(event, dto.getMessage()));
         entity = this.notificationMapper.toEntity(dto, event);
         entity.updateAfterCreated();
         entity.activate();

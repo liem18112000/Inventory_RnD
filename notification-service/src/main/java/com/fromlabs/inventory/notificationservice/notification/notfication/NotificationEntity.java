@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.beans.validator.MessageValidator;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
+import com.fromlabs.inventory.notificationservice.notification.event.EventType;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.notificationservice.notification.notfication.NotificationStatus.*;
@@ -49,6 +51,9 @@ public class NotificationEntity {
     @Column(name = "message")
     private String message;
 
+    @Column(name = "message_type")
+    private String messageType;
+
     @Column(name = "type")
     private String type = NotificationType.EMAIL.getType();
 
@@ -78,6 +83,10 @@ public class NotificationEntity {
         if (isNull(this.status)) {
             this.setStatus(NEW.getStatus());
             this.setCreatedAt(Instant.now().toString());
+            final var eventType = Arrays.stream(EventType.values())
+                    .filter(type -> type.getType().equals(this.getEvent().getEventType()))
+                    .findFirst().orElseThrow(() -> new IllegalStateException("Event type not found"));
+            this.setMessageType(eventType.getMessageType());
         } else {
             throw new IllegalStateException(
                     String.format("Cannot change notification status as it is in '%s' status",

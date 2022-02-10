@@ -1,5 +1,6 @@
 package com.fromlabs.inventory.notificationservice.notification.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,8 @@ import lombok.SneakyThrows;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Base message value object
@@ -18,6 +21,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageValueObject implements Serializable {
     private static final long serialVersionUID = -7759702696942353240L;
 
@@ -44,5 +48,14 @@ public class MessageValueObject implements Serializable {
         this.sendAt = sendAt;
         this.from = from;
         this.to = to;
+    }
+
+    public Map<String, Object> toMap() {
+        return Map.of(
+                "subject", this.getSubject(),
+                "body", this.getBody(),
+                "from", this.getFrom(),
+                "to", this.getTo()
+        );
     }
 }

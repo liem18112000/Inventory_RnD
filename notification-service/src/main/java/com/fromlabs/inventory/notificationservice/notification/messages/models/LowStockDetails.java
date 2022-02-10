@@ -9,7 +9,9 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LowStockTableRow implements Serializable {
-
-
+public class LowStockDetails implements Serializable {
+    private String ingredientCode;
+    private String ingredientName;
+    private Float minQuantity;
+    private Float currentQuantity;
 }

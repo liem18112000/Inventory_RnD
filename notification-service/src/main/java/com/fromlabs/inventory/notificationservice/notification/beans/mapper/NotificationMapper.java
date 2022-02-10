@@ -3,6 +3,7 @@ package com.fromlabs.inventory.notificationservice.notification.beans.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.event.EventEntity;
+import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,19 @@ public class NotificationMapper {
             return null;
         }
 
+        Class clazz;
+        try {
+            clazz = Class.forName(entity.getMessageType());
+        } catch (ClassNotFoundException exception) {
+            clazz = MessageValueObject.class;
+        }
+
         return NotificationDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .event(this.eventMapper.toDto(entity.getEvent()))
-                .message(this.messageValueObjectMapper.toObject(entity.getMessage()))
+                .message(this.messageValueObjectMapper.toObject(entity.getMessage(), clazz))
                 .type(entity.getType())
                 .notifyAt(entity.getNotifyAt())
                 .status(entity.getStatus())
