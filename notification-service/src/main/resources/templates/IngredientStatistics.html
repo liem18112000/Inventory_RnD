@@ -206,7 +206,7 @@
                                                 <tr>
                                                     <td class="left" style="padding-bottom:40px; text-align:left;">
                                                         Hello admin,<br>
-                                                        We found that there are some ingredient item is run out of stock:
+                                                        This is your monthly statistics:
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -222,16 +222,18 @@
                                                     <tr>
                                                         <th>Code</th>
                                                         <th>Name</th>
-                                                        <th>Min quantity</th>
-                                                        <th>Current quantity</th>
+                                                        <th>Quantity</th>
+                                                        <th>Unit type</th>
+                                                        <th>Unit</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr th:each="detail : ${details}">
                                                         <td th:text="${detail.ingredientCode}">Code</td>
                                                         <td th:text="${detail.ingredientName}">Name</td>
-                                                        <td th:text="${detail.minQuantity}">Min quantity</td>
-                                                        <td th:text="${detail.currentQuantity}">Current quantity</td>
+                                                        <td th:text="${detail.quantity}">Quantity</td>
+                                                        <td th:text="${detail.unitType}">Unit type</td>
+                                                        <td th:text="${detail.unit}">unit</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

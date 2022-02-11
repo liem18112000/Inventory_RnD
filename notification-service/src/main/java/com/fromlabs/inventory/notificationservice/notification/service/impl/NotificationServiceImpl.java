@@ -14,7 +14,9 @@ import com.fromlabs.inventory.notificationservice.notification.event.EventReposi
 import com.fromlabs.inventory.notificationservice.notification.event.EventType;
 import com.fromlabs.inventory.notificationservice.notification.messages.LowStockMessageValueObject;
 import com.fromlabs.inventory.notificationservice.notification.messages.MessageValueObject;
+import com.fromlabs.inventory.notificationservice.notification.messages.StatisticsMessageValueObject;
 import com.fromlabs.inventory.notificationservice.notification.messages.models.LowStockDetails;
+import com.fromlabs.inventory.notificationservice.notification.messages.models.StatisticsDetails;
 import com.fromlabs.inventory.notificationservice.notification.messages.template.MessageTemplateRepository;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationEntity;
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationRepository;
@@ -234,6 +236,25 @@ public class NotificationServiceImpl implements NotificationService {
             try {
                 final var descriptions = new ObjectMapper().readValue(
                         event.getDescription(), new TypeReference<List<LowStockDetails>>(){});
+                message.setDetails(descriptions);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                message.setDetails(List.of());
+            }
+            return message;
+        } else if (EventType.INGREDIENT_ITEM_STATISTICS.getType().equals(eventType)) {
+            var message =  StatisticsMessageValueObject
+                    .statisticsMessageBuilder()
+                    .from(oldMessage.getFrom())
+                    .to(oldMessage.getTo())
+                    .body(oldMessage.getBody())
+                    .sendAt(oldMessage.getSendAt())
+                    .subject(oldMessage.getSubject())
+                    .link("")
+                    .build();
+            try {
+                final var descriptions = new ObjectMapper().readValue(
+                        event.getDescription(), new TypeReference<List<StatisticsDetails>>(){});
                 message.setDetails(descriptions);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();

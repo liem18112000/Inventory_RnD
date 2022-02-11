@@ -3,6 +3,7 @@ package com.fromlabs.inventory.notificationservice.notification.messages;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fromlabs.inventory.notificationservice.notification.messages.models.LowStockDetails;
+import com.fromlabs.inventory.notificationservice.notification.messages.models.StatisticsDetails;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,17 +19,17 @@ import java.util.Optional;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LowStockMessageValueObject extends MessageValueObject {
-    private static final long serialVersionUID = 5577015249238000552L;
+public class StatisticsMessageValueObject extends MessageValueObject {
+    private static final long serialVersionUID = 7233818492237317710L;
 
     private String dashboardLink;
 
-    private List<LowStockDetails> details;
+    private List<StatisticsDetails> details;
 
-    @Builder(builderMethodName = "lowStockMessageBuilder")
-    public LowStockMessageValueObject(
+    @Builder(builderMethodName = "statisticsMessageBuilder")
+    public StatisticsMessageValueObject(
             String subject, String body, String link, String sendAt,
-            String from, String to, List<LowStockDetails> details) {
+            String from, String to, List<StatisticsDetails> details) {
         super(subject, body, sendAt, from, to);
         this.dashboardLink = link;
         this.details = details;
