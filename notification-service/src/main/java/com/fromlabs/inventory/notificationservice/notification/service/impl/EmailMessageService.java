@@ -27,7 +27,7 @@ public class EmailMessageService implements MessageService {
 
     private final JavaMailSender sender;
 
-    private final MessageValueObjectMapper mapperMapper;
+    private final MessageValueObjectMapper messageValueObjectMapper;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -39,7 +39,7 @@ public class EmailMessageService implements MessageService {
             final @NotNull MessageValueObject message)
             throws DateTimeParseException, IllegalArgumentException,
             JsonProcessingException, MailException, MessagingException {
-        var mailMessage = this.mapperMapper.toMimeMessage(
+        var mailMessage = this.messageValueObjectMapper.toMimeMessage(
                 sender.createMimeMessage(), message);
         var sentMessage = this.objectMapper.readValue(
                 this.objectMapper.writeValueAsString(message), MessageValueObject.class);
