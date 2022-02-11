@@ -70,9 +70,11 @@ const AdminTemplate = (props) => { //path, exact, Component
                                 <NavLink to="/supplier">Supplier Group</NavLink>
                             </Menu.Item>
                         </SubMenu>
-                        <Menu.Item key="7" icon={<BellOutlined />}>
-                            <NavLink to="/notification">Notification</NavLink>
-                        </Menu.Item>
+                        <SubMenu key="sub5" title="Notification Mgt" icon={<BellOutlined />}>
+                            <Menu.Item key="7" >
+                                <NavLink to="/notification/event">Notification</NavLink>
+                            </Menu.Item>
+                        </SubMenu>
                     </Menu>
                 </Sider>
                 <Layout className="site-layout">

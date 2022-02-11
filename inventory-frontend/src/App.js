@@ -25,6 +25,8 @@ import { sleep } from "./core/utility/ComponentUtility";
 import { SupplierChild } from './supplier/child/SupplierChild';
 import { SupplierMaterial } from './supplier/material/SupplierMaterial';
 import { SupplierImport } from './supplier/supplier-import/SupplierImport';
+import { Event } from './notification/event/Event';
+import { Notification } from './notification/notification/Notification';
 import { ImportDetail } from './supplier/import-detail/ImportDetail';
 
 export const history = createBrowserHistory();
@@ -62,6 +64,8 @@ function App() {
         <AdminTemplate path="/supplier/:id" exact Component={SupplierChild} />
         <AdminTemplate path="/supplier/material/:id" exact Component={SupplierMaterial} />
         <AdminTemplate path="/supplier/import/:id" exact Component={SupplierImport} />
+        <AdminTemplate path="/notification/event" exact Component={Event} />
+        <AdminTemplate path="/notification/event/:id" exact Component={Notification} />
         <AdminTemplate path="/supplier/import/detail/:id" exact Component={ImportDetail} />
         <AdminTemplate path="/notification" exact Component={Dashboard} />
       </Switch>

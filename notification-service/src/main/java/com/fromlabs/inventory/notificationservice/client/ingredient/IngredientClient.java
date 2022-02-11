@@ -5,7 +5,7 @@
 package com.fromlabs.inventory.notificationservice.client.ingredient;
 
 import com.fromlabs.inventory.notificationservice.client.ingredient.bean.IngredientDto;
-import com.fromlabs.inventory.notificationservice.config.versions.ApiV1;
+import com.fromlabs.inventory.notificationservice.config.ApiV1;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
