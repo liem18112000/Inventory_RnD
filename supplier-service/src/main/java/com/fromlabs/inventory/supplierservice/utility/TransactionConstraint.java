@@ -4,18 +4,23 @@
 
 package com.fromlabs.inventory.supplierservice.utility;
 
+import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.supplierservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotNull;
+
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -261,6 +266,58 @@ public class TransactionConstraint {
 
         // Log out the check result and return it
         return logWrapper(result, "checkImportDetailExistById: {}");
+    }
+
+    /**
+     * Check constraints before update or save import detail
+     * @param request ImportDetailRequest
+     * @param importService ImportService
+     * @param service ImportDetailService
+     * @param client IngredientClient
+     * @param isUpdate Update flag
+     * @return boolean
+     */
+    public boolean checkConstraintsBeforeUpdateOrSaveImportDetail(
+            @NotNull final ImportDetailRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService service,
+            @NotNull final IngredientClient client,
+            final boolean isUpdate
+    ) {
+        final var result = (!isUpdate || checkImportDetailExistById(request.getId(), service)) &&
+                request.getQuantity() > 0 &&
+                Objects.nonNull(importService.getById(request.getImportId())) &&
+                Objects.nonNull(client.getIngredientById(request.getClientId(), request.getIngredientId()));
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkConstraintsBeforeUpdateOrSaveImportDetail: {}");
+    }
+
+    /**
+     * Check constraints before or update material
+     * @param request ProvidableMaterialRequest
+     * @param supplierService SupplierService
+     * @param service ProvidableMaterialService
+     * @param client IngredientClient
+     * @param isUpdate Update material flag
+     * @return boolean
+     */
+    public boolean checkConstrainsBeforeSaveOrUpdateMaterial(
+            @NotNull final ProvidableMaterialRequest request,
+            @NotNull final SupplierService supplierService,
+            @NotNull final ProvidableMaterialService service,
+            @NotNull final IngredientClient client,
+            final boolean isUpdate
+    ) {
+        // Check condition
+        final var result = (!isUpdate || checkMaterialExistById(request.getId(), service)) &&
+                request.getMaximumQuantity() >= request.getMinimumQuantity() &&
+                Objects.nonNull(supplierService.getById(request.getSupplierId())) &&
+                Objects.nonNull(client.getIngredientById(request.getTenantId(),
+                        request.getIngredientId()));
+
+        // Log out the check result and return it
+        return logWrapper(result, "checkConstrainsBeforeSaveMaterial: {}");
     }
 
     /**
