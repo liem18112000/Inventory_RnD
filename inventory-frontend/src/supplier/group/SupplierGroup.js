@@ -140,7 +140,7 @@ export class SupplierGroup extends Component {
         return (
             <React.Fragment>
                 <span className="p-column-title">Create At</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createdAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
@@ -149,7 +149,7 @@ export class SupplierGroup extends Component {
         return (
             <React.Fragment>
                 <span className="p-column-title">Update At</span>
-                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updateAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updatedAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
@@ -420,8 +420,8 @@ export class SupplierGroup extends Component {
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column sortField="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column sortField="updateAt" filterField="updateAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
+                    <Column sortField="createdAt" filterField="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column sortField="updatedAt" filterField="updatedAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >

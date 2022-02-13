@@ -44,14 +44,22 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
-    getPageChild(parentId, filter, page, rows, sortField, sortOrder, isMock = true) {
+    /**
+     * Get page of supplier child by filter
+     * @param filter        Filter on name and code
+     * @param page          Page
+     * @param rows          Size per page
+     * @param sortField     Sorting field (default field is id)
+     * @param sortOrder     Sorting order (default order is desc)
+     * @param isMock        Activate mock if true otherwise use real api call
+     */
+    getPageChild(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve([]);
         }
 
         const url = `${BaseURL}/child/page`;
-        const request = { ...filter, parentId: parentId };
-        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier child data from api
@@ -61,6 +69,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Get supplier by Id
+     * @param id supplier Id
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     getByID(id, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -75,6 +88,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Save supplier by request
+     * @param supplier Supplier request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     saveSupplier(supplier, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -90,6 +108,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Update supplier by request
+     * @param supplier Supplier request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     updateSupplier(supplier, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -105,14 +128,22 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
-    getPageMaterial(supplierGroupId, filter, page, rows, sortField, sortOrder, isMock = true) {
+    /**
+     * Get page mat4rial by request
+     * @param filter        Filter on name, ingredientId and code
+     * @param page          Page
+     * @param rows          Size per page
+     * @param sortField     Sorting field (default field is id)
+     * @param sortOrder     Sorting order (default order is desc)
+     * @param isMock        Activate mock if true otherwise use real api call
+     */
+    getPageMaterial(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve([]);
         }
 
         const url = `${BaseURL}/providable-material/page`;
-        const request = { ...filter, supplierGroupId: supplierGroupId };
-        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier child data from api
@@ -122,14 +153,22 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
-    getPageImport(supplierId, filter, page, rows, sortField, sortOrder, isMock = true) {
+    /**
+     * Get page import by request
+     * @param filter        Filter on name, ingredientId, supplierId and description
+     * @param page          Page
+     * @param rows          Size per page
+     * @param sortField     Sorting field (default field is id)
+     * @param sortOrder     Sorting order (default order is desc)
+     * @param isMock        Activate mock if true otherwise use real api call
+     */
+    getPageImport(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve([]);
         }
 
         const url = `${BaseURL}/import/page`;
-        const request = { ...filter, supplierId: supplierId };
-        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier child data from api
@@ -139,14 +178,22 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
-    getPageImportDetail(supplierId, filter, page, rows, sortField, sortOrder, isMock = true) {
+    /**
+     * Get page import detail by request
+     * @param filter        Filter on name and code
+     * @param page          Page
+     * @param rows          Size per page
+     * @param sortField     Sorting field (default field is id)
+     * @param sortOrder     Sorting order (default order is desc)
+     * @param isMock        Activate mock if true otherwise use real api call
+     */
+    getPageImportDetail(filter, page, rows, sortField, sortOrder, isMock = true) {
         if (isMock) {
             return Promise.resolve([]);
         }
 
         const url = `${BaseURL}/import/detail/page`;
-        const request = { ...filter, supplierId: supplierId };
-        const body = new FilterRequestMapper().toRequest(request, filter, page, rows, sortField, sortOrder);
+        const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
         const config = { headers: getHeaderByGatewayStatus() };
 
         // Fetch supplier child data from api
@@ -156,6 +203,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Get import by Id
+     * @param id Import Id
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     getImportByID(id, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -169,7 +221,12 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
-    
+
+    /**
+     * Get material by id
+     * @param id Material ID
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     getMaterialById(id, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -184,6 +241,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Save import by request
+     * @param imports Import request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     saveSupplierImport(imports, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -198,7 +260,12 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
-    
+
+    /**
+     * Save supplier material by request
+     * @param material material request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     saveSupplierMaterial(material, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -214,6 +281,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Update import by request
+     * @param imports Import request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     updateSupplierImport(imports, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -228,7 +300,12 @@ export class SupplierService {
             .then(res => res.data)
             .catch(error => console.log(error));
     }
-    
+
+    /**
+     * Update material by request
+     * @param material Material request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     updateSupplierMaterial(material, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -244,6 +321,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Get import detail by id
+     * @param id Import detail Id
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     getImportDetailByID(id, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -258,6 +340,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Save import detail request
+     * @param imports Import detail request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     saveSupplierImportDetail(imports, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -273,6 +360,11 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Update import detail by request
+     * @param imports Import detail request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
     updateSupplierImportDetail(imports, isMock = true) {
         if (isMock) {
             return Promise.resolve({});
@@ -288,6 +380,12 @@ export class SupplierService {
             .catch(error => console.log(error));
     }
 
+    /**
+     * Delete import by id
+     * @param id Import Id
+     * @param isMock Activate mock if true otherwise use real api call
+     * @returns {Promise<unknown>|Promise<AxiosResponse<any>>}
+     */
     deleteSupplierImportDetail(id, isMock = true) {
         if (isMock) {
             return Promise.resolve(null);

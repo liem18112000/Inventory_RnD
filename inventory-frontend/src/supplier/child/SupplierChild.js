@@ -31,6 +31,7 @@ export class SupplierChild extends Component {
             sortOrder: 0,
             // --paginator state--
             filter: {
+                parentId: props.match.params.id,
                 name: "",
                 code: "",
             },
@@ -50,9 +51,8 @@ export class SupplierChild extends Component {
 
     getPageChildren = () => {
         const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
-        const parentId = this.props.match.params.id;
         this.supplierService
-            .getPageChild(parentId, filter, page, rows, sortField, sortOrder, isMock)
+            .getPageChild(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
             .then(data => this.setState({ ...this.state, ...data }));
@@ -69,6 +69,7 @@ export class SupplierChild extends Component {
         this.setState({
             ...this.state,
             filter: {
+                ...this.state.filter,
                 name: "",
                 code: "",
             }
@@ -153,16 +154,16 @@ export class SupplierChild extends Component {
         return (
             <React.Fragment>
                 <span className="p-column-title">Create At</span>
-                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.createAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.createdAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
 
-    updateBodyTemplate(rowData) {
+    updateAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
                 <span className="p-column-title">Update At</span>
-                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updateAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updatedAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
@@ -360,13 +361,12 @@ export class SupplierChild extends Component {
                     emptyMessage="No supplier found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                // rowsPerPageOptions={[2, 5, 10, 25, 50]}
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column sortField="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column sortField="updateAt" filterField="updateAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
+                    <Column sortField="createdAt" filterField="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column sortField="updatedAt" filterField="updatedAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div>

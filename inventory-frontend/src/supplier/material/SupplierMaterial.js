@@ -33,6 +33,8 @@ export class SupplierMaterial extends Component {
             sortOrder: 0,
             // --paginator state--
             filter: {
+                supplierId: props.match.params.id,
+                ingredientId: null,
                 name: "",
                 code: "",
             },
@@ -58,7 +60,6 @@ export class SupplierMaterial extends Component {
     getPageMaterials = () => {
         this.supplierService
             .getPageMaterial(
-                this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
                 this.state.rows,
@@ -85,6 +86,17 @@ export class SupplierMaterial extends Component {
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
+    }
+
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this detail?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
     }
 
     actionBodyTemplate(rowData, form) {
@@ -166,10 +178,10 @@ export class SupplierMaterial extends Component {
         this.setState({
             ...this.state,
             filter: {
+                ...this.state.filter,
+                ingredientId: null,
                 name: "",
-                code: "",
-                description: "",
-                updatedAt: "",
+                code: ""
             }
         }, () => {
             this.setState({ loading: true });
@@ -391,12 +403,12 @@ export class SupplierMaterial extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="ingredient" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
+                    <Column field="ingredientId" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />
                     <Column field="maximumQuantity" header="Max Quant" body={this.maxQuantityBodyTemplate} sortable />
-                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
+                    <Column field="updatedAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >

@@ -30,6 +30,7 @@ export class SupplierImport extends Component {
             sortOrder: 0,
             // --paginator state--
             filter: {
+                supplierId: props.match.params.id,
                 name: "",
                 code: "",
             },
@@ -49,7 +50,6 @@ export class SupplierImport extends Component {
     getPageImports = () => {
         this.supplierService
             .getPageImport(
-                this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
                 this.state.rows,
@@ -145,7 +145,7 @@ export class SupplierImport extends Component {
         return (
             <React.Fragment>
                 <span className="p-column-title">Create At</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createdAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
@@ -170,10 +170,9 @@ export class SupplierImport extends Component {
         this.setState({
             ...this.state,
             filter: {
+                ...this.state.filter,
                 name: "",
                 code: "",
-                description: "",
-                updatedAt: "",
             }
         }, () => {
             this.setState({ loading: true });
@@ -394,9 +393,9 @@ export class SupplierImport extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column field="updateAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
+                    <Column field="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column field="updatedAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >

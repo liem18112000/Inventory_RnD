@@ -31,6 +31,7 @@ export class ImportDetail extends Component {
             sortOrder: 0,
             // --paginator state--
             filter: {
+                importId: props.match.params.id,
                 name: "",
                 ingredientId: null
             },
@@ -57,7 +58,6 @@ export class ImportDetail extends Component {
     getPageDetail = () => {
         this.supplierService
             .getPageImportDetail(
-                this.props.match.params.id,
                 this.state.filter,
                 this.state.page,
                 this.state.rows,
@@ -146,7 +146,7 @@ export class ImportDetail extends Component {
         return (
             <React.Fragment>
                 <span className="p-column-title">Create At</span>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createdAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
@@ -180,8 +180,9 @@ export class ImportDetail extends Component {
         this.setState({
             ...this.state,
             filter: {
+                ...this.state.filter,
                 name: "",
-                ingredientId: null,
+                ingredientId: null
             }
         }, () => {
             this.setState({ loading: true });
@@ -406,12 +407,12 @@ export class ImportDetail extends Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
-                    <Column field="ingredient" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
+                    <Column field="ingredientId" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
-                    <Column field="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column field="updateAt" header="Update At" body={this.updatedAtBodyTemplate} sortable />
+                    <Column field="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column field="updatedAt" header="Update At" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >
