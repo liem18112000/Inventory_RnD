@@ -17,5 +17,5 @@ import java.io.Serializable;
 public class BaseEntityWithCreatedAt<ID extends Serializable> extends BaseEntity<ID> {
 
     @Column(name="create_at")
-    protected String createAt;
+    protected String createdAt;
 }

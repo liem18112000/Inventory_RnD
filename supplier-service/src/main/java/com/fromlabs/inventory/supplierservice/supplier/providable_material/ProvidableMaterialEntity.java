@@ -50,10 +50,11 @@ public class ProvidableMaterialEntity extends SupplierReferencedMultiEntity<Long
     public ProvidableMaterialEntity update(@NotNull final ProvidableMaterialRequest request) {
         this.setDescription(request.getDescription());
         this.setName(request.getName());
+        this.setIngredientId(request.getIngredientId());
         this.setMinimumQuantity(request.getMinimumQuantity());
         this.setMaximumQuantity(request.getMaximumQuantity());
         this.setActive(request.isActive());
-        this.setUpdateAt(Instant.now().toString());
+        this.setUpdatedAt(Instant.now().toString());
         return this;
     }
 

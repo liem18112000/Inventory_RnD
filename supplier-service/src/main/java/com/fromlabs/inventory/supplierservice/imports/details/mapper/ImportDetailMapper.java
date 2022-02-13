@@ -50,8 +50,8 @@ public class ImportDetailMapper {
                 .ingredient(ingredientClient.getIngredientById(entity.getClientId(), entity.getIngredientId()))
                 .quantity(entity.getQuantity())
                 .activated(entity.isActive())
-                .createAt(entity.getCreateAt())
-                .updateAt(entity.getUpdateAt())
+                .createAt(entity.getCreatedAt())
+                .updateAt(entity.getUpdatedAt())
                 .build();
     }
 
@@ -98,8 +98,8 @@ public class ImportDetailMapper {
         entity.setIngredientId(request.getIngredientId());
         entity.setQuantity(request.getQuantity());
         entity.setDescription(request.getDescription());
-        entity.setCreateAt(Instant.now().toString());
-        entity.setUpdateAt(Instant.now().toString());
+        entity.setCreatedAt(Instant.now().toString());
+        entity.setUpdatedAt(Instant.now().toString());
         entity.setActive(request.isActive());
         return entity;
     }

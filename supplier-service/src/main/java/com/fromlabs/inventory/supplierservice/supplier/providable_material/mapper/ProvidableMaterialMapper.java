@@ -41,8 +41,8 @@ public class ProvidableMaterialMapper {
                 .tenantId(entity.getClientId())
                 .name(entity.getName())
                 .description(entity.getDescription())
-                .createAt(entity.getUpdateAt())
-                .updateAt(entity.getUpdateAt())
+                .createAt(entity.getUpdatedAt())
+                .updateAt(entity.getUpdatedAt())
                 .activated(entity.isActive())
                 .min(entity.getMinimumQuantity())
                 .max(entity.getMaximumQuantity())
@@ -116,7 +116,7 @@ public class ProvidableMaterialMapper {
         entity.setClientId(request.getClientId());
         entity.setName(request.getName());
         entity.setDescription(request.getDescription());
-        entity.setUpdateAt(request.getUpdateAt());
+        entity.setUpdatedAt(request.getUpdateAt());
         return entity;
     }
 

@@ -51,7 +51,7 @@ public class ImportEntity extends BaseEntityWithCreatedAt<Long> {
         this.setCode(request.getCode());
         this.setDescription(request.getDescription());
         this.setActive(request.isActivated());
-        this.setUpdateAt(Instant.now().toString());
+        this.setUpdatedAt(Instant.now().toString());
         return this;
     }
 

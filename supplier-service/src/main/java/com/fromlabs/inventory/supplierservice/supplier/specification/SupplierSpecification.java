@@ -77,7 +77,7 @@ public class SupplierSpecification {
      * @return          BaseSpecification&lt;SupplierEntity&gt;
      */
     public static BaseSpecification<SupplierEntity> hasCreateAt(String createdAt) {
-        return Spec(criteriaEqual("createAt", createdAt));
+        return Spec(criteriaEqual("createdAt", createdAt));
     }
 
     /**
@@ -86,7 +86,7 @@ public class SupplierSpecification {
      * @return          BaseSpecification&lt;SupplierEntity&gt;
      */
     public static BaseSpecification<SupplierEntity> hasUpdatedAt(String updateAt) {
-        return Spec(criteriaEqual("updateAt", updateAt));
+        return Spec(criteriaEqual("updatedAt", updateAt));
     }
 
     /**
@@ -100,8 +100,8 @@ public class SupplierSpecification {
                 .and(hasCode(entity.getCode()))
                 .and(hasDescription(entity.getDescription()))
                 .and(hasGroup(entity.isGroup()))
-                .and(hasCreateAt(entity.getCreateAt()))
-                .and(hasUpdatedAt(entity.getUpdateAt()));
+                .and(hasCreateAt(entity.getCreatedAt()))
+                .and(hasUpdatedAt(entity.getUpdatedAt()));
         return isNull(parent) ? spec : spec.and(hasParent(parent));
     }
 }

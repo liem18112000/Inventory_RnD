@@ -45,7 +45,7 @@ public class ProvidableMaterialSpecification {
     /**
      * Filter for has description
      * @param description ProvidableMaterialEntity description
-     * @return            BaseSpecification&lt;SupplierEntity&gt;
+     * @return            BaseSpecification&lt;ProvidableMaterialEntity&gt;
      */
     public static BaseSpecification<ProvidableMaterialEntity> hasDescription(String description) {
         return Spec(criteriaEqual("description", description.trim()));
@@ -54,16 +54,16 @@ public class ProvidableMaterialSpecification {
     /**
      *
      * @param updateAt  update timestamp
-     * @return          BaseSpecification&lt;SupplierEntity&gt;
+     * @return          BaseSpecification&lt;ProvidableMaterialEntity&gt;
      */
     public static BaseSpecification<ProvidableMaterialEntity> hasUpdatedAt(String updateAt) {
-        return Spec(criteriaEqual("updateAt", updateAt));
+        return Spec(criteriaEqual("updatedAt", updateAt));
     }
 
     /**
-     *
+     * Filter by ingredient ID
      * @param ingredientId  update timestamp
-     * @return              BaseSpecification&lt;SupplierEntity&gt;
+     * @return              BaseSpecification&lt;ProvidableMaterialEntity&gt;
      */
     public static BaseSpecification<ProvidableMaterialEntity> hasIngredientId(Long ingredientId) {
         return Spec(criteriaEqual("ingredientId", ingredientId));
@@ -78,7 +78,7 @@ public class ProvidableMaterialSpecification {
         var spec = hasClientId(entity.getClientId())
                 .and(hasName(entity.getName()))
                 .and(hasDescription(entity.getDescription()))
-                .and(hasUpdatedAt(entity.getUpdateAt()));
+                .and(hasUpdatedAt(entity.getUpdatedAt()));
         spec = isNull(entity.getIngredientId()) ? spec : spec.and(hasIngredientId(entity.getIngredientId()));
         return isNull(supplier) ? spec : spec.and(hasSuppler(supplier));
     }

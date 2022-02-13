@@ -37,7 +37,7 @@ public class BaseEntity<ID extends Serializable> {
     protected String description;
 
     @Column(name="update_at")
-    protected String updateAt;
+    protected String updatedAt;
 
     @Column(name="is_active")
     protected boolean isActive = true;

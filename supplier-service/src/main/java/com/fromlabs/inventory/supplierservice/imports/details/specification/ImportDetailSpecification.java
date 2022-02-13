@@ -66,7 +66,7 @@ public class ImportDetailSpecification {
      * @return          BaseSpecification&lt;ImportDetailEntity&gt;
      */
     public static BaseSpecification<ImportDetailEntity> hasUpdatedAt(String updateAt) {
-        return Spec(criteriaEqual("updateAt", updateAt));
+        return Spec(criteriaEqual("updatedAt", updateAt));
     }
 
     /**
@@ -75,7 +75,7 @@ public class ImportDetailSpecification {
      * @return          BaseSpecification&lt;ImportDetailEntity&gt;
      */
     public static BaseSpecification<ImportDetailEntity> hasCreatedAt(String updateAt) {
-        return Spec(criteriaEqual("createAt", updateAt));
+        return Spec(criteriaEqual("createdAt", updateAt));
     }
 
     /**

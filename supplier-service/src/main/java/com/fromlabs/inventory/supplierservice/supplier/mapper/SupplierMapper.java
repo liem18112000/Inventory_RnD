@@ -37,8 +37,8 @@ public class SupplierMapper {
                 .name(entity.getName())
                 .code(entity.getCode())
                 .description(entity.getDescription())
-                .createAt(entity.getUpdateAt())
-                .updateAt(entity.getUpdateAt())
+                .createAt(entity.getUpdatedAt())
+                .updateAt(entity.getUpdatedAt())
                 .activated(entity.isActive());
 
         return Objects.nonNull(entity.getParent()) ? builder.build() :
@@ -79,7 +79,7 @@ public class SupplierMapper {
         entity.setCode(request.getCode());
         entity.setDescription(request.getDescription());
         entity.setGroup(Objects.isNull(request.getParentId()));
-        entity.setCreateAt(request.getCreatedAt());
+        entity.setCreatedAt(request.getCreatedAt());
         return entity;
     }
 
@@ -95,8 +95,8 @@ public class SupplierMapper {
         entity.setCode(request.getCode());
         entity.setDescription(request.getDescription());
         entity.setGroup(Objects.isNull(request.getParentId()) || request.getParentId() <= 0);
-        entity.setCreateAt(request.getCreateAt());
-        entity.setUpdateAt(request.getUpdateAt());
+        entity.setCreatedAt(request.getCreateAt());
+        entity.setUpdatedAt(request.getUpdateAt());
         return entity;
     }
 

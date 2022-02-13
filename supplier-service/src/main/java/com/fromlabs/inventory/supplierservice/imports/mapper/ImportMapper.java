@@ -41,8 +41,8 @@ public class ImportMapper {
                 .name(entity.getName())
                 .code(entity.getCode())
                 .description(entity.getDescription())
-                .createAt(entity.getUpdateAt())
-                .updateAt(entity.getUpdateAt())
+                .createAt(entity.getCreatedAt())
+                .updateAt(entity.getUpdatedAt())
                 .isActive(entity.isActive())
                 .build();
     }
@@ -82,8 +82,8 @@ public class ImportMapper {
         entity.setCode(request.getCode());
         entity.setSupplier(supplier);
         entity.setDescription(request.getDescription());
-        entity.setCreateAt(request.getCreatedAt());
-        entity.setUpdateAt(Instant.now().toString());
+        entity.setCreatedAt(request.getCreatedAt());
+        entity.setUpdatedAt(Instant.now().toString());
         return entity;
     }
 
@@ -98,8 +98,8 @@ public class ImportMapper {
         entity.setName(request.getName());
         entity.setCode(request.getCode());
         entity.setDescription(request.getDescription());
-        entity.setCreateAt(request.getCreateAt());
-        entity.setUpdateAt(request.getUpdateAt());
+        entity.setCreatedAt(request.getCreateAt());
+        entity.setUpdatedAt(request.getUpdateAt());
         return entity;
     }
 

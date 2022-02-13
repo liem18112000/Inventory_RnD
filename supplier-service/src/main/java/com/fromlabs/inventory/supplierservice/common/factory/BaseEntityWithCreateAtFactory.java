@@ -10,7 +10,7 @@ public class BaseEntityWithCreateAtFactory<ID extends Serializable> extends Base
 
     public BaseEntityWithCreatedAt<ID> create() {
         BaseEntityWithCreatedAt<ID> entity = (BaseEntityWithCreatedAt<ID>) super.create();
-        entity.setCreateAt(DEFAULT_TIMESTAMP_PROPERTY);
+        entity.setCreatedAt(DEFAULT_TIMESTAMP_PROPERTY);
         return entity;
     }
 
@@ -20,7 +20,7 @@ public class BaseEntityWithCreateAtFactory<ID extends Serializable> extends Base
 
     public BaseEntityWithCreatedAt<ID> createRandom() {
         BaseEntityWithCreatedAt<ID> entity = (BaseEntityWithCreatedAt<ID>) super.createRandom();
-        entity.setCreateAt(DEFAULT_TIMESTAMP_PROPERTY);
+        entity.setCreatedAt(DEFAULT_TIMESTAMP_PROPERTY);
         return entity;
     }
 

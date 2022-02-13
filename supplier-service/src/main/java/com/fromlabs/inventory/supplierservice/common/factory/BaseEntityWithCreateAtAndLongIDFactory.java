@@ -8,13 +8,13 @@ public class BaseEntityWithCreateAtAndLongIDFactory extends BaseEntityWithLongID
 
     public BaseEntityWithCreatedAt<Long> create() {
         var entity = (BaseEntityWithCreatedAt<Long>) super.create();
-        entity.setCreateAt(DEFAULT_TIMESTAMP_PROPERTY);
+        entity.setCreatedAt(DEFAULT_TIMESTAMP_PROPERTY);
         return entity;
     }
 
     public BaseEntityWithCreatedAt<Long> createRandom() {
         var entity = (BaseEntityWithCreatedAt<Long>) super.createRandom();
-        entity.setCreateAt(DEFAULT_TIMESTAMP_PROPERTY);
+        entity.setCreatedAt(DEFAULT_TIMESTAMP_PROPERTY);
         return entity;
     }
 

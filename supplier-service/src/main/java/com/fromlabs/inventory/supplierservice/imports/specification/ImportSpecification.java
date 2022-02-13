@@ -73,7 +73,7 @@ public class ImportSpecification {
      * @return          BaseSpecification&lt;ImportEntity&gt;
      */
     public static BaseSpecification<ImportEntity> hasCreateAt(String createdAt) {
-        return Spec(criteriaEqual("createAt", createdAt));
+        return Spec(criteriaEqual("createdAt", createdAt));
     }
 
     /**
@@ -82,7 +82,7 @@ public class ImportSpecification {
      * @return          BaseSpecification&lt;ImportEntity&gt;
      */
     public static BaseSpecification<ImportEntity> hasUpdatedAt(String updateAt) {
-        return Spec(criteriaEqual("updateAt", updateAt));
+        return Spec(criteriaEqual("updatedAt", updateAt));
     }
 
     /**
@@ -96,8 +96,8 @@ public class ImportSpecification {
                 .and(hasName(entity.getName()))
                 .and(hasCode(entity.getCode()))
                 .and(hasDescription(entity.getDescription()))
-                .and(hasCreateAt(entity.getCreateAt()))
-                .and(hasUpdatedAt(entity.getUpdateAt()));
+                .and(hasCreateAt(entity.getCreatedAt()))
+                .and(hasUpdatedAt(entity.getUpdatedAt()));
         return Objects.nonNull(supplier) ? spec.and(hasSupplier(supplier)) : spec;
     }
 

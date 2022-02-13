@@ -64,7 +64,7 @@ public class SupplierEntity extends SupplierBaseEntity {
         this.setName(request.getName());
         this.setCode(request.getCode());
         this.setDescription(request.getDescription());
-        this.setUpdateAt(Instant.now().toString());
+        this.setUpdatedAt(Instant.now().toString());
         return this;
     }
 

@@ -17,8 +17,8 @@ public class BaseDto<ID extends Serializable> {
     private Long tenantId;
     protected String name;
     protected String description;
-    protected String updateAt;
-    protected String createAt;
+    protected String updatedAt;
+    protected String createdAt;
     protected boolean isActive = true;
     final protected String accessAt = Instant.now().toString();
 
