@@ -486,11 +486,10 @@ public class TransactionLogic {
             @NotNull final ProvidableMaterialService    providableMaterialService,
             @NotNull final IngredientClient             ingredientClient
     ) {
-        final var entity = providableMaterialService.getById(request.getId())
-                .update(request);
+        final var entity = providableMaterialService.getById(request.getId()).update(request);
         final var savedEntity = providableMaterialService.save(entity);
         final var dto = ProvidableMaterialMapper.toDto(savedEntity, ingredientClient);
-        return status(HttpStatus.CREATED).body(dto);
+        return ok(dto);
     }
 
     /**
