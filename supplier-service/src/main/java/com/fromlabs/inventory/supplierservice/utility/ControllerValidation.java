@@ -98,6 +98,8 @@ public class ControllerValidation {
         log.info("validateMaterialRequest - is update : {}", isUpdate);
         var validator = StringRequestValidator()
                 .criteriaIsPositiveLong(TENANT_ID, request.getTenantId())
+                .criteriaIsPositiveLong(INGREDIENT_ID, request.getIngredientId())
+                .criteriaIsPositiveLong(SUPPLIER_ID, request.getSupplierId())
                 .criteriaRequired(NAME, request.getName())
                 .criteriaRequired(ACTIVE, request.isActive());
         return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;

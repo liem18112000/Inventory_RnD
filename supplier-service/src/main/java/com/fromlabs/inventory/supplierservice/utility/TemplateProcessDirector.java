@@ -380,11 +380,12 @@ public class TemplateProcessDirector {
             @NotNull final ProvidableMaterialService providableMaterialService,
             @NotNull final IngredientClient ingredientClient
     ) {
+        final boolean isUpdate = false;
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap(() -> bootstrapTenantId(tenantId, request))
-                .validate(() -> validateMaterialRequest(request, false))
-                .before(() -> true) // TODO: add constrains
-                .process(() -> saveProvidableMaterial(request, supplierService, providableMaterialService, ingredientClient))
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateMaterialRequest(request, isUpdate))
+                .before(    () -> checkConstrainsBeforeSaveOrUpdateMaterial(request, supplierService, providableMaterialService, ingredientClient, isUpdate))
+                .process(   () -> saveProvidableMaterial(request, supplierService, providableMaterialService, ingredientClient))
                 .build();
     }
 
@@ -396,6 +397,7 @@ public class TemplateProcessDirector {
      * Build update material template process
      * @param tenantId                  Tenant ID
      * @param request                   ProvidableMaterialRequest
+     * @param supplierService           SupplierService
      * @param providableMaterialService ProvidableMaterialService
      * @param ingredientClient          IngredientClient
      * @return TemplateProcess
@@ -403,15 +405,16 @@ public class TemplateProcessDirector {
     public TemplateProcess buildUpdateProvidableMaterialTemplateProcess(
             @NotNull final Long tenantId,
             @NotNull final ProvidableMaterialRequest request,
+            @NotNull final SupplierService supplierService,
             @NotNull final ProvidableMaterialService providableMaterialService,
             @NotNull final IngredientClient ingredientClient
     ) {
+        final boolean isUpdate = true;
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap(() -> bootstrapTenantId(tenantId, request))
-                .validate(() -> validateMaterialRequest(request, true))
-                .before(() -> true) // TODO: add constrains
-                .process(() -> updateProvidableMaterial(request, providableMaterialService, ingredientClient))
-                .after(() -> true) // TODO: add constraints
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateMaterialRequest(request, isUpdate))
+                .before(    () -> checkConstrainsBeforeSaveOrUpdateMaterial(request, supplierService, providableMaterialService, ingredientClient, isUpdate))
+                .process(   () -> updateProvidableMaterial(request, providableMaterialService, ingredientClient))
                 .build();
     }
 
@@ -596,12 +599,12 @@ public class TemplateProcessDirector {
             @NotNull final ImportDetailService importDetailService,
             @NotNull final IngredientClient ingredientClient
     ) {
+        final boolean isUpdate = false;
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .bootstrap( () -> bootstrapTenantId(tenantId, request))
-                .validate(  () -> validateImportDetailRequest(request, false))
-                .before(    () -> true) // TODO: add constrains
+                .validate(  () -> validateImportDetailRequest(request, isUpdate))
+                .before(    () -> checkConstraintsBeforeUpdateOrSaveImportDetail(request, importService, importDetailService, ingredientClient, isUpdate))
                 .process(   () -> saveImportDetail(request, importService, importDetailService, ingredientClient))
-                .after(     () -> true) // TODO: add constrains
                 .build();
     }
 
@@ -625,11 +628,12 @@ public class TemplateProcessDirector {
             @NotNull final ImportDetailService importDetailService,
             @NotNull final IngredientClient ingredientClient
     ) {
+        final boolean isUpdate = true;
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap(() -> bootstrapTenantId(tenantId, request))
-                .validate(() -> validateImportDetailRequest(request, true))
-                .before(() -> checkImportDetailExistById(request.getId(), importDetailService))
-                .process(() -> updateImportDetail(request, importDetailService, ingredientClient))
+                .bootstrap( () -> bootstrapTenantId(tenantId, request))
+                .validate(  () -> validateImportDetailRequest(request, true))
+                .before(    () -> checkConstraintsBeforeUpdateOrSaveImportDetail(request, importService, importDetailService, ingredientClient, isUpdate))
+                .process(   () -> updateImportDetail(request, importDetailService, ingredientClient))
                 .build();
     }
 
