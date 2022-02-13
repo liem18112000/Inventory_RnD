@@ -376,7 +376,7 @@ public class SupplierController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.PUT, "providable-material"));
         return (ResponseEntity<?>) buildUpdateProvidableMaterialTemplateProcess(
-                tenantId, request, providableMaterialService, ingredientClient).run();
+                tenantId, request, supplierService, providableMaterialService, ingredientClient).run();
     }
 
     /**
