@@ -72,7 +72,7 @@ const AdminTemplate = (props) => { //path, exact, Component
                         </SubMenu>
                         <SubMenu key="sub5" title="Notification Mgt" icon={<BellOutlined />}>
                             <Menu.Item key="7" >
-                                <NavLink to="/notification/event">Notification</NavLink>
+                                <NavLink to="/notification/event">Event</NavLink>
                             </Menu.Item>
                         </SubMenu>
                     </Menu>

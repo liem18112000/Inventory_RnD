@@ -74,33 +74,57 @@ export class Event extends Component {
             .then(data => this.setState({ ...this.state, ...data }));
     }
 
-    /**
-     * Description body
-     * @param rowData event data row
-     * @returns {JSX.Element}
-     */
-    descriptionBodyTemplate(rowData) {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Description</span>
-                <span>{rowData.description}</span>
-            </React.Fragment>
-        );
-    }
+    // /**
+    //  * Description body
+    //  * @param rowData event data row
+    //  * @returns {JSX.Element}
+    //  */
+    // descriptionBodyTemplate(rowData) {
+    //     return (
+    //         <React.Fragment>
+    //             <span className="p-column-title">Description</span>
+    //             <span>{rowData.description}</span>
+    //         </React.Fragment>
+    //     );
+    // }
 
     /**
      * Action body template
      * @param rowData event data row
      * @returns {JSX.Element}
      */
-    actionBodyTemplate(rowData) {
+    actionBodyTemplate(rowData, form) {
+        let items = [
+            {
+                label: 'Edit',
+                icon: 'pi pi-pencil',
+                command: () => this.props.history.push({
+                    pathname: `material/${rowData.id}`,
+                    state: {
+                        supplierGroupId: this.props.match.params.id,
+                    }
+                })
+                // command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
+            },
+            {
+                label: 'Description',
+                icon: 'pi pi-table',
+                command: () => this.props.history.push({
+                    pathname: `import/${rowData.id}`,
+                    state: {
+                        supplierGroupId: this.props.match.params.id,
+                    }
+                })
+            }
+        ];
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
-                    <Button label="View" onClick={() => this.props.history.push({
-                        pathname: `event/${rowData.id}`
-                    })}></Button>
+                    <SplitButton label="View" 
+                    onClick={(e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }}
+                    model={items}>
+                    </SplitButton>
                 </div>
             </React.Fragment>
         );
@@ -342,7 +366,7 @@ export class Event extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="p-col-12 p-md-6">
+                        {/* <div className="p-col-12 p-md-6">
                             <div className="p-grid">
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
@@ -354,7 +378,7 @@ export class Event extends Component {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
                                 <div className="p-col-12">
@@ -416,7 +440,7 @@ export class Event extends Component {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
+                    {/* <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable /> */}
                     <Column sortField="occurAt" filterField="createAt" header="Occur At" body={this.occurAtBodyTemplate} sortable />
                     <Column sortField="eventType" filterField="eventType" header="Event Type" body={this.eventTypeBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData)} />
