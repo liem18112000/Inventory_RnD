@@ -9,7 +9,7 @@ import {
     mockGetNotificationById,
     mockGetEventTypes, mockGetNotificationTypes
 } from "../core/models/MockDataModel";
-import {addActorNameAndRole} from "../core/utility/RequestActorConfig";
+import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 
 // Notification base URL
 const BaseURL = baseNotificationAPI()
@@ -184,6 +184,26 @@ export class NotificationService {
 
         return axios
             .get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    /**
+     * Update event by request
+     * @param event event request
+     * @param isMock Activate mock if true otherwise use real api call
+     */
+    updateEvent(event, isMock = true) {
+        if (isMock) {
+            return Promise.resolve({});
+        }
+
+        const url = `${BaseURL}/event/${event.id}`;
+        const body = addActorNameAndRole(event);
+        const config = { headers: getHeaderByGatewayStatus({}) }
+
+        return axios
+            .put(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
