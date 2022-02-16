@@ -13,6 +13,7 @@ import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
+import { EventForm } from './EventForm';
 
 export class Event extends Component {
 
@@ -74,20 +75,6 @@ export class Event extends Component {
             .then(data => this.setState({ ...this.state, ...data }));
     }
 
-    // /**
-    //  * Description body
-    //  * @param rowData event data row
-    //  * @returns {JSX.Element}
-    //  */
-    // descriptionBodyTemplate(rowData) {
-    //     return (
-    //         <React.Fragment>
-    //             <span className="p-column-title">Description</span>
-    //             <span>{rowData.description}</span>
-    //         </React.Fragment>
-    //     );
-    // }
-
     /**
      * Action body template
      * @param rowData event data row
@@ -98,33 +85,17 @@ export class Event extends Component {
             {
                 label: 'Edit',
                 icon: 'pi pi-pencil',
-                command: () => this.props.history.push({
-                    pathname: `material/${rowData.id}`,
-                    state: {
-                        supplierGroupId: this.props.match.params.id,
-                    }
-                })
-                // command: (e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }
+                command: (e) => { form.action(rowData.id) }
             },
-            {
-                label: 'Description',
-                icon: 'pi pi-table',
-                command: () => this.props.history.push({
-                    pathname: `import/${rowData.id}`,
-                    state: {
-                        supplierGroupId: this.props.match.params.id,
-                    }
-                })
-            }
         ];
+
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
-                    <SplitButton label="View" 
-                    onClick={(e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }}
-                    model={items}>
-                    </SplitButton>
+                    <SplitButton label="View" onClick={() => this.props.history.push({
+                        pathname: `event/${rowData.id}`
+                    })} model={items}></SplitButton>
                 </div>
             </React.Fragment>
         );
@@ -351,6 +322,9 @@ export class Event extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <EventForm ref={el => this.form = el}
+                    refreshData={() => this.getPage()}
+                />
                 <Fieldset legend="Notification Event" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -440,10 +414,9 @@ export class Event extends Component {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    {/* <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable /> */}
                     <Column sortField="occurAt" filterField="createAt" header="Occur At" body={this.occurAtBodyTemplate} sortable />
                     <Column sortField="eventType" filterField="eventType" header="Event Type" body={this.eventTypeBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >
         );
