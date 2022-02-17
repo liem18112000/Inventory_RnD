@@ -351,9 +351,9 @@ export class SupplierGroup extends Component {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Code"
-                                            value={this.state.filter.code}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
+                                            placeholder="Name"
+                                            value={this.state.filter.name}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -364,9 +364,9 @@ export class SupplierGroup extends Component {
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
                                         <InputText
-                                            placeholder="Name"
-                                            value={this.state.filter.name}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
+                                            placeholder="Code"
+                                            value={this.state.filter.code}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
                                         />
                                     </div>
                                 </div>

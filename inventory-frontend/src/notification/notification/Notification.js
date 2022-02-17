@@ -13,7 +13,8 @@ import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { NotificationForm } from './NotificationForm';
 
 export class Notification extends Component {
 
@@ -109,18 +110,16 @@ export class Notification extends Component {
      * @param rowData data row
      * @returns {JSX.Element}
      */
-    actionBodyTemplate(rowData) {
+    actionBodyTemplate(rowData, form) {
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
                 <div className="card">
                     <Button label="View"
-                    //         onClick={() => window.location.replace(
-                    //     `supplier/${rowData.id}`
-                    // )}
+                        onClick={(e) => { form.action(rowData.id) }}
                     ></Button>
                 </div>
-            </React.Fragment>
+            </React.Fragment >
         );
     }
 
@@ -367,6 +366,9 @@ export class Notification extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <NotificationForm ref={el => this.form = el}
+                    refreshData={() => this.getPage()}
+                />
                 <Fieldset legend="Notification" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -475,7 +477,7 @@ export class Notification extends Component {
                     <Column sortField="notifyAt" filterField="notifyAt" header="Notify At" body={this.occurAtBodyTemplate} sortable />
                     <Column sortField="type" filterField="type" header="Type" body={this.notificationTypeBodyTemplate} sortable />
                     <Column sortField="status" filterField="status" header="Status" body={this.notificationStatusBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >
         );

@@ -179,7 +179,7 @@ export class NotificationService {
             return mockGetNotificationById();
         }
 
-        const url = `${BaseURL}/notification/${id}`
+        const url = `${BaseURL}/${id}`
         const config = { headers: getHeaderByGatewayStatus() };
 
         return axios

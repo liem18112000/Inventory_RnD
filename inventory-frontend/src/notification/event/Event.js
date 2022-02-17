@@ -340,19 +340,6 @@ export class Event extends Component {
                                 </div>
                             </div>
                         </div>
-                        {/* <div className="p-col-12 p-md-6">
-                            <div className="p-grid">
-                                <div className="p-col-12">
-                                    <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Description"
-                                            value={this.state.filter.description}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, description: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
                                 <div className="p-col-12">
