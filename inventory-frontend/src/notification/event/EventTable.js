@@ -38,7 +38,7 @@ export class EventTable extends Component {
     }
 
     setViewInformation(id) {
-        this.notificationService.getNotificationById(id, this.state.isMock).then(data => {
+        this.notificationService.getEventById(id, this.state.isMock).then(data => {
             this.setState({
                 data: {
                     id: data ? data.id : null,
@@ -77,26 +77,8 @@ export class EventTable extends Component {
      */
     render() {
         return (
-            <Dialog header="Notification Detail" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }}>
-                <div className="p-grid p-fluid">
-                    <div className="p-col-12">
-                        <label>To</label>
-                        <InputText value={this.state.data.message.to} disabled />
-                    </div>
-                    <div className="p-col-12">
-                        <label>Subject</label>
-                        <InputText value={this.state.data.message.subject} disabled />
-                    </div>
-                    <div className="p-col-12">
-                        <label>Message</label>
-                        {/* <InputText value={this.state.data.message.body} disabled /> */}
-                        <InputTextarea rows={3} value={this.state.data.message.body} disabled />
-                    </div>
-                    <div className="p-col-12">
-                        <label>From</label>
-                        <InputText value={this.state.data.message.from} disabled />
-                    </div>
-                </div>
+            <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }}>
+                <p>Datatable</p>
             </Dialog>
         );
     }

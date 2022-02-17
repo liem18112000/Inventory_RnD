@@ -89,7 +89,6 @@ export class NotificationForm extends Component {
                     </div>
                     <div className="p-col-12">
                         <label>Message</label>
-                        {/* <InputText value={this.state.data.message.body} disabled /> */}
                         <InputTextarea rows={3} value={this.state.data.message.body} disabled />
                     </div>
                     <div className="p-col-12">

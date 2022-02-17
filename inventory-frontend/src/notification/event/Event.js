@@ -15,6 +15,7 @@ import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
 import { EventForm } from './EventForm';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { EventTable } from './EventTable';
 
 export class Event extends Component {
 
@@ -107,27 +108,27 @@ export class Event extends Component {
             .then(data => this.setState({ ...this.state, ...data }));
     }
 
-/**
-     * Confirm dialog for delete function
-     * @param {*} rowData 
-     */
- confirmDelete(rowData) {
-    confirmDialog({
-        message: 'Do you want to delete this category?',
-        header: 'Delete Confirmation',
-        icon: 'pi pi-info-circle',
-        acceptClassName: 'p-button-danger',
-        accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageCategories),
-        reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
-    });
-}
+    /**
+         * Confirm dialog for delete function
+         * @param {*} rowData 
+         */
+    confirmDelete(rowData) {
+        confirmDialog({
+            message: 'Do you want to delete this category?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            acceptClassName: 'p-button-danger',
+            accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageCategories),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+        });
+    }
 
     /**
      * Action body template
      * @param rowData event data row
      * @returns {JSX.Element}
      */
-    actionBodyTemplate(rowData, form) {
+    actionBodyTemplate(rowData, form, table) {
         let items = [
             {
                 label: 'Edit',
@@ -137,11 +138,11 @@ export class Event extends Component {
             {
                 label: 'Description',
                 icon: 'pi pi-table',
-                command: (e) => { this.confirmDelete(rowData) }
+                command: (e) => { table.action(rowData.id) }
             },
         ];
 
-        
+
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
@@ -152,7 +153,7 @@ export class Event extends Component {
                 </div>
             </React.Fragment>
         );
-        
+
     }
 
     /**
@@ -378,6 +379,9 @@ export class Event extends Component {
                 <EventForm ref={el => this.form = el}
                     refreshData={() => this.getPage()}
                 />
+                <EventTable ref={el => this.table = el}
+                    refreshData={() => this.getPage()}
+                />
                 <Fieldset legend="Notification Event" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -456,7 +460,7 @@ export class Event extends Component {
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column sortField="occurAt" filterField="createAt" header="Occur At" body={this.occurAtBodyTemplate} sortable />
                     <Column sortField="eventType" filterField="eventType" header="Event Type" body={this.eventTypeBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form, this.table)} />
                 </DataTable>
             </div >
         );
