@@ -14,6 +14,7 @@ import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
 import { EventForm } from './EventForm';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export class Event extends Component {
 
@@ -39,12 +40,43 @@ export class Event extends Component {
             },
             eventTypes: [],
             isMock: false,
-            loading: false
+            loading: false,
+            displayResponsive: false
         };
         this.notificationService = new NotificationService();
         this.mapper = new PagingDataModelMapper();
+        this.onClick = this.onClick.bind(this);
+        this.onHide = this.onHide.bind(this);
+    }
+    onClick(name, position) {
+        let state = {
+            [`${name}`]: true
+        };
+
+        if (position) {
+            state = {
+                ...state,
+                position
+            }
+        }
+
+        this.setState(state);
     }
 
+    onHide(name) {
+        this.setState({
+            [`${name}`]: false
+        });
+    }
+
+    renderFooter(name) {
+        return (
+            <div>
+                <Button label="No" icon="pi pi-times" onClick={() => this.onHide(name)} className="p-button-text" />
+                <Button label="Yes" icon="pi pi-check" onClick={() => this.onHide(name)} autoFocus />
+            </div>
+        );
+    }
     /**
      * This function is activated after component is created
      */
@@ -75,6 +107,21 @@ export class Event extends Component {
             .then(data => this.setState({ ...this.state, ...data }));
     }
 
+/**
+     * Confirm dialog for delete function
+     * @param {*} rowData 
+     */
+ confirmDelete(rowData) {
+    confirmDialog({
+        message: 'Do you want to delete this category?',
+        header: 'Delete Confirmation',
+        icon: 'pi pi-info-circle',
+        acceptClassName: 'p-button-danger',
+        accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageCategories),
+        reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+    });
+}
+
     /**
      * Action body template
      * @param rowData event data row
@@ -87,8 +134,14 @@ export class Event extends Component {
                 icon: 'pi pi-pencil',
                 command: (e) => { form.action(rowData.id) }
             },
+            {
+                label: 'Description',
+                icon: 'pi pi-table',
+                command: (e) => { this.confirmDelete(rowData) }
+            },
         ];
 
+        
         return (
             <React.Fragment>
                 <span className="p-column-title">Action</span>
@@ -99,6 +152,7 @@ export class Event extends Component {
                 </div>
             </React.Fragment>
         );
+        
     }
 
     /**
@@ -163,7 +217,6 @@ export class Event extends Component {
             filter: {
                 name: "",
                 eventType: "",
-                description: ""
             }
         }, () => {
             this.setState({ loading: true });
