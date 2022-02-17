@@ -3,6 +3,8 @@ import { InputText } from 'primereact/inputtext';
 import { NotificationService } from '../../service/NotificationService';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
+import Column from 'antd/lib/table/Column';
+import { DataTable } from 'primereact/datatable';
 
 export class EventTable extends Component {
 
@@ -78,7 +80,14 @@ export class EventTable extends Component {
     render() {
         return (
             <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }}>
-                <p>Datatable</p>
+                <div className="card">
+                    <DataTable value={this.state.products}>
+                        <Column field="code" header="Code"></Column>
+                        <Column field="name" header="Name"></Column>
+                        <Column field="minquantity" header="Minimum Quantity"></Column>
+                        <Column field="maxquantity" header="Maximum Quantity"></Column>
+                    </DataTable>
+                </div>
             </Dialog>
         );
     }

@@ -108,20 +108,20 @@ export class Event extends Component {
             .then(data => this.setState({ ...this.state, ...data }));
     }
 
-    /**
-         * Confirm dialog for delete function
-         * @param {*} rowData 
-         */
-    confirmDelete(rowData) {
-        confirmDialog({
-            message: 'Do you want to delete this category?',
-            header: 'Delete Confirmation',
-            icon: 'pi pi-info-circle',
-            acceptClassName: 'p-button-danger',
-            accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageCategories),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
-        });
-    }
+    // /**
+    //      * Confirm dialog for delete function
+    //      * @param {*} rowData 
+    //      */
+    // confirmDelete(rowData) {
+    //     confirmDialog({
+    //         message: 'Do you want to delete this category?',
+    //         header: 'Delete Confirmation',
+    //         icon: 'pi pi-info-circle',
+    //         acceptClassName: 'p-button-danger',
+    //         accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageCategories),
+    //         reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+    //     });
+    // }
 
     /**
      * Action body template
