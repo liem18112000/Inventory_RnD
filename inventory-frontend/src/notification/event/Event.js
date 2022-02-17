@@ -138,7 +138,7 @@ export class Event extends Component {
             {
                 label: 'Description',
                 icon: 'pi pi-table',
-                command: (e) => { table.action(rowData.id) }
+                command: (e) => { table.action(rowData.description, rowData.eventType) }
             },
         ];
 

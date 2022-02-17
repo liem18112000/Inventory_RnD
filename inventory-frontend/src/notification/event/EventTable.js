@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { InputText } from 'primereact/inputtext';
 import { NotificationService } from '../../service/NotificationService';
 import { Dialog } from 'primereact/dialog';
-import { InputTextarea } from 'primereact/inputtextarea';
 import Column from 'antd/lib/table/Column';
 import { DataTable } from 'primereact/datatable';
 
@@ -15,10 +13,8 @@ export class EventTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: {
-                id: null,
-                message: ''
-            },
+            data: [],
+            type: "",
             isMock: false,
             errors: {},
             displayResponsive: false,
@@ -35,22 +31,19 @@ export class EventTable extends Component {
     componentDidMount() {
     }
 
-    action = (id) => {
-        this.setViewInformation(id);
+    action = (data, type) => {
+        const json = JSON.parse(data)
+        this.setViewInformation(json, type);
+        console.log(json)
     }
 
-    setViewInformation(id) {
-        this.notificationService.getEventById(id, this.state.isMock).then(data => {
+    setViewInformation(data, type) {
             this.setState({
-                data: {
-                    id: data ? data.id : null,
-                    message: data ? data.message : '',
-                },
-                id: data ? data.id : null,
+                data: data,
+                type: type,
                 displayResponsive: true,
             })
-        })
-    }
+        } 
 
     onClick(name, position) {
         let state = {
@@ -78,18 +71,37 @@ export class EventTable extends Component {
      * @returns {JSX.Element}
      */
     render() {
-        return (
-            <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }}>
-                <div className="card">
-                    <DataTable value={this.state.products}>
-                        <Column field="code" header="Code"></Column>
-                        <Column field="name" header="Name"></Column>
-                        <Column field="minquantity" header="Minimum Quantity"></Column>
-                        <Column field="maxquantity" header="Maximum Quantity"></Column>
-                    </DataTable>
-                </div>
-            </Dialog>
-        );
+        if (this.state.type === "Ingredient item monthly statistics")
+        {
+            return (
+                <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw'}}>
+                    <div className="card">
+                        <DataTable value={this.state.data}>
+                            <Column field="ingredientCode" header="Code"></Column>
+                            <Column field="ingredientName" header="Name"></Column>
+                            <Column field="quantity" header="Quantity"></Column>
+                            <Column field="unitType" header="Unit Type"></Column>
+                            <Column field="unit" header="Unit"></Column>
+                        </DataTable>
+                    </div>
+                </Dialog>
+            );
+        }
+         else if (this.state.type === "Ingredient item quantity is low"){
+            return (
+                <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw'}}>
+                    <div className="card">
+                        <DataTable value={this.state.data}>
+                            <Column field="ingredientCode" header="Code"></Column>
+                            <Column field="ingredientName" header="Name"></Column>
+                            <Column field="minQuantity" header="Minimum Quantity"></Column>
+                            <Column field="currentQuantity" header="Current Quantity"></Column>
+                        </DataTable>
+                    </div>
+                </Dialog>
+            );
+        } 
+        return null;
     }
 }
 
