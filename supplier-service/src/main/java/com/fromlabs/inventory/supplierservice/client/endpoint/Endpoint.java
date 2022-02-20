@@ -5,6 +5,8 @@
 package com.fromlabs.inventory.supplierservice.client.endpoint;
 
 import com.fromlabs.inventory.supplierservice.imports.beans.dto.ImportDto;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.dto.ImportDetailDto;
+import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -20,5 +22,6 @@ public interface Endpoint {
 
     ImportDto getImportById(Long id);
 
+    ImportDetailDto onAddNewItem(ImportDetailRequest request);
 
 }

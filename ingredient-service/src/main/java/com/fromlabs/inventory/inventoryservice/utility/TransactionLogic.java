@@ -7,6 +7,7 @@ package com.fromlabs.inventory.inventoryservice.utility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
+import com.fromlabs.inventory.inventoryservice.client.supplier.beans.ImportDetailRequest;
 import com.fromlabs.inventory.inventoryservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.inventoryservice.common.entity.BaseEntity;
 import com.fromlabs.inventory.inventoryservice.common.transaction.*;
@@ -54,6 +55,7 @@ import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -714,6 +716,22 @@ public class TransactionLogic {
         // Convert item request to item entity
         var item = ItemMapper.toEntity(request);
 
+        // Add item to import detail if saving
+        if (Objects.isNull(item.getId())) {
+            final var addItemRequest = ImportDetailRequest.builder()
+                    .clientId(request.getClientId())
+                    .name("Import_".concat(LocalDateTime.now().toString()))
+                    .description("Item is added to import")
+                    .importId(request.getImportId())
+                    .ingredientId(request.getIngredientId())
+                    .build();
+            final var detail = supplierClient.onAddNewItem(addItemRequest);
+            if (Objects.isNull(detail)) {
+                log.error("saveOrUpdateItem: add item to import detail failed: {}", addItemRequest);
+                throw new IllegalStateException("saveOrUpdateItem: add item to import detail failed");
+            }
+        }
+
         // Set information for item entity
         item.setIngredient(ingredient);
         item.setImportId(request.getImportId());
@@ -1061,6 +1079,19 @@ public class TransactionLogic {
             @NotNull final SupplierClient supplierClient
     ) {
         final var items = BatchItemsMapper.toEntity(request, ingredientService);
+        final var addItemRequest = ImportDetailRequest.builder()
+                .clientId(request.getClientId())
+                .name("ImportBatch_".concat(LocalDateTime.now().toString()))
+                .description("Batch of item is added to import")
+                .importId(request.getImportId())
+                .ingredientId(request.getIngredientId())
+                .quantity(items.size())
+                .build();
+        final var detail = supplierClient.onAddNewItem(addItemRequest);
+        if (Objects.isNull(detail)) {
+            log.error("saveItems: add batch of item to import detail failed: {}", addItemRequest);
+            throw new IllegalStateException("saveItems: add batch of item to import detail failed");
+        }
         final var savedItems = itemService.save(items);
         final var itemDTOs = ItemMapper.toDto(savedItems, supplierClient);
         request.setCodes(itemDTOs.stream().map(ItemDto::getCode).collect(Collectors.toSet()));

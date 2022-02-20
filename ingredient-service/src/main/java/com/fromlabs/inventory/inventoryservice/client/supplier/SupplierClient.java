@@ -4,12 +4,12 @@
 
 package com.fromlabs.inventory.inventoryservice.client.supplier;
 
+import com.fromlabs.inventory.inventoryservice.client.supplier.beans.ImportDetailDto;
+import com.fromlabs.inventory.inventoryservice.client.supplier.beans.ImportDetailRequest;
 import com.fromlabs.inventory.inventoryservice.client.supplier.beans.ImportDto;
 import com.fromlabs.inventory.inventoryservice.config.ApiV1;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Client for supplier module
@@ -21,4 +21,7 @@ public interface SupplierClient {
 
     @GetMapping("import/{id:\\d+}")
     ImportDto getImportById(@PathVariable Long id);
+
+    @PostMapping("import/add-items")
+    ImportDetailDto onAddNewItem(@RequestBody ImportDetailRequest request);
 }
