@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface NotificationRepository extends
         JpaRepository<NotificationEntity, Long>, JpaSpecificationExecutor<NotificationEntity> {
-    List<NotificationEntity> findAllByStatusAndActiveIsTrue(String status);
+    List<NotificationEntity> findAllByStatusAndAndNotifyAtIsNullAndActiveIsTrue(String status);
 }

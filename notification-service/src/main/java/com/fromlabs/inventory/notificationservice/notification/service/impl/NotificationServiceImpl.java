@@ -522,7 +522,8 @@ public class NotificationServiceImpl implements NotificationService {
         }
         log.info("Start send all notifications with limit : {}", trueLimit);
         final var unsentNotifications = this.notificationRepository
-                .findAllByStatusAndActiveIsTrue(NotificationStatus.NEW.getStatus());
+                .findAllByStatusAndAndNotifyAtIsNullAndActiveIsTrue(
+                        NotificationStatus.SENDING.getStatus());
         var failedNotifications = new ArrayList<String>();
         final var notifications = unsentNotifications.parallelStream()
                 .map(entity -> {
