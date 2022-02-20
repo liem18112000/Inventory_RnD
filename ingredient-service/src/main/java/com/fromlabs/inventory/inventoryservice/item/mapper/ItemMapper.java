@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.item.mapper;
 
+import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.item.ItemEntity;
 import com.fromlabs.inventory.inventoryservice.item.beans.dto.ItemDto;
@@ -103,12 +104,13 @@ public class ItemMapper {
      * @return ItemDto
      */
     public ItemDto toDto(
-            @NotNull final ItemEntity entity
+            @NotNull final ItemEntity entity,
+            @NotNull final SupplierClient supplierClient
     ) {
         return ItemDto.builder()
                 .id(entity.getId())
                 .clientId(entity.getClientId())
-                .importId(entity.getImportId())
+                .imports(supplierClient.getImportById(entity.getImportId()))
                 .ingredient(IngredientMapper.toDto(entity.getIngredient()))
                 .code(entity.getCode())
                 .name(entity.getName())
@@ -125,9 +127,11 @@ public class ItemMapper {
      * @return List&lt;ItemDto&gt;
      */
     public List<ItemDto> toDto(
-            @NotNull final List<ItemEntity> entities
+            @NotNull final List<ItemEntity> entities,
+            @NotNull final SupplierClient supplierClient
     ) {
-        return entities.stream().map(ItemMapper::toDto).collect(Collectors.toList());
+        return entities.stream().map(entity -> ItemMapper.toDto(entity, supplierClient))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -136,9 +140,10 @@ public class ItemMapper {
      * @return Page&lt;ItemDto&gt;
      */
     public Page<ItemDto> toDto(
-            @NotNull final Page<ItemEntity> entities
+            @NotNull final Page<ItemEntity> entities,
+            @NotNull final SupplierClient supplierClient
     ) {
-        return entities.map(ItemMapper::toDto);
+        return entities.map(entity -> ItemMapper.toDto(entity, supplierClient));
     }
 
     //</editor-fold>

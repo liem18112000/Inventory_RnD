@@ -5,6 +5,7 @@
 package com.fromlabs.inventory.inventoryservice.item.beans.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fromlabs.inventory.inventoryservice.client.supplier.beans.ImportDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
 import lombok.Builder;
 import lombok.Data;
@@ -19,12 +20,11 @@ public class ItemDto {
     private Long id;
     private Long clientId;
     private IngredientDto ingredient;
-    private Long importId;
+    private ImportDto imports;
     private String name;
     private String code;
     private String description;
     private String unit;
     private String unitType;
     private String expiredAt;
-
 }

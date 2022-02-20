@@ -5,7 +5,7 @@
 package com.fromlabs.inventory.inventoryservice.applications;
 
 import com.fromlabs.inventory.inventoryservice.client.auth.AuthClient;
-import com.fromlabs.inventory.inventoryservice.client.auth.beans.AuthDTO;
+import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.common.template.WebStatefulTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.common.template.manager.TemplateProcessCacheManger;
 import com.fromlabs.inventory.inventoryservice.config.ApiV1;
@@ -66,6 +66,7 @@ public class IngredientController implements ApplicationController {
     private final InventoryService              inventoryService;
     private final ItemService                   itemService;
     private final TemplateProcessCacheManger    processCache;
+    private final SupplierClient                supplierClient;
 
     @Autowired
     private AuthClient authClient;
@@ -107,6 +108,7 @@ public class IngredientController implements ApplicationController {
      * @param inventoryService      The service of InventoryEntity
      * @param itemService           The service of ItemEntity
      * @param processCache          The service of TemplateProcessCache
+     * @param supplierClient        The client of Supplier
      */
     public IngredientController(
             IngredientService ingredientService,
@@ -114,7 +116,8 @@ public class IngredientController implements ApplicationController {
             IngredientEventService eventService,
             InventoryService inventoryService,
             ItemService itemService,
-            TemplateProcessCacheManger processCache
+            TemplateProcessCacheManger processCache,
+            SupplierClient supplierClient
     ) {
         this.ingredientService  = ingredientService;
         this.historyService     = historyService;
@@ -122,6 +125,7 @@ public class IngredientController implements ApplicationController {
         this.inventoryService   = inventoryService;
         this.itemService        = itemService;
         this.processCache       = processCache;
+        this.supplierClient     = supplierClient;
         trackControllerDependencyInjectionInformation(
                 this.ingredientService,
                 this.historyService,
@@ -681,7 +685,8 @@ public class IngredientController implements ApplicationController {
             @RequestBody ItemPageRequest request
     ){
         log.info(path(HttpMethod.POST, "item/page"));
-        return (ResponseEntity<?>) buildGetPageItemTemplateProcess(tenantId, request, ingredientService, itemService).run();
+        return (ResponseEntity<?>) buildGetPageItemTemplateProcess(
+                tenantId, request, ingredientService, itemService, supplierClient).run();
     }
 
     /**
@@ -694,7 +699,7 @@ public class IngredientController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId
     ){
         log.info(path(HttpMethod.GET, "item/all"));
-        return (ResponseEntity<?>) buildGetAllItemProcessTemplate(tenantId, itemService).run();
+        return (ResponseEntity<?>) buildGetAllItemProcessTemplate(tenantId, itemService, supplierClient).run();
     }
 
     /**
@@ -707,7 +712,7 @@ public class IngredientController implements ApplicationController {
             @PathVariable(ID) Long id
     ){
         log.info(path(HttpMethod.GET, "item/".concat(String.valueOf(id))));
-        return (ResponseEntity<?>) buildGetItemByIdTemplateProcess(id, itemService).run();
+        return (ResponseEntity<?>) buildGetItemByIdTemplateProcess(id, itemService, supplierClient).run();
     }
 
     /**
@@ -723,7 +728,7 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.POST, "item"));
         return (ResponseEntity<?>) buildSaveItemProcessTemplate(tenantId, request,
-                ingredientService, itemService, historyService, eventService).run();
+                ingredientService, itemService, historyService, eventService, supplierClient).run();
     }
 
     /**
@@ -739,7 +744,7 @@ public class IngredientController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.POST, "item/batch"));
         return (ResponseEntity<?>) buildSaveItemsProcessTemplate(tenantId, request,
-                ingredientService, itemService, historyService, eventService).run();
+                ingredientService, itemService, historyService, eventService, supplierClient).run();
     }
 
     /**
@@ -757,7 +762,7 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.PUT, "item/".concat(String.valueOf(id))));
         return (ResponseEntity<?>) buildUpdateItemProcessTemplate(tenantId, id, request,
-                ingredientService, itemService, historyService, eventService).run();
+                ingredientService, itemService, historyService, eventService, supplierClient).run();
     }
 
     /**
@@ -789,7 +794,7 @@ public class IngredientController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.DELETE, "item/all"));
         return (ResponseEntity<?>) buildDeleteAllItemAfterConfirmTemplateProcess(tenantId, request,
-                ingredientService, inventoryService, itemService).run();
+                ingredientService, inventoryService, itemService, supplierClient).run();
     }
 
     // </editor-fold>

@@ -6,6 +6,7 @@ package com.fromlabs.inventory.inventoryservice.utility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.common.dto.SimpleDto;
 import com.fromlabs.inventory.inventoryservice.common.entity.BaseEntity;
 import com.fromlabs.inventory.inventoryservice.common.transaction.*;
@@ -415,10 +416,11 @@ public class TransactionLogic {
     public Page<ItemDto> getItemPageWithFiler(
             @NotNull final ItemPageRequest request,
             @NotNull final IngredientService   ingredientService,
-            @NotNull final ItemService         itemService
+            @NotNull final ItemService         itemService,
+            @NotNull final SupplierClient supplierClient
     ) {
         log.info("getItemPageWithFiler : start");
-        return ItemMapper.toDto(getItemEntityPage(request, ingredientService, itemService));
+        return ItemMapper.toDto(getItemEntityPage(request, ingredientService, itemService), supplierClient);
     }
 
     /**
@@ -700,7 +702,8 @@ public class TransactionLogic {
     public ResponseEntity<ItemDto> saveOrUpdateItem(
             @NotNull final ItemRequest request,
             @NotNull final IngredientService   ingredientService,
-            @NotNull final ItemService         itemService
+            @NotNull final ItemService         itemService,
+            @NotNull final SupplierClient supplierClient
     ) {
         // Check pre-condition
         assert nonNull(request.getIngredientId());
@@ -719,7 +722,7 @@ public class TransactionLogic {
         final var savedItem = itemService.save(item);
 
         // Convert item entity to DTO and then return
-        return ok(ItemMapper.toDto(savedItem));
+        return ok(ItemMapper.toDto(savedItem, supplierClient));
     }
 
     //</editor-fold>
@@ -739,7 +742,8 @@ public class TransactionLogic {
     public ResponseEntity<?> deleteAllItems(
             @NotNull final ItemDeleteAllRequest    request,
             @NotNull final IngredientService       ingredientService,
-            @NotNull final ItemService             itemService
+            @NotNull final ItemService             itemService,
+            @NotNull final SupplierClient          supplierClient
     ) {
         // Get deleted list of item based on strategy
         final var ingredient = ingredientService.getById(request.getIngredientId());
@@ -752,7 +756,7 @@ public class TransactionLogic {
         itemService.deleteAll(deleteItems);
 
         // Return deleted items as DTO
-        return ok(ItemMapper.toDto(items));
+        return ok(ItemMapper.toDto(items, supplierClient));
     }
 
     /**
@@ -1053,11 +1057,12 @@ public class TransactionLogic {
     public ResponseEntity<?> saveItems(
             @NotNull BatchItemsRequest request,
             @NotNull final IngredientService ingredientService,
-            @NotNull final ItemService       itemService
+            @NotNull final ItemService       itemService,
+            @NotNull final SupplierClient supplierClient
     ) {
         final var items = BatchItemsMapper.toEntity(request, ingredientService);
         final var savedItems = itemService.save(items);
-        final var itemDTOs = ItemMapper.toDto(savedItems);
+        final var itemDTOs = ItemMapper.toDto(savedItems, supplierClient);
         request.setCodes(itemDTOs.stream().map(ItemDto::getCode).collect(Collectors.toSet()));
         return ok().body(itemDTOs);
     }
