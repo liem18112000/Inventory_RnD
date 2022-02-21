@@ -719,6 +719,68 @@ export const mockPageInventory = () => {
     return Promise.resolve(mock);
 }
 
+export const mockImportSimple = () => {
+    const mockData = [
+        {
+            "value": 1,
+            "label": "API_Child_02-IMPORTG1001"
+        },
+        {
+            "value": 2,
+            "label": "API_Child_02-IMPORTG1002"
+        },
+        {
+            "value": 3,
+            "label": "API_Child_02-IMPORTG1003"
+        },
+        {
+            "value": 4,
+            "label": "API_Child_03-import_Code_001"
+        },
+        {
+            "value": 5,
+            "label": "API_Child_03-import_Code_002_edited"
+        },
+        {
+            "value": 6,
+            "label": "API_Child_01-Import 01"
+        },
+        {
+            "value": 7,
+            "label": "API_Child_01-Import 02 edited"
+        },
+        {
+            "value": 8,
+            "label": "API_Child_01-Import 03"
+        },
+        {
+            "value": 9,
+            "label": "API_Child_01-Import 04"
+        },
+        {
+            "value": 10,
+            "label": "API_Child_01-Import 05"
+        },
+        {
+            "value": 11,
+            "label": "API_Child_01-Import 06"
+        },
+        {
+            "value": 12,
+            "label": "WinmartBranch01-Import001-20211201"
+        },
+        {
+            "value": 13,
+            "label": "WinmartBranch01-Import002-20220101"
+        },
+        {
+            "value": 14,
+            "label": "WinmartBranch01-Import003-20220201"
+        }
+    ]
+    return Promise.resolve(mockData);
+}
+
 export const mockSuggestTaxon = () => {
     const mock = [
         {

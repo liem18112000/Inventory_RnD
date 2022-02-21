@@ -4,6 +4,7 @@ import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import { compose } from "../core/utility/ComponentUtility";
+import {mockImportSimple} from "../core/models/MockDataModel";
 
 // Supplier base URL
 const BaseURL = baseSupplierAPI()
@@ -223,6 +224,24 @@ export class SupplierService {
     }
 
     /**
+     * Get import label-value
+     * @param isMock Activate mock if true otherwise use real api call
+     */
+    getImportSimple(isMock = true) {
+        if (isMock) {
+            return mockImportSimple();
+        }
+
+        const url = `${BaseURL}/import/simple`
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        return axios
+            .get(url, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    /**
      * Get material by id
      * @param id Material ID
      * @param isMock Activate mock if true otherwise use real api call
@@ -384,7 +403,7 @@ export class SupplierService {
      * Delete import by id
      * @param id Import Id
      * @param isMock Activate mock if true otherwise use real api call
-     * @returns {Promise<unknown>|Promise<AxiosResponse<any>>}
+     * @returns {Promise<unknown>|Promise<>}
      */
     deleteSupplierImportDetail(id, isMock = true) {
         if (isMock) {
