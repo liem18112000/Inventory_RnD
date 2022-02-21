@@ -4,10 +4,12 @@ import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { IngredientService } from '../../service/IngredientService';
+import { SupplierService } from '../../service/SupplierService';
 import { Calendar } from 'primereact/calendar';
 import moment from 'moment';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
+import { Dropdown } from 'primereact/dropdown';
 
 /**
  * Ingredient form for save or update ingredient form information
@@ -30,7 +32,9 @@ export class IngredientItemForm extends Component {
                 unitType: this.props.unitType,
                 code: '',
                 expiredAt: '',
+                importId: '',
             },
+            importList: [],
             isMock: false,
             visible: false,
             errors: {},
@@ -40,12 +44,23 @@ export class IngredientItemForm extends Component {
 
         }
         this.ingredientService = new IngredientService();
+        this.supplierService = new SupplierService();
     }
 
+    getImportList() {
+        this.supplierService.getImportSimple(this.state.isMock).then(data => {
+            this.setState({
+                ...this.state, 
+                importList: data
+            })
+        })
+    }
+    
     /**
      * Function is called after component is required
      */
     componentDidMount() {
+        this.getImportList()
     }
 
     /**
@@ -332,7 +347,6 @@ export class IngredientItemForm extends Component {
                             showIcon
                         />
                     </div>
-
                     {this.state.formHeader === this.state.batchTitle ?
                         <div className="p-col-12">
                             <label>* Quantity</label>
@@ -346,7 +360,11 @@ export class IngredientItemForm extends Component {
                         </div>
                         : <></>
                     }
-
+                    <div className="p-col-12">
+                        <label>* Import</label>
+                        <Dropdown value={this.state.data.importId} options={this.state.importList} onChange={(e) => this.setState({ data: { ...this.state.data, importId: e.target.value } })} 
+                        itemTemplates={item => item.label} placeholder="Select import" />
+                    </div>
                     <div className="p-col-12">
                         <label>Description</label>
                         <InputTextarea rows={5} value={this.state.data.description} placeholder="Enter description"
