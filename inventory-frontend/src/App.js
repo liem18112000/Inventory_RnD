@@ -28,6 +28,7 @@ import { SupplierImport } from './supplier/supplier-import/SupplierImport';
 import { Event } from './notification/event/Event';
 import { Notification } from './notification/notification/Notification';
 import { ImportDetail } from './supplier/import-detail/ImportDetail';
+import { SuggestTaxon } from './ingredient/suggest-taxon/SuggestTaxon';
 
 export const history = createBrowserHistory();
 
@@ -55,11 +56,11 @@ function App() {
         <AdminTemplate path="/ingredient/:id" exact Component={IngredientType} />
         <AdminTemplate path="/ingredient/history/:id" exact Component={IngredientHistory} />
         <AdminTemplate path="/ingredient/type/:id" exact Component={IngredientItem} />
+        <AdminTemplate path="/taxon" exact Component={SuggestTaxon} />
         <AdminTemplate path="/recipe" exact Component={RecipeGroup} />
         <AdminTemplate path="/recipes" exact Component={Recipes} />
         <AdminTemplate path="/recipe/:id" exact Component={RecipeChild} />
         <AdminTemplate path="/recipe/child/:id" exact Component={RecipeDetail} />
-        {/* <AdminTemplate path="/supplier" exact Component={SupplierGroup} /> */}
         <AdminTemplate path="/supplier" exact Component={SupplierGroup} />
         <AdminTemplate path="/supplier/:id" exact Component={SupplierChild} />
         <AdminTemplate path="/supplier/material/:id" exact Component={SupplierMaterial} />
