@@ -605,6 +605,24 @@ public class TransactionLogic {
         return ok(ImportMapper.toDto(updatedImport));
     }
 
+    /**
+     * Get import by label-value import simple list
+     * @param tenantId Tenant ID
+     * @param importService ImportService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> getImportLabelValue(
+            @NotNull final Long tenantId,
+            @NotNull final ImportService importService
+    ) {
+        final var spec = ImportSpecification.hasClientId(tenantId);
+        final var simpleList = importService.getAll(spec).stream().map(i -> {
+                final var label = i.getSupplier().getCode().concat("-").concat(i.getCode());
+                return SimpleDto.builder().label(label).value(i.getId()).build();
+            });
+        return ok(simpleList);
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT DETAIL">

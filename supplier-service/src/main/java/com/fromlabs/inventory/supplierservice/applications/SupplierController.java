@@ -2,6 +2,7 @@ package com.fromlabs.inventory.supplierservice.applications;
 
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.common.template.WebTemplateProcessWithCheckBeforeAfter;
+import com.fromlabs.inventory.supplierservice.config.AppConfig;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportPageRequest;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
@@ -478,6 +479,19 @@ public class SupplierController implements ApplicationController {
         log.info(path(HttpMethod.PUT, "import"));
         return (ResponseEntity<?>) buildUpdateImportTemplateProcess(
                 tenantId, request, importService, supplierService).run();
+    }
+
+    /**
+     * Get label-value supplier import
+     *
+     * @param tenantId Tenant ID
+     * @return ResponseEntity
+     */
+    @GetMapping("import/simple")
+    public ResponseEntity<?> getImportLabelValue(
+            @RequestHeader(TENANT_ID) Long tenantId) {
+        log.info(path(HttpMethod.GET, "import/simple"));
+        return (ResponseEntity<?>) buildGetImportByLabelValue(tenantId, importService).run();
     }
 
     //</editor-fold>

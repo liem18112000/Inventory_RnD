@@ -243,6 +243,15 @@ public interface ApplicationController {
             ImportRequest request
     );
 
+    /**
+     * Get label-value supplier import
+     * @param tenantId Tenant ID
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> getImportLabelValue(
+            Long tenantId
+    );
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT DETAIL">

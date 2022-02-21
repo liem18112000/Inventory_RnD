@@ -462,6 +462,20 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
+    //<editor-fold desc="Build get import by label value">
+
+    public TemplateProcess buildGetImportByLabelValue(
+            @NotNull final Long tenantId,
+            @NotNull final ImportService importService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(  () -> validateTenant(tenantId))
+                .process(   () -> getImportLabelValue(tenantId, importService))
+                .build();
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="buildGetPageImportTemplateProcess">
 
     /**
