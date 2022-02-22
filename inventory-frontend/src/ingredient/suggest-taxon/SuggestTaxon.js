@@ -5,8 +5,6 @@ import { ProductService } from '../../service/ProductService';
 import { IngredientService } from '../../service/IngredientService'
 import '../../assets/styles/DataViewDemo.css';
 import { SuggestTaxonForm } from './SuggestTaxonDetail';
-import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
-import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { getMediaSource } from '../../service/MediaService';
 
 export class SuggestTaxon extends Component {
@@ -31,7 +29,6 @@ export class SuggestTaxon extends Component {
     }
 
     componentDidMount() {
-        // this.productService.getProducts().then(data => this.setState({ products: data }));
         this.suggestTaxon()
     }
 
@@ -39,10 +36,17 @@ export class SuggestTaxon extends Component {
         const { isMock } = this.state;
         this.ingredientService
             .getSuggestTaxon(isMock)
-            .then(data => this.setState({ ...this.state, data: data }));
+            .then(data =>
+                this.setState({ ...this.state,
+                    data: data.map(elem => {
+                        return {
+                            ...elem,
+                            image: getMediaSource()
+                        }
+                    })
+                })
+            );
     }
-
-
 
     onSortChange(event) {
         const value = event.value;
@@ -67,7 +71,7 @@ export class SuggestTaxon extends Component {
         return (
             <div className="p-col-12">
                 <div className="product-list-item">
-                    <img src={getMediaSource()}
+                    <img src={data.image}
                         onError={(e) => e.target.src = getMediaSource()}
                         alt={data.name} />
                     <div className="product-list-detail">
@@ -87,7 +91,7 @@ export class SuggestTaxon extends Component {
             <div className="p-col-12 p-md-3">
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content">
-                        <img src={getMediaSource()}
+                        <img src={data.image}
                             onError={(e) => e.target.src = getMediaSource()}
                             alt={data.name} />
                         <div className="product-name">{data.recipe.name}</div>

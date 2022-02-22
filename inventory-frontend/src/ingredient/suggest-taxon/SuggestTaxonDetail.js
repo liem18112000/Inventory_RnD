@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { ProductService } from '../../service/ProductService';
 import { Dialog } from 'primereact/dialog';
-import { Card } from 'primereact/card';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import '../../assets/styles/CardDemo.css';
-import { getMediaSource } from '../../service/MediaService';
+import {getMediaSource} from "../../service/MediaService";
 
 export class SuggestTaxonForm extends Component {
 
@@ -93,7 +90,8 @@ export class SuggestTaxonForm extends Component {
             >
                 {data && <div className="taxon-card">
                     <div className="">
-                        <img src={"showcase/demo/images/usercard.png"} style={{ width: '50%', align: 'center' }} onError={(e) => e.target.src = getMediaSource()} />
+                        <img src={this.state.data.image} style={{ width: '50%', align: 'center' }}
+                             onError={(e) => e.target.src = getMediaSource()} />
                         <div className="taxon-name">{data.recipe.name}</div>
                     </div>
                     {/* <DataTable value={data.details}>
@@ -106,7 +104,8 @@ export class SuggestTaxonForm extends Component {
                             <span className="detail">Recipe Detail</span>
                             <ul>
                                 <li key=""><span className="detail">Recipe name: </span>{item.name}</li>
-                                <li key=""><span className="detail">Recipe quantity: </span>{item.quantity}</li>
+                                <li key=""><span className="detail">Recipe quantity: </span>
+                                    {item.quantity} {item.ingredient.unit}</li>
                             </ul>
                         </div>
                     ))}
