@@ -10,11 +10,8 @@ import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailServic
 import com.fromlabs.inventory.supplierservice.imports.details.beans.dto.ImportDetailDto;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.imports.mapper.ImportMapper;
-import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.dto.ProvidableMaterialDto;
-import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.specification.ProvidableMaterialSpecification;
 import com.fromlabs.inventory.supplierservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.supplierservice.imports.details.specification.ImportDetailSpecification.hasImport;
@@ -37,7 +33,6 @@ public class EndpointImpl implements Endpoint {
     private final ImportService importService;
     private final ImportDetailService importDetailService;
     private final IngredientClient ingredientClient;
-    private final SupplierService supplierService;
     private final ProvidableMaterialService materialService;
     public static final String SERVICE_PATH = "/endpoint/supplier/" + ApiV1.URI_API + "/";
 
@@ -50,7 +45,6 @@ public class EndpointImpl implements Endpoint {
         this.importService = importService;
         this.importDetailService = importDetailService;
         this.ingredientClient = ingredientClient;
-        this.supplierService = supplierService;
         this.materialService = materialService;
     }
 
