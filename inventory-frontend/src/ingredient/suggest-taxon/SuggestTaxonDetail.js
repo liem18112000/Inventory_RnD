@@ -3,7 +3,7 @@ import { ProductService } from '../../service/ProductService';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import '../../assets/styles/CardDemo.css';
-import {getMediaSource} from "../../service/MediaService";
+import { getMediaSource } from "../../service/MediaService";
 
 export class SuggestTaxonForm extends Component {
 
@@ -89,9 +89,10 @@ export class SuggestTaxonForm extends Component {
                 footer={this.renderFooter('displayResponsive')}
             >
                 {data && <div className="taxon-card">
+                    <img src={this.state.data.image} style={{ width: '90%', align: 'center' }}
+                        onError={(e) => e.target.src = getMediaSource()} />
                     <div className="">
-                        <img src={this.state.data.image} style={{ width: '50%', align: 'center' }}
-                             onError={(e) => e.target.src = getMediaSource()} />
+
                         <div className="taxon-name">{data.recipe.name}</div>
                     </div>
                     {/* <DataTable value={data.details}>
@@ -103,8 +104,8 @@ export class SuggestTaxonForm extends Component {
                         <div className="taxon-detail">
                             <span className="detail">Recipe Detail</span>
                             <ul>
-                                <li key=""><span className="detail">Recipe name: </span>{item.name}</li>
-                                <li key=""><span className="detail">Recipe quantity: </span>
+                                <li key="1"><span className="detail">Recipe name: </span>{item.name}</li>
+                                <li key="2"><span className="detail">Recipe quantity: </span>
                                     {item.quantity} {item.ingredient.unit}</li>
                             </ul>
                         </div>

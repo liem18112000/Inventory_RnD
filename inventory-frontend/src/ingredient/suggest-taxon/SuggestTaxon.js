@@ -37,7 +37,8 @@ export class SuggestTaxon extends Component {
         this.ingredientService
             .getSuggestTaxon(isMock)
             .then(data =>
-                this.setState({ ...this.state,
+                this.setState({
+                    ...this.state,
                     data: data.map(elem => {
                         return {
                             ...elem,
@@ -90,10 +91,10 @@ export class SuggestTaxon extends Component {
         return (
             <div className="p-col-12 p-md-3">
                 <div className="product-grid-item card">
+                    <img src={data.image}
+                        onError={(e) => e.target.src = getMediaSource()}
+                        alt={data.name} />
                     <div className="product-grid-item-content">
-                        <img src={data.image}
-                            onError={(e) => e.target.src = getMediaSource()}
-                            alt={data.name} />
                         <div className="product-name">{data.recipe.name}</div>
                     </div>
                     <div className="product-grid-item-bottom">
