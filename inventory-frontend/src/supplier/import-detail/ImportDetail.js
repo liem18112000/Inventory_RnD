@@ -303,14 +303,14 @@ export class ImportDetail extends Component {
             <div className="table-header">
                 <span className="p-input-icon-left">
                     <i className="pi pi-plus" />
-                    <Button
+                    {/* <Button
                         className="blue-btn"
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
                         label="New import detail"
                         onClick={() => this.form.action(null, this.props.match.params.id, true)}
-                    />
+                    /> */}
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
@@ -413,7 +413,7 @@ export class ImportDetail extends Component {
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
                     <Column field="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
                     <Column field="updatedAt" header="Update At" body={this.updatedAtBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    {/* <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} /> */}
                 </DataTable>
             </div >
         );
