@@ -24,4 +24,9 @@ public interface SupplierClient {
 
     @PostMapping("import/add-items")
     ImportDetailDto onAddNewItem(@RequestBody ImportDetailRequest request);
+
+    @GetMapping("import/{importId:\\d+}/ingredient/{ingredientId:\\d+}")
+    boolean isIngredientCanBeProvidable(
+            @PathVariable Long importId, @PathVariable Long ingredientId,
+            @RequestParam("quantity") float quantity);
 }

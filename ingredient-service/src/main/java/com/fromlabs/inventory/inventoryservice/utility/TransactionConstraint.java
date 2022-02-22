@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.utility;
 
+import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.inventoryservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.inventoryservice.ingredient.*;
@@ -693,11 +694,13 @@ public class TransactionConstraint {
             @NotNull final IngredientService ingredientService,
             @NotNull final ItemService itemService,
             @NotNull final IngredientHistoryService historyService,
-            @NotNull final IngredientEventService eventService
+            @NotNull final IngredientEventService eventService,
+            @NotNull final SupplierClient supplierClient
     ) {
         // Check constraint on ingredient
         var isPassed =  checkSaveItemRequestIngredientIsChild(request, ingredientService) &&
                         checkBatchItemQuantityWhenCodeSetIsProvided(request) &&
+                        checkItemCanBeAdd(request, request.getQuantity(), supplierClient) &&
                         checkItemExpiration(request);
 
         // Check all code are whether unique
@@ -713,6 +716,13 @@ public class TransactionConstraint {
         }
 
         return logWrapper(isPassed, "checkConstraintBeforeSaveItems: {}");
+    }
+
+    private boolean checkItemCanBeAdd(
+            final @NotNull ItemRequest request, final float quantity,
+            final @NotNull SupplierClient supplierClient) {
+        return supplierClient.isIngredientCanBeProvidable(request.getImportId(),
+                request.getIngredientId(), quantity);
     }
 
     /**

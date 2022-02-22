@@ -761,9 +761,11 @@ public class TemplateProcessDirector {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .bootstrap( () -> bootstrapTenantAndPreprocessBatchItemRequest(tenantId, request))
                 .validate(  () -> validateSaveItems(request))
-                .before(    () -> checkConstraintBeforeSaveItems(request, ingredientService, itemService, historyService, eventService))
+                .before(    () -> checkConstraintBeforeSaveItems(request, ingredientService, itemService,
+                        historyService, eventService, supplierClient))
                 .process(   () -> saveItems(request, ingredientService, itemService, supplierClient))
-                .after(     () -> checkConstraintAfterSaveItems(request, ingredientService, itemService, historyService, eventService))
+                .after(     () -> checkConstraintAfterSaveItems(request, ingredientService, itemService,
+                        historyService, eventService))
                 .build();
     }
 
