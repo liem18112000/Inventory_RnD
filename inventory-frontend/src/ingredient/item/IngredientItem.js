@@ -101,6 +101,15 @@ class IngredientItem extends Component {
         );
     }
 
+    importBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Import</span>
+                <span>{rowData.imports.code}</span>
+            </React.Fragment>
+        );
+    }
+
     actionBodyTemplate(rowData, form) {
         return (
             <React.Fragment>
@@ -388,10 +397,11 @@ class IngredientItem extends Component {
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column sortField="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} sortable />
                     <Column sortField="expiredAt" filterField="expiredAt" header="Expired At" body={this.expiredAtBodyTemplate} sortable />
-                    <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} sortable />
-                    <Column field="unit" header="Unit" body={this.unitBodyTemplate} sortable />
+                    <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate}/>
+                    <Column field="unit" header="Unit" body={this.unitBodyTemplate}/>
+                    <Column field="imports" header="Import" body={this.importBodyTemplate}/>
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    {/* <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} /> */}
                 </DataTable>
             </div>
         );
