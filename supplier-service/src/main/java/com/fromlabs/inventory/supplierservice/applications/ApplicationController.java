@@ -279,17 +279,6 @@ public interface ApplicationController {
     );
 
     /**
-     * Save import by request
-     * @param tenantId  Tenant ID
-     * @param request   ImportDetailRequest
-     * @return          ResponseEntity
-     */
-    ResponseEntity<?> saveImportDetail(
-            Long                tenantId,
-            ImportDetailRequest request
-    );
-
-    /**
      * Update import by request
      * @param tenantId  Tenant ID
      * @param request   ImportDetailRequest

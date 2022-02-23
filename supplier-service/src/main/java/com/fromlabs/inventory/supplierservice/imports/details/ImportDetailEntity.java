@@ -45,7 +45,6 @@ public class ImportDetailEntity extends ImportReferencedMultiEntity {
      */
     public ImportDetailEntity update(@NotNull final ImportDetailRequest request) {
         this.setName(request.getName());
-        this.setQuantity(request.getQuantity());
         this.setDescription(request.getDescription());
         this.setActive(request.isActive());
         this.setUpdatedAt(Instant.now().toString());

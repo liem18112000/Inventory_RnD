@@ -118,16 +118,13 @@ public class ControllerValidation {
     }
 
     public RequestValidator validateImportDetailRequest(
-            @NotNull final ImportDetailRequest request, final boolean isUpdate) {
-        log.info("validateImportDetail - is update : {}", isUpdate);
-        var validator = StringRequestValidator()
-                .criteriaIsPositiveLong(TENANT_ID, request.getClientId())
-                .criteriaIsPositiveLong(IMPORT_ID, request.getImportId())
-                .criteriaIsPositiveLong(INGREDIENT_ID, request.getIngredientId())
-                .criteriaIsPositiveFloat(QUANTITY, request.getQuantity())
+            @NotNull final ImportDetailRequest request) {
+        log.info("validateImportDetail : {}", request);
+        return  StringRequestValidator()
                 .criteriaRequired(NAME, request.getName())
-                .criteriaRequired(ACTIVE, request.isActive());
-        return isUpdate ? validator.criteriaIsPositiveLong(ID, request.getId()).validate() : validator;
+                .criteriaRequired(ACTIVE, request.isActive())
+                .criteriaIsPositiveLong(ID, request.getId())
+                .validate();
     }
 
     /**

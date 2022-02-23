@@ -477,7 +477,7 @@ public class SupplierController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.PUT, "import"));
         return (ResponseEntity<?>) buildUpdateImportTemplateProcess(
-                tenantId, request, importService, supplierService).run();
+                tenantId, request, importService).run();
     }
 
     //</editor-fold>
@@ -533,37 +533,20 @@ public class SupplierController implements ApplicationController {
     }
 
     /**
-     * Save import detail by request
-     *
-     * @param tenantId Tenant ID
-     * @param request  ImportDetailRequest
-     * @return ResponseEntity
-     */
-    @PostMapping("import/detail")
-    public ResponseEntity<?> saveImportDetail(
-            @RequestHeader(TENANT_ID) Long tenantId,
-            @RequestBody ImportDetailRequest request
-    ) {
-        log.info(path(HttpMethod.POST, "import/detail"));
-        return (ResponseEntity<?>) buildSaveImportDetailTemplateProcess(
-                tenantId, request, importService, importDetailService, ingredientClient).run();
-    }
-
-    /**
      * Update import detail by request
      *
      * @param tenantId Tenant ID
      * @param request  ImportDetailRequest
      * @return ResponseEntity
      */
-    @PutMapping("import/detail")
+    @PutMapping("import/detail/{id:\\d+}")
     public ResponseEntity<?> updateImportDetail(
             @RequestHeader(TENANT_ID) Long tenantId,
             @RequestBody ImportDetailRequest request
     ) {
         log.info(path(HttpMethod.PUT, "import/detail"));
         return (ResponseEntity<?>) buildUpdateImportDetailTemplateProcess(
-                tenantId, request, importService, importDetailService, ingredientClient).run();
+                tenantId, request, importDetailService, ingredientClient).run();
     }
 
     /**
