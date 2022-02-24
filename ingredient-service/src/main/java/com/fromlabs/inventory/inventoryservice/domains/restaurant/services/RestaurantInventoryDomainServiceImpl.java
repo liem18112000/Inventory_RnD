@@ -17,7 +17,6 @@ import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +27,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.lang.Integer.*;
-import static java.lang.Math.*;
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Math.floor;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -251,7 +250,7 @@ public class RestaurantInventoryDomainServiceImpl
         return Math.min(
 
                 // Get the quantity that can be made by the available item compared to the required quantity
-                (int) ceil(getInventoryQuantity(ingredientsInInventory, detail) / detail.getQuantity()),
+                (int) floor(getInventoryQuantity(ingredientsInInventory, detail) / detail.getQuantity()),
 
                 // the current smallest number of quantity
                 minQuantitySuggest
