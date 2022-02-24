@@ -582,13 +582,11 @@ public class TransactionLogic {
     /**
      * Update import
      * @param request ImportRequest
-     * @param supplierService SupplierService
      * @param importService ImportService
      * @return ResponseEntity
      */
     public ResponseEntity<?> updateImport(
             @NotNull final ImportRequest request,
-            @NotNull final SupplierService supplierService,
             @NotNull final ImportService importService
     ) {
         // Pre-condition
@@ -668,33 +666,6 @@ public class TransactionLogic {
     }
 
     /**
-     * Save import detail by request
-     * @param request ImportDetailRequest
-     * @param importService ImportService
-     * @param importDetailService ImportDetailService
-     * @param ingredientClient IngredientClient
-     * @return ResponseEntity
-     */
-    public ResponseEntity<?> saveImportDetail(
-            @NotNull final ImportDetailRequest request,
-            @NotNull final ImportService importService,
-            @NotNull final ImportDetailService importDetailService,
-            @NotNull final IngredientClient ingredientClient
-    ) {
-        // Check pre-condition
-        assert nonNull(request.getImportId());
-
-        // Build entity for saving
-        final var importEntity = importService.getById(request.getImportId());
-        final var entity = ImportDetailMapper.toEntity(request, importEntity);
-
-        // Save entity and convent result to DTO
-        final var savedEntity = importDetailService.save(entity);
-        final var dto = ImportDetailMapper.toDto(savedEntity, ingredientClient);
-        return status(HttpStatus.CREATED).body(dto);
-    }
-
-    /**
      * Update import detail by request
      * @param request ImportDetailRequest
      * @param importDetailService ImportDetailService
@@ -707,12 +678,12 @@ public class TransactionLogic {
             @NotNull final IngredientClient ingredientClient
     ) {
         // Check pre-condition
-        assert nonNull(request.getId());
-        assert nonNull(request.getImportId());
+        final var id = request.getId();
+        assert nonNull(id);
 
         // Build entity for update
-        final var entity = importDetailService.getById(request.getId())
-                .update(request);
+        final var entity = importDetailService
+                .getById(id).update(request);
 
         // Update entity and convent result to DTO
         final var updatedEntity = importDetailService.save(entity);

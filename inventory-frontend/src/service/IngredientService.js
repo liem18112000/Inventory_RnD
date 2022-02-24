@@ -9,11 +9,12 @@ import {
     mockPageIngredientCategory,
     mockPageIngredientItem,
     mockPageIngredientType,
-    mockPageInventory
+    mockPageInventory,
+    mockSuggestTaxon
 } from "../core/models/MockDataModel";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
-import {compose} from "../core/utility/ComponentUtility";
-import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import { compose } from "../core/utility/ComponentUtility";
+import { authenticateWithApiKeyAndPrincipal, authorizeWithApiKey } from "../core/security/ApiKeyHeaderConfig";
 
 // Ingredient base URL
 const BaseURL = baseIngredientAPI()
@@ -368,5 +369,20 @@ export class IngredientService {
 
         return axios
             .delete(`${BaseURL}/${id}`, config)
+    }
+
+    getSuggestTaxon(isMock = true) {
+        if (isMock) {
+            return mockSuggestTaxon();
+        }
+
+        const url = `${BaseURL}/restaurant/suggest`;
+        const body = {}
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch ingredient category data from api
+        return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 }

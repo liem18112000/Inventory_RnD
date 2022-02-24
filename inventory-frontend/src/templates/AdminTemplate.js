@@ -54,7 +54,7 @@ const AdminTemplate = (props) => { //path, exact, Component
                                 <NavLink to="/ingredient">Ingredient Categories</NavLink>
                             </Menu.Item>
                             <Menu.Item key="3" >
-                                <NavLink to="/suggest-taxon">Suggest Taxon</NavLink>
+                                <NavLink to="/taxon">Suggest Taxon</NavLink>
                             </Menu.Item>
                         </SubMenu>
                         <SubMenu key="sub3" title="Recipe Mgt" icon={<OneToOneOutlined />}>

@@ -534,20 +534,18 @@ public class TemplateProcessDirector {
      * @param tenantId Tenant ID
      * @param request   ImportRequest
      * @param importService ImportService
-     * @param supplierService SupplierService
      * @return TemplateProcess
      */
     public TemplateProcess buildUpdateImportTemplateProcess(
             @NotNull final Long tenantId,
             @NotNull final ImportRequest request,
-            @NotNull final ImportService importService,
-            @NotNull final SupplierService supplierService
+            @NotNull final ImportService importService
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .bootstrap( () -> bootstrapTenantId(tenantId, request))
                 .validate(  () -> validateImportRequest(request, false))
                 .before(    () -> checkBeforeUpdateImport(request, importService))
-                .process(   () -> updateImport(request, supplierService, importService))
+                .process(   () -> updateImport(request, importService))
                 .build();
     }
 
@@ -595,58 +593,25 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
-    //<editor-fold desc="buildSaveImportDetailTemplateProcess">
-
-    /**
-     * Build save import detail template process
-     * @param tenantId Tenant ID
-     * @param request   ImportDetailRequest
-     * @param importService ImportService
-     * @param importDetailService ImportDetailService
-     * @param ingredientClient IngredientClient
-     * @return TemplateProcess
-     */
-    public TemplateProcess buildSaveImportDetailTemplateProcess(
-            @NotNull final Long tenantId,
-            @NotNull final ImportDetailRequest request,
-            @NotNull final ImportService importService,
-            @NotNull final ImportDetailService importDetailService,
-            @NotNull final IngredientClient ingredientClient
-    ) {
-        final boolean isUpdate = false;
-        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap( () -> bootstrapTenantId(tenantId, request))
-                .validate(  () -> validateImportDetailRequest(request, isUpdate))
-                .before(    () -> checkConstraintsBeforeUpdateOrSaveImportDetail(request, importService, importDetailService, ingredientClient, isUpdate))
-                .process(   () -> saveImportDetail(request, importService, importDetailService, ingredientClient))
-                .build();
-    }
-
-    //</editor-fold>
-
     //<editor-fold desc="buildUpdateImportDetailTemplateProcess">
 
     /**
      * Build update import detail template process
-     * @param tenantId Tenant ID
      * @param request   ImportDetailRequest
-     * @param importService ImportService
      * @param importDetailService ImportDetailService
      * @param ingredientClient IngredientClient
      * @return TemplateProcess
      */
     public TemplateProcess buildUpdateImportDetailTemplateProcess(
-            @NotNull final Long tenantId,
+            @NotNull final Long id,
             @NotNull final ImportDetailRequest request,
-            @NotNull final ImportService importService,
             @NotNull final ImportDetailService importDetailService,
             @NotNull final IngredientClient ingredientClient
     ) {
-        final boolean isUpdate = true;
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
-                .bootstrap( () -> bootstrapTenantId(tenantId, request))
-                .validate(  () -> validateImportDetailRequest(request, true))
-                .before(    () -> checkConstraintsBeforeUpdateOrSaveImportDetail(request, importService, importDetailService, ingredientClient, isUpdate))
+                .bootstrap( () -> bootstrapId(id, request))
+                .validate(  () -> validateImportDetailRequest(request))
+                .before(    () -> checkConstraintsBeforeUpdateBasicInformationImportDetail(request, importDetailService))
                 .process(   () -> updateImportDetail(request, importDetailService, ingredientClient))
                 .build();
     }

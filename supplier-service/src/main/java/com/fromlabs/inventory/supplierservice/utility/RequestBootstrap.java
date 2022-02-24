@@ -108,20 +108,6 @@ public class RequestBootstrap {
     }
 
     /**
-     * Bootstrap tenant for import request
-     * @param tenantId  Tenant Id
-     * @param request   ImportDetailRequest
-     * @return          Object
-     */
-    public Object bootstrapTenantId(
-            Long                tenantId,
-            ImportDetailRequest       request
-    ) {
-        request.setClientId(tenantId);
-        return logWrapper(request, "bootstrapTenantId: {}");
-    }
-
-    /**
      * Bootstrap tenant for import page request
      * @param tenantId  Tenant Id
      * @param request   ImportPageRequest
@@ -147,6 +133,20 @@ public class RequestBootstrap {
     ) {
         request.setClientId(tenantId);
         return logWrapper(request, "bootstrapTenantId: {}");
+    }
+
+    /**
+     * Bootstrap id for import detail request
+     * @param id Entity id
+     * @param request ImportDetailRequest
+     * @return Object
+     */
+    public Object bootstrapId(
+            Long id,
+            ImportDetailRequest request
+    ) {
+        request.setId(id);
+        return logWrapper(request, "bootstrapId: {}");
     }
 
     /**

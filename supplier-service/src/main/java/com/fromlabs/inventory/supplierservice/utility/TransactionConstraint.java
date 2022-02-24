@@ -277,17 +277,12 @@ public class TransactionConstraint {
      * @param isUpdate Update flag
      * @return boolean
      */
-    public boolean checkConstraintsBeforeUpdateOrSaveImportDetail(
+    public boolean checkConstraintsBeforeUpdateBasicInformationImportDetail(
             @NotNull final ImportDetailRequest request,
-            @NotNull final ImportService importService,
-            @NotNull final ImportDetailService service,
-            @NotNull final IngredientClient client,
-            final boolean isUpdate
+            @NotNull final ImportDetailService service
     ) {
-        final var result = (!isUpdate || checkImportDetailExistById(request.getId(), service)) &&
-                request.getQuantity() > 0 &&
-                Objects.nonNull(importService.getById(request.getImportId())) &&
-                Objects.nonNull(client.getIngredientById(request.getClientId(), request.getIngredientId()));
+        final var result =
+                Objects.nonNull(service.getById(request.getId()));
 
         // Log out the check result and return it
         return logWrapper(result, "checkConstraintsBeforeUpdateOrSaveImportDetail: {}");
