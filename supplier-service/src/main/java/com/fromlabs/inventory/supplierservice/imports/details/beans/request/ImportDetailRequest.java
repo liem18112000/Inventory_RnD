@@ -13,7 +13,11 @@ import lombok.Data;
 @Data
 public class ImportDetailRequest {
     private Long    id;
+    private Long    clientId;
+    private Long    importId;
+    private Long    ingredientId;
     private String  name;
     private String  description;
+    private float   quantity = 0f;
     private boolean active = true;
 }

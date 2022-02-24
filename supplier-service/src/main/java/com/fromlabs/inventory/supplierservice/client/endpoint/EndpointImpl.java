@@ -91,7 +91,8 @@ public class EndpointImpl implements Endpoint {
                 importDetailService, ingredientClient).getBody();
     }
 
-    @GetMapping("import/{importId:\\d+}/ingredient/{ingredientId:\\d+}")
+    @RequestMapping(value = "import/{importId:\\d+}/ingredient/{ingredientId:\\d+}",
+            method = {RequestMethod.GET, RequestMethod.POST})
     public boolean isIngredientCanBeProvidable(
             @PathVariable Long importId, @PathVariable Long ingredientId,
             @RequestParam("quantity") float quantity) {

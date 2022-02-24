@@ -665,6 +665,34 @@ public class TransactionLogic {
         return ok(dto);
     }
 
+
+    /**
+     * Save import detail by request
+     * @param request ImportDetailRequest
+     * @param importService ImportService
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> saveImportDetail(
+            @NotNull final ImportDetailRequest request,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        // Check pre-condition
+        assert nonNull(request.getImportId());
+
+        // Build entity for saving
+        final var importEntity = importService.getById(request.getImportId());
+        final var entity = ImportDetailMapper.toEntity(request, importEntity);
+
+        // Save entity and convent result to DTO
+        final var savedEntity = importDetailService.save(entity);
+        final var dto = ImportDetailMapper.toDto(savedEntity, ingredientClient);
+        return status(HttpStatus.CREATED).body(dto);
+    }
+
     /**
      * Update import detail by request
      * @param request ImportDetailRequest

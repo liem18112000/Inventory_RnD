@@ -79,4 +79,30 @@ public class ImportDetailMapper {
     }
 
     //</editor-fold>
+
+    //<editor-fold desc="TO ENTITY">
+
+    /**
+     * Convert to entity
+     * @param request ImportDetailRequest
+     * @param importEntity ImportEntity
+     * @return ImportDetailEntity
+     */
+    public ImportDetailEntity toEntity(
+            final @NotNull ImportDetailRequest request,
+            @NotNull final ImportEntity importEntity) {
+        var entity = create(DEFAULT);
+        entity.setClientId(request.getClientId());
+        entity.setName(request.getName());
+        entity.setImportEntity(importEntity);
+        entity.setIngredientId(request.getIngredientId());
+        entity.setQuantity(request.getQuantity());
+        entity.setDescription(request.getDescription());
+        entity.setCreatedAt(Instant.now().toString());
+        entity.setUpdatedAt(Instant.now().toString());
+        entity.setActive(request.isActive());
+        return entity;
+    }
+
+    //</editor-fold>
 }
