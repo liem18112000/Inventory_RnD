@@ -316,7 +316,7 @@ export class ImportDetail extends Component {
                     </SplitButton>
                 </span>
                 <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                    <a onClick={() => this.props.history.push({
+                    <a href='supplier-child' onClick={() => this.props.history.push({
                         pathname: `../${this.state.supplierId}`,
                         state: {
                             supplierGroupId: this.props.location.state.supplierGroupId,

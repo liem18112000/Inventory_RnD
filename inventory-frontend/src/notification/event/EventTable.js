@@ -38,12 +38,12 @@ export class EventTable extends Component {
     }
 
     setViewInformation(data, type) {
-            this.setState({
-                data: data,
-                type: type,
-                displayResponsive: true,
-            })
-        } 
+        this.setState({
+            data: data,
+            type: type,
+            displayResponsive: true,
+        })
+    }
 
     onClick(name, position) {
         let state = {
@@ -71,10 +71,9 @@ export class EventTable extends Component {
      * @returns {JSX.Element}
      */
     render() {
-        if (this.state.type === "Ingredient item monthly statistics")
-        {
+        if (this.state.type === "Ingredient item monthly statistics") {
             return (
-                <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw'}}>
+                <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw' }}>
                     <div className="card">
                         <DataTable value={this.state.data}>
                             <Column field="ingredientCode" header="Code"></Column>
@@ -87,9 +86,9 @@ export class EventTable extends Component {
                 </Dialog>
             );
         }
-         else if (this.state.type === "Ingredient item quantity is low"){
+        else if (this.state.type === "Ingredient item quantity is low") {
             return (
-                <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw'}}>
+                <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw' }}>
                     <div className="card">
                         <DataTable value={this.state.data}>
                             <Column field="ingredientCode" header="Code"></Column>
@@ -100,7 +99,7 @@ export class EventTable extends Component {
                     </div>
                 </Dialog>
             );
-        } 
+        }
         return null;
     }
 }
