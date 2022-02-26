@@ -4,7 +4,10 @@
 
 package com.fromlabs.inventory.inventoryservice.domains.restaurant.controller;
 
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import static com.fromlabs.inventory.inventoryservice.config.AppConfig.TENANT_ID;
@@ -21,6 +24,10 @@ public interface RestaurantDomainController {
      * @return          ResponseEntity
      */
     ResponseEntity<?> suggest(
-            @RequestHeader(TENANT_ID) Long tenantId
+            Long tenantId
+    );
+
+    ResponseEntity<?> confirmSuggest(
+            SuggestResponse confirmSuggestion, int quantity
     );
 }

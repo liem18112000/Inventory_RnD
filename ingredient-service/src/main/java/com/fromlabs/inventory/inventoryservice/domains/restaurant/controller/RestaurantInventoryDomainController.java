@@ -6,6 +6,8 @@ package com.fromlabs.inventory.inventoryservice.domains.restaurant.controller;
 
 import com.fromlabs.inventory.inventoryservice.common.template.WebTemplateProcessWithCheckBeforeAfter;
 import com.fromlabs.inventory.inventoryservice.config.ApiV1;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.services.RestaurantInventoryDomainService;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.utility.RestaurantTransactionConstraint;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.utility.RestaurantTransactionLogic;
@@ -16,14 +18,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.fromlabs.inventory.inventoryservice.config.AppConfig.TENANT_ID;
 import static com.fromlabs.inventory.inventoryservice.domains.DomainServiceConfiguration.DOMAIN_SERVICE_NAME_CONFIG;
 import static com.fromlabs.inventory.inventoryservice.domains.DomainServiceConfiguration.RESTAURANT_DOMAIN;
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * Domain controller for restaurant
@@ -86,5 +86,11 @@ public class RestaurantInventoryDomainController implements RestaurantDomainCont
                 .process(   () -> RestaurantTransactionLogic.suggestTaxon(tenantId, domainService))
                 .after(     () -> RestaurantTransactionConstraint.checkConstraintAfterSuggest(domainService))
                 .build().run();
+    }
+
+    @PostMapping("confirm")
+    public ResponseEntity<?> confirmSuggest(
+            @RequestBody SuggestResponse request, @RequestParam int quantity) {
+        return ok(this.domainService.confirmOnSuggestion(request, quantity));
     }
 }

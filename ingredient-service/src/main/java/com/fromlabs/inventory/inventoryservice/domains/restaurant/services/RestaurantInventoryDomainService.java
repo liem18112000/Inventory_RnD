@@ -6,6 +6,7 @@ package com.fromlabs.inventory.inventoryservice.domains.restaurant.services;
 
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 
@@ -99,5 +100,13 @@ public interface RestaurantInventoryDomainService {
             int                         minQuantitySuggest,
             List<RecipeDetailDto>       details
     );
+
+    /**
+     * Confirm on suggestion
+     * @param request SuggestResponse
+     * @param quantity Quantity
+     * @return SuggestResponse
+     */
+    ConfirmSuggestion confirmOnSuggestion(SuggestResponse request, int quantity);
 
 }

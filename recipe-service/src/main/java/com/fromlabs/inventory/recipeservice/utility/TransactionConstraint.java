@@ -10,6 +10,8 @@ import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.hasCode;
 import static com.fromlabs.inventory.recipeservice.recipe.specification.RecipeSpecification.hasName;
 import static java.util.Objects.isNull;
@@ -82,19 +84,21 @@ public class TransactionConstraint {
         // Check pre-condition
         assert nonNull(service);
 
-        final boolean result = buildConstraintWrapperCheckRecipeExistByNameOrCode(request.getName(), request.getCode(), service)
+        final boolean result = buildConstraintWrapperCheckRecipeExistByNameOrCode(
+                request.getTenantId(), request.getName(), request.getCode(), service)
                 && buildConstraintWrapperIsRecipeParentExistByIDOrNullParentId(request.getParentId(), service);
         return logWrapper( result, "checkConstrainsBeforeSaveRecipe: {}");
     }
 
     public boolean buildConstraintWrapperCheckRecipeExistByNameOrCode(
+            Long            tenantId,
             String          name,
             String          code,
             RecipeService   service
     ) {
         return ConstraintWrapper.builder()
                 .name("Check constrain recipe is not duplicate by name or code")
-                .check(() -> service.getAll(where(hasName(name)).or(hasCode(code))).isEmpty())
+                .check(() -> Objects.isNull(service.getByCode(code)) && Objects.isNull(service.getByName(tenantId, name)))
                 .exception(new ConstraintViolateException("Check constrain recipe is duplicate by name or code"))
                 .build().constraintCheck();
     }

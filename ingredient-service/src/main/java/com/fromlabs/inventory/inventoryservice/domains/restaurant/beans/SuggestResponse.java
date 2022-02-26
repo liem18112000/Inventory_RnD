@@ -22,8 +22,6 @@ import java.util.List;
  * <h2>Properties</h2>
  * <p>Required properties which show the result are : </p>
  * <ul>
- *     <li>Product ID : suggested product's id</li>
- *     <li>Product Name : suggested product's name</li>
  *     <li>RecipeDto : Data Transfer Object of recipe child (children of a recipe group)</li>
  *     <li>Details : Collection of recipe details</li>
  *     <li>TaxonQuantity : the quantity (a whole number) of suggested product</li>
@@ -36,16 +34,7 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SuggestResponse {
-
-    // TODO: Should referenced the Product DTO
-    private Long productId;
-    private String productName;
-
     private RecipeDto recipe;
     private List<RecipeDetailDto> details;
     private int taxonQuantity;
-
-    // TODO: Reconsider the expired mechanism in somewhere else
-    private String expiredTime;
-    private boolean confirmed;
 }

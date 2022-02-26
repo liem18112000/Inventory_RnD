@@ -9,19 +9,26 @@ import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailD
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
 import com.fromlabs.inventory.inventoryservice.common.dto.BaseDto;
 import com.fromlabs.inventory.inventoryservice.domains.AbstractDomainService;
-import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestExpireDuration;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.IngredientSuggestion;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
+import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
+import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -220,7 +227,62 @@ public class RestaurantInventoryDomainServiceImpl
         return minQuantitySuggest;
     }
 
+    //<editor-fold desc="Confirm suggestion">
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    public ConfirmSuggestion confirmOnSuggestion(
+            @NotNull final SuggestResponse request, final int quantity) {
+
+        final int taxonQuantity = request.getTaxonQuantity();
+        if (quantity > taxonQuantity) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Taxon quantity is less than confirm quantity");
+        }
+
+        final var itemMaps = request
+                .getDetails().stream().collect(Collectors.toUnmodifiableMap(
+                        detail -> detail.getIngredient().getCode(),
+                        detail -> detail.getQuantity() * quantity));
+        var remainItemMap = new ArrayList<IngredientSuggestion>();
+        var suggestItemMap = new ArrayList<IngredientSuggestion>();
+        itemMaps.forEach((ingredientCode, ingredientQuantity) -> {
+            final var ingredient = this.ingredientService.getByCode(ingredientCode);
+            final var items = this.itemService.getAllByIngredient(
+                    ingredient.getClientId(), ingredient);
+            final var itemSize = items.size();
+            final var suggestionSize = ingredientQuantity.intValue();
+            if (itemSize < suggestionSize) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Ingredient item is required more than the inventory contains");
+            }
+            final var deletedItems = items.subList(0, ingredientQuantity.intValue());
+            this.itemService.deleteAll(deletedItems);
+            final var ingredientDto = IngredientMapper.toDto(
+                    this.ingredientService.getByCode(ingredientCode));
+            remainItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
+                    .quantity(itemSize - suggestionSize).build());
+            suggestItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
+                    .quantity(suggestionSize).build());
+        });
+
+        return ConfirmSuggestion.builder()
+                .ingredientRemain(remainItemMap)
+                .ingredientSuggestions(suggestItemMap)
+                // TODO: Add status when low stock
+                .lowStockAlert(false)
+                .confirmSuggestion(true)
+                .taxonQuantity(taxonQuantity)
+                .build();
+    }
+
     //</editor-fold>
+
+    //</editor-fold>
+
+
 
     //<editor-fold desc="UTILITIES">
 
@@ -300,8 +362,6 @@ public class RestaurantInventoryDomainServiceImpl
                 .recipe(recipe)
                 .taxonQuantity(minQuantitySuggest)
                 .details(details)
-                .expiredTime(SuggestExpireDuration.SHORT_EXPIRATION.toString())
-                .confirmed(false)
                 .build();
     }
 
