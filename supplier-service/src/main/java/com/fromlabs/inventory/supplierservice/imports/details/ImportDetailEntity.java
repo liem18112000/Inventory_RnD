@@ -43,11 +43,22 @@ public class ImportDetailEntity extends ImportReferencedMultiEntity {
      * @param request ImportRequest
      * @return ImportEntity
      */
-    public ImportDetailEntity update(@NotNull final ImportDetailRequest request) {
+    public ImportDetailEntity updateBasicInformation(
+            @NotNull final ImportDetailRequest request) {
         this.setName(request.getName());
         this.setDescription(request.getDescription());
         this.setActive(request.isActive());
         this.setUpdatedAt(Instant.now().toString());
+        return this;
+    }
+
+    public ImportDetailEntity incrementQuantity(final int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity is negative: "
+                    .concat(String.valueOf(quantity)));
+        }
+        this.setQuantity(this.getQuantity() == null ?
+                quantity : this.getQuantity() + quantity);
         return this;
     }
 

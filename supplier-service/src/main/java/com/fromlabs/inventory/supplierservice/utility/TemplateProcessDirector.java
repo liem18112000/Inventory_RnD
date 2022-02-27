@@ -612,7 +612,7 @@ public class TemplateProcessDirector {
                 .bootstrap( () -> bootstrapId(id, request))
                 .validate(  () -> validateImportDetailRequest(request))
                 .before(    () -> checkConstraintsBeforeUpdateBasicInformationImportDetail(request, importDetailService))
-                .process(   () -> updateImportDetail(request, importDetailService, ingredientClient))
+                .process(   () -> updateImportDetailInformation(request, importDetailService, ingredientClient))
                 .build();
     }
 

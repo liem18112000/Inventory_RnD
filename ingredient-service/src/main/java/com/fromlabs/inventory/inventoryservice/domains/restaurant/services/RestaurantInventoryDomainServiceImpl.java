@@ -13,7 +13,6 @@ import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmS
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.IngredientSuggestion;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
-import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
@@ -26,11 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -227,6 +227,8 @@ public class RestaurantInventoryDomainServiceImpl
         return minQuantitySuggest;
     }
 
+    //</editor-fold>
+
     //<editor-fold desc="Confirm suggestion">
 
     /**
@@ -248,25 +250,8 @@ public class RestaurantInventoryDomainServiceImpl
                         detail -> detail.getQuantity() * quantity));
         var remainItemMap = new ArrayList<IngredientSuggestion>();
         var suggestItemMap = new ArrayList<IngredientSuggestion>();
-        itemMaps.forEach((ingredientCode, ingredientQuantity) -> {
-            final var ingredient = this.ingredientService.getByCode(ingredientCode);
-            final var items = this.itemService.getAllByIngredient(
-                    ingredient.getClientId(), ingredient);
-            final var itemSize = items.size();
-            final var suggestionSize = ingredientQuantity.intValue();
-            if (itemSize < suggestionSize) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Ingredient item is required more than the inventory contains");
-            }
-            final var deletedItems = items.subList(0, ingredientQuantity.intValue());
-            this.itemService.deleteAll(deletedItems);
-            final var ingredientDto = IngredientMapper.toDto(
-                    this.ingredientService.getByCode(ingredientCode));
-            remainItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
-                    .quantity(itemSize - suggestionSize).build());
-            suggestItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
-                    .quantity(suggestionSize).build());
-        });
+        itemMaps.forEach((ingredientCode, ingredientQuantity) ->
+                useItemsBaseOnConfirmTaxon(remainItemMap, suggestItemMap, ingredientCode, ingredientQuantity));
 
         return ConfirmSuggestion.builder()
                 .ingredientRemain(remainItemMap)
@@ -278,11 +263,37 @@ public class RestaurantInventoryDomainServiceImpl
                 .build();
     }
 
-    //</editor-fold>
+    @Transactional
+    protected void useItemsBaseOnConfirmTaxon(
+            @NotNull List<IngredientSuggestion> remainItemMap,
+            @NotNull List<IngredientSuggestion> suggestItemMap,
+            final @NotNull @NotEmpty String ingredientCode,
+            final @NotNull Float ingredientQuantity) {
+        final var ingredient = this.ingredientService.getByCode(ingredientCode);
+        if (Objects.isNull(ingredient)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format("Ingredient item is not found by code '%s'", ingredientCode));
+        }
+
+        final var items = this.itemService.getAllByIngredient(
+                ingredient.getClientId(), ingredient);
+        final var itemSize = items.size();
+        final var suggestionSize = ingredientQuantity.intValue();
+        if (itemSize < suggestionSize) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Ingredient item is required more than the inventory contains");
+        }
+        final var deletedItems = items.subList(0, ingredientQuantity.intValue());
+        this.itemService.deleteAll(deletedItems);
+        final var ingredientDto = IngredientMapper.toDto(
+                this.ingredientService.getByCode(ingredientCode));
+        remainItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
+                .quantity(itemSize - suggestionSize).build());
+        suggestItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
+                .quantity(suggestionSize).build());
+    }
 
     //</editor-fold>
-
-
 
     //<editor-fold desc="UTILITIES">
 

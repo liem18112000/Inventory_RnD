@@ -6,6 +6,7 @@ import com.fromlabs.inventory.supplierservice.config.ApiV1;
 import com.fromlabs.inventory.supplierservice.imports.ImportEntity;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.dto.ImportDto;
+import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailEntity;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.dto.ImportDetailDto;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.supplierservice.imports.details.specification.ImportDetailSpecification.hasImport;
@@ -34,6 +36,7 @@ public class EndpointImpl implements Endpoint {
     private final ImportDetailService importDetailService;
     private final IngredientClient ingredientClient;
     private final ProvidableMaterialService materialService;
+    private final SupplierService supplierService;
     public static final String SERVICE_PATH = "/endpoint/supplier/" + ApiV1.URI_API + "/";
 
     public EndpointImpl(
@@ -46,6 +49,7 @@ public class EndpointImpl implements Endpoint {
         this.importDetailService = importDetailService;
         this.ingredientClient = ingredientClient;
         this.materialService = materialService;
+        this.supplierService = supplierService;
     }
 
     /**
@@ -82,13 +86,25 @@ public class EndpointImpl implements Endpoint {
             return (ImportDetailDto) TransactionLogic.saveImportDetail(request, importService,
                     importDetailService, ingredientClient).getBody();
         }
-        if (details.size() > 1) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        request.setId(details.get(0).getId());
-        request.setQuantity(request.getQuantity() + details.get(0).getQuantity());
-        return (ImportDetailDto) TransactionLogic.updateImportDetail(request,
+        this.validateUpdateImportDetailQuantity(details);
+        return (ImportDetailDto) TransactionLogic.incrementImportDetailQuantity(
+                details.get(0).getId(), details.get(0).getQuantity().intValue(),
                 importDetailService, ingredientClient).getBody();
+    }
+
+    private void validateUpdateImportDetailQuantity(List<ImportDetailEntity> details) {
+        if (details.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "There are more than 1 import detail with import and ingredient");
+        }
+        if (Objects.isNull(details.get(0).getId())) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Import details id is null");
+        }
+        if (Objects.isNull(details.get(0).getQuantity())) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Import detail quantity is null");
+        }
     }
 
     @RequestMapping(value = "import/{importId:\\d+}/ingredient/{ingredientId:\\d+}",

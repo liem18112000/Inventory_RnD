@@ -700,7 +700,7 @@ public class TransactionLogic {
      * @param ingredientClient IngredientClient
      * @return ResponseEntity
      */
-    public ResponseEntity<?> updateImportDetail(
+    public ResponseEntity<?> updateImportDetailInformation(
             @NotNull final ImportDetailRequest request,
             @NotNull final ImportDetailService importDetailService,
             @NotNull final IngredientClient ingredientClient
@@ -711,7 +711,32 @@ public class TransactionLogic {
 
         // Build entity for update
         final var entity = importDetailService
-                .getById(id).update(request);
+                .getById(id).updateBasicInformation(request);
+
+        // Update entity and convent result to DTO
+        final var updatedEntity = importDetailService.save(entity);
+        final var dto = ImportDetailMapper.toDto(updatedEntity, ingredientClient);
+
+        return ok(dto);
+    }
+
+    /**
+     * Update import detail by request
+     * @param id Entity id
+     * @param incrementQuantity increment quantity
+     * @param importDetailService ImportDetailService
+     * @param ingredientClient IngredientClient
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> incrementImportDetailQuantity(
+            @NotNull final Long id,
+            @NotNull final Integer incrementQuantity,
+            @NotNull final ImportDetailService importDetailService,
+            @NotNull final IngredientClient ingredientClient
+    ) {
+        // Build entity for update
+        final var entity = importDetailService
+                .getById(id).incrementQuantity(incrementQuantity);
 
         // Update entity and convent result to DTO
         final var updatedEntity = importDetailService.save(entity);
