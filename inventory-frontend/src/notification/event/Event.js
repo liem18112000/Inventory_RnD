@@ -14,7 +14,6 @@ import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
 import { EventForm } from './EventForm';
-import { confirmDialog } from 'primereact/confirmdialog';
 import { EventTable } from './EventTable';
 
 export class Event extends Component {

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
-import classNames from 'classnames';
 import { Toast } from 'primereact/toast';
 import { sleep } from "../../core/utility/ComponentUtility";
 import { NotificationService } from '../../service/NotificationService';

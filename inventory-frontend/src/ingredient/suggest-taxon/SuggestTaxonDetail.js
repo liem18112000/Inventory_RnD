@@ -85,12 +85,11 @@ export class SuggestTaxonForm extends Component {
                 onHide={() => this.onHide('displayResponsive')}
                 breakpoints={{ '768px': '55%' }}
                 style={{ width: '25vw', overflowY: 'hidden', textAlign: 'center' }}
-                onHide={() => this.onHide('displayResponsive')}
                 footer={this.renderFooter('displayResponsive')}
             >
                 {data && <div className="taxon-card">
                     <img src={this.state.data.image} style={{ width: '90%', align: 'center' }}
-                        onError={(e) => e.target.src = getMediaSource()} />
+                        onError={(e) => e.target.src = getMediaSource()} alt="" />
                     <div className="">
 
                         <div className="taxon-name">{data.recipe.name}</div>
