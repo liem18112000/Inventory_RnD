@@ -88,7 +88,7 @@ public class EndpointImpl implements Endpoint {
         }
         this.validateUpdateImportDetailQuantity(details);
         return (ImportDetailDto) TransactionLogic.incrementImportDetailQuantity(
-                details.get(0).getId(), details.get(0).getQuantity().intValue(),
+                details.get(0).getId(), request.getQuantity(),
                 importDetailService, ingredientClient).getBody();
     }
 

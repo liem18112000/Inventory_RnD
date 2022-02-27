@@ -20,7 +20,7 @@ public class ImportDetailEntityFactory extends BaseEntityWithCreateAtAndLongIDFa
      */
     public ImportDetailEntity create() {
         var entity = (ImportDetailEntity) super.create();
-        entity.setQuantity(DEFAULT_NUMBER_PROPERTY.floatValue());
+        entity.setQuantity(DEFAULT_NUMBER_PROPERTY.intValue());
         entity.setIngredientId(2L);
         return entity;
     }
@@ -31,7 +31,7 @@ public class ImportDetailEntityFactory extends BaseEntityWithCreateAtAndLongIDFa
      */
     public ImportDetailEntity createRandom() {
         var entity = (ImportDetailEntity) super.createRandom();
-        entity.setQuantity(RANDOM_NUMBER_PROPERTY.floatValue());
+        entity.setQuantity(RANDOM_NUMBER_PROPERTY.intValue());
         entity.setIngredientId(RANDOM_NUMBER_PROPERTY);
         return entity;
     }

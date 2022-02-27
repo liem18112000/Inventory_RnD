@@ -36,7 +36,7 @@ public class ImportDetailEntity extends ImportReferencedMultiEntity {
 
     @Min(value = 0)
     @Column(name="quantity")
-    private Float quantity;
+    private Integer quantity;
 
     /**
      * Update entity by request
