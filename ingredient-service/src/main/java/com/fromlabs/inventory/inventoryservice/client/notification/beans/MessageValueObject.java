@@ -1,6 +1,8 @@
 package com.fromlabs.inventory.inventoryservice.client.notification.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,9 +14,10 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor
+@Builder
 public class MessageValueObject implements Serializable {
-    private static final long serialVersionUID = 8648686753621439851L;
+    private static final long serialVersionUID = -2098924596464123323L;
 
     protected String subject;
 

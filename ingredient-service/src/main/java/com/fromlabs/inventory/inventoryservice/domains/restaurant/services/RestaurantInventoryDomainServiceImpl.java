@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fromlabs.inventory.inventoryservice.client.notification.NotificationClient;
 import com.fromlabs.inventory.inventoryservice.client.notification.beans.EventDTO;
+import com.fromlabs.inventory.inventoryservice.client.notification.beans.MessageValueObject;
+import com.fromlabs.inventory.inventoryservice.client.notification.beans.NotificationDTO;
 import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
@@ -18,6 +20,7 @@ import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmS
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.IngredientSuggestion;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.LowStockDetails;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.config.NotificationConfiguration;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
@@ -25,6 +28,7 @@ import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +45,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.floor;
@@ -51,6 +56,9 @@ import static java.util.Objects.nonNull;
 @Transactional(rollbackFor = {Throwable.class, Exception.class})
 public class RestaurantInventoryDomainServiceImpl
         extends AbstractDomainService implements RestaurantInventoryDomainService {
+
+    @Autowired
+    private NotificationConfiguration configuration;
 
     //<editor-fold desc="SETUP">
 
@@ -243,7 +251,7 @@ public class RestaurantInventoryDomainServiceImpl
 
     //</editor-fold>
 
-    //<editor-fold desc="Confirm suggestion">
+    //<editor-fold desc="CONFIRM TAXON">
 
     /**
      * {@inheritDoc}
@@ -301,17 +309,74 @@ public class RestaurantInventoryDomainServiceImpl
     private void notifyLowStockEvent(
             final @NotNull @NotEmpty List<LowStockDetails> eventItemMap)
             throws JsonProcessingException {
+
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         final String details = objectMapper.writeValueAsString(eventItemMap);
-        final EventDTO event = EventDTO.builder()
+        final EventDTO event = buildEvent(details);
+        final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
+        if (Objects.nonNull(pushedEvent)) {
+            final var notifications = Stream.of(this.configuration.getEmails())
+                    .map(email -> sendNotification(pushedEvent, email))
+                    .collect(Collectors.toList());
+            log.info("Sent notification : {}", notifications);
+        }
+        log.info("Event pushed : {}", pushedEvent);
+    }
+
+    private NotificationDTO sendNotification(
+            final @NotNull EventDTO pushedEvent,
+            final @NotNull String email) {
+        final var notification = buildNotification(pushedEvent, email);
+        final var savedNotification = this.notificationClient
+                .saveNotification(notification);
+        if (Objects.isNull(savedNotification)) {
+            log.error("Create notification failed: {}", notification);
+            return null;
+        }
+        final var readyNotification = this.notificationClient
+                .updateNotificationStatusToSending(savedNotification.getId());
+        if (Objects.isNull(readyNotification)) {
+            log.error("Update notification to sending mode failed");
+            return null;
+        }
+        final var sentNotification = this.notificationClient
+                .sendNotificationMessage(readyNotification.getId());
+        if (Objects.isNull(sentNotification)) {
+            log.error("Send notification failed");
+            return null;
+        }
+        return sentNotification;
+    }
+
+    private EventDTO buildEvent(String details) {
+        return EventDTO.builder()
                 .eventType("Ingredient item quantity is low")
                 .description(details)
                 .name("Low stock event on ".concat(LocalDateTime.now().toString()))
                 .occurAt(Instant.now().toString())
                 .build();
-        final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
-        log.info("Event pushed : {}", pushedEvent);
+    }
+
+    private NotificationDTO buildNotification(EventDTO pushedEvent, String email) {
+        return NotificationDTO.builder()
+                .name("Ingredient item run low at".concat(LocalDateTime.now().toString()))
+                .message(buildMessage(email))
+                .description("Create notification of low stock event")
+                .event(pushedEvent)
+                .type("email")
+                .createdAt(Instant.now().toString())
+                .build();
+    }
+
+    private MessageValueObject buildMessage(String email) {
+        return MessageValueObject.builder()
+                .subject("[Alert] Ingredient item run low")
+                .body("From ingredient activity, we found that there are some " +
+                        "ingredient are in low quantity")
+                .from("noreply@rim.com")
+                .to(email)
+                .build();
     }
 
     @Transactional
