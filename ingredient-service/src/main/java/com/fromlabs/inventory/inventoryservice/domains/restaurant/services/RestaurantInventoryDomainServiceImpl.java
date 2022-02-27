@@ -4,6 +4,11 @@
 
 package com.fromlabs.inventory.inventoryservice.domains.restaurant.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fromlabs.inventory.inventoryservice.client.notification.NotificationClient;
+import com.fromlabs.inventory.inventoryservice.client.notification.beans.EventDTO;
 import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
@@ -11,6 +16,7 @@ import com.fromlabs.inventory.inventoryservice.common.dto.BaseDto;
 import com.fromlabs.inventory.inventoryservice.domains.AbstractDomainService;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.IngredientSuggestion;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.LowStockDetails;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
@@ -27,6 +33,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +56,25 @@ public class RestaurantInventoryDomainServiceImpl
 
     protected final RecipeClient recipeClient;
 
+    protected final NotificationClient notificationClient;
+
     /**
      * Constructor
      * @param ingredientService IngredientService
      * @param inventoryService  InventoryService
      * @param itemService       ItemService
+     * @param notificationClient NotificationClient
      */
     public RestaurantInventoryDomainServiceImpl(
             IngredientService ingredientService,
             InventoryService inventoryService,
             ItemService itemService,
-            RecipeClient recipeClient) {
+            RecipeClient recipeClient,
+            NotificationClient notificationClient
+    ) {
         super(ingredientService, inventoryService, itemService);
         this.recipeClient = recipeClient;
+        this.notificationClient = notificationClient;
     }
 
     //</editor-fold>
@@ -237,36 +251,74 @@ public class RestaurantInventoryDomainServiceImpl
     @Transactional
     public ConfirmSuggestion confirmOnSuggestion(
             @NotNull final SuggestResponse request, final int quantity) {
-
-        final int taxonQuantity = request.getTaxonQuantity();
-        if (quantity > taxonQuantity) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Taxon quantity is less than confirm quantity");
+        try {
+            return processConfirmSuggestion(request, quantity);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return generateFailedConfirmResponse(quantity);
         }
+    }
 
+    private ConfirmSuggestion generateFailedConfirmResponse(final int quantity) {
+        return ConfirmSuggestion.builder()
+                .confirmSuggestion(false)
+                .taxonQuantity(quantity)
+                .build();
+    }
+
+    @Transactional
+    protected ConfirmSuggestion processConfirmSuggestion(SuggestResponse request, int quantity) {
         final var itemMaps = request
                 .getDetails().stream().collect(Collectors.toUnmodifiableMap(
                         detail -> detail.getIngredient().getCode(),
                         detail -> detail.getQuantity() * quantity));
         var remainItemMap = new ArrayList<IngredientSuggestion>();
         var suggestItemMap = new ArrayList<IngredientSuggestion>();
+        var eventItemMap = new ArrayList<LowStockDetails>();
         itemMaps.forEach((ingredientCode, ingredientQuantity) ->
-                useItemsBaseOnConfirmTaxon(remainItemMap, suggestItemMap, ingredientCode, ingredientQuantity));
-
+                useItemsBaseOnConfirmTaxon(remainItemMap, suggestItemMap,
+                        eventItemMap, ingredientCode, ingredientQuantity));
+        try {
+            if (!eventItemMap.isEmpty()) {
+                log.info("Event low stock is raised");
+                this.notifyLowStockEvent(eventItemMap);
+            } else {
+                log.info("There is no low stock ingredient item");
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            log.error("Low stock event push failed");
+        }
         return ConfirmSuggestion.builder()
                 .ingredientRemain(remainItemMap)
                 .ingredientSuggestions(suggestItemMap)
-                // TODO: Add status when low stock
-                .lowStockAlert(false)
+                .lowStockAlert(!eventItemMap.isEmpty())
                 .confirmSuggestion(true)
-                .taxonQuantity(taxonQuantity)
+                .taxonQuantity(quantity)
                 .build();
+    }
+
+    private void notifyLowStockEvent(
+            final @NotNull @NotEmpty List<LowStockDetails> eventItemMap)
+            throws JsonProcessingException {
+        var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        final String details = objectMapper.writeValueAsString(eventItemMap);
+        final EventDTO event = EventDTO.builder()
+                .eventType("Ingredient item quantity is low")
+                .description(details)
+                .name("Low stock event on ".concat(LocalDateTime.now().toString()))
+                .occurAt(Instant.now().toString())
+                .build();
+        final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
+        log.info("Event pushed : {}", pushedEvent);
     }
 
     @Transactional
     protected void useItemsBaseOnConfirmTaxon(
             @NotNull List<IngredientSuggestion> remainItemMap,
             @NotNull List<IngredientSuggestion> suggestItemMap,
+            @NotNull List<LowStockDetails> eventItemMap,
             final @NotNull @NotEmpty String ingredientCode,
             final @NotNull Float ingredientQuantity) {
         final var ingredient = this.ingredientService.getByCode(ingredientCode);
@@ -285,12 +337,35 @@ public class RestaurantInventoryDomainServiceImpl
         }
         final var deletedItems = items.subList(0, ingredientQuantity.intValue());
         this.itemService.deleteAll(deletedItems);
+
         final var ingredientDto = IngredientMapper.toDto(
                 this.ingredientService.getByCode(ingredientCode));
+        final var remainQuantity = itemSize - suggestionSize;
+
         remainItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
-                .quantity(itemSize - suggestionSize).build());
+                .quantity(remainQuantity).build());
         suggestItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
                 .quantity(suggestionSize).build());
+
+        final var config = this.ingredientService
+                .getConfig(ingredient.getClientId(), ingredient);
+        if (Objects.isNull(config)) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Ingredient config not found");
+        }
+        final var minimumQuantity = config.getMinimumQuantity();
+        if (Objects.isNull(minimumQuantity)) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Ingredient minimum is null");
+        }
+        if (remainQuantity < minimumQuantity) {
+            eventItemMap.add(LowStockDetails.builder()
+                    .currentQuantity((float) remainQuantity)
+                    .minQuantity(minimumQuantity)
+                    .ingredientCode(ingredientCode)
+                    .ingredientName(ingredient.getName())
+                    .build());
+        }
     }
 
     //</editor-fold>

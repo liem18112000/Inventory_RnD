@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.domains;
 
+import com.fromlabs.inventory.inventoryservice.client.notification.NotificationClient;
 import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.domains.fast.services.FastInventoryDomainService;
 import com.fromlabs.inventory.inventoryservice.domains.fast.services.FastInventoryDomainServiceImpl;
@@ -114,15 +115,16 @@ public class DomainServiceConfiguration {
             IngredientService ingredientService,
             InventoryService inventoryService,
             ItemService itemService,
-            RecipeClient recipeClient
+            RecipeClient recipeClient,
+            NotificationClient notificationClient
     ) {
         log.info("Domain service : {}", RestaurantInventoryDomainServiceImpl.class.getName());
         return new RestaurantInventoryDomainServiceImpl(
                 ingredientService,
                 inventoryService,
                 itemService,
-                recipeClient
-        );
+                recipeClient,
+                notificationClient);
     }
 
     /**
