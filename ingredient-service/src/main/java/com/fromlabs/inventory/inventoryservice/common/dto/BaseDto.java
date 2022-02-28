@@ -14,7 +14,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class BaseDto<ID extends Serializable> {
     protected ID id;
-    private Long clientId;
+    private Long tenantId;
     protected String name;
     protected String description;
     protected String updateAt;

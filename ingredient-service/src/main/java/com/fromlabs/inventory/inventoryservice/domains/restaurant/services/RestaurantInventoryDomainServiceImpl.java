@@ -289,7 +289,7 @@ public class RestaurantInventoryDomainServiceImpl
         try {
             if (!eventItemMap.isEmpty()) {
                 log.info("Event low stock is raised");
-                this.notifyLowStockEvent(eventItemMap);
+                this.notifyLowStockEvent(request.getRecipe().getTenantId(), eventItemMap);
             } else {
                 log.info("There is no low stock ingredient item");
             }
@@ -306,7 +306,7 @@ public class RestaurantInventoryDomainServiceImpl
                 .build();
     }
 
-    private void notifyLowStockEvent(
+    private void notifyLowStockEvent(final @NotNull Long tenantId,
             final @NotNull @NotEmpty List<LowStockDetails> eventItemMap)
             throws JsonProcessingException {
 
@@ -316,7 +316,8 @@ public class RestaurantInventoryDomainServiceImpl
         final EventDTO event = buildEvent(details);
         final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
         if (Objects.nonNull(pushedEvent)) {
-            final var notifications = Stream.of(this.configuration.getEmails())
+            final var notifications =
+                    this.configuration.getEmails(tenantId).stream()
                     .map(email -> sendNotification(pushedEvent, email))
                     .collect(Collectors.toList());
             log.info("Sent notification : {}", notifications);
