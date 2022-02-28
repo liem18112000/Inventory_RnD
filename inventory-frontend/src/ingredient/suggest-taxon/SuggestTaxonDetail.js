@@ -7,6 +7,7 @@ import { getMediaSource } from "../../service/MediaService";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { InputNumber } from 'primereact/inputnumber';
+import {sleep} from "../../core/utility/ComponentUtility";
 
 export class SuggestTaxonDetail extends Component {
 
@@ -79,34 +80,37 @@ export class SuggestTaxonDetail extends Component {
     }
 
     checkMinMax = (input) => {
-        if (input < 1 || input > this.state.data.taxonQuantity) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !(input < 1 || input > this.state.data.taxonQuantity);
     }
 
     confirmSuggestion() {
         if (!this.checkMinMax(this.state.confirmQuantity)) {
-            return () => this.toast.show({ severity: 'error', summary: 'Error Message', detail: 'Message Content', life: 1000 });
+            this.toast.show({ severity: 'error', summary: 'Invalid input', detail: 'Confirm quantity ' +
+                    'is either lower than ZERO or larger then max quantity', life: 1000 });
+        } else {
+            // Confirm Suggestion
+            this.toast.show({ severity: 'success', summary: 'Confirmed',
+                detail: `You have confirm ${this.state.confirmQuantity}`, life: 1000 });
+            sleep(500).then(() => {
+                this.onHide("displayResponsive")
+                this.setState({
+                    ...this.state, confirmQuantity: 1
+                })
+            })
         }
-        // Confirm Suggestion 
-        return () => this.toast.show({ severity: 'success', summary: 'Confirmed', detail: 'You have accepted', life: 1000 });
+
     }
 
-    confirmDelete(name) {
+    confirmDelete() {
         confirmDialog({
             message:
                 <InputNumber
                     inputId="integeronly"
-                    style={{ width: '215px' }}
+                    style={{ width: '15vw' }}
                     placeholder="Enter the number"
-                    // value={this.state.confirmQuantity}
-                    min="1"
-                    max={this.state.data.taxonQuantity}
+                    value={this.state.confirmQuantity}
                     showButtons
-                    // onValueChange={(e) => this.setState({ ...this.state, confirmQuantity: e.value })}
+                    onValueChange={(e) => this.setState({ ...this.state, confirmQuantity: e.value })}
                 />,
             header: 'Confirm the suggestion',
             acceptClassName: 'p-button-primary',
