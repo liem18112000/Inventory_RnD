@@ -9,7 +9,6 @@ import { Toast } from 'primereact/toast';
 import { SupplierService } from '../../service/SupplierService';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
-import { InputNumber } from 'primereact/inputnumber';
 /**
  * Recipe form for save or update recipe form information
  */
@@ -128,7 +127,7 @@ export class SupplierMaterialForm extends Component {
         return field !== null;
     }
     checkMinMax = (min, max) => {
-       return min <= max
+        return min <= max
     }
     /**
      * Check the submit validation is valid
@@ -306,7 +305,7 @@ export class SupplierMaterialForm extends Component {
                             min="1"
                             max="1000"
                             onChange={(e) => this.setState({ data: { ...this.state.data, minimumQuantity: e.target.value } })} />
-                             <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.minimumQuantity}</div>
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.minimumQuantity}</div>
                     </div>
                     <div className="p-col-12">
                         <label>* Maximum Quatity</label>
@@ -317,7 +316,7 @@ export class SupplierMaterialForm extends Component {
                             min="1"
                             max="1000"
                             onChange={(e) => this.setState({ data: { ...this.state.data, maximumQuantity: e.target.value } })} />
-                             <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.maximumQuantity}</div>
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.maximumQuantity}</div>
                     </div>
                     <div className="p-col-12">
                         <label>* Ingredient Name </label>

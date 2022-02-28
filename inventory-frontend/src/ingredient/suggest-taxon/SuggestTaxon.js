@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import { ProductService } from '../../service/ProductService';
 import { IngredientService } from '../../service/IngredientService'
 import '../../assets/styles/DataViewDemo.css';
-import { SuggestTaxonForm } from './SuggestTaxonDetail';
+import { SuggestTaxonDetail } from './SuggestTaxonDetail';
 import { getMediaSource } from '../../service/MediaService';
 
 export class SuggestTaxon extends Component {
@@ -20,6 +20,7 @@ export class SuggestTaxon extends Component {
             sortOrder: null,
             sortField: null,
             isMock: false,
+            loading: true,
         };
 
         this.productService = new ProductService();
@@ -29,6 +30,7 @@ export class SuggestTaxon extends Component {
     }
 
     componentDidMount() {
+        this.setState({ loading: true });
         this.suggestTaxon()
     }
 
@@ -39,6 +41,7 @@ export class SuggestTaxon extends Component {
             .then(data =>
                 this.setState({
                     ...this.state,
+                    loading: false,
                     data: data.map(elem => {
                         return {
                             ...elem,
@@ -137,8 +140,8 @@ export class SuggestTaxon extends Component {
         return (
             <div className="dataview-demo">
                 <div className="card">
-                    <SuggestTaxonForm ref={el => this.form = el} />
-                    <DataView value={this.state.data} layout={this.state.layout} header={header}
+                    <SuggestTaxonDetail ref={el => this.form = el} />
+                    <DataView value={this.state.data} layout={this.state.layout} header={header} loading={this.state.loading}
                         itemTemplate={this.itemTemplate} paginator rows={12}
                         sortOrder={this.state.sortOrder} sortField={this.state.sortField} />
                 </div>

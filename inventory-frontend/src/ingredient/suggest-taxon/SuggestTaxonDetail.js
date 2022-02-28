@@ -6,9 +6,9 @@ import '../../assets/styles/CardDemo.css';
 import { getMediaSource } from "../../service/MediaService";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
 
-export class SuggestTaxonForm extends Component {
+export class SuggestTaxonDetail extends Component {
 
     /**
      * Set default data state
@@ -17,10 +17,11 @@ export class SuggestTaxonForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            confirmQuantity: 1,
             isMock: false,
             errors: {},
             displayResponsive: false,
-            position: 'center'
+            position: 'center',
         }
         this.productService = new ProductService();
         this.onClick = this.onClick.bind(this);
@@ -77,21 +78,39 @@ export class SuggestTaxonForm extends Component {
         );
     }
 
+    checkMinMax = (input) => {
+        if (input < 1 || input > this.state.data.taxonQuantity) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    confirmSuggestion() {
+        if (!this.checkMinMax(this.state.confirmQuantity)) {
+            return () => this.toast.show({ severity: 'error', summary: 'Error Message', detail: 'Message Content', life: 1000 });
+        }
+        // Confirm Suggestion 
+        return () => this.toast.show({ severity: 'success', summary: 'Confirmed', detail: 'You have accepted', life: 1000 });
+    }
+
     confirmDelete(name) {
         confirmDialog({
             message:
-                <InputText
-                    style={{ width: '215px'}}
+                <InputNumber
+                    inputId="integeronly"
+                    style={{ width: '215px' }}
                     placeholder="Enter the number"
-                    value={this.state.data.quantity}
-                    type="number"
+                    // value={this.state.confirmQuantity}
                     min="1"
                     max={this.state.data.taxonQuantity}
-                    onChange={(e) => this.setState({ data: { ...this.state.data, quantity: e.target.value } })}
+                    showButtons
+                    // onValueChange={(e) => this.setState({ ...this.state, confirmQuantity: e.value })}
                 />,
             header: 'Confirm the suggestion',
-            acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 }),
+            acceptClassName: 'p-button-primary',
+            accept: () => this.confirmSuggestion(),
             reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
         });
     }
