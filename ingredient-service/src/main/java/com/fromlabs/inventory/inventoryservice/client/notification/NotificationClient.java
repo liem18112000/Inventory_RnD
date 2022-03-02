@@ -21,18 +21,6 @@ import java.util.Set;
 @RequestMapping(value = "endpoint/notification/" + ApiV1.URI_API)
 public interface NotificationClient {
 
-    @GetMapping("event/types")
-    Set<SimpleDto> getEventTypes();
-
-    @GetMapping("event/{id:\\d+}")
-    EventDTO getEventById(@PathVariable Long id);
-
-    @GetMapping("statuses")
-    Set<SimpleDto> getNotificationStatuses();
-
-    @GetMapping("types")
-    Set<SimpleDto> getNotificationTypes();
-
     @GetMapping("{id:\\d+}")
     NotificationDTO getNotificationById(@PathVariable Long id);
 
@@ -44,5 +32,11 @@ public interface NotificationClient {
 
     @PostMapping
     NotificationDTO saveNotification(@RequestBody NotificationDTO request);
+
+    @PostMapping("event")
+    EventDTO saveEvent(@RequestBody EventDTO request);
+
+    @GetMapping("event/{id:\\d+}")
+    EventDTO getEventById(@PathVariable Long id);
 
 }

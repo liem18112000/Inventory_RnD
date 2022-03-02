@@ -25,5 +25,5 @@ public class SimpleDto {
     }
     private Object value;
     private Object label;
-    private List<SimpleDto> options = null;
+    private List<SimpleDto> options;
 }

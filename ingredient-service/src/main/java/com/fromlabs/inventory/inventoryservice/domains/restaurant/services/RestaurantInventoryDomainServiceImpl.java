@@ -4,6 +4,13 @@
 
 package com.fromlabs.inventory.inventoryservice.domains.restaurant.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fromlabs.inventory.inventoryservice.client.notification.NotificationClient;
+import com.fromlabs.inventory.inventoryservice.client.notification.beans.EventDTO;
+import com.fromlabs.inventory.inventoryservice.client.notification.beans.MessageValueObject;
+import com.fromlabs.inventory.inventoryservice.client.notification.beans.NotificationDTO;
 import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
@@ -11,7 +18,9 @@ import com.fromlabs.inventory.inventoryservice.common.dto.BaseDto;
 import com.fromlabs.inventory.inventoryservice.domains.AbstractDomainService;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.IngredientSuggestion;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.LowStockDetails;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.config.NotificationConfiguration;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
@@ -19,6 +28,7 @@ import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +37,15 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.floor;
@@ -44,23 +57,32 @@ import static java.util.Objects.nonNull;
 public class RestaurantInventoryDomainServiceImpl
         extends AbstractDomainService implements RestaurantInventoryDomainService {
 
+    @Autowired
+    private NotificationConfiguration configuration;
+
     //<editor-fold desc="SETUP">
 
     protected final RecipeClient recipeClient;
+
+    protected final NotificationClient notificationClient;
 
     /**
      * Constructor
      * @param ingredientService IngredientService
      * @param inventoryService  InventoryService
      * @param itemService       ItemService
+     * @param notificationClient NotificationClient
      */
     public RestaurantInventoryDomainServiceImpl(
             IngredientService ingredientService,
             InventoryService inventoryService,
             ItemService itemService,
-            RecipeClient recipeClient) {
+            RecipeClient recipeClient,
+            NotificationClient notificationClient
+    ) {
         super(ingredientService, inventoryService, itemService);
         this.recipeClient = recipeClient;
+        this.notificationClient = notificationClient;
     }
 
     //</editor-fold>
@@ -229,7 +251,7 @@ public class RestaurantInventoryDomainServiceImpl
 
     //</editor-fold>
 
-    //<editor-fold desc="Confirm suggestion">
+    //<editor-fold desc="CONFIRM TAXON">
 
     /**
      * {@inheritDoc}
@@ -237,29 +259,124 @@ public class RestaurantInventoryDomainServiceImpl
     @Transactional
     public ConfirmSuggestion confirmOnSuggestion(
             @NotNull final SuggestResponse request, final int quantity) {
-
-        final int taxonQuantity = request.getTaxonQuantity();
-        if (quantity > taxonQuantity) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Taxon quantity is less than confirm quantity");
+        try {
+            return processConfirmSuggestion(request, quantity);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return generateFailedConfirmResponse(quantity);
         }
+    }
 
+    private ConfirmSuggestion generateFailedConfirmResponse(final int quantity) {
+        return ConfirmSuggestion.builder()
+                .confirmSuggestion(false)
+                .taxonQuantity(quantity)
+                .build();
+    }
+
+    @Transactional
+    protected ConfirmSuggestion processConfirmSuggestion(SuggestResponse request, int quantity) {
         final var itemMaps = request
                 .getDetails().stream().collect(Collectors.toUnmodifiableMap(
                         detail -> detail.getIngredient().getCode(),
                         detail -> detail.getQuantity() * quantity));
         var remainItemMap = new ArrayList<IngredientSuggestion>();
         var suggestItemMap = new ArrayList<IngredientSuggestion>();
+        var eventItemMap = new ArrayList<LowStockDetails>();
         itemMaps.forEach((ingredientCode, ingredientQuantity) ->
-                useItemsBaseOnConfirmTaxon(remainItemMap, suggestItemMap, ingredientCode, ingredientQuantity));
-
+                useItemsBaseOnConfirmTaxon(remainItemMap, suggestItemMap,
+                        eventItemMap, ingredientCode, ingredientQuantity));
+        try {
+            if (!eventItemMap.isEmpty()) {
+                log.info("Event low stock is raised");
+                this.notifyLowStockEvent(request.getRecipe().getTenantId(), eventItemMap);
+            } else {
+                log.info("There is no low stock ingredient item");
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            log.error("Low stock event push failed");
+        }
         return ConfirmSuggestion.builder()
                 .ingredientRemain(remainItemMap)
                 .ingredientSuggestions(suggestItemMap)
-                // TODO: Add status when low stock
-                .lowStockAlert(false)
+                .lowStockAlert(!eventItemMap.isEmpty())
                 .confirmSuggestion(true)
-                .taxonQuantity(taxonQuantity)
+                .taxonQuantity(quantity)
+                .build();
+    }
+
+    private void notifyLowStockEvent(final @NotNull Long tenantId,
+            final @NotNull @NotEmpty List<LowStockDetails> eventItemMap)
+            throws JsonProcessingException {
+
+        var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        final String details = objectMapper.writeValueAsString(eventItemMap);
+        final EventDTO event = buildEvent(details);
+        final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
+        if (Objects.nonNull(pushedEvent)) {
+            final var notifications =
+                    this.configuration.getEmails(tenantId).stream()
+                    .map(email -> sendNotification(pushedEvent, email))
+                    .collect(Collectors.toList());
+            log.info("Sent notification : {}", notifications);
+        }
+        log.info("Event pushed : {}", pushedEvent);
+    }
+
+    private NotificationDTO sendNotification(
+            final @NotNull EventDTO pushedEvent,
+            final @NotNull String email) {
+        final var notification = buildNotification(pushedEvent, email);
+        final var savedNotification = this.notificationClient
+                .saveNotification(notification);
+        if (Objects.isNull(savedNotification)) {
+            log.error("Create notification failed: {}", notification);
+            return null;
+        }
+        final var readyNotification = this.notificationClient
+                .updateNotificationStatusToSending(savedNotification.getId());
+        if (Objects.isNull(readyNotification)) {
+            log.error("Update notification to sending mode failed");
+            return null;
+        }
+        final var sentNotification = this.notificationClient
+                .sendNotificationMessage(readyNotification.getId());
+        if (Objects.isNull(sentNotification)) {
+            log.error("Send notification failed");
+            return null;
+        }
+        return sentNotification;
+    }
+
+    private EventDTO buildEvent(String details) {
+        return EventDTO.builder()
+                .eventType("Ingredient item quantity is low")
+                .description(details)
+                .name("Low stock event on ".concat(LocalDateTime.now().toString()))
+                .occurAt(Instant.now().toString())
+                .build();
+    }
+
+    private NotificationDTO buildNotification(EventDTO pushedEvent, String email) {
+        return NotificationDTO.builder()
+                .name("Ingredient item run low at".concat(LocalDateTime.now().toString()))
+                .message(buildMessage(email))
+                .description("Create notification of low stock event")
+                .event(pushedEvent)
+                .type("email")
+                .createdAt(Instant.now().toString())
+                .build();
+    }
+
+    private MessageValueObject buildMessage(String email) {
+        return MessageValueObject.builder()
+                .subject("[Alert] Ingredient item run low")
+                .body("From ingredient activity, we found that there are some " +
+                        "ingredient are in low quantity")
+                .from("noreply@rim.com")
+                .to(email)
                 .build();
     }
 
@@ -267,6 +384,7 @@ public class RestaurantInventoryDomainServiceImpl
     protected void useItemsBaseOnConfirmTaxon(
             @NotNull List<IngredientSuggestion> remainItemMap,
             @NotNull List<IngredientSuggestion> suggestItemMap,
+            @NotNull List<LowStockDetails> eventItemMap,
             final @NotNull @NotEmpty String ingredientCode,
             final @NotNull Float ingredientQuantity) {
         final var ingredient = this.ingredientService.getByCode(ingredientCode);
@@ -285,12 +403,35 @@ public class RestaurantInventoryDomainServiceImpl
         }
         final var deletedItems = items.subList(0, ingredientQuantity.intValue());
         this.itemService.deleteAll(deletedItems);
+
         final var ingredientDto = IngredientMapper.toDto(
                 this.ingredientService.getByCode(ingredientCode));
+        final var remainQuantity = itemSize - suggestionSize;
+
         remainItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
-                .quantity(itemSize - suggestionSize).build());
+                .quantity(remainQuantity).build());
         suggestItemMap.add(IngredientSuggestion.builder().ingredient(ingredientDto)
                 .quantity(suggestionSize).build());
+
+        final var config = this.ingredientService
+                .getConfig(ingredient.getClientId(), ingredient);
+        if (Objects.isNull(config)) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Ingredient config not found");
+        }
+        final var minimumQuantity = config.getMinimumQuantity();
+        if (Objects.isNull(minimumQuantity)) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Ingredient minimum is null");
+        }
+        if (remainQuantity < minimumQuantity) {
+            eventItemMap.add(LowStockDetails.builder()
+                    .currentQuantity((float) remainQuantity)
+                    .minQuantity(minimumQuantity)
+                    .ingredientCode(ingredientCode)
+                    .ingredientName(ingredient.getName())
+                    .build());
+        }
     }
 
     //</editor-fold>

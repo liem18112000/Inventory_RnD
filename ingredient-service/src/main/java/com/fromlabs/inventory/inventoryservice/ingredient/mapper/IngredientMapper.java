@@ -15,6 +15,7 @@ import javax.validation.constraints.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.inventoryservice.common.factory.FactoryCreateType.*;
@@ -103,8 +104,11 @@ public class IngredientMapper {
      * @return          IngredientDto
      */
     public IngredientDto toDto(
-            @NotNull final IngredientEntity entity
+            final IngredientEntity entity
     ){
+        if (Objects.isNull(entity)) {
+            return null;
+        }
         var dto = IngredientDto.builder()
                 .id(entity.getId())
                 .clientId(entity.getClientId())

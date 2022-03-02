@@ -1,6 +1,7 @@
 package com.fromlabs.inventory.inventoryservice.client.notification.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,9 +11,9 @@ import java.io.Serializable;
  * @author Liem
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class EventDTO implements Serializable {
-    private static final long serialVersionUID = 1849110233953707096L;
+    private static final long serialVersionUID = -7979032320112642876L;
 
     private Long id;
 

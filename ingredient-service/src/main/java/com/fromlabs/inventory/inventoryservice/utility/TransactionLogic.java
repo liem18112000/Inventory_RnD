@@ -287,9 +287,14 @@ public class TransactionLogic {
 
         // Convert to ingredient entity to DTO
         var dto = toDto(ingredient);
+        if (Objects.isNull(dto)) {
+            return null;
+        }
 
         // If ingredient is child set ingredient quantity
-        if(nonNull(ingredient.getParent())) setIngredientQuantity(inventoryService, dto);
+        if (nonNull(ingredient.getParent())) {
+            setIngredientQuantity(inventoryService, dto);
+        }
 
         // Otherwise, return the DTO
         return dto;
@@ -318,9 +323,14 @@ public class TransactionLogic {
 
         // Convert ingredient entity to DTO
         var dto = toDto(ingredient);
+        if (Objects.isNull(dto)) {
+            return null;
+        }
 
         // If ingredient is child set ingredient quantity
-        if(nonNull(ingredient.getParent())) setIngredientQuantity(inventoryService, dto);
+        if(nonNull(ingredient.getParent())) {
+            setIngredientQuantity(inventoryService, dto);
+        }
 
         // Otherwise, return the DTO
         return dto;
