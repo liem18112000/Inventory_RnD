@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ProductService } from '../../service/ProductService';
+import DomainService from '../../service/DomainService';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import '../../assets/styles/CardDemo.css';
@@ -7,7 +7,7 @@ import { getMediaSource } from "../../service/MediaService";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { InputNumber } from 'primereact/inputnumber';
-import {sleep} from "../../core/utility/ComponentUtility";
+import { sleep } from "../../core/utility/ComponentUtility";
 
 export class SuggestTaxonDetail extends Component {
 
@@ -24,7 +24,7 @@ export class SuggestTaxonDetail extends Component {
             displayResponsive: false,
             position: 'center',
         }
-        this.productService = new ProductService();
+        this.domainService = new DomainService();
         this.onClick = this.onClick.bind(this);
         this.onHide = this.onHide.bind(this);
     }
@@ -85,18 +85,38 @@ export class SuggestTaxonDetail extends Component {
 
     confirmSuggestion() {
         if (!this.checkMinMax(this.state.confirmQuantity)) {
-            this.toast.show({ severity: 'error', summary: 'Invalid input', detail: 'Confirm quantity ' +
-                    'is either lower than ZERO or larger then max quantity', life: 1000 });
+            this.toast.show({
+                severity: 'error', summary: 'Invalid input', detail: 'Confirm quantity ' +
+                    'is either lower than ZERO or larger then max quantity', life: 1000
+            });
         } else {
             // Confirm Suggestion
-            this.toast.show({ severity: 'success', summary: 'Confirmed',
-                detail: `You have confirm ${this.state.confirmQuantity}`, life: 1000 });
-            sleep(500).then(() => {
-                this.onHide("displayResponsive")
-                this.setState({
-                    ...this.state, confirmQuantity: 1
-                })
-            })
+            this.domainService.confirmTaxon(this.state.data, this.state.confirmQuantity, this.state.isMock).then((data) => {
+                if (data.confirmSuggestion) {
+                    this.toast.show({
+                        severity: 'success', summary: 'Confirmed',
+                        detail: `You have confirm ${this.state.confirmQuantity}`, life: 1000
+                    });
+                    sleep(500).then(() => {
+                        this.onHide("displayResponsive")
+                        if (data.lowStockAlert) {
+                            this.toast.show({
+                                severity: 'warn', summary: 'Lowstock alert',
+                                detail: `This taxon is low-stocked`, life: 1000
+                            });
+                        } 
+                        this.setState({
+                            ...this.state, confirmQuantity: 1
+                        })
+                    })
+                } else {
+                    this.toast.show({
+                        severity: 'error', summary: 'Confirm failed',
+                        detail: `There is an error in confirmation`, life: 1000
+                    });
+                }
+            });
+
         }
 
     }

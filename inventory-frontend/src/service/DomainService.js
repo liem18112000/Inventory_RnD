@@ -10,23 +10,20 @@ export default class DomainService {
      * @param request
      * @param isMock
      */
-    confirmTaxon(request, isMock = true) {
+    confirmTaxon(request, confirmQuantity, isMock = true) {
+        console.log(request);
         if (isMock) {
             return mockSuggestTaxon();
         }
 
-        if (!request.quantity <= 0) {
+        if (confirmQuantity <= 0) {
             throw Error("Quantity must be equal or larger than 1");
-        }
-
-        if (!request.details || !(request.constructor === Array) || request.details.length === 0) {
-            throw Error("details is null or not array or an empty array")
         }
 
         const url       = `${baseIngredientAPI()}/restaurant/confirm`;
         const config    = {
             headers: getHeaderByGatewayStatus(),
-            params: { quantity: request.quantity }
+            params: { quantity: confirmQuantity }
         };
 
         // fetch ingredient suggest taxon data from api
