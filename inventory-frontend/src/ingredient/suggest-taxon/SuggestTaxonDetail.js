@@ -104,11 +104,11 @@ export class SuggestTaxonDetail extends Component {
                                 severity: 'warn', summary: 'Lowstock alert',
                                 detail: `This taxon is low-stocked`, life: 1000
                             });
-                        } 
+                        }
                         this.setState({
                             ...this.state, confirmQuantity: 1
                         })
-                    })
+                    }).then(this.props.refreshData)
                 } else {
                     this.toast.show({
                         severity: 'error', summary: 'Confirm failed',
