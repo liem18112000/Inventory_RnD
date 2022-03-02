@@ -4,20 +4,33 @@ import axios from "axios";
 import { baseIngredientAPI } from "../constant";
 
 export default class DomainService {
+    
     /**
      * Suggest taxon
+     * @param request
      * @param isMock
      */
-    suggestTaxon(isMock = true) {
+    confirmTaxon(request, isMock = true) {
         if (isMock) {
             return mockSuggestTaxon();
         }
 
-        const url       = `${baseIngredientAPI()}/restaurant/suggest`;
-        const config    = { headers: getHeaderByGatewayStatus() };
+        if (!request.quantity <= 0) {
+            throw Error("Quantity must be equal or larger than 1");
+        }
+
+        if (!request.details || !(request.constructor === Array) || request.details.length === 0) {
+            throw Error("details is null or not array or an empty array")
+        }
+
+        const url       = `${baseIngredientAPI()}/restaurant/confirm`;
+        const config    = {
+            headers: getHeaderByGatewayStatus(),
+            params: { quantity: request.quantity }
+        };
 
         // fetch ingredient suggest taxon data from api
-        return axios.post(url, body, config)
+        return axios.post(url, request, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
