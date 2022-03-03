@@ -97,13 +97,13 @@ export class SuggestTaxonDetail extends Component {
                         severity: 'success', summary: 'Confirmed',
                         detail: `You have confirm ${this.state.confirmQuantity}`, life: 1000
                     });
-                    sleep(500).then(() => {
+                    sleep().then(() => {
                         this.onHide("displayResponsive")
                         if (data.lowStockAlert) {
-                            this.toast.show({
+                            sleep().then(() => this.toast.show({
                                 severity: 'warn', summary: 'Lowstock alert',
                                 detail: `This taxon is low-stocked`, life: 1000
-                            });
+                            }));
                         }
                         this.setState({
                             ...this.state, confirmQuantity: 1
@@ -153,11 +153,10 @@ export class SuggestTaxonDetail extends Component {
                     onHide={() => this.onHide('displayResponsive')}
                     breakpoints={{ '768px': '55%' }}
                     style={{ width: '25vw', overflowY: 'hidden', textAlign: 'center' }}
-                    onHide={() => this.onHide('displayResponsive')}
                     footer={this.renderFooter('displayResponsive')}
                 >
                     {data && <div className="taxon-card">
-                        <img src={this.state.data.image} style={{ width: '90%', align: 'center' }}
+                        <img src={this.state.data.image} alt={"Taxon"} style={{ width: '90%', align: 'center' }}
                             onError={(e) => e.target.src = getMediaSource()} />
                         <div className="">
 
@@ -165,11 +164,11 @@ export class SuggestTaxonDetail extends Component {
                         </div>
 
                         {data.details.map((item, index) => (
-                            <div className="taxon-detail">
+                            <div key={"div_" + index} className="taxon-detail">
                                 <span className="detail">Recipe Detail</span>
                                 <ul>
-                                    <li key="1"><span className="detail">Recipe name: </span>{item.name}</li>
-                                    <li key="2"><span className="detail">Recipe quantity: </span>
+                                    <li key={"recipeName_" + index}><span className="detail">Recipe name: </span>{item.name}</li>
+                                    <li key={"recipeQuantity_" + index}><span className="detail">Recipe quantity: </span>
                                         {item.quantity} {item.ingredient.unit}</li>
                                 </ul>
                             </div>
