@@ -4,11 +4,11 @@ spring:
   application:
     name: ingredient-service
   config:
-    import: optional:consul:${SPRING_CLOUD_CONSUL_HOST:localhost}:${SPRING_CLOUD_CONSUL_PORT:8500}/
+    import: optional:consul:${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}/
   cloud:
     consul:
-      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
-      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
       enabled: true
       config:
         format: files
@@ -24,7 +24,7 @@ spring:
           - spring
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/inventory
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/inventory
     username: root
     password: root
 application:
@@ -54,7 +54,7 @@ spring:
   profiles: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/inventory
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/inventory
     username: root
     password: root
   jpa:
@@ -67,7 +67,7 @@ spring:
   profiles: liem-local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/inventory
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/inventory
     username: root
     password:
 
