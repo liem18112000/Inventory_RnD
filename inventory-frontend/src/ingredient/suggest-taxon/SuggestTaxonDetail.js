@@ -135,7 +135,7 @@ export class SuggestTaxonDetail extends Component {
             header: 'Confirm the suggestion',
             acceptClassName: 'p-button-primary',
             accept: () => this.confirmSuggestion(),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel the confirmation', life: 1000 })
         });
     }
 
