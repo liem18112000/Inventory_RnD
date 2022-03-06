@@ -2,6 +2,8 @@ server:
   port: 8083
   forward-headers-strategy: framework
 spring:
+  profiles:
+    active: dev
   mail:
     host: smtp.gmail.com
     port: 587
@@ -16,11 +18,11 @@ spring:
   application:
     name: notification-service
   config:
-    import: optional:consul:${SPRING_CLOUD_CONSUL_HOST:localhost}:${SPRING_CLOUD_CONSUL_PORT:8500}/
+    import: optional:consul:${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}/
   cloud:
     consul:
-      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
-      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
       enabled: true
       config:
         format: files
@@ -58,9 +60,9 @@ spring:
   profiles: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/notification
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/notification
     username: root
-    password: root
+    password:
   jpa:
     show-sql: true
     properties:
@@ -71,7 +73,7 @@ spring:
   profiles: liem-local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/notification
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/notification
     username: root
     password:
 
