@@ -97,7 +97,7 @@ export class SuggestTaxon extends Component {
                     <img src={data.image}
                         onError={(e) => e.target.src = getMediaSource()}
                         alt={data.name} />
-                    <div className="product-grid-item-content">
+                    <div className="product-grid-item-content" style={{ height: '7vw' }}>
                         <div className="product-name">{data.recipe.name}</div>
                     </div>
                     <div className="product-grid-item-bottom">

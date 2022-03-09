@@ -162,8 +162,10 @@ export class IngredientItemForm extends Component {
         this.setState({
             ...this.state,
             errors: {
-                name: !this.requireField(this.state.data.name) ? "Ingredient detail name is required" : null,
-                code: !this.requireField(this.state.data.code) ? "Ingredient detail code is required" : null
+                name: !this.requireField(this.state.data.name) ? "Ingredient item name is required" : null,
+                code: !this.requireField(this.state.data.code) ? "Ingredient item code is required" : null,
+                expiredAt: !this.requireField(this.state.data.expiredAt) ? "Ingredient item expired date is required" : null,
+                importId: !this.requireField(this.state.data.importId) ? "Ingredient item import is required" : null,
             }
         }, callback);
     }
@@ -184,6 +186,12 @@ export class IngredientItemForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.expiredAt ? this.state.errors.expiredAt : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.importId ? this.state.errors.importId : ""}
                     </div>
                 </div>
             </div>
@@ -346,6 +354,7 @@ export class IngredientItemForm extends Component {
                             })}
                             showIcon
                         />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.expiredAt}</div>
                     </div>
                     {this.state.formHeader === this.state.batchTitle ?
                         <div className="p-col-12">
@@ -364,6 +373,7 @@ export class IngredientItemForm extends Component {
                         <label>* Import</label>
                         <Dropdown value={this.state.data.importId} options={this.state.importList} onChange={(e) => this.setState({ data: { ...this.state.data, importId: e.target.value } })} 
                         itemTemplates={item => item.label} placeholder="Select import" />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.importId}</div>
                     </div>
                     <div className="p-col-12">
                         <label>Description</label>
