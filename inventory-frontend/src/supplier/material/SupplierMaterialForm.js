@@ -124,7 +124,7 @@ export class SupplierMaterialForm extends Component {
         return field && field.length > 0;
     }
     requireNumberField = (field) => {
-        return field !== null;
+        return field !== null && field !== "";
     }
     checkMinMax = (min, max) => {
         return min <= max
@@ -146,7 +146,10 @@ export class SupplierMaterialForm extends Component {
             ...this.state,
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Supplier material name is required" : null,
-                code: !this.requireNumberField(this.state.data.code) ? "Supplier material code is required" : null,
+                ingredientId: !this.requireField(this.state.data.ingredientId) ? "Supplier material ingredient is required" : null,
+                // code: !this.requireNumberField(this.state.data.code) ? "Supplier material code is required" : null,
+                min: !this.requireNumberField(this.state.data.minimumQuantity) ? "Supplier material minimum quantity is required" : null,
+                max: !this.requireNumberField(this.state.data.maximumQuantity) ? "Supplier material maximum quantity is required" : null,
                 minimumQuantity: !this.checkMinMax(this.state.data.minimumQuantity, this.state.data.maximumQuantity) ? "Min must be less than or equal max" : null,
                 maximumQuantity: !this.checkMinMax(this.state.data.minimumQuantity, this.state.data.maximumQuantity) ? "Max must be more than or equal min" : null,
             }
@@ -168,7 +171,16 @@ export class SupplierMaterialForm extends Component {
                         {this.state.errors.name ? this.state.errors.name : ""}
                     </div>
                     <div className="p-col-12">
+                        {this.state.errors.ingredientId ? this.state.errors.ingredientId : ""}
+                    </div>
+                    <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.min ? this.state.errors.min : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.max ? this.state.errors.max : ""}
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.minimumQuantity ? this.state.errors.minimumQuantity : ""}
@@ -290,12 +302,6 @@ export class SupplierMaterialForm extends Component {
                             onChange={(e) => this.setState({ data: { ...this.state.data, name: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.name}</div>
                     </div>
-                    {/* <div className="p-col-12">
-                        <label>* Code</label>
-                        <InputText value={this.state.data.code} placeholder="Enter code"
-                            onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
-                    </div> */}
                     <div className="p-col-12">
                         <label>* Minimum Quatity</label>
                         <InputText
@@ -306,6 +312,7 @@ export class SupplierMaterialForm extends Component {
                             max="1000"
                             onChange={(e) => this.setState({ data: { ...this.state.data, minimumQuantity: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.minimumQuantity}</div>
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.min}</div>
                     </div>
                     <div className="p-col-12">
                         <label>* Maximum Quatity</label>
@@ -317,6 +324,7 @@ export class SupplierMaterialForm extends Component {
                             max="1000"
                             onChange={(e) => this.setState({ data: { ...this.state.data, maximumQuantity: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.maximumQuantity}</div>
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.max}</div>
                     </div>
                     <div className="p-col-12">
                         <label>* Ingredient Name </label>
@@ -332,7 +340,7 @@ export class SupplierMaterialForm extends Component {
                                 })
                             }}
                         />
-                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.ingredientId}</div>
                     </div>
                     <div className="p-col-12">
                         <label>Description</label>

@@ -50,12 +50,12 @@ export class IngredientItemForm extends Component {
     getImportList() {
         this.supplierService.getImportSimple(this.state.isMock).then(data => {
             this.setState({
-                ...this.state, 
+                ...this.state,
                 importList: data
             })
         })
     }
-    
+
     /**
      * Function is called after component is required
      */
@@ -146,6 +146,10 @@ export class IngredientItemForm extends Component {
         return field && field.length > 0;
     }
 
+    requireNumberField = (field) => {
+        return field !== null && field !== "";
+    }
+    
     /**
    * Check the submit validation is valid
    * @returns {boolean}
@@ -164,6 +168,7 @@ export class IngredientItemForm extends Component {
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Ingredient item name is required" : null,
                 code: !this.requireField(this.state.data.code) ? "Ingredient item code is required" : null,
+                quantity: !this.requireNumberField(this.state.data.quantity) ? "Ingredient item quantity is required" : null,
                 expiredAt: !this.requireField(this.state.data.expiredAt) ? "Ingredient item expired date is required" : null,
                 importId: !this.requireField(this.state.data.importId) ? "Ingredient item import is required" : null,
             }
@@ -186,6 +191,9 @@ export class IngredientItemForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.quantity ? this.state.errors.quantity : ""}
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.expiredAt ? this.state.errors.expiredAt : ""}
@@ -366,13 +374,14 @@ export class IngredientItemForm extends Component {
                                 min="1"
                                 max="1000"
                                 onChange={(e) => this.setState({ data: { ...this.state.data, quantity: e.target.value } })} />
+                            <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.quantity}</div>
                         </div>
                         : <></>
                     }
                     <div className="p-col-12">
                         <label>* Import</label>
-                        <Dropdown value={this.state.data.importId} options={this.state.importList} onChange={(e) => this.setState({ data: { ...this.state.data, importId: e.target.value } })} 
-                        itemTemplates={item => item.label} placeholder="Select import" />
+                        <Dropdown value={this.state.data.importId} options={this.state.importList} onChange={(e) => this.setState({ data: { ...this.state.data, importId: e.target.value } })}
+                            itemTemplates={item => item.label} placeholder="Select import" />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.importId}</div>
                     </div>
                     <div className="p-col-12">

@@ -139,6 +139,7 @@ export class RecipeChildForm extends Component {
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Recipe name is required" : null,
                 code: !this.requireField(this.state.data.code) ? "Recipe code is required" : null,
+                recipeGroup: !this.requireField(this.state.recipeGroup.label) ? "Recipe group is required" : null,
             }
         }, callback)
     }
@@ -159,6 +160,9 @@ export class RecipeChildForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.recipeGroup ? this.state.errors.recipeGroup : ""}
                     </div>
                 </div>
             </div>
@@ -294,6 +298,7 @@ export class RecipeChildForm extends Component {
                                 }
                             }
                         />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.recipeGroup}</div>
                     </div>
                     <div className="p-col-12">
                         <label>Description</label>

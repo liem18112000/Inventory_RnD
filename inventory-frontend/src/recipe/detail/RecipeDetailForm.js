@@ -122,6 +122,10 @@ export class RecipeDetailForm extends Component {
         return field && field.length > 0;
     }
 
+    requireNumberField = (field) => {
+        return field !== null && field !== "";
+    }
+
     /**
      * Check the submit validation is valid
      * @returns {boolean}
@@ -140,6 +144,7 @@ export class RecipeDetailForm extends Component {
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Recipe detail name is required" : null,
                 code: !this.requireField(this.state.data.code) ? "Recipe detail code is required" : null,
+                quantity: !this.requireNumberField(this.state.data.quantity) ? "Recipe detail quantity is required" : null,
                 ingredientId: !this.state.data.ingredientId ? "Ingredient is required" : null,
             }
         }, callback)
@@ -161,6 +166,9 @@ export class RecipeDetailForm extends Component {
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.code ? this.state.errors.code : ""}
+                    </div>
+                    <div className="p-col-12">
+                        {this.state.errors.quantity ? this.state.errors.quantity : ""}
                     </div>
                     <div className="p-col-12">
                         {this.state.errors.ingredientId ? this.state.errors.ingredientId : ""}
@@ -294,6 +302,7 @@ export class RecipeDetailForm extends Component {
                             min="1"
                             max="1000"
                             onChange={(e) => this.setState({ data: { ...this.state.data, quantity: e.target.value } })} />
+                        <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.quantity}</div>
                     </div>
                     <div className="p-col-12">
                         <label>* Ingredient </label>
