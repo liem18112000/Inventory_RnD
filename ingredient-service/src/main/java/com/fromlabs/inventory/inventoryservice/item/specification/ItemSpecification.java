@@ -13,6 +13,7 @@ import java.util.Objects;
 
 import static com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaEqual;
+import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaStrictlyEqual;
 
 /**
  * Item specification for filter
@@ -36,11 +37,11 @@ public class ItemSpecification {
     }
 
     public static BaseSpecification<ItemEntity> hasUnit(String unit) {
-        return Spec(criteriaEqual("unit", unit));
+        return Spec(criteriaStrictlyEqual("unit", unit, true));
     }
 
     public static BaseSpecification<ItemEntity> hasUnitType(String unitType) {
-        return Spec(criteriaEqual("unitType", unitType));
+        return Spec(criteriaStrictlyEqual("unitType", unitType, true));
     }
 
     public static BaseSpecification<ItemEntity> hasDescription(String description) {
