@@ -49,18 +49,18 @@ class InventoryServiceTest {
     void setUp() {
         this.getTemplateUnitTest = UnitTestTemplateProcess.builder()
                 .build()
-                .input(ID,         14L).input(NEGATIVE_ID,          -1L).input(NON_EXIST_ID,            99999L)
-                .input(INGREDIENT_ID, 2L).input(NEGATIVE_INGREDIENT_ID, -1L).input(NON_EXIST_INGREDIENT_ID, 99999L)
+                .input(ID,         81L).input(NEGATIVE_ID,          -1L).input(NON_EXIST_ID,            99999L)
+                .input(INGREDIENT_ID, 161L).input(NEGATIVE_INGREDIENT_ID, -1L).input(NON_EXIST_INGREDIENT_ID, 99999L)
                 .input(TENANT_ID,   1L).input(NEGATIVE_TENANT_ID,   -1L).input(NON_EXIST_TENANT_ID,     99999L)
                 .input(PAGE_NUMBER, 0) .input(NEGATIVE_PAGE_NUMBER, -1) .input(NON_EXIST_PAGE_NUMBER,   99999)
                 .input(PAGE_SIZE,   10) .input(NEGATIVE_PAGE_SIZE,  -1) .input(NON_EXIST_PAGE_SIZE,     99999).input(ZERO_PAGE_SIZE, 0)
                 .input(ASC_SORT,    "id, asc")                  .input(NON_EXIST_ASC_SORT,      "nonExist, asc")
                 .input(ASC_SORT,    "id, desc")                 .input(NON_EXIST_DESC_SORT,     "nonExist, desc")
-                .input(NAME,        "New Zealand Cow Milk NZCM").input(NON_EXIST_NAME,          NON_EXIST_NAME)
-                .input(DESCRIPTION, "New Zealand Cow Milk")     .input(NON_EXIST_DESCRIPTION,   NON_EXIST_DESCRIPTION)
-                .input(UNIT,        "bottle")                   .input(NON_EXIST_UNIT,          NON_EXIST_UNIT)
-                .input(UNIT_TYPE,   "whole")                    .input(NON_EXIST_UNIT_TYPE,     NON_EXIST_UNIT_TYPE)
-                .input(UPDATED_AT,  "2021-11-20T05:15:37.893383100Z")      .input(NON_EXIST_UPDATED_AT,    Instant.now().plusSeconds(3600).toString())
+                .input(NAME,        "ST 25 Rice ST025Rice").input(NON_EXIST_NAME,          NON_EXIST_NAME)
+                .input(DESCRIPTION, "The best rice in the world")     .input(NON_EXIST_DESCRIPTION,   NON_EXIST_DESCRIPTION)
+                .input(UNIT,        "kilogram")                   .input(NON_EXIST_UNIT,          NON_EXIST_UNIT)
+                .input(UNIT_TYPE,   "weight")                    .input(NON_EXIST_UNIT_TYPE,     NON_EXIST_UNIT_TYPE)
+                .input(UPDATED_AT,  "2022-03-09T11:54:51.252494100Z")      .input(NON_EXIST_UPDATED_AT,    Instant.now().plusSeconds(3600).toString())
                 .input(PAGE_REQUEST, new InventoryPageRequest());
     }
 

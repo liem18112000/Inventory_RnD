@@ -59,7 +59,7 @@ public class IngredientSpecification {
      * @return          BaseSpecification&lt;IngredientEntity&gt;
      */
     public static BaseSpecification<IngredientEntity> hasUnit(String unit) {
-        return Spec(criteriaEqual("unit", unit));
+        return Spec(criteriaStrictlyEqual("unit", unit, true));
     }
 
     /**
@@ -68,7 +68,7 @@ public class IngredientSpecification {
      * @return          BaseSpecification&lt;IngredientEntity&gt;
      */
     public static BaseSpecification<IngredientEntity> hasUnitType(String unitType) {
-        return Spec(criteriaEqual("unitType", unitType));
+        return Spec(criteriaStrictlyEqual("unitType", unitType, true));
     }
 
     /**

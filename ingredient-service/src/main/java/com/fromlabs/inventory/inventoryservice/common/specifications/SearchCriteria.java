@@ -10,6 +10,12 @@ public class SearchCriteria {
     private SearchOperation operation;
     private Object value;
 
+    @Builder.Default
+    private boolean strict = false;
+
+    @Builder.Default
+    private boolean ignoreEmpty = true;
+
     static public SearchCriteria criteriaLessThan(String key, Object value) {
         return SearchCriteria.builder().key(key).operation(SearchOperation.LESS_THAN).value(value).build();
     }
@@ -28,6 +34,11 @@ public class SearchCriteria {
 
     static public SearchCriteria criteriaEqual(String key, Object value) {
         return SearchCriteria.builder().key(key).operation(SearchOperation.EQUAL).value(value).build();
+    }
+
+    static public SearchCriteria criteriaStrictlyEqual(String key, Object value, boolean ignoreEmpty) {
+        return SearchCriteria.builder().key(key).operation(SearchOperation.EQUAL)
+                .value(value).strict(true).ignoreEmpty(ignoreEmpty).build();
     }
 
     static public SearchCriteria criteriaNotEqual(String key, Object value) {

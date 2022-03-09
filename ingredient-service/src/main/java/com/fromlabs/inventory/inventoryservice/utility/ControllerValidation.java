@@ -158,7 +158,7 @@ public class ControllerValidation {
         log.info("validateSaveItem");
         return  StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
                 .criteriaIsPositiveLong("ingredientId", request.getIngredientId())
-//                .criteriaIsPositiveLong("importId", request.getImportId())
+                .criteriaIsPositiveLong("importId", request.getImportId())
                 .criteriaRequired("name", request.getName())
                 .criteriaRequired("code", request.getCode())
                 .criteriaRequired("expiredAt", request.getExpiredAt())
@@ -178,6 +178,7 @@ public class ControllerValidation {
         log.info("validateSaveItems");
         return  StringRequestValidator().criteriaIsPositiveLong(TENANT_ID, request.getClientId())
                 .criteriaIsPositiveLong("ingredientId", request.getIngredientId())
+                .criteriaIsPositiveLong("importId", request.getImportId())
                 .criteriaIsPositiveLong("quantity", request.getQuantity())
                 .criteriaRequired("expiredAt", request.getExpiredAt())
                 .criteriaRequired("unit", request.getUnit())

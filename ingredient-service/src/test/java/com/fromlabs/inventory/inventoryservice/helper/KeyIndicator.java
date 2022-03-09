@@ -17,6 +17,8 @@ public class KeyIndicator {
     static public final String DESCRIPTION          = "description";
     static public final String UNIT                 = "unit";
     static public final String UNIT_TYPE            = "unitType";
+    static public final String CHILD_UNIT           = "childUnit";
+    static public final String CHILD_UNIT_TYPE      = "childUnitType";
     static public final String UPDATED_AT           = "updatedAt";
     static public final String CREATED_AT           = "createdAt";
     static public final String CHILD_UPDATED_AT     = "childUpdatedAt";

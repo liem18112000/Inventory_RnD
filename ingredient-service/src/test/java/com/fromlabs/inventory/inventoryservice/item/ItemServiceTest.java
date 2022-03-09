@@ -57,25 +57,25 @@ class ItemServiceTest {
     //<editor-fold desc="Get item by code">
     @DisplayName("Get item by code" + " - positive case : all thing is right")
     @Test
-    void getByCode_Postive_AllThingsIsRight() {
+    void getByCode_Positive_AllThingsIsRight() {
         // get item from service
-        var item = this.itemService.getByCode(1L,"QLGM01");
+        var item = this.itemService.getByCode(1L,"Code");
         assert Objects.nonNull(item);
         assert Objects.equals(item.getClientId(),1L);
-        assert Objects.equals(item.getCode(),"QLGM01");
+        assert Objects.equals(item.getCode(),"Code");
     }
     @DisplayName("Get item by code" + " - negative case : item code is not exist")
     @Test
     void getByCode_Negative_CodeIsNotExist() {
         // get item from service
-        var item = this.itemService.getByCode(1L,"LIEMGAUGAU");
+        var item = this.itemService.getByCode(1L,"NotExist");
         assert Objects.isNull(item);
     }
     @DisplayName("Get item by code" + " - negative case : tenant is not exist")
     @Test
     void getByCode_Negative_TenantIsNotExist() {
         // get item from service
-        var item = this.itemService.getByCode(666L,"QLGM01");
+        var item = this.itemService.getByCode(666L,"Code");
         assert Objects.isNull(item);
     }
     //</editor-fold>
@@ -83,21 +83,21 @@ class ItemServiceTest {
     //<editor-fold desc="get item by name">
     @DisplayName("Get item by name" + " - positive case : all thing is right")
     @Test
-    void getByName_Postive_AllThingsIsRight() {
+    void getByName_Positive_AllThingsIsRight() {
         // get item by name
-        var items = this.itemService.getByName(1L,"British Coca cola");
+        var items = this.itemService.getByName(1L,"Name");
         assert Objects.nonNull(items);
         assert !items.isEmpty();
 
         assert items.stream().allMatch(item -> item.getClientId().equals(1L) &&
-                item.getName().equals("British Coca cola"));
+                item.getName().equals("Name"));
     }
     //</editor-fold>
 
     //<editor-fold desc="get all by client ID">
     @DisplayName("Get all by client ID" + " - positive case : all thing is right")
     @Test
-    void getAll_Postive_AllThingsIsRight() {
+    void getAll_Positive_AllThingsIsRight() {
         var items = this.itemService.getAll(1L);
         assert Objects.nonNull(items);
         assert !items.isEmpty();
@@ -120,27 +120,27 @@ class ItemServiceTest {
         request.setClientId(1L);
         var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L); } );
+        assert ((Page<?>)page).stream().allMatch(item-> ((ItemEntity)item).getClientId().equals(1L));
     }
     @DisplayName("Get page filter with exist name" + " - positive case : all thing is right")
     @Test
     void getPage_PositiveCase_FilterWithExistName() {
         var request = new ItemPageRequest();
-        request.setName("New Zealand cow milk");
+        request.setName("Name");
         request.setClientId(1L);
         var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getName().equals("New Zealand cow milk"); } );
+        assert ((Page<?>)page).stream().allMatch(item-> ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getName().equals("Name"));
     }
     @DisplayName("Get page filter with exist code" + " - positive case : all thing is right")
     @Test
     void getPage_PositiveCase_FilterWithExistCode() {
         var request = new ItemPageRequest();
-        request.setCode("QLGM01");
+        request.setCode("Code");
         request.setClientId(1L);
         var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getCode().equals("QLGM01"); } );
+        assert ((Page<?>)page).stream().allMatch(item-> ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getCode().toLowerCase().startsWith("code"));
     }
     @DisplayName("Get page filter with exist unit type" + " - positive case : all thing is right")
     @Test
@@ -150,29 +150,8 @@ class ItemServiceTest {
         request.setClientId(1L);
         var page = this.itemService.getPage(ItemSpecification.filter(ItemMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(item->{ return ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getUnitType().equals("whole"); } );
+        assert ((Page<?>)page).stream().allMatch(item-> ((ItemEntity)item).getClientId().equals(1L) && ((ItemEntity)item).getUnitType().equals("whole"));
     }
-
 
     //</editor-fold>
-
-    @Test
-    void save() {
-    }
-
-    @Test
-    void delete() {
-    }
-
-    @Test
-    void deleteAll() {
-    }
-
-    @Test
-    void deleteAllByIds() {
-    }
-
-    @Test
-    void getAllByIngredient() {
-    }
 }

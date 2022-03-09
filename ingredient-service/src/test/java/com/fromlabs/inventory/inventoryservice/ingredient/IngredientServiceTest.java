@@ -46,21 +46,21 @@ class IngredientServiceTest {
     void setUp() {
         this.getTemplateUnitTest = UnitTestTemplateProcess.builder()
                 .build()
-                .input(ID,          1L).input(NEGATIVE_ID,          -1L).input(NON_EXIST_ID,            99999L).input(CHILD_ID,    2L)
+                .input(ID,          160L).input(NEGATIVE_ID,          -1L).input(NON_EXIST_ID,            99999L).input(CHILD_ID,    161L)
                 .input(TENANT_ID,   1L).input(NEGATIVE_TENANT_ID,   -1L).input(NON_EXIST_TENANT_ID,     99999L)
-                .input(PARENT_ID,   1L).input(NEGATIVE_PARENT_ID,   -1L).input(NON_EXIST_PARENT_ID,     99999L)
+                .input(PARENT_ID,   160L).input(NEGATIVE_PARENT_ID,   -1L).input(NON_EXIST_PARENT_ID,     99999L)
                 .input(PAGE_NUMBER, 0) .input(NEGATIVE_PAGE_NUMBER, -1) .input(NON_EXIST_PAGE_NUMBER,   99999)
                 .input(PAGE_SIZE,   10) .input(NEGATIVE_PAGE_SIZE,  -1) .input(NON_EXIST_PAGE_SIZE,     99999).input(ZERO_PAGE_SIZE, 0)
                 .input(ASC_SORT,    "id, asc")  .input(NON_EXIST_ASC_SORT,      "nonExist, asc")
                 .input(ASC_SORT,    "id, desc") .input(NON_EXIST_DESC_SORT,     "nonExist, desc")
-                .input(NAME,        "Milk")     .input(NON_EXIST_NAME,          NON_EXIST_NAME).input(CHILD_NAME, "New Zealand Cow Milk")
-                .input(CODE,        "11223344") .input(NON_EXIST_CODE,          NON_EXIST_CODE).input(CHILD_CODE, "NZCM")
-                .input(DESCRIPTION, "Milk")     .input(NON_EXIST_DESCRIPTION,   NON_EXIST_DESCRIPTION)
-                .input(UNIT,        "bottle")   .input(NON_EXIST_UNIT,          NON_EXIST_UNIT)
-                .input(UNIT_TYPE,   "whole")    .input(NON_EXIST_UNIT_TYPE,     NON_EXIST_UNIT_TYPE)
-                .input(CREATED_AT,  "2021-10-03 22:27:07").input(NON_EXIST_CREATED_AT, Instant.now().plusSeconds(3600).toString())
-                .input(CHILD_CREATED_AT, "2021-10-03 22:27:06").input(CHILD_UPDATED_AT, "2021-11-20T05:17:06.343531900Z")
-                .input(UPDATED_AT,  "2021-10-03 22:27:07").input(NON_EXIST_UPDATED_AT, Instant.now().plusSeconds(3600).toString())
+                .input(NAME,        "Rice")     .input(NON_EXIST_NAME,          NON_EXIST_NAME).input(CHILD_NAME, "ST 25 Rice")
+                .input(CODE,        "Rice")     .input(NON_EXIST_CODE,          NON_EXIST_CODE).input(CHILD_CODE, "ST025Rice")
+                .input(DESCRIPTION, "Rice")     .input(NON_EXIST_DESCRIPTION,   NON_EXIST_DESCRIPTION)
+                .input(UNIT,        "generic")   .input(NON_EXIST_UNIT,          NON_EXIST_UNIT).input(CHILD_UNIT, "kilogram")
+                .input(UNIT_TYPE,   "generic")    .input(NON_EXIST_UNIT_TYPE,     NON_EXIST_UNIT_TYPE).input(CHILD_UNIT_TYPE, "weight")
+                .input(CREATED_AT,  "2022-02-24T14:02:27.326402600Z").input(NON_EXIST_CREATED_AT, Instant.now().plusSeconds(3600).toString())
+                .input(CHILD_CREATED_AT, "2022-02-24T14:02:27.326402600Z").input(CHILD_UPDATED_AT, "2022-02-24T14:02:27.326402600Z")
+                .input(UPDATED_AT,  "2022-02-24T14:02:27.326402600Z").input(NON_EXIST_UPDATED_AT, Instant.now().plusSeconds(3600).toString())
                 .input(PAGE_REQUEST, new IngredientPageRequest());
     }
 
@@ -673,14 +673,14 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
-                    request.setUnit((String)   getInput(UNIT));
+                    request.setUnit((String)   getInput(CHILD_UNIT));
                     return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  !ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID))
-                                && Objects.equals(ingredient.getUnit(), getInput(UNIT));
+                                && Objects.equals(ingredient.getUnit(), getInput(CHILD_UNIT));
                     });
                 }).run();
     }
@@ -694,14 +694,14 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
-                    request.setUnitType((String)getInput(UNIT_TYPE));
+                    request.setUnitType((String)getInput(CHILD_UNIT_TYPE));
                     return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  !ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID))
-                                && Objects.equals(ingredient.getUnitType(), getInput(UNIT_TYPE));
+                                && Objects.equals(ingredient.getUnitType(), getInput(CHILD_UNIT_TYPE));
                     });
                 }).run();
     }

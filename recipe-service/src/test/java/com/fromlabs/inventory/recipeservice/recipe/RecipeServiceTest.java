@@ -18,7 +18,7 @@ import java.util.Objects;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = RecipeServiceApplication.class)
-@ActiveProfiles("tuan-local")
+@ActiveProfiles("dev")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RecipeServiceTest {
     @Autowired
@@ -26,16 +26,16 @@ class RecipeServiceTest {
     //<editor-fold desc="Get recipe by code">
     @DisplayName("Get recipe by code" + " - positive case : all thing is right")
     @Test
-    void getByCode_Postive_AllThingsIsRight() {
-        var recipe = this.recipeService.getByName(1L,"123123");
+    void getByCode_Positive_AllThingsIsRight() {
+        var recipe = this.recipeService.getByName(1L,"Food");
         assert Objects.nonNull(recipe);
         assert Objects.equals(recipe.getClientId(),1L);
-        assert Objects.equals(recipe.getCode(),"123123");
+        assert Objects.equals(recipe.getCode(),"Food");
     }
     //</editor-fold>
     @DisplayName("Get all by client ID" + " - positive case : all thing is right")
     @Test
-    void getAll_Postive_AllThingsIsRight() {
+    void getAll_Positive_AllThingsIsRight() {
         var recipes=this.recipeService.getAll(1L);
         assert Objects.nonNull(recipes);
         assert !recipes.isEmpty();
@@ -55,19 +55,22 @@ class RecipeServiceTest {
     void getPage_PositiveCase_AllThingIsRight() {
         var request = new RecipePageRequest();
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L); } );
+        assert ((Page<?>)page).stream().allMatch(recipe-> ((RecipeEntity)recipe).getClientId().equals(1L));
     }
     @DisplayName("Get page filter with exist name" + " - positive case : all thing is right")
     @Test
     void getPage_PositiveCase_FilterWithExistName() {
         var request = new RecipePageRequest();
-        request.setName("Strawberri yogurt");
+        request.setName("Food");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getName().equals("Strawberri yogurt"); } );
+        assert ((Page<?>)page).stream().allMatch(recipe-> ((RecipeEntity)recipe)
+                .getClientId().equals(1L) && ((RecipeEntity)recipe).getName().equals("Food"));
     }
     @DisplayName("Get page filter with none exist name and tenant ID" + " - negative case : Name and tenant ID is not exist")
     @Test
@@ -75,9 +78,11 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setName("Clown");
         request.setTenantId(2L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().noneMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(2L) && ((RecipeEntity)recipe).getName().equals("Clown"); } );
+        assert ((Page<?>)page).stream().noneMatch(recipe-> ((RecipeEntity)recipe)
+                .getClientId().equals(2L) && ((RecipeEntity)recipe).getName().equals("NotExist"));
     }
     @DisplayName("Get page filter with exist code" + " - positive case : all thing is right")
     @Test
@@ -85,9 +90,11 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setCode("531531");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getCode().equals("531531"); } );
+        assert ((Page<?>)page).stream().allMatch(recipe-> ((RecipeEntity)recipe)
+                .getClientId().equals(1L) && ((RecipeEntity)recipe).getCode().equals("Food"));
     }
     @DisplayName("Get page filter with none exist code" + " - negative case : code is not exist")
     @Test
@@ -95,9 +102,11 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setCode("999DS");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getCode().equals("999DS"); } );
+        assert ((Page<?>)page).stream().allMatch(recipe-> ((RecipeEntity)recipe)
+                    .getClientId().equals(1L) && ((RecipeEntity)recipe).getCode().equals("NotExist"));
     }
     @DisplayName("Get page filter with exist Description" + " - positive case : all thing is right")
     @Test
@@ -105,47 +114,24 @@ class RecipeServiceTest {
         var request = new RecipePageRequest();
         request.setDescription("yorgurt");
         request.setTenantId(1L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().allMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(1L) && ((RecipeEntity)recipe).getDescription().equals("yorgurt"); } );
+        assert ((Page<?>)page).stream().allMatch(recipe-> ((RecipeEntity)recipe)
+                .getClientId().equals(1L) && ((RecipeEntity)recipe).getDescription().equals("Food"));
     }
     @DisplayName("Get page filter with none exist Description" + " - negative case : Description and Tenant ID is not exist")
     @Test
     void getPage_NegativeCase_FilterWithNoneExistDescriptionAndTenantID() {
         var request = new RecipePageRequest();
         request.setDescription("tooHot");
-        request.setTenantId(2L);
-        var page = this.recipeService.getPage(RecipeSpecification.filter(RecipeMapper.toEntity(request), null), request.getPageable());
+        request.setTenantId(1L);
+        var page = this.recipeService.getPage(RecipeSpecification
+                .filter(RecipeMapper.toEntity(request), null), request.getPageable());
         assert Objects.nonNull(page);
-        assert ((Page<?>)page).stream().noneMatch(recipe->{ return ((RecipeEntity)recipe).getClientId().equals(2L) && ((RecipeEntity)recipe).getDescription().equals("tooHot"); } );
+        assert ((Page<?>)page).stream().noneMatch(recipe->
+                ((RecipeEntity)recipe).getClientId().equals(2L) &&
+                        ((RecipeEntity)recipe).getDescription().equals("tooHot"));
     }
     //</editor-fold>
-
-    @Test
-    void getAll() {
-    }
-
-    @Test
-    void testGetPage() {
-    }
-
-    @Test
-    void testGetAll() {
-    }
-
-    @Test
-    void testGetPage1() {
-    }
-
-    @Test
-    void testGetAll1() {
-    }
-
-    @Test
-    void save() {
-    }
-
-    @Test
-    void delete() {
-    }
 }

@@ -45,8 +45,13 @@ public final class BaseSpecification<T> implements Specification<T> {
         }
         else if (operation.equals(SearchOperation.EQUAL)) {
             if (root.get(criteria.getKey()).getJavaType() == String.class) {
-                return builder.like(
-                        root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                if (criteria.isStrict()) {
+                    if (criteria.getValue().toString().isEmpty() && criteria.isIgnoreEmpty()) {
+                        return builder.like(root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                    }
+                    return builder.equal(root.get(criteria.getKey()), criteria.getValue());
+                }
+                return builder.like(root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
             } else {
                 return builder.equal(root.get(criteria.getKey()), criteria.getValue());
             }

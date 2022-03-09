@@ -12,8 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification.Spec;
-import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaEqual;
-import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaGreaterThanOrEqual;
+import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.*;
 
 /**
  * Inventory specification for filter
@@ -33,11 +32,11 @@ public class InventorySpecification {
     }
 
     public static BaseSpecification<InventoryEntity> hasUnit(String unit) {
-        return Spec(criteriaEqual("unit", unit));
+        return Spec(criteriaStrictlyEqual("unit", unit, true));
     }
 
     public static BaseSpecification<InventoryEntity> hasUnitType(String unitType) {
-        return Spec(criteriaEqual("unitType", unitType));
+        return Spec(criteriaStrictlyEqual("unitType", unitType, true));
     }
 
     public static BaseSpecification<InventoryEntity> hasDescription(String description) {
