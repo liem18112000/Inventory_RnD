@@ -170,7 +170,7 @@ export class IngredientItemForm extends Component {
                 code: !this.requireField(this.state.data.code) ? "Ingredient item code is required" : null,
                 quantity: !this.requireNumberField(this.state.data.quantity) ? "Ingredient item quantity is required" : null,
                 expiredAt: !this.requireField(this.state.data.expiredAt) ? "Ingredient item expired date is required" : null,
-                importId: !this.requireField(this.state.data.importId) ? "Ingredient item import is required" : null,
+                importId: !this.requireNumberField(this.state.data.importId) ? "Ingredient item import is required" : null,
             }
         }, callback);
     }
