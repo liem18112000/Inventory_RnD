@@ -146,7 +146,7 @@ export class SupplierMaterialForm extends Component {
             ...this.state,
             errors: {
                 name: !this.requireField(this.state.data.name) ? "Supplier material name is required" : null,
-                ingredientId: !this.requireField(this.state.data.ingredientId) ? "Supplier material ingredient is required" : null,
+                ingredientId: !this.requireNumberField(this.state.data.ingredientId) ? "Supplier material ingredient is required" : null,
                 // code: !this.requireNumberField(this.state.data.code) ? "Supplier material code is required" : null,
                 min: !this.requireNumberField(this.state.data.minimumQuantity) ? "Supplier material minimum quantity is required" : null,
                 max: !this.requireNumberField(this.state.data.maximumQuantity) ? "Supplier material maximum quantity is required" : null,
