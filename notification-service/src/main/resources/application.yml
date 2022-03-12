@@ -5,10 +5,10 @@ spring:
   profiles:
     active: dev
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: liemdev18112000@gmail.com
-    password: liem18112000
+    host: ${$MAIL_HOST:smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME:9dcbafd8999c65}
+    password: ${MAIN_PASSWORD:1e5030b386e43d}
     properties:
       mail:
         smtp:
@@ -38,7 +38,7 @@ spring:
           - spring
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/notification
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/notification
     username: root
     password: root
 application:
