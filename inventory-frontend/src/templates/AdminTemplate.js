@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { Route } from "react-router";
-import {Layout, Menu, Breadcrumb, Button} from 'antd';
+import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import { NavLink } from "react-router-dom";
 // import { history } from "../App.js";
 import "./AdminTemplate.css"
@@ -11,7 +11,9 @@ import {
     ShoppingCartOutlined,
     BellOutlined
 } from '@ant-design/icons';
-import {logout} from "../core/security/AuthenticateService";
+import { logout } from "../core/security/AuthenticateService";
+import '../assets/styles/OverlayPanelDemo.css';
+import { NotificationDialog } from "../notification/bell/NotificationDialog";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -41,7 +43,7 @@ const AdminTemplate = (props) => { //path, exact, Component
                     <div className="title">
                         <h1>Inventory System</h1>
                     </div>
-                    <Menu 
+                    <Menu
                         // defaultSelectedKeys={['2']} 
                         mode="inline">
                         <SubMenu key="sub1" title="Dashboard" icon={<DesktopOutlined />}>
@@ -78,10 +80,13 @@ const AdminTemplate = (props) => { //path, exact, Component
                     </Menu>
                 </Sider>
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0 }} >
+                    <Header className="site-layout-background" style={{ padding: 0 }}>
 
                         {/*TODO: Style logout button*/}
                         <Button onClick={(e) => logout()}>Logout</Button>
+
+                        <NotificationDialog />
+
                     </Header>
                     <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb style={{ margin: '16px 0' }}>
