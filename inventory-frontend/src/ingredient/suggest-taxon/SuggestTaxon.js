@@ -140,7 +140,7 @@ export class SuggestTaxon extends Component {
         return (
             <div className="dataview-demo">
                 <div className="card">
-                    <SuggestTaxonDetail ref={el => this.form = el} refreshData={() => this.suggestTaxon()} />
+                    <SuggestTaxonDetail bell={this.props.bell} ref={el => this.form = el} refreshData={() => this.suggestTaxon()} />
                     <DataView value={this.state.data} layout={this.state.layout} header={header} loading={this.state.loading}
                         itemTemplate={this.itemTemplate} paginator rows={12}
                         sortOrder={this.state.sortOrder} sortField={this.state.sortField} />

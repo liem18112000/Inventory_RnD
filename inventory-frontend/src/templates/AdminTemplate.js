@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState} from "react";
 import { Route } from "react-router";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import { NavLink } from "react-router-dom";
@@ -35,6 +35,8 @@ const AdminTemplate = (props) => { //path, exact, Component
         window.scrollTo(0, 0);
 
     })
+
+    let bell = useRef(null)
 
     return <Route {...restProps} render={(propsRoute) => { //props.location, props.history, props.match
         return <Fragment>
@@ -85,14 +87,14 @@ const AdminTemplate = (props) => { //path, exact, Component
                         {/*TODO: Style logout button*/}
                         <Button onClick={(e) => logout()}>Logout</Button>
 
-                        <NotificationDialog />
+                        <NotificationDialog ref={bell} />
 
                     </Header>
                     <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb style={{ margin: '16px 0' }}>
                         </Breadcrumb>
                         <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
-                            <Component {...propsRoute} />
+                            <Component bell={bell} {...propsRoute} />
                         </div>
                     </Content>
                 </Layout>

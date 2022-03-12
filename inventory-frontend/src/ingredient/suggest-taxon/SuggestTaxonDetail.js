@@ -24,6 +24,7 @@ export class SuggestTaxonDetail extends Component {
             displayResponsive: false,
             position: 'center',
         }
+        this.bell = props.bell
         this.domainService = new DomainService();
         this.onClick = this.onClick.bind(this);
         this.onHide = this.onHide.bind(this);
@@ -100,6 +101,7 @@ export class SuggestTaxonDetail extends Component {
                     sleep().then(() => {
                         this.onHide("displayResponsive")
                         if (data.lowStockAlert) {
+                            this.bell.current.getPage()
                             sleep().then(() => this.toast.show({
                                 severity: 'warn', summary: 'Lowstock alert',
                                 detail: `This taxon is low-stocked`, life: 1000

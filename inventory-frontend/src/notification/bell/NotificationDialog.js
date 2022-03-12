@@ -95,15 +95,16 @@ export class NotificationDialog extends Component {
                     onClick={(e) => this.op.toggle(e)}
                     aria-haspopup aria-controls="overlay_panel"
                 >
-                    <Badge value={this.state.total} ></Badge>
+                    <Badge value={this.state.total} />
                 </i>
-                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
+                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{ width: '500px' }} className="overlaypanel-demo">
                     <DataTable
                         value={this.state.content}
                         selectionMode="single"
                         paginator rows={5}
                     >
                         <Column field="name" />
+                        <Column field="eventType" />
                     </DataTable>
                 </OverlayPanel>
             </>
