@@ -7,6 +7,7 @@ import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { NotificationService } from "../../service/NotificationService";
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Badge } from 'primereact/badge';
+import '../../assets/styles/TableDemo.css'
 
 export class NotificationDialog extends Component {
 
@@ -20,7 +21,7 @@ export class NotificationDialog extends Component {
             content: [],
             // --paginator state--
             page: 0,
-            rows: 10,
+            rows: 5,
             total: 0,
             sortField: "",
             sortOrder: 0,
@@ -45,17 +46,7 @@ export class NotificationDialog extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPage();
-        this.getEventTypes();
     };
-
-    getEventTypes() {
-        this.notificationService.getEventTypes(this.state.isMock).then(types => {
-            this.setState({
-                ...this.state,
-                eventTypes: types.content
-            })
-        });
-    }
 
     /**
      * Call get page supplier group API
@@ -69,17 +60,15 @@ export class NotificationDialog extends Component {
             .then(data => this.setState({ ...this.state, ...data }));
     }
 
-    /**
-     * Category name body template
-     * @param rowData event data row
-     * @returns {JSX.Element}
-     */
-    nameBodyTemplate(rowData) {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Name</span>
-                {rowData.name}
-            </React.Fragment>
+    onPage = e => {
+        this.setState(
+            {
+                loading: true,
+                page: e.page
+            },
+            () => {
+                this.getPage();
+            }
         );
     }
 
@@ -97,14 +86,28 @@ export class NotificationDialog extends Component {
                 >
                     <Badge value={this.state.total} />
                 </i>
-                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{ width: '500px' }} className="overlaypanel-demo">
+                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
                     <DataTable
+                        lazy={true}
+                        first={this.state.page * this.state.rows}
                         value={this.state.content}
+                        className="p-datatable-customers"
+                        dataKey="id"
                         selectionMode="single"
-                        paginator rows={5}
+
+                        paginator={true}
+                        rows={this.state.rows}
+                        loading={this.state.loading}
+                        onPage={this.onPage}
+                        onSort={this.onSort}
+
+                        emptyMessage="No event found"
+                        totalRecords={this.state.total}
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} events"
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     >
-                        <Column field="name" />
-                        <Column field="eventType" />
+                        <Column header="Event" field="name" />
+                        <Column header="Type" field="eventType" />
                     </DataTable>
                 </OverlayPanel>
             </>
