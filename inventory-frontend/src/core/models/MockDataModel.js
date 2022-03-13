@@ -1278,3 +1278,46 @@ export const mockGetNotificationStatuses = () => {
 
     return Promise.resolve(mockData);
 }
+
+export const mockSendPeriodStatistics = () => {
+    const mockData = {
+        "sendSuccess": true,
+        "details": [
+            {
+                "ingredientName": "ST 25 Rice",
+                "ingredientCode": "ST025Rice",
+                "quantity": 11.0,
+                "unit": "kilogram",
+                "unitType": "weight",
+                "updateAt": "2022-03-13T02:53:25.849198200Z"
+            },
+            {
+                "ingredientName": "White Salt",
+                "ingredientCode": "White Salt",
+                "quantity": 50.0,
+                "unit": "gram",
+                "unitType": "weight",
+                "updateAt": "2022-03-13T02:53:25.854171Z"
+            },
+            {
+                "ingredientName": "Beef",
+                "ingredientCode": "Beef",
+                "quantity": 4.0,
+                "unit": "kilogram",
+                "unitType": "weight",
+                "updateAt": "2022-03-13T02:53:25.861178Z"
+            },
+            {
+                "ingredientName": "Carrot",
+                "ingredientCode": "Carrot",
+                "quantity": 11.0,
+                "unit": "kilogram",
+                "unitType": "weight",
+                "updateAt": "2022-03-13T02:53:25.866851100Z"
+            }
+        ],
+        "sendAt": "2022-03-13T05:47:45.019089Z"
+    };
+
+    return Promise.resolve(mockData);
+}
