@@ -61,7 +61,6 @@ export class Recipes extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -70,7 +69,6 @@ export class Recipes extends Component {
     groupBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Group</span>
                 <span>{rowData.parent.label}</span>
             </React.Fragment>
         );
@@ -107,7 +105,6 @@ export class Recipes extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="View" onClick={() => this.props.history.push({
                         pathname: `recipe/child/${rowData.id}`,
@@ -121,7 +118,6 @@ export class Recipes extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -130,7 +126,6 @@ export class Recipes extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -139,7 +134,6 @@ export class Recipes extends Component {
     updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Updated At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );

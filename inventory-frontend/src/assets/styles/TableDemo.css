@@ -81,12 +81,10 @@
 
     .datatable-doc-demo .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td {
         text-align: left;
-        display: block;
-        border: 0 none !important;
+        display: flex;
         width: 100% !important;
         float: left;
         clear: left;
-        border: 0 none;
     }
 
     .datatable-doc-demo .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td .p-column-title {

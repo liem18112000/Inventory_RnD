@@ -82,7 +82,6 @@ export class SupplierMaterial extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -112,7 +111,6 @@ export class SupplierMaterial extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="Edit"
                         onClick={() => form.action(rowData.id, this.props.match.params.id, false)}
@@ -125,7 +123,6 @@ export class SupplierMaterial extends Component {
     ingredientBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Ingredient</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.ingredient.name}</span>
             </React.Fragment>
         );
@@ -134,7 +131,6 @@ export class SupplierMaterial extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -143,7 +139,6 @@ export class SupplierMaterial extends Component {
     updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Updated At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -152,7 +147,6 @@ export class SupplierMaterial extends Component {
     maxQuantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Quantity</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.maximumQuantity}</span>
             </React.Fragment>
         );
@@ -161,7 +155,6 @@ export class SupplierMaterial extends Component {
     minQuantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Quantity</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.minimumQuantity}</span>
             </React.Fragment>
         );

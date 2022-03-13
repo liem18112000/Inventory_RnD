@@ -70,7 +70,6 @@ export class SupplierGroup extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -93,7 +92,6 @@ export class SupplierGroup extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="View" onClick={() => window.location.replace(
                         `supplier/${rowData.id}`
@@ -111,7 +109,6 @@ export class SupplierGroup extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -125,7 +122,6 @@ export class SupplierGroup extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 {rowData.name}
             </React.Fragment>
         );
@@ -139,7 +135,6 @@ export class SupplierGroup extends Component {
     createAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Create At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createdAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -148,7 +143,6 @@ export class SupplierGroup extends Component {
     updateAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Update At</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updatedAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );

@@ -95,7 +95,6 @@ class IngredientItem extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -104,7 +103,6 @@ class IngredientItem extends Component {
     importBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Import</span>
                 <span>{rowData.imports.code}</span>
             </React.Fragment>
         );
@@ -113,7 +111,6 @@ class IngredientItem extends Component {
     actionBodyTemplate(rowData, form) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <Button
                         icon="pi pi-pencil"
@@ -127,7 +124,6 @@ class IngredientItem extends Component {
     unitBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Unit</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.status)}>{rowData.unit}</span>
             </React.Fragment>
         );
@@ -136,7 +132,6 @@ class IngredientItem extends Component {
     unitTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Unit Type</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.status)}>{rowData.unitType}</span>
             </React.Fragment>
         );
@@ -145,7 +140,6 @@ class IngredientItem extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -154,7 +148,6 @@ class IngredientItem extends Component {
     categoryBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Categories</span>
                 <span style={{ verticalAlign: 'middle' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -163,7 +156,6 @@ class IngredientItem extends Component {
     expiredAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Active</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.expiredAt).format('DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -172,7 +164,6 @@ class IngredientItem extends Component {
     quantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Quantity</span>
                 <span>{rowData.quantity}</span>
             </React.Fragment>
         );

@@ -104,7 +104,6 @@ export class IngredientType extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -155,7 +154,6 @@ export class IngredientType extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     {/* <SplitButton label="View" onClick={() => window.location.replace(
                         `type/${rowData.id}`
@@ -176,7 +174,6 @@ export class IngredientType extends Component {
     unitBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Unit</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.status)}>{rowData.unit}</span>
             </React.Fragment>
         );
@@ -185,7 +182,6 @@ export class IngredientType extends Component {
     unitTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Unit Type</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.status)}>{rowData.unitType}</span>
             </React.Fragment>
         );
@@ -194,7 +190,6 @@ export class IngredientType extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -203,7 +198,6 @@ export class IngredientType extends Component {
     categoryBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Categories</span>
                 <span style={{ verticalAlign: 'middle' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -212,7 +206,6 @@ export class IngredientType extends Component {
     createAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Active</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.createAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -221,7 +214,6 @@ export class IngredientType extends Component {
     quantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Quantity</span>
                 <span>{rowData.quantity}</span>
             </React.Fragment>
         );

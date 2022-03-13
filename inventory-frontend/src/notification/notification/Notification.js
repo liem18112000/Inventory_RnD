@@ -99,7 +99,6 @@ export class Notification extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -113,7 +112,6 @@ export class Notification extends Component {
     actionBodyTemplate(rowData, form) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <Button label="View"
                         onClick={(e) => { form.action(rowData.id) }}
@@ -131,7 +129,6 @@ export class Notification extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 {rowData.name}
             </React.Fragment>
         );
@@ -145,7 +142,6 @@ export class Notification extends Component {
     notificationTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Type</span>
                 {rowData.type}
             </React.Fragment>
         );
@@ -159,7 +155,6 @@ export class Notification extends Component {
     notificationStatusBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Status</span>
                 {rowData.status}
             </React.Fragment>
         );
@@ -173,7 +168,6 @@ export class Notification extends Component {
     occurAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Notify At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>
                     {rowData.notifyAt ? moment(rowData.notifyAt).format('HH:mm-A-ddd-DD/MMM/YYYY') : "Not Available"}
                 </span>
