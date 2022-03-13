@@ -261,7 +261,9 @@ export class IngredientInventory extends Component {
                     severity: 'success', summary: 'Confirmed',
                     detail: `Send statistics success`, life: 1000
                 });
-                sleep().then(this.props.refreshData)
+                sleep().then(() => {
+                    this.props.bell.current.getPage()
+                })
             } else {
                 this.toast.show({
                     severity: 'warn', summary: 'Failed Message',
