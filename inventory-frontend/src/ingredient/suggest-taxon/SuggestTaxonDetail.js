@@ -3,11 +3,14 @@ import DomainService from '../../service/DomainService';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import '../../assets/styles/CardDemo.css';
+import '../../assets/styles/TableDemo.css'
 import { getMediaSource } from "../../service/MediaService";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { InputNumber } from 'primereact/inputnumber';
 import { sleep } from "../../core/utility/ComponentUtility";
+import {DataTable} from "primereact/datatable";
+import {Column} from "primereact/column";
 
 export class SuggestTaxonDetail extends Component {
 
@@ -141,6 +144,15 @@ export class SuggestTaxonDetail extends Component {
         });
     }
 
+    quantityBody(rowData) {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Quantity</span>
+                <span>{rowData.quantity} {rowData.ingredient.unit}</span>
+            </React.Fragment>
+        );
+    }
+
     /**
      * Render
      * @returns {JSX.Element}
@@ -161,25 +173,31 @@ export class SuggestTaxonDetail extends Component {
                         <img src={this.state.data.image} alt={"Taxon"} style={{ width: '90%', align: 'center' }}
                             onError={(e) => e.target.src = getMediaSource()} />
                         <div className="">
-
                             <div className="taxon-name">{data.recipe.name}</div>
                         </div>
 
-                        {data.details.map((item, index) => (
-                            <div key={"div_" + index} className="taxon-detail">
-                                <span className="detail">Recipe Detail</span>
-                                <ul>
-                                    <li key={"recipeName_" + index}><span className="detail">Recipe name: </span>{item.name}</li>
-                                    <li key={"recipeQuantity_" + index}><span className="detail">Recipe quantity: </span>
-                                        {item.quantity} {item.ingredient.unit}</li>
-                                </ul>
-                            </div>
-                        ))}
+                        <div className="taxon-detail">
+                            <DataTable
+                                lazy={true}
+                                value={data.details}
+                                dataKey="id"
+                                className="p-datatable-customers"
+                                rows={5}
+                            >
+                                <Column header="Ingredient" field="ingredient.name" />
+                                <Column header="Quantity" body={this.quantityBody} />
+                            </DataTable>
+                        </div>
+
+                        <br/>
 
                         <div className="taxon-quantity">
-                            <span className=""><span className="detail">Taxon quantity: </span> {data.taxonQuantity}</span>
+                            <span className="">
+                                <span className="detail">Taxon quantity: </span>
+                                {data.taxonQuantity}
+                            </span>
                         </div>
-                        <br></br>
+                        <br/>
                     </div>}
                 </Dialog>
             </>
