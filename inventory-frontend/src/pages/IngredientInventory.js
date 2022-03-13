@@ -8,12 +8,14 @@ import { Button } from "primereact/button";
 import { Fieldset } from "primereact/fieldset";
 
 import { IngredientService } from '../service/IngredientService.js'
+import DomainService from '../service/DomainService.js'
 
 import '../assets/styles/TableDemo.css'
 import { Dropdown } from 'primereact/dropdown';
 import moment from 'moment';
 import { handleGetPage } from '../core/handlers/ApiLoadContentHandler.js';
 import { Toast } from 'primereact/toast';
+import { sleep } from "../core/utility/ComponentUtility";
 
 export class IngredientInventory extends Component {
 
@@ -44,6 +46,7 @@ export class IngredientInventory extends Component {
         };
 
         this.ingredientService = new IngredientService();
+        this.domainService = new DomainService();
     }
 
     componentDidMount() {
@@ -251,6 +254,23 @@ export class IngredientInventory extends Component {
         return ''
     };
 
+    sendStatistics() {
+        this.domainService.sendPeriodStatistics(this.state.isMock).then((data) => {
+            if (data.sendSuccess) {
+                this.toast.show({
+                    severity: 'success', summary: 'Confirmed',
+                    detail: `Send statistics success`, life: 1000
+                });
+                sleep().then(this.props.refreshData)
+            } else {
+                this.toast.show({
+                    severity: 'warn', summary: 'Failed Message',
+                    detail: `${data.failedMessage}`, life: 1000
+                });
+            }
+        });
+    }
+
     render() {
         // const header = this.renderHeader();
         let tableLengthOptions = [
@@ -290,6 +310,13 @@ export class IngredientInventory extends Component {
             <>
                 <div className="table-header" >
                     <span className="p-input-icon-left">
+                        <Button
+                            className="blue-btn"
+                            style={{ marginRight: '0.5rem' }}
+                            iconPos="left"
+                            label="Send Statistics"
+                            onClick={() => this.sendStatistics()}
+                        />
                         <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
                             onClick={this.onRefresh} model={tableLengthOptions}>
                         </SplitButton>

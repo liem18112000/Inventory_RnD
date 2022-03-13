@@ -78,7 +78,7 @@ export class SuggestTaxonDetail extends Component {
                 <Button label="Cancel" icon="pi pi-times"
                     onClick={() => this.onHide(name)} className="p-button-text" />
                 <Button label="Save" icon="pi pi-check"
-                    onClick={() => this.confirmDelete(name)} autoFocus />
+                    onClick={() => this.confirmSave(name)} autoFocus />
             </div>
         );
     }
@@ -126,7 +126,7 @@ export class SuggestTaxonDetail extends Component {
 
     }
 
-    confirmDelete() {
+    confirmSave() {
         confirmDialog({
             message:
                 <InputNumber
