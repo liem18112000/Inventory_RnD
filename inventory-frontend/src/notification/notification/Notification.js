@@ -420,7 +420,7 @@ export class Notification extends Component {
                                             placeholder={"Notification Status"}
                                             itemTemplates={item => item.label}
                                             options={this.state.notificationStatuses}
-                                            value={this.state.filter.type}
+                                            value={this.state.filter.status}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, status: e.target.value })}
                                         />
                                     </div>
