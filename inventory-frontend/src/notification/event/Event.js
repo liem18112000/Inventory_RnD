@@ -144,7 +144,6 @@ export class Event extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="View" onClick={() => this.props.history.push({
                         pathname: `event/${rowData.id}`
@@ -163,7 +162,6 @@ export class Event extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 {rowData.name}
             </React.Fragment>
         );
@@ -177,7 +175,6 @@ export class Event extends Component {
     eventTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Event Type</span>
                 {rowData.eventType}
             </React.Fragment>
         );
@@ -191,7 +188,6 @@ export class Event extends Component {
     occurAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Occur At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.occurAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );

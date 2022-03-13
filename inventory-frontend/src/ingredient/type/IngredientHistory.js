@@ -120,7 +120,6 @@ export class IngredientHistory extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -133,7 +132,6 @@ export class IngredientHistory extends Component {
     eventBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Event</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.event.status.name)}>{rowData.event.name.replace(/_/g, " ")}</span>
             </React.Fragment>
         );
@@ -142,7 +140,6 @@ export class IngredientHistory extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 <span style={{ verticalAlign: 'middle' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -151,7 +148,6 @@ export class IngredientHistory extends Component {
     trackTimestampBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Track Timestamp</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.trackTimestamp).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -160,7 +156,6 @@ export class IngredientHistory extends Component {
     actorNameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Actor Name</span>
                 <span>{rowData.actorName}</span>
             </React.Fragment>
         );
@@ -169,7 +164,6 @@ export class IngredientHistory extends Component {
     actorRoleBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Actor Role</span>
                 <span>{rowData.actorRole}</span>
             </React.Fragment>
         );

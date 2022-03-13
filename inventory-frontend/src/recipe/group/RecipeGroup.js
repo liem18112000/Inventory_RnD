@@ -60,7 +60,6 @@ export class RecipeGroup extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -96,7 +95,6 @@ export class RecipeGroup extends Component {
         console.log(rowData.id)
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="View"
                         onClick={() => this.props.history.push({
@@ -113,7 +111,6 @@ export class RecipeGroup extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -122,7 +119,6 @@ export class RecipeGroup extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Categories</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -131,7 +127,6 @@ export class RecipeGroup extends Component {
     updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Create At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );

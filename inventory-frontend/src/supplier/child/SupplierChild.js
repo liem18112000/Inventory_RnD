@@ -88,7 +88,6 @@ export class SupplierChild extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -121,7 +120,6 @@ export class SupplierChild extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="Edit"
                         onClick={(e) => { form.action(rowData.id, this.props.match.params.id, this.state.isMock) }}
@@ -134,7 +132,6 @@ export class SupplierChild extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -143,7 +140,6 @@ export class SupplierChild extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 <span style={{ verticalAlign: 'middle' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -152,7 +148,6 @@ export class SupplierChild extends Component {
     createAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Create At</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.createdAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -161,7 +156,6 @@ export class SupplierChild extends Component {
     updateAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Update At</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updatedAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );

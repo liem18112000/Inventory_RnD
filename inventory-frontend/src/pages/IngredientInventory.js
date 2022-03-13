@@ -134,7 +134,6 @@ export class IngredientInventory extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -143,7 +142,6 @@ export class IngredientInventory extends Component {
     unitBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Unit</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.status)}>{rowData.unit}</span>
             </React.Fragment>
         );
@@ -152,7 +150,6 @@ export class IngredientInventory extends Component {
     unitTypeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Unit Type</span>
                 <span className={classNames('customer-badge', 'status-' + rowData.status)}>{rowData.unitType}</span>
             </React.Fragment>
         );
@@ -161,7 +158,6 @@ export class IngredientInventory extends Component {
     nameBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Name</span>
                 {rowData.name}
             </React.Fragment>
         );
@@ -170,7 +166,6 @@ export class IngredientInventory extends Component {
     updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Active</span>
                 <span style={{ verticalAlign: 'middle' }}>{moment(rowData.updatedAt).format('HH:mm A ddd DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -179,7 +174,6 @@ export class IngredientInventory extends Component {
     quantityBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Quantity</span>
                 <span>{rowData.quantity}</span>
             </React.Fragment>
         );

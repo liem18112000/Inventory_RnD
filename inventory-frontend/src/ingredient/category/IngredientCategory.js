@@ -57,12 +57,12 @@ export class IngredientCategory extends Component {
      * Call get page ingredient category API
      */
     getPageCategories = () => {
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         this.ingredientService
             .getPageCategory(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => this.setState({ ...this.state, ...data}));
+            .then(data => this.setState({ ...this.state, ...data }));
     }
 
     /**
@@ -73,7 +73,6 @@ export class IngredientCategory extends Component {
     descriptionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Description</span>
                 <span>{rowData.description}</span>
             </React.Fragment>
         );
@@ -116,7 +115,6 @@ export class IngredientCategory extends Component {
 
         return (
             <React.Fragment>
-                <span className="p-column-title">Action</span>
                 <div className="card">
                     <SplitButton label="View" onClick={() => window.location.replace(
                         `ingredient/${rowData.id}`
@@ -134,7 +132,6 @@ export class IngredientCategory extends Component {
     codeBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Code</span>
                 {rowData.code}
             </React.Fragment>
         );
@@ -148,7 +145,6 @@ export class IngredientCategory extends Component {
     categoryBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Categories</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{rowData.name}</span>
             </React.Fragment>
         );
@@ -162,7 +158,6 @@ export class IngredientCategory extends Component {
     createAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span className="p-column-title">Create At</span>
                 <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.createAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
@@ -428,6 +423,7 @@ export class IngredientCategory extends Component {
                         </div>
                     </div>
                 </Fieldset>
+
                 < DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
@@ -453,10 +449,10 @@ export class IngredientCategory extends Component {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
-                    <Column sortField="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} sortable />
-                    <Column sortField="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column field="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} sortable />
+                    <Column field="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    <Column field="action" header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >
         );
