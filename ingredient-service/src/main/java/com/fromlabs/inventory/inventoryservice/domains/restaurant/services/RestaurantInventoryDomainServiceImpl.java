@@ -16,10 +16,7 @@ import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailD
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
 import com.fromlabs.inventory.inventoryservice.common.dto.BaseDto;
 import com.fromlabs.inventory.inventoryservice.domains.AbstractDomainService;
-import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
-import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.IngredientSuggestion;
-import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.LowStockDetails;
-import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.*;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.config.NotificationConfiguration;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
@@ -38,6 +35,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.floor;
@@ -313,22 +310,22 @@ public class RestaurantInventoryDomainServiceImpl
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         final String details = objectMapper.writeValueAsString(eventItemMap);
-        final EventDTO event = buildEvent(details);
+        final EventDTO event = buildLowStockEvent(details);
         final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
         if (Objects.nonNull(pushedEvent)) {
             final var notifications =
                     this.configuration.getEmails(tenantId).stream()
-                    .map(email -> sendNotification(pushedEvent, email))
+                    .map(email -> sendLowStockNotification(pushedEvent, email))
                     .collect(Collectors.toList());
             log.info("Sent notification : {}", notifications);
         }
         log.info("Event pushed : {}", pushedEvent);
     }
 
-    private NotificationDTO sendNotification(
+    private NotificationDTO sendLowStockNotification(
             final @NotNull EventDTO pushedEvent,
             final @NotNull String email) {
-        final var notification = buildNotification(pushedEvent, email);
+        final var notification = buildLowStockNotification(pushedEvent, email);
         final var savedNotification = this.notificationClient
                 .saveNotification(notification);
         if (Objects.isNull(savedNotification)) {
@@ -350,7 +347,7 @@ public class RestaurantInventoryDomainServiceImpl
         return sentNotification;
     }
 
-    private EventDTO buildEvent(String details) {
+    private EventDTO buildLowStockEvent(String details) {
         return EventDTO.builder()
                 .eventType("Ingredient item quantity is low")
                 .description(details)
@@ -359,10 +356,10 @@ public class RestaurantInventoryDomainServiceImpl
                 .build();
     }
 
-    private NotificationDTO buildNotification(EventDTO pushedEvent, String email) {
+    private NotificationDTO buildLowStockNotification(EventDTO pushedEvent, String email) {
         return NotificationDTO.builder()
                 .name("Ingredient item run low at".concat(LocalDateTime.now().toString()))
-                .message(buildMessage(email))
+                .message(buildLowStockMessage(email))
                 .description("Create notification of low stock event")
                 .event(pushedEvent)
                 .type("email")
@@ -370,7 +367,7 @@ public class RestaurantInventoryDomainServiceImpl
                 .build();
     }
 
-    private MessageValueObject buildMessage(String email) {
+    private MessageValueObject buildLowStockMessage(String email) {
         return MessageValueObject.builder()
                 .subject("[Alert] Ingredient item run low")
                 .body("From ingredient activity, we found that there are some " +
@@ -432,6 +429,178 @@ public class RestaurantInventoryDomainServiceImpl
                     .ingredientName(ingredient.getName())
                     .build());
         }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="SEND STATISTICS">
+
+    /**
+     * Send inventory statistics
+     *
+     * @param tenantId Client ID
+     * @return SendStatisticsResponse
+     */
+    @Transactional
+    public SendStatisticsResponse sendInventoryStatistics(
+            final @NotNull Long tenantId
+    ) {
+        log.info("Start sendInventoryStatistics : {}", tenantId);
+        try {
+            final var inventoryItems = this.inventoryService.getAll(tenantId);
+            final var statisticsLastSentDate =
+                    this.configuration.getStatisticsLastSentDate(tenantId);
+            final var statisticsPeriod = this.configuration.getStatisticsPeriod(tenantId);
+            if (statisticsLastSentDate.plusDays(statisticsPeriod.longValue()).isAfter(LocalDate.now())) {
+                return generateFailedSendStatisticResponse("Statistics date is not satisfied");
+            }
+            final var response = processSendStatistics(tenantId, inventoryItems);
+            log.info("End sendInventoryStatistics : {}", response);
+            return response;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            final var response =
+                    generateFailedSendStatisticResponse(exception.getMessage());
+            log.info("End sendInventoryStatistics : {}", response);
+            return response;
+        }
+    }
+
+    private SendStatisticsResponse generateFailedSendStatisticResponse(
+            final @NotNull String message
+    ) {
+        return SendStatisticsResponse.builder()
+                .failedMessage(message)
+                .details(null)
+                .sendSuccess(false)
+                .build();
+    }
+
+    @Transactional
+    public SendStatisticsResponse processSendStatistics(
+            final @NotNull Long tenantId,
+            final @NotNull List<InventoryEntity> inventoryItems
+    ) {
+        try {
+            var objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            final var detailsList =
+                    this.convertInventoryEntitiesToStatisticsDetails(inventoryItems);
+            final String details = objectMapper.writeValueAsString(detailsList);
+            final EventDTO event = this.buildStatisticsEvent(details);
+            final EventDTO pushedEvent = this.notificationClient.saveEvent(event);
+            if (Objects.nonNull(pushedEvent)) {
+                final var notifications =
+                        this.configuration.getStatisticsEmails(tenantId).stream()
+                        .map(email -> sendStatisticsNotification(pushedEvent, email))
+                        .collect(Collectors.toList());
+                log.info("Sent notification : {}", notifications);
+            }
+            log.info("Event pushed : {}", pushedEvent);
+            try {
+                this.configuration.updateStatisticsLastSentDateToNow(tenantId);
+                log.info("Statistics last sent configuration updated: {}",
+                        this.configuration.getStatisticsLastSentDate(tenantId));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                log.warn("Statistics last sent configuration update failed");
+            }
+
+            return SendStatisticsResponse.builder()
+                    .details(detailsList)
+                    .sendSuccess(true)
+                    .build();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return generateFailedSendStatisticResponse(exception.getMessage());
+        }
+    }
+
+    private NotificationDTO sendStatisticsNotification(
+            final @NotNull EventDTO pushedEvent,
+            final @NotNull String email
+    ) {
+        final var notification = buildStatisticsNotification(pushedEvent, email);
+        final var savedNotification = this.notificationClient
+                .saveNotification(notification);
+        if (Objects.isNull(savedNotification)) {
+            log.error("Create notification failed: {}", notification);
+            return null;
+        }
+        final var readyNotification = this.notificationClient
+                .updateNotificationStatusToSending(savedNotification.getId());
+        if (Objects.isNull(readyNotification)) {
+            log.error("Update notification to sending mode failed");
+            return null;
+        }
+        final var sentNotification = this.notificationClient
+                .sendNotificationMessage(readyNotification.getId());
+        if (Objects.isNull(sentNotification)) {
+            log.error("Send notification failed");
+            return null;
+        }
+        return sentNotification;
+    }
+
+    private List<StatisticsDetails> convertInventoryEntitiesToStatisticsDetails(
+             final @NotNull List<InventoryEntity> inventoryEntities
+    ) {
+        return inventoryEntities.stream().map(this::convertInventoryEntityToStatisticsDetail)
+                .filter(Objects::nonNull).distinct().collect(Collectors.toList());
+    }
+
+    private StatisticsDetails convertInventoryEntityToStatisticsDetail(
+            final InventoryEntity entity
+    ) {
+        if (Objects.isNull(entity)) {
+            log.warn("Inventory is null");
+            return null;
+        }
+
+        final var ingredient = entity.getIngredient();
+
+        if (Objects.isNull(ingredient)) {
+            log.warn("Inventory ingredient is null");
+            return null;
+        }
+
+        return StatisticsDetails.builder()
+                .ingredientName(ingredient.getName())
+                .ingredientCode(ingredient.getCode())
+                .unit(ingredient.getUnit())
+                .unitType(ingredient.getUnitType())
+                .quantity(entity.getQuantity())
+                .updateAt(entity.getUpdateAt())
+                .build();
+    }
+
+    private EventDTO buildStatisticsEvent(String details) {
+        return  EventDTO.builder()
+                .name("Period statistic on ".concat(LocalDateTime.now().toString()))
+                .eventType("Ingredient item monthly statistics")
+                .description(details)
+                .occurAt(Instant.now().toString())
+                .build();
+    }
+
+    private NotificationDTO buildStatisticsNotification(EventDTO pushedEvent, String email) {
+        return NotificationDTO.builder()
+                .name("Period statistics on ".concat(LocalDateTime.now().toString()))
+                .message(buildStatisticsMessage(email))
+                .description("Create notification of period statistics event")
+                .event(pushedEvent)
+                .type("email")
+                .createdAt(Instant.now().toString())
+                .build();
+    }
+
+    private MessageValueObject buildStatisticsMessage(String email) {
+        return MessageValueObject.builder()
+                .subject("[Notification] Period statistic")
+                .body("There is the period statistics")
+                .from("noreply@rim.com")
+                .to(email)
+                .build();
     }
 
     //</editor-fold>

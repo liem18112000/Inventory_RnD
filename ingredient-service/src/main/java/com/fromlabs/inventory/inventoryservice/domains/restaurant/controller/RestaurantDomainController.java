@@ -27,7 +27,23 @@ public interface RestaurantDomainController {
             Long tenantId
     );
 
+    /**
+     * Confirm suggest recipe and quantity of a taxon that could
+     * be made by existing ingredient and items
+     * @param confirmSuggestion  CSuggestResponse
+     * @param quantity  Confirmed quantity
+     * @return          ResponseEntity
+     */
     ResponseEntity<?> confirmSuggest(
             SuggestResponse confirmSuggestion, int quantity
+    );
+
+    /**
+     * Send monthly statistics to pre-defined receipt
+     * @param tenantId  Client ID
+     * @return          ResponseEntity
+     */
+    ResponseEntity<?> sendStatistics(
+            Long tenantId
     );
 }

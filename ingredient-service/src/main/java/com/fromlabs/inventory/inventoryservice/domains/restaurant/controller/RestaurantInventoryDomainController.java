@@ -88,9 +88,24 @@ public class RestaurantInventoryDomainController implements RestaurantDomainCont
                 .build().run();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @PostMapping("confirm")
     public ResponseEntity<?> confirmSuggest(
             @RequestBody SuggestResponse request, @RequestParam int quantity) {
+        log.info(path(HttpMethod.POST, "confirm"));
         return ok(this.domainService.confirmOnSuggestion(request, quantity));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @PostMapping("statistics")
+    public ResponseEntity<?> sendStatistics(
+            @RequestHeader(TENANT_ID) Long tenantId) {
+        log.info(path(HttpMethod.POST, "statistics" +
+                ""));
+        return ok(this.domainService.sendInventoryStatistics(tenantId));
     }
 }

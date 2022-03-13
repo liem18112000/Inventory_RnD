@@ -7,6 +7,7 @@ package com.fromlabs.inventory.inventoryservice.domains.restaurant.services;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.ConfirmSuggestion;
+import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SendStatisticsResponse;
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.beans.SuggestResponse;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 
@@ -109,4 +110,10 @@ public interface RestaurantInventoryDomainService {
      */
     ConfirmSuggestion confirmOnSuggestion(SuggestResponse request, int quantity);
 
+    /**
+     * Send inventory statistics
+     * @param tenantId Client ID
+     * @return SendStatisticsResponse
+     */
+    SendStatisticsResponse sendInventoryStatistics(Long tenantId);
 }
