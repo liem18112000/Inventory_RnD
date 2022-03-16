@@ -42,12 +42,7 @@ export const Login = ({onAuthenticate}) => {
                                 <label htmlFor="password" >Password</label>
                             </span>
                         </div>
-                        <div className="p-field-checkbox">
-                            <Checkbox inputId="accept" name="accept" />
-                            <label htmlFor="accept" >Remember me</label>
-                        </div>
-
-                        <Button type="submit" label="Submit" className="p-mt-2" />
+                        <Button type="submit" label="Submit" className="p-mt-0" />
                     </form>
                 </div>
             </div>
