@@ -363,7 +363,7 @@ export class IngredientType extends Component {
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText
-                                placeholder="Category"
+                                placeholder="Name"
                                 value={this.state.filter.name}
                                 onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                             />

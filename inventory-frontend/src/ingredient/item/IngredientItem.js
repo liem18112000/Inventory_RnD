@@ -386,7 +386,7 @@ class IngredientItem extends Component {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
-                    <Column sortField="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} sortable />
+                    <Column sortField="name" filterField="name" header="Name" body={this.categoryBodyTemplate} sortable />
                     <Column sortField="expiredAt" filterField="expiredAt" header="Expired At" body={this.expiredAtBodyTemplate} sortable />
                     <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate}/>
                     <Column field="unit" header="Unit" body={this.unitBodyTemplate}/>
