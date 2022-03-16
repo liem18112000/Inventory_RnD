@@ -289,7 +289,7 @@ export class IngredientTypeForm extends Component {
                             onChange={(e) => this.setState({ data: { ...this.state.data, code: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.code}</div>
                     </div>
-                    <div className="p-col-12">
+                    {this.state.formHeader !== this.state.editTitle && <div className="p-col-12">
                         <label>* Unit Type </label>
                         <Dropdown value={this.state.data.unitType}
                             options={this.state.unitTypes}
@@ -305,13 +305,13 @@ export class IngredientTypeForm extends Component {
                                 )
                             }} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unitType}</div>
-                    </div>
-                    <div className="p-col-12">
+                    </div>}
+                    {this.state.formHeader !== this.state.editTitle && <div className="p-col-12">
                         <label>* Unit </label>
                         <Dropdown value={this.state.data.unit}
                             options={this.state.units} onChange={(e) => this.setState({ data: { ...this.state.data, unit: e.target.value } })} />
                         <div className="p-form-error" style={{ color: "red" }}>{this.state.errors.unit}</div>
-                    </div>
+                    </div>}
                     <div className="p-col-12">
                         <label>Description</label>
                         <InputTextarea rows={5} value={this.state.data.description} placeholder="Enter description"
