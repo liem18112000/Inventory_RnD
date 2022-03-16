@@ -121,12 +121,16 @@ export class RecipeChildForm extends Component {
         return field && field.length > 0;
     }
 
+    requireNumberField = (field) => {
+        return field !== null && field !== "";
+    }
+
     /**
      * Check the submit validation is valid
      * @returns {boolean}
      */
     isSubmitValid = () => {
-        return !(this.state.errors.name || this.state.errors.code);
+        return !(this.state.errors.name || this.state.errors.code || this.state.errors.recipeGroup);
     }
 
     /**
