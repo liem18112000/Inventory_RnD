@@ -5,10 +5,13 @@
 package com.fromlabs.inventory.recipeservice.client.endpoint;
 
 import com.fromlabs.inventory.recipeservice.client.ingredient.IngredientClient;
+import com.fromlabs.inventory.recipeservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.recipeservice.config.ApiV1;
+import com.fromlabs.inventory.recipeservice.detail.RecipeDetailEntity;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
 import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
 import com.fromlabs.inventory.recipeservice.detail.mapper.RecipeDetailMapper;
+import com.fromlabs.inventory.recipeservice.detail.specification.RecipeDetailSpecification;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
 import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
@@ -162,5 +165,16 @@ public class EndPointImpl implements EndPoint {
     ) {
         log.info(path(HttpMethod.GET, "detail/code"));
         return RecipeDetailMapper.toDto(recipeDetailService.getByCode(code), ingredientClient);
+    }
+
+    @RequestMapping(
+            value = "detail/exist-by-ingredient/{ingredientId:\\d+}",
+            method = {RequestMethod.GET, RequestMethod.POST})
+    public boolean existByIngredient(
+            @PathVariable Long ingredientId
+    ) {
+        log.info(path(HttpMethod.GET, "detail/exist-by-ingredient/".concat(String.valueOf(ingredientId))));
+        final BaseSpecification<RecipeDetailEntity> specification = RecipeDetailSpecification.hasIngredientId(ingredientId);
+        return !recipeDetailService.getAll(specification).isEmpty();
     }
 }

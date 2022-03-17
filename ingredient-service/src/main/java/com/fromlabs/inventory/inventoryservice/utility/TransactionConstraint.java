@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.utility;
 
+import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.common.exception.ConstraintViolateException;
 import com.fromlabs.inventory.inventoryservice.common.wrapper.ConstraintWrapper;
@@ -655,9 +656,53 @@ public class TransactionConstraint {
     }
 
     /**
+     * Check constraint before delete ingredient
+     * @param id Ingredient id
+     * @param ingredientService IngredientService
+     * @param recipeClient RecipeClient
+     * @param supplierClient SupplierClient
+     * @return boolean
+     */
+    public boolean checkConstraintBeforeDeleteIngredient(
+            Long id,
+            IngredientService ingredientService,
+            RecipeClient recipeClient,
+            SupplierClient supplierClient
+    ) {
+        final var recipeDetailNotExistByIngredient = ConstraintWrapper.builder()
+                .name("Check ingredient has no recipe detail referenced")
+                .check(() -> !recipeClient.existByIngredient(id))
+                .exception(new ConstraintViolateException("Ingredient has recipe details referenced"))
+                .build();
+
+        final var materialNotExistByIngredient = ConstraintWrapper.builder()
+                .name("Check ingredient has no material referenced")
+                .check(() -> !supplierClient.isMaterialExistByIngredient(id))
+                .exception(new ConstraintViolateException("Ingredient has material referenced"))
+                .build();
+
+        final var ingredientCategoryChildrenNotExist = ConstraintWrapper.builder()
+                .name("Check ingredient as category has no children")
+                .check(() -> {
+                    final var ingredient = ingredientService.getById(id);
+                    return !ingredient.isCategory() ||
+                            ingredientService.getAll(ingredient.getClientId(), ingredient.getId()).isEmpty();
+                })
+                .exception(new ConstraintViolateException("Check ingredient as category has children"))
+                .build();
+
+        final var isPass =  isIngredientExistById(id, ingredientService) &&
+                            ingredientCategoryChildrenNotExist.constraintCheck() &&
+                            recipeDetailNotExistByIngredient.constraintCheck() &&
+                            materialNotExistByIngredient.constraintCheck();
+
+        return logWrapper(isPass, "checkConstraintBeforeDeleteIngredient: {}");
+    }
+
+    /**
      * Check item entity by id
      * @param id                Entity ID
-     * @param itemService I     temService
+     * @param itemService       ItemService
      * @return                  boolean
      */
     public boolean isItemExistById(

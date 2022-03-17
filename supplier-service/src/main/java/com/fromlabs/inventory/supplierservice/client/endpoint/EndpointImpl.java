@@ -2,6 +2,7 @@ package com.fromlabs.inventory.supplierservice.client.endpoint;
 
 import com.fromlabs.inventory.supplierservice.client.ingredient.IngredientClient;
 import com.fromlabs.inventory.supplierservice.common.exception.ObjectNotFoundException;
+import com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.supplierservice.config.ApiV1;
 import com.fromlabs.inventory.supplierservice.imports.ImportEntity;
 import com.fromlabs.inventory.supplierservice.imports.ImportService;
@@ -12,6 +13,7 @@ import com.fromlabs.inventory.supplierservice.imports.details.beans.dto.ImportDe
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
 import com.fromlabs.inventory.supplierservice.imports.mapper.ImportMapper;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
+import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialEntity;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.specification.ProvidableMaterialSpecification;
 import com.fromlabs.inventory.supplierservice.utility.TransactionLogic;
@@ -129,5 +131,16 @@ public class EndpointImpl implements Endpoint {
         final var materialConfig = this.materialService.getAll(spec).get(0);
         return materialConfig.getMinimumQuantity() <= quantity &&
                 quantity <= materialConfig.getMaximumQuantity();
+    }
+
+    @RequestMapping(
+            value = "providable-material/exist-by-ingredient/{ingredientId:\\d+}",
+            method = {RequestMethod.GET, RequestMethod.POST})
+    public boolean isMaterialExistByIngredient(
+            @PathVariable Long ingredientId
+    ) {
+        final BaseSpecification<ProvidableMaterialEntity> specification = ProvidableMaterialSpecification
+                .hasIngredientId(ingredientId);
+        return !this.materialService.getAll(specification).isEmpty();
     }
 }

@@ -104,4 +104,9 @@ public interface RecipeClient {
             @RequestParam(CODE) String code
     );
 
+    @GetMapping("detail/exist-by-ingredient/{ingredientId:\\d+}")
+    boolean existByIngredient(
+            @PathVariable(INGREDIENT_ID) Long ingredientId
+    );
+
 }

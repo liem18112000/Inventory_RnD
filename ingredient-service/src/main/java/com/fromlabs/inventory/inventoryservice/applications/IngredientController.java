@@ -5,6 +5,7 @@
 package com.fromlabs.inventory.inventoryservice.applications;
 
 import com.fromlabs.inventory.inventoryservice.client.auth.AuthClient;
+import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.common.template.WebStatefulTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.common.template.manager.TemplateProcessCacheManger;
@@ -67,6 +68,7 @@ public class IngredientController implements ApplicationController {
     private final ItemService                   itemService;
     private final TemplateProcessCacheManger    processCache;
     private final SupplierClient                supplierClient;
+    private final RecipeClient                  recipeClient;
 
     @Autowired
     private AuthClient authClient;
@@ -109,6 +111,7 @@ public class IngredientController implements ApplicationController {
      * @param itemService           The service of ItemEntity
      * @param processCache          The service of TemplateProcessCache
      * @param supplierClient        The client of Supplier
+     * @param recipeClient          The client of Recipe
      */
     public IngredientController(
             IngredientService ingredientService,
@@ -117,7 +120,8 @@ public class IngredientController implements ApplicationController {
             InventoryService inventoryService,
             ItemService itemService,
             TemplateProcessCacheManger processCache,
-            SupplierClient supplierClient
+            SupplierClient supplierClient,
+            RecipeClient recipeClient
     ) {
         this.ingredientService  = ingredientService;
         this.historyService     = historyService;
@@ -126,6 +130,7 @@ public class IngredientController implements ApplicationController {
         this.itemService        = itemService;
         this.processCache       = processCache;
         this.supplierClient     = supplierClient;
+        this.recipeClient       = recipeClient;
         trackControllerDependencyInjectionInformation(
                 this.ingredientService,
                 this.historyService,
@@ -511,7 +516,8 @@ public class IngredientController implements ApplicationController {
         log.info(path(HttpMethod.DELETE, String.valueOf(id)));
         final var unauthenticated = this.isNotAuthenticated(apiKey, principal);
         if (unauthenticated != null) return unauthenticated;
-        return (ResponseEntity<?>) buildDeleteIngredientByIdTemplateProcess(tenantId, id, ingredientService).run();
+        return (ResponseEntity<?>) buildDeleteIngredientByIdTemplateProcess(tenantId, id,
+                ingredientService, recipeClient, supplierClient).run();
     }
 
     // </editor-fold>

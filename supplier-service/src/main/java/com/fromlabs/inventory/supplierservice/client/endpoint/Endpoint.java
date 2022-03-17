@@ -27,4 +27,6 @@ public interface Endpoint {
 
     boolean isIngredientCanBeProvidable(Long importId, Long ingredientId, float quantity);
 
+    boolean isMaterialExistByIngredient(Long ingredientId);
+
 }

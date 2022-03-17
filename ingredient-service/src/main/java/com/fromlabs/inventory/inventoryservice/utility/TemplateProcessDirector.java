@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.utility;
 
+import com.fromlabs.inventory.inventoryservice.client.recipe.RecipeClient;
 import com.fromlabs.inventory.inventoryservice.client.supplier.SupplierClient;
 import com.fromlabs.inventory.inventoryservice.common.template.*;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
@@ -285,16 +286,20 @@ public class TemplateProcessDirector {
      * @param tenantId          Tenant ID
      * @param id                Ingredient ID
      * @param ingredientService IngredientService
+     * @param recipeClient
+     * @param supplierClient
      * @return                  TemplateProcess
      */
     public TemplateProcess buildDeleteIngredientByIdTemplateProcess(
-            @NotNull final Long                 tenantId,
-            @NotNull final Long                 id,
-            @NotNull final IngredientService    ingredientService
+            @NotNull final Long tenantId,
+            @NotNull final Long id,
+            @NotNull final IngredientService ingredientService,
+            @NotNull final RecipeClient recipeClient,
+            @NotNull final SupplierClient supplierClient
     ) {
         return WebCheckBuilder()
                 .validate(  () -> validateTenantAndId(tenantId, id))
-                .before(    () -> isIngredientExistById(id, ingredientService))
+                .before(    () -> checkConstraintBeforeDeleteIngredient(id, ingredientService, recipeClient, supplierClient))
                 .process(   () -> deleteIngredientEntity(id, ingredientService))
                 .after(     () -> !isIngredientExistById(id, ingredientService))
                 .build();

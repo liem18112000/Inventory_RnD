@@ -6,6 +6,7 @@ package com.fromlabs.inventory.recipeservice.client.endpoint;
 
 import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
 import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -86,5 +87,14 @@ public interface EndPoint {
      */
     RecipeDetailDto getDetailByCode(
             String code
+    );
+
+    /**
+     * Check recipe detail exist by ingredient
+     * @param ingredientId Ingredient ID
+     * @return true if existed. Otherwise, false
+     */
+    public boolean existByIngredient(
+            Long ingredientId
     );
 }

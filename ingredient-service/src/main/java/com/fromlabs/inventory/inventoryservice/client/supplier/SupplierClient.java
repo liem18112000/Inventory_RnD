@@ -11,6 +11,8 @@ import com.fromlabs.inventory.inventoryservice.config.ApiV1;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import static com.fromlabs.inventory.inventoryservice.config.AppConfig.INGREDIENT_ID;
+
 /**
  * Client for supplier module
  * @author Liem
@@ -29,4 +31,9 @@ public interface SupplierClient {
     boolean isIngredientCanBeProvidable(
             @PathVariable Long importId, @PathVariable Long ingredientId,
             @RequestParam("quantity") float quantity);
+
+    @GetMapping("providable-material/exist-by-ingredient/{ingredientId:\\d+}")
+    boolean isMaterialExistByIngredient(
+            @PathVariable(INGREDIENT_ID) Long ingredientId
+    );
 }
