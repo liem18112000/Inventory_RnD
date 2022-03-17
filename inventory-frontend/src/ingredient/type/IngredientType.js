@@ -109,6 +109,23 @@ export class IngredientType extends Component {
         );
     }
 
+    deleteIngredient(ingredientId) {
+        if (!ingredientId) {
+            this.toast.show({ severity: 'warning', summary: 'Delete failed', detail: 'Ingredient id is not set', life: 3000 })
+        } else {
+            this.ingredientService.deleteIngredient(ingredientId, this.state.isMock)
+                .then(res => {
+                    if (res) {
+                        this.toast.show({ severity: 'success', summary: 'Delete success', detail: 'Ingredient detail has been deleted', life: 1000 })
+                        this.getPageTypes()
+                    } else {
+                        this.toast.show({ severity: 'error', summary: 'Delete failed',
+                            detail: 'Ingredient detail may has recipe detail or material referenced ', life: 5000 })
+                    }
+                })
+        }
+    }
+
     /**
      * Confirm dialog for delete function
      * @param {*} rowData 
@@ -119,7 +136,7 @@ export class IngredientType extends Component {
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
-            accept: () => this.ingredientService.deleteIngredient(rowData.id, this.state.isMock).then(this.getPageTypes),
+            accept: () => this.deleteIngredient(rowData.id),
             reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
         });
     }
@@ -155,9 +172,6 @@ export class IngredientType extends Component {
         return (
             <React.Fragment>
                 <div className="card">
-                    {/* <SplitButton label="View" onClick={() => window.location.replace(
-                        `type/${rowData.id}`
-                    )} model={items}></SplitButton> */}
                     <SplitButton label="View" onClick={() => this.props.history.push({
                         pathname: `type/${rowData.id}`,
                         state: {

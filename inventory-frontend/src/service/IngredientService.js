@@ -367,8 +367,9 @@ export class IngredientService {
             )()
         }
 
-        return axios
-            .delete(`${BaseURL}/${id}`, config)
+        return axios.delete(`${BaseURL}/${id}`, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     getSuggestTaxon(isMock = true) {
