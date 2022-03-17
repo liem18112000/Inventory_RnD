@@ -252,6 +252,15 @@ public interface ApplicationController {
             Long tenantId
     );
 
+    /**
+     * Delete import by id
+     * @param id Import ID
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> deleteImport(
+            Long id
+    );
+
     //</editor-fold>
 
     //<editor-fold desc="IMPORT DETAIL">

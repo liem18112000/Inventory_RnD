@@ -11,6 +11,7 @@ import com.fromlabs.inventory.supplierservice.imports.ImportService;
 import com.fromlabs.inventory.supplierservice.imports.beans.request.ImportRequest;
 import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailService;
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailRequest;
+import com.fromlabs.inventory.supplierservice.imports.details.specification.ImportDetailSpecification;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierService;
 import com.fromlabs.inventory.supplierservice.supplier.beans.request.SupplierRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
@@ -271,10 +272,7 @@ public class TransactionConstraint {
     /**
      * Check constraints before update or save import detail
      * @param request ImportDetailRequest
-     * @param importService ImportService
      * @param service ImportDetailService
-     * @param client IngredientClient
-     * @param isUpdate Update flag
      * @return boolean
      */
     public boolean checkConstraintsBeforeUpdateBasicInformationImportDetail(
@@ -313,6 +311,35 @@ public class TransactionConstraint {
 
         // Log out the check result and return it
         return logWrapper(result, "checkConstrainsBeforeSaveMaterial: {}");
+    }
+
+    /**
+     * checkConstraintBeforeDeleteImport
+     * @param id            Import ID
+     * @param importService ImportService
+     * @param detailService ImportDetailService
+     * @return boolean
+     */
+    public boolean checkConstraintBeforeDeleteImport(
+            @NotNull final Long id,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService detailService
+    ) {
+
+        final var importHasNoDetail = ConstraintWrapper.builder()
+                .name("Check supplier import has no detail")
+                .check(() -> {
+                    final var imports = importService.getById(id);
+                    final var spec = ImportDetailSpecification.hasImport(imports);
+                    return Objects.nonNull(imports) && detailService.getAll(spec).isEmpty();
+                })
+                .exception(new ConstraintViolateException("Supplier import has detail"))
+                .build();
+
+        final var isPass =  checkImportExistById(id, importService) &&
+                            importHasNoDetail.constraintCheck();
+
+        return logWrapper(isPass, "checkConstraintBeforeDeleteImport: {}");
     }
 
     /**

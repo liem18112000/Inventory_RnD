@@ -430,12 +430,13 @@ public class TemplateProcessDirector {
      */
     public TemplateProcess buildDeleteProvidableMaterialTemplateProcess(
             @NotNull final Long id,
-            @NotNull final ProvidableMaterialService providableMaterialService
+            @NotNull final ProvidableMaterialService providableMaterialService,
+            @NotNull final IngredientClient ingredientClient
     ) {
         return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
                 .validate(() -> validateId(id))
                 .before(() -> checkMaterialExistById(id, providableMaterialService))
-                .process(() -> deleteProvidableMaterial(id, providableMaterialService))
+                .process(() -> deleteProvidableMaterial(id, providableMaterialService, ingredientClient))
                 .after(() -> !checkMaterialExistById(id, providableMaterialService))
                 .build();
     }
@@ -471,6 +472,29 @@ public class TemplateProcessDirector {
         return WebTemplateProcess.builder()
                 .validate(  () -> validateTenant(tenantId))
                 .process(   () -> getImportLabelValue(tenantId, importService))
+                .build();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Build delete import by id template process">
+
+    /**
+     * Build delete import by id template process
+     * @param id            Import ID
+     * @param importService ImportService
+     * @return              TemplateProcess
+     */
+    public TemplateProcess buildDeleteImportByIdTemplateProcess(
+            @NotNull final Long id,
+            @NotNull final ImportService importService,
+            @NotNull final ImportDetailService detailService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .validate(  () -> validateId(id))
+                .before(    () -> checkConstraintBeforeDeleteImport(id, importService, detailService))
+                .process(   () -> deleteImport(id, importService))
+                .after(     () -> !checkImportExistById(id, importService))
                 .build();
     }
 

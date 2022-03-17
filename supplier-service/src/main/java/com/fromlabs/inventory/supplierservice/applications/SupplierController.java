@@ -392,7 +392,7 @@ public class SupplierController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.DELETE, "providable-material"));
         return (ResponseEntity<?>) buildDeleteProvidableMaterialTemplateProcess(
-                id, providableMaterialService).run();
+                id, providableMaterialService, ingredientClient).run();
     }
 
     //</editor-fold>
@@ -492,6 +492,21 @@ public class SupplierController implements ApplicationController {
             @RequestHeader(TENANT_ID) Long tenantId) {
         log.info(path(HttpMethod.GET, "import/simple"));
         return (ResponseEntity<?>) buildGetImportByLabelValue(tenantId, importService).run();
+    }
+
+    /**
+     * Delete import by id
+     *
+     * @param id Import ID
+     * @return ResponseEntity
+     */
+    @DeleteMapping("import/{id:\\d+}")
+    public ResponseEntity<?> deleteImport(
+            @PathVariable(ID) Long id
+    ) {
+        log.info(path(HttpMethod.GET, "import/".concat(String.valueOf(id))));
+        return (ResponseEntity<?>) buildDeleteImportByIdTemplateProcess(id,
+                importService, importDetailService).run();
     }
 
     //</editor-fold>

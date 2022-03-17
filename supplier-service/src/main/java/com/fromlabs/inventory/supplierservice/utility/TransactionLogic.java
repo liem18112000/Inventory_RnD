@@ -36,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.*;
@@ -500,15 +501,20 @@ public class TransactionLogic {
      */
     public ResponseEntity<?> deleteProvidableMaterial(
             @NotNull final Long id,
-            @NotNull final ProvidableMaterialService service
+            @NotNull final ProvidableMaterialService service,
+            @NotNull final IngredientClient client
     ) {
         // Get entity by id
         final var entity = service.getById(id);
 
+        if (Objects.isNull(entity)) {
+            throw new IllegalStateException("Material is not found by id: ".concat(String.valueOf(id)));
+        }
+
         // Delete entity
         service.delete(entity);
 
-        return noContent().build();
+        return ok(ProvidableMaterialMapper.toDto(entity, client));
     }
 
     //</editor-fold>
@@ -619,6 +625,24 @@ public class TransactionLogic {
                 return SimpleDto.builder().label(label).value(i.getId()).build();
             });
         return ok(simpleList);
+    }
+
+    /**
+     * Delete import by id
+     * @param id Import ID
+     * @param importService ImportService
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> deleteImport(
+            @NotNull final Long id,
+            @NotNull final ImportService importService
+    ) {
+        final var imports = importService.getById(id);
+        if (Objects.isNull(imports)) {
+            throw new IllegalStateException("Import is not found by id: ".concat(String.valueOf(id)));
+        }
+        importService.delete(imports);
+        return ok(ImportMapper.toDto(imports));
     }
 
     //</editor-fold>
