@@ -80,13 +80,32 @@ export class RecipeDetail extends Component {
         );
     }
 
+    deleteRecipeDetail(recipeId) {
+        if (!recipeId) {
+            this.toast.show({ severity: 'warning', summary: 'Delete failed',
+                detail: 'Recipe detail id is not set', life: 3000 })
+        } else {
+            this.recipeService.deleteRecipeDetail(recipeId, this.state.isMock)
+                .then(res => {
+                    if (res) {
+                        this.toast.show({ severity: 'success', summary: 'Delete success',
+                            detail: 'Recipe detail has been deleted', life: 1000 })
+                        this.getPageDetails()
+                    } else {
+                        this.toast.show({ severity: 'error', summary: 'Delete failed',
+                            detail: 'Recipe detail caught unknown error.', life: 5000 })
+                    }
+                })
+        }
+    }
+
     confirmDelete(rowData) {
         confirmDialog({
             message: 'Do you want to delete this detail?',
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
+            accept: () => this.deleteRecipeDetail(rowData.id, this.state.isMock),
             reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
         });
     }
@@ -96,10 +115,7 @@ export class RecipeDetail extends Component {
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => { this.confirmDelete(rowData)
-                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                    //     .then(this.getPageDetails)
-                }
+                command: (e) => this.confirmDelete(rowData)
             }
         ];
 
@@ -407,6 +423,7 @@ export class RecipeDetail extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
+                    <Column field="ingredient.name" header="Ingredient"/>
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />

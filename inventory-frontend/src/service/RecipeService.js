@@ -579,7 +579,6 @@ export class RecipeService {
             .catch(error => console.log(error));
     }
 
-
     /**
      * Delete recipe by id
      * @param id            Recipe ID
@@ -590,10 +589,26 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
-        return axios
-            .delete(`${BaseURL}/${id}`, {
+        return axios.delete(`${BaseURL}/${id}`, {
                 headers: getHeaderByGatewayStatus({})
-            })
+            }).then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    /**
+     * Delete recipe detail by id
+     * @param id            Recipe Detail ID
+     * @param isMock        Activate mock if true otherwise use real api call
+     */
+    deleteRecipeDetail(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve(groupJson.content[0]);
+        }
+
+        return axios.delete(`${BaseURL}/detail/${id}`, {
+            headers: getHeaderByGatewayStatus({})
+        }).then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     getAllRecipeChild(filter, page, rows, sortField, sortOrder, isMock = true) {

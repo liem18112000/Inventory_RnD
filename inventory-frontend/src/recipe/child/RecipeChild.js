@@ -74,14 +74,34 @@ export class RecipeChild extends Component {
         );
     }
 
+    deleteRecipe(recipeId) {
+        if (!recipeId) {
+            this.toast.show({ severity: 'warning', summary: 'Delete failed',
+                detail: 'Recipe id is not set', life: 3000 })
+        } else {
+            this.recipeService.deleteRecipe(recipeId, this.state.isMock)
+                .then(res => {
+                    if (res) {
+                        this.toast.show({ severity: 'success', summary: 'Delete success',
+                            detail: 'Recipe child has been deleted', life: 1000 })
+                        this.getPageChildren()
+                    } else {
+                        this.toast.show({ severity: 'error', summary: 'Delete failed',
+                            detail: 'Recipe child may has recipe detail.', life: 5000 })
+                    }
+                })
+        }
+    }
+
     confirmDelete(rowData) {
         confirmDialog({
             message: 'Do you want to delete this recipe?',
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+            accept: () => this.deleteRecipe(rowData.id, this.state.isMock),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete',
+                detail: 'You have cancel delete', life: 1000 })
         });
     }
 
@@ -96,10 +116,7 @@ export class RecipeChild extends Component {
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => { this.confirmDelete(rowData)
-                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                    //     .then(this.getPageChildren)
-                }
+                command: (e) => this.confirmDelete(rowData)
             }
         ];
 

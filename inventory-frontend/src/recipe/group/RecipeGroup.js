@@ -65,14 +65,34 @@ export class RecipeGroup extends Component {
         );
     }
 
+    deleteRecipe(recipeId) {
+        if (!recipeId) {
+            this.toast.show({ severity: 'warning', summary: 'Delete failed',
+                detail: 'Recipe id is not set', life: 3000 })
+        } else {
+            this.recipeService.deleteRecipe(recipeId, this.state.isMock)
+                .then(res => {
+                    if (res) {
+                        this.toast.show({ severity: 'success', summary: 'Delete success',
+                            detail: 'Recipe group has been deleted', life: 1000 })
+                        this.getPageGroups()
+                    } else {
+                        this.toast.show({ severity: 'error', summary: 'Delete failed',
+                            detail: 'Recipe group may has recipe child or recipe detail.', life: 5000 })
+                    }
+                })
+        }
+    }
+
     confirmDelete(rowData) {
         confirmDialog({
             message: 'Do you want to delete this group?',
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+            accept: () => this.deleteRecipe(rowData.id, this.state.isMock),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete',
+                detail: 'You have cancel delete', life: 1000 })
         });
     }
 
@@ -86,10 +106,7 @@ export class RecipeGroup extends Component {
             {
                 label: 'Delete',
                 icon: 'pi pi-trash',
-                command: (e) => { this.confirmDelete(rowData)
-                    // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
-                    //     .then(this.getPageGroups)
-                }
+                command: (e) => this.confirmDelete(rowData)
             }
         ];
         console.log(rowData.id)
