@@ -400,7 +400,7 @@ export class SupplierService {
     }
 
     /**
-     * Delete import by id
+     * Delete import detail by id
      * @param id Import Id
      * @param isMock Activate mock if true otherwise use real api call
      * @returns {Promise<unknown>|Promise<>}
@@ -418,5 +418,45 @@ export class SupplierService {
 
         return axios
             .delete(`${BaseURL}/import/detail/${id}`, config)
+    }
+
+    /**
+     * Delete import by id
+     * @param id Import Id
+     * @param isMock Activate mock if true otherwise use real api call
+     * @returns {Promise<unknown>|Promise<>}
+     */
+    deleteImport(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve(null);
+        }
+
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+            )()
+        }
+
+        return axios
+            .delete(`${BaseURL}/import/${id}`, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    deleteMaterial(id, isMock = true) {
+        if (isMock) {
+            return Promise.resolve(null);
+        }
+
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+            )()
+        }
+
+        return axios
+            .delete(`${BaseURL}/providable-material/${id}`, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 }

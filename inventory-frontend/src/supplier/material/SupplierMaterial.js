@@ -87,14 +87,34 @@ export class SupplierMaterial extends Component {
         );
     }
 
+    deleteMaterial(materialId) {
+        if (!materialId) {
+            this.toast.show({ severity: 'warning', summary: 'Delete failed',
+                detail: 'Material id is not set', life: 3000 })
+        } else {
+            this.supplierService.deleteMaterial(materialId, this.state.isMock)
+                .then(res => {
+                    if (res) {
+                        this.toast.show({ severity: 'success', summary: 'Delete success',
+                            detail: 'Material has been deleted', life: 1000 })
+                        this.getPageMaterials()
+                    } else {
+                        this.toast.show({ severity: 'error', summary: 'Delete failed',
+                            detail: 'Material caught an unknown error.', life: 5000 })
+                    }
+                })
+        }
+    }
+
     confirmDelete(rowData) {
         confirmDialog({
             message: 'Do you want to delete this detail?',
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
+            accept: () => this.deleteMaterial(rowData.id),
+            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete',
+                detail: 'You have cancel delete', life: 1000 })
         });
     }
 

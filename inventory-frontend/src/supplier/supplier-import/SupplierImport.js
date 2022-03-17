@@ -77,13 +77,32 @@ export class SupplierImport extends Component {
         );
     }
 
+    deleteImport(importId) {
+        if (!importId) {
+            this.toast.show({ severity: 'warning', summary: 'Delete failed',
+                detail: 'Import id is not set', life: 3000 })
+        } else {
+            this.supplierService.deleteImport(importId, this.state.isMock)
+                .then(res => {
+                    if (res) {
+                        this.toast.show({ severity: 'success', summary: 'Delete success',
+                            detail: 'Supplier import has been deleted', life: 1000 })
+                        this.getPageImports()
+                    } else {
+                        this.toast.show({ severity: 'error', summary: 'Delete failed',
+                            detail: 'Supplier import had been used for importing ingredient items.', life: 5000 })
+                    }
+                })
+        }
+    }
+
     confirmDelete(rowData) {
         confirmDialog({
-            message: 'Do you want to delete this detail?',
+            message: 'Do you want to delete this import?',
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
-            accept: () => this.toast.show({ severity: 'warn', summary: 'Warning', detail: 'Under development', life: 1000 }),
+            accept: () => this.deleteImport(rowData.id),
             reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete', detail: 'You have cancel delete', life: 1000 })
         });
     }
