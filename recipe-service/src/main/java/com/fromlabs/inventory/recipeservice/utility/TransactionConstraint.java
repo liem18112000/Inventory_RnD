@@ -5,6 +5,7 @@ import com.fromlabs.inventory.recipeservice.common.exception.ConstraintViolateEx
 import com.fromlabs.inventory.recipeservice.common.wrapper.ConstraintWrapper;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.detail.specification.RecipeDetailSpecification;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
@@ -56,6 +57,45 @@ public class TransactionConstraint {
      */
     public boolean isRecipeExistById(Long property, RecipeService service) {
         return logWrapper(nonNull(service.getById(property)), "isRecipeExistById : {}");
+    }
+
+    /**
+     * Check recipe exist and has no child
+     * @param id                    Recipe id
+     * @param recipeService         RecipeService
+     * @param recipeDetailService   RecipeDetailService
+     * @return                      boolean
+     */
+    public boolean checkConstraintsBeforeDeleteRecipe(
+            Long id,
+            RecipeService recipeService,
+            RecipeDetailService recipeDetailService
+    ) {
+        final var recipeGroupHasNoChild = ConstraintWrapper.builder()
+                .name("Check recipe group has no child")
+                .check(() -> {
+                    final var recipe = recipeService.getById(id);
+                    return Objects.nonNull(recipe) && (!recipe.isGroup() ||
+                            recipeService.getAll(recipe.getClientId(), recipe.getId()).isEmpty());
+                })
+                .exception(new ConstraintViolateException("Recipe group has no child"))
+                .build();
+
+        final var recipeHasNoDetail = ConstraintWrapper.builder()
+                .name("Check recipe group has no detail")
+                .check(() -> {
+                    final var recipe = recipeService.getById(id);
+                    final var spec = RecipeDetailSpecification.hasRecipe(recipe);
+                    return Objects.nonNull(recipe) && recipeDetailService.getAll(spec).isEmpty();
+                })
+                .exception(new ConstraintViolateException("Recipe group has no detail"))
+                .build();
+
+        final var isPass =  isRecipeExistById(id, recipeService) &&
+                            recipeGroupHasNoChild.constraintCheck() &&
+                            recipeHasNoDetail.constraintCheck();
+
+        return logWrapper(isPass, "checkConstraintsBeforeDeleteRecipe : {}");
     }
 
     /**

@@ -175,6 +175,29 @@ public class TransactionLogic {
 
     //</editor-fold>
 
+    //<editor-fold desc="Delete recipe entity by id">
+
+    /**
+     * Delete recipe entity by id
+     * @param id        Recipe id
+     * @param service   RecipeDto
+     * @return          RecipeDto
+     */
+    public RecipeDto deleteRecipeEntity(
+            Long id,
+            RecipeService service
+    ) {
+        log.info("deleteRecipeEntity");
+        final var recipe = service.getById(id);
+        if (Objects.isNull(recipe)) {
+            throw new IllegalStateException("Recipe is not found by id: ".concat(String.valueOf(id)));
+        }
+        service.delete(recipe);
+        return RecipeMapper.toDto(recipe);
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="Update recipe detail entity">
 
     /**
@@ -184,7 +207,7 @@ public class TransactionLogic {
      * @param ingredientClient  IngredientClient
      * @return                   RecipeDto
      */
-    public RecipeDetailDto updateRecipeEntity(
+    public RecipeDetailDto updateRecipeDetailEntity(
             RecipeDetailRequest request,
             RecipeDetailService service,
             IngredientClient    ingredientClient
@@ -194,6 +217,31 @@ public class TransactionLogic {
                 service.save(service.getById(request.getId()).update(request)),
                 ingredientClient
         );
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Delete recipe detail by id">
+
+    /**
+     * Delete recipe detail by id
+     * @param id                Recipe detail id
+     * @param service           RecipeDetailService
+     * @param ingredientClient  IngredientClient
+     * @return                  RecipeDetailDto
+     */
+    public RecipeDetailDto deleteRecipeDetailEntity(
+            Long                id,
+            RecipeDetailService service,
+            IngredientClient    ingredientClient
+    ) {
+        log.info("updateRecipeEntity");
+        final var detail = service.getById(id);
+        if (Objects.isNull(detail)) {
+            throw new IllegalStateException("Recipe detail is not found by id: ".concat(String.valueOf(id)));
+        }
+        service.delete(detail);
+        return RecipeDetailMapper.toDto(detail, ingredientClient);
     }
 
     //</editor-fold>

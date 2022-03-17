@@ -220,6 +220,26 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
+    /**
+     * Build delete recipe by id template process
+     * @param id                    Recipe ID
+     * @param recipeService         RecipeService
+     * @param recipeDetailService   RecipeDetailService
+     * @return                      TemplateProcess
+     */
+    public TemplateProcess buildDeleteRecipeTemplateProcess(
+            Long                id,
+            RecipeService       recipeService,
+            RecipeDetailService recipeDetailService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .validate(  () -> validateId(id))
+                .before(    () -> checkConstraintsBeforeDeleteRecipe(id, recipeService, recipeDetailService))
+                .process(   () -> ok(deleteRecipeEntity(id, recipeService)))
+                .after(     () -> !isRecipeExistById(id, recipeService))
+                .build();
+    }
+
 
     //<editor-fold desc="Build get page recipe detail template process">
 
@@ -392,10 +412,30 @@ public class TemplateProcessDirector {
                 .bootstrap( () -> recipeDetailRequestBootstrap(tenantId, request))
                 .validate(  () -> validateRecipeDetailRequest(request, true))
                 .before(    () -> checkConstrainsBeforeUpdateRecipeDetail(request, recipeDetailService))
-                .process(   () -> ok(updateRecipeEntity(request, recipeDetailService, ingredientClient)))
+                .process(   () -> ok(updateRecipeDetailEntity(request, recipeDetailService, ingredientClient)))
                 .after(     () -> checkConstrainsAfterUpdateRecipeDetail(request, recipeDetailService))
                 .build();
     }
 
     //</editor-fold>
+
+    /**
+     * Build update recipe detail template process
+     * @param id                    Recipe detail ID
+     * @param recipeDetailService   RecipeDetailService
+     * @param ingredientClient      IngredientClient
+     * @return                      TemplateProcess
+     */
+    public TemplateProcess buildDeleteRecipeDetailTemplateProcess(
+            Long                id,
+            RecipeDetailService recipeDetailService,
+            IngredientClient    ingredientClient
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .validate(  () -> validateId(id))
+                .before(    () -> isRecipeDetailExistById(id, recipeDetailService))
+                .process(   () -> ok(deleteRecipeDetailEntity(id, recipeDetailService, ingredientClient)))
+                .after(     () -> !isRecipeDetailExistById(id, recipeDetailService))
+                .build();
+    }
 }

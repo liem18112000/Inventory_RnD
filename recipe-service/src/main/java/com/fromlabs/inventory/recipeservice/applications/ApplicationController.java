@@ -100,6 +100,15 @@ public interface ApplicationController {
             RecipeRequest request
     );
 
+    /**
+     * Delete recipe by id
+     * @param id Recipe id
+     * @return ResponseEntity
+     */
+    ResponseEntity<?> delete(
+            Long id
+    );
+
     //</editor-fold>
 
     //</editor-fold>

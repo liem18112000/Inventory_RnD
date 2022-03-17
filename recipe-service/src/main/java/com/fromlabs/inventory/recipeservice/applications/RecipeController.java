@@ -217,6 +217,21 @@ public class RecipeController implements ApplicationController {
         return (ResponseEntity<?>) buildUpdateRecipeTemplateProcess(tenantId, request, recipeService).run();
     }
 
+    /**
+     * Delete recipe by id
+     *
+     * @param id Recipe id
+     * @return ResponseEntity
+     */
+    @DeleteMapping("{id:\\d+}")
+    public ResponseEntity<?> delete(
+            @PathVariable(ID) Long id
+    ) {
+        log.info(path(HttpMethod.DELETE, String.valueOf(id)));
+        return (ResponseEntity<?>) buildDeleteRecipeTemplateProcess(id,
+                recipeService, recipeDetailService).run();
+    }
+
     //</editor-fold>
 
     //</editor-fold>
@@ -322,6 +337,19 @@ public class RecipeController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.PUT, "detail"));
         return (ResponseEntity<?>) buildUpdateRecipeDetailTemplateProcess(tenantId, request, recipeDetailService, ingredientClient).run();
+    }
+
+    /**
+     * Delete recipe detail by id
+     * @param id Recipe Detail ID
+     * @return ResponseEntity
+     */
+    @DeleteMapping("detail/{id:\\d+}")
+    public ResponseEntity<?> deleteDetail(
+            @PathVariable(ID) Long id
+    ) {
+        log.info(path(HttpMethod.DELETE, "detail/".concat(String.valueOf(id))));
+        return (ResponseEntity<?>) buildDeleteRecipeDetailTemplateProcess(id, recipeDetailService, ingredientClient).run();
     }
 
     //</editor-fold>
