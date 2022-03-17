@@ -29,12 +29,20 @@ spring:
     url: jdbc:mysql://${DB_HOST:localhost}:3306/recipe
     username: root
     password: root
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 application:
   formatted-version: (v1.0.0)
   base-url: recipe
 domain:
   service-name: FromLabsRestaurantDomainService
   service-path: restaurant
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:ieltstinder}
+  api-key: ${CLOUDINARY_API_KEY:516474928343968}
+  api-secret: ${CLOUDINARY_API_SECRET:O0_Rc0zE1QoyjK_5tofsO9F0LCc}
 services:
   ingredient-service:
     name: ingredient-service

@@ -12,6 +12,7 @@ import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
 import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
 import com.fromlabs.inventory.recipeservice.detail.mapper.RecipeDetailMapper;
 import com.fromlabs.inventory.recipeservice.detail.specification.RecipeDetailSpecification;
+import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
 import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
@@ -36,6 +37,7 @@ public class EndPointImpl implements EndPoint {
     private final RecipeService         recipeService;
     private final RecipeDetailService   recipeDetailService;
     private final IngredientClient      ingredientClient;
+    private final MediaService          mediaService;
 
     /**
      * Constructor
@@ -46,12 +48,14 @@ public class EndPointImpl implements EndPoint {
     public EndPointImpl(
             RecipeService recipeService,
             RecipeDetailService recipeDetailService,
-            IngredientClient ingredientClient
+            IngredientClient ingredientClient,
+            MediaService mediaService
     ) {
         log.info("Endpoint initialized : {}", "endpoint/recipe/" + ApiV1.URI_API);
         this.recipeService = recipeService;
         this.recipeDetailService = recipeDetailService;
         this.ingredientClient = ingredientClient;
+        this.mediaService = mediaService;
     }
 
     public static final String SERVICE_PATH = "/endpoint/recipe/" + ApiV1.URI_API + "/";

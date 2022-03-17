@@ -38,6 +38,7 @@ public class RecipeMapper {
                 .description(entity.getDescription())
                 .createAt(entity.getUpdateAt())
                 .updateAt(entity.getUpdateAt())
+                .media(entity.getMediaId())
                 .activated(entity.isActivated());
         return Objects.nonNull(entity.getParent()) ? builder.build() :
                 builder.children(toDto(entity.getChildren())).build();

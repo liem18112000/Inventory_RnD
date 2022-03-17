@@ -15,9 +15,9 @@ public class RecipeWithParentDto extends RecipeDto {
 
     @Builder(builderMethodName = "recipeWithParentBuilder")
     public RecipeWithParentDto(Long id, Long tenantId, String name, String description, String updateAt,
-                               String createAt, boolean activated, String code, List<RecipeDto> children,
-                               SimpleDto parent) {
-        super(id, tenantId, name, description, updateAt, createAt, activated, code, children);
+                               String createAt, boolean activated, Long media, String code,
+                               List<RecipeDto> children, SimpleDto parent) {
+        super(id, tenantId, name, description, updateAt, createAt, activated, media, code, children);
         this.parent = parent;
     }
 

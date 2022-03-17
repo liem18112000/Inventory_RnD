@@ -7,10 +7,12 @@ import com.fromlabs.inventory.recipeservice.common.template.WebTemplateProcessWi
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.experimental.UtilityClass;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.fromlabs.inventory.recipeservice.common.validator.RequestValidator.StringRequestValidator;
 import static com.fromlabs.inventory.recipeservice.config.AppConfig.CODE;
@@ -438,4 +440,29 @@ public class TemplateProcessDirector {
                 .after(     () -> !isRecipeDetailExistById(id, recipeDetailService))
                 .build();
     }
+
+    //<editor-fold desc="buildUpdateRecipeImageTemplateProcess">
+
+    /**
+     * buildUpdateRecipeImageTemplateProcess
+     * @param id            Recipe ID
+     * @param image         Recipe image
+     * @param recipeService RecipeService
+     * @param mediaService  MediaService
+     * @return              TemplateProcess
+     */
+    public TemplateProcess buildUpdateRecipeImageTemplateProcess(
+            Long id,
+            MultipartFile image,
+            RecipeService recipeService,
+            MediaService mediaService
+    ) {
+        return WebTemplateProcessWithCheckBeforeAfter.WebCheckBuilder()
+                .validate(  () -> validateId(id))
+                .before(    () -> isRecipeExistById(id, recipeService))
+                .process(   () -> ok(updateImageForRecipe(id, image, recipeService, mediaService)))
+                .build();
+    }
+
+    //</editor-fold>
 }

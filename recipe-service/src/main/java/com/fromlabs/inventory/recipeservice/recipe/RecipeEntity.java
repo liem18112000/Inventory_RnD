@@ -2,6 +2,7 @@ package com.fromlabs.inventory.recipeservice.recipe;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fromlabs.inventory.recipeservice.entity.RecipeBaseEntity;
+import com.fromlabs.inventory.recipeservice.media.entity.MediaEntity;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import lombok.Getter;
@@ -46,6 +47,9 @@ public class RecipeEntity extends RecipeBaseEntity<Long> {
     @NotNull(message = "Group boolean flag should not be null")
     @Column(name="is_group")
     protected boolean group;
+
+    @Column(name = "media_id")
+    protected Long mediaId;
 
     @Override
     public boolean equals(Object o) {
