@@ -105,7 +105,7 @@ export class RecipeChild extends Component {
         });
     }
 
-    actionBodyTemplate(rowData, form) {
+    actionBodyTemplate(rowData, form, upload) {
         console.log(rowData.id)
         let items = [
             {
@@ -117,6 +117,11 @@ export class RecipeChild extends Component {
                 label: 'Delete',
                 icon: 'pi pi-trash',
                 command: (e) => this.confirmDelete(rowData)
+            },
+            {
+                label: 'Upload',
+                icon: 'pi pi-upload',
+                command: (e) => { upload.action(rowData.id, rowData.parent.value, true) }
             }
         ];
 

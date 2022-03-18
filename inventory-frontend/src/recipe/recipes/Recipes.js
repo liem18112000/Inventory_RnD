@@ -14,7 +14,8 @@ import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { RecipeChildForm } from '../child/RecipeChildForm';
 import { confirmDialog } from 'primereact/confirmdialog';
-import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
+import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { UploadImageForm } from '../upload-media/UploadImageForm';
 
 export class Recipes extends Component {
 
@@ -50,12 +51,12 @@ export class Recipes extends Component {
     };
 
     getAllRecipeChildren = () => {
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         this.recipeService
             .getAllRecipeChild(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => this.setState({ ...this.state, ...data}));
+            .then(data => this.setState({ ...this.state, ...data }));
     }
 
     descriptionBodyTemplate(rowData) {
@@ -85,7 +86,7 @@ export class Recipes extends Component {
         });
     }
 
-    actionBodyTemplate(rowData, form) {
+    actionBodyTemplate(rowData, form, upload) {
         let items = [
             {
                 label: 'Edit',
@@ -100,6 +101,11 @@ export class Recipes extends Component {
                     // this.recipeService.deleteRecipe(rowData.id, this.state.isMock)
                     //     .then(this.getAllRecipeChildren)
                 }
+            },
+            {
+                label: 'Upload',
+                icon: 'pi pi-upload',
+                command: (e) => { upload.action(rowData.id, rowData.parent.value, true) }
             }
         ];
 
@@ -295,6 +301,9 @@ export class Recipes extends Component {
                 <RecipeChildForm ref={el => this.form = el}
                     refreshData={() => this.getAllRecipeChildren()}
                 />
+                <UploadImageForm ref={el => this.upload = el}
+                    refreshData={() => this.getAllRecipeChildren()}
+                />
                 <Fieldset legend="Recipes" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -392,7 +401,7 @@ export class Recipes extends Component {
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="group" header="Group" body={this.groupBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form, this.upload)} />
                 </DataTable>
             </div >
         );

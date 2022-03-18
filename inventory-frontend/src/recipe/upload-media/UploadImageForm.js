@@ -56,7 +56,7 @@ export class UploadImageForm extends Component {
     }
 
     action = (id, parentId, isUpload = true) => {
-        if (!isUpload && id != null) {
+        if (isUpload && id != null) {
             this.setUploadImage(id, parentId);
         }
     }
