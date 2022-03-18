@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.client.recipe;
 
+import com.fromlabs.inventory.inventoryservice.client.recipe.beans.MediaDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDetailDto;
 import com.fromlabs.inventory.inventoryservice.client.recipe.beans.RecipeDto;
 import com.fromlabs.inventory.inventoryservice.config.ApiV1;
@@ -107,6 +108,11 @@ public interface RecipeClient {
     @GetMapping("detail/exist-by-ingredient/{ingredientId:\\d+}")
     boolean existByIngredient(
             @PathVariable(INGREDIENT_ID) Long ingredientId
+    );
+
+    @GetMapping("media/{id:\\d+}")
+    MediaDto getMedia(
+            @PathVariable(ID) Long id
     );
 
 }

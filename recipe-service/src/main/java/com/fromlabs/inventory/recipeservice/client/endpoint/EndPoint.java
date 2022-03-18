@@ -5,6 +5,7 @@
 package com.fromlabs.inventory.recipeservice.client.endpoint;
 
 import com.fromlabs.inventory.recipeservice.detail.beans.dto.RecipeDetailDto;
+import com.fromlabs.inventory.recipeservice.media.bean.MediaDto;
 import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -94,7 +95,11 @@ public interface EndPoint {
      * @param ingredientId Ingredient ID
      * @return true if existed. Otherwise, false
      */
-    public boolean existByIngredient(
+    boolean existByIngredient(
             Long ingredientId
+    );
+
+    MediaDto getMedia(
+            Long id
     );
 }

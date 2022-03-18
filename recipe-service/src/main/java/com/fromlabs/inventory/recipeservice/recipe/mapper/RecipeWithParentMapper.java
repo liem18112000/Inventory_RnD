@@ -28,6 +28,7 @@ public class RecipeWithParentMapper {
                 .description(entity.getDescription())
                 .createAt(entity.getUpdateAt())
                 .updateAt(entity.getUpdateAt())
+                .media(entity.getMediaId())
                 .activated(entity.isActivated())
                 .children(nonNull(entity.getChildren()) ? RecipeMapper.toDto(entity.getChildren()) : null)
                 .parent(nonNull(parent) ? SimpleDto.builder().label(parent.getName()).value(parent.getId()).build() : null)
