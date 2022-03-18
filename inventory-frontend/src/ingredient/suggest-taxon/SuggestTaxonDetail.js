@@ -11,6 +11,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { sleep } from "../../core/utility/ComponentUtility";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
+import {Image} from "primereact/image";
 
 export class SuggestTaxonDetail extends Component {
 
@@ -170,8 +171,10 @@ export class SuggestTaxonDetail extends Component {
                     footer={this.renderFooter('displayResponsive')}
                 >
                     {data && <div className="taxon-card">
-                        <img src={this.state.data.image} alt={"Taxon"} style={{ width: '90%', align: 'center' }}
-                            onError={(e) => e.target.src = getMediaSource()} />
+                        <Image
+                            src={this.state.data.image} alt={"Taxon"} width="100%"
+                            style={{ objectFit: "cover",width: '90%', align: 'center' }}
+                            onError={(e) => e.target.src = getMediaSource()} preview />
                         <div className="">
                             <div className="taxon-name">{data.recipe.name}</div>
                         </div>
