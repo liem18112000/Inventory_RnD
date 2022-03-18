@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { RecipeService } from '../../service/RecipeService';
-import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
 import { FileUpload } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
+import {baseRecipeAPI} from "../../constant";
+import {sleep} from "../../core/utility/ComponentUtility";
 
 export class UploadImageForm extends Component {
 
@@ -18,11 +19,7 @@ export class UploadImageForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: {
-                id: null,
-                parentId: null,
-                tenantId: '',
-            },
+            id: null,
             isMock: false,
             visible: false,
             totalSize: 0
@@ -43,125 +40,30 @@ export class UploadImageForm extends Component {
     }
 
     onTemplateUpload(e) {
+        if ([...e.files].length > 1) {
+            this.toast.show({ severity: 'error', summary: 'Upload failed', detail: 'Only one image is allowed' });
+            return;
+        }
+
         let totalSize = 0;
-        e.files.forEach(file => {
+        [...e.files].forEach(file => {
             totalSize += (file.size || 0);
         });
 
         this.setState({
-            totalSize
+            ...this.state,
+            "totalSize": totalSize
         }, () => {
-            this.toast.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+            this.toast.show({ severity: 'success', summary: 'Success', detail: 'File Uploaded' });
+            sleep().then(this.onHide)
         });
     }
 
-    action = (id, parentId, isUpload = true) => {
-        if (isUpload && id != null) {
-            this.setUploadImage(id, parentId);
-        }
-    }
-
-    setUploadImage(id, parentId) {
-        this.recipeService.getByID(id, this.state.isMock).then(data => {
-            this.setState({
-                data: {
-                    id: data ? data.id : null,
-                    parentId: parentId,
-                    tenantId: data ? data.tenantId : '',
-                },
-                id: data ? data.id : null,
-                visible: true,
-                totalSize: 0,
-            })
+    action = (id) => {
+        this.setState({
+            visible: true,
+            id: id
         })
-    }
-
-    isSubmitValid = () => {
-        return !(this.state.errors.name || this.state.errors.code || this.state.errors.recipeGroup);
-    }
-
-    /**
-     * Handler all submit of save or update recipe form information
-     * @param e
-     */
-    handleSubmit = (e) => {
-        this.validateSubmit(() => {
-            // If validation is valid, call API and get response
-            if (this.isSubmitValid()) {
-                let response = this.getResponseAfterSubmit();
-                this.handleAfterSubmit(response);
-            }
-            // Otherwise, handle fail validation
-            else {
-                this.handleFailValidation();
-            }
-        })
-    }
-
-    /**
-     * Handle fail validation
-     */
-    handleFailValidation() {
-        this.toast.show({
-            severity: 'error', summary: 'Upload Failed',
-            content: 'Image is invalid',
-            life: 1000
-        });
-    }
-
-    /**
-     * Handle event based on submit responses
-     * @param response
-     */
-    handleAfterSubmit(response) {
-        response
-            .then(res => {
-                if (!res) {
-                    this.handleFailSubmit();
-                } else {
-                    this.handleSuccessSubmit();
-                }
-            })
-    }
-
-    /**
-     * Handle success response
-     */
-    handleSuccessSubmit() {
-        this.toast.show({
-            severity: 'success', summary: 'Submit Success',
-            detail: 'Upload Success',
-            life: 1000
-        });
-
-        sleep(500).then(() => {
-            this.props.refreshData();
-            this.onHide();
-        })
-    }
-
-    /**
-     * Handle fail or error response
-     */
-    handleFailSubmit() {
-        this.toast.show({
-            severity: 'error', summary: 'Submit Fail',
-            detail: 'Upload Failed',
-            life: 1000
-        });
-    }
-
-    /**
-     * Retrieve response after submit form
-     */
-    getResponseAfterSubmit() {
-        if (this.state.formHeader === this.state.editTitle) {
-            console.log('Edit')
-            return this.recipeService.updateRecipe(this.state.data, this.state.isMock);
-        } else {
-            console.log('Save')
-            return this.recipeService.saveRecipe(this.state.data, this.state.isMock);
-        }
     }
 
     /**
@@ -171,31 +73,15 @@ export class UploadImageForm extends Component {
         this.setState({ visible: false, errors: {} });
     }
 
-    onUpload() {
-        this.toast.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
-    }
-
     onTemplateSelect(e) {
         let totalSize = this.state.totalSize;
-        e.files.forEach(file => {
+        [...e.files].forEach(file => {
             totalSize += file.size;
         });
 
         this.setState({
-            totalSize
-        });
-    }
-
-    onTemplateUpload(e) {
-        let totalSize = 0;
-        e.files.forEach(file => {
-            totalSize += (file.size || 0);
-        });
-
-        this.setState({
-            totalSize
-        }, () => {
-            this.toast.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+            ...this.state,
+            "totalSize": totalSize
         });
     }
 
@@ -211,7 +97,7 @@ export class UploadImageForm extends Component {
 
     headerTemplate(options) {
         const { className, chooseButton, uploadButton, cancelButton } = options;
-        const value = this.state.totalSize / 10000;
+        const value = this.state.totalSize / 80000;
         const formatedValue = this.fileUploadRef ? this.fileUploadRef.formatSize(this.state.totalSize) : '0 B';
 
         return (
@@ -219,7 +105,11 @@ export class UploadImageForm extends Component {
                 {chooseButton}
                 {uploadButton}
                 {cancelButton}
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{ width: '300px', height: '20px', marginLeft: 'auto' }}></ProgressBar>
+                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 8 MB`} style={{
+                    width: '300px',
+                    height: '20px',
+                    marginLeft: 'auto'
+                }}/>
             </div>
         );
     }
@@ -243,8 +133,15 @@ export class UploadImageForm extends Component {
     emptyTemplate() {
         return (
             <div className="p-d-flex p-ai-center p-dir-col">
-                <i className="pi pi-image p-mt-3 p-p-5" style={{ 'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-                <span style={{ 'fontSize': '1.2em', color: 'var(--text-color-secondary)' }} className="p-my-5">Drag and Drop Image Here</span>
+                <i className="pi pi-image p-mt-3 p-p-5" style={{
+                    'fontSize': '5em',
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--surface-b)',
+                    color: 'var(--surface-d)'
+                }}/>
+                <span style={{ 'fontSize': '1.2em', color: 'var(--text-color-secondary)' }} className="p-my-5">
+                    Drag and Drop Image Here
+                </span>
             </div>
         )
     }
@@ -254,23 +151,50 @@ export class UploadImageForm extends Component {
      * @returns {JSX.Element}
      */
     render() {
-        const chooseOptions = { icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined' };
-        const uploadOptions = { icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined' };
-        const cancelOptions = { icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
+        const chooseOptions = {
+            icon: 'pi pi-fw pi-images',
+            iconOnly: true,
+            className: 'custom-choose-btn p-button-rounded p-button-outlined'
+        };
+        const uploadOptions = {
+            icon: 'pi pi-fw pi-cloud-upload',
+            iconOnly: true,
+            className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'
+        };
+        const cancelOptions = {
+            icon: 'pi pi-fw pi-times',
+            iconOnly: true,
+            className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'
+        };
         return (
-            <Sidebar visible={this.state.visible} style={{ overflowY: "auto", width: "40em" }} position="right"
-                blockScroll={true} baseZIndex={1000000} onHide={this.onHide} >
+            <Sidebar
+                visible={this.state.visible}
+                style={{ overflowY: "auto", width: "40em" }}
+                position="right"
+                blockScroll={true}
+                baseZIndex={1000000}
+                onHide={this.onHide} >
                 <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
                 <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
                 <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
                 <Toast ref={(el) => this.toast = el} />
                 <h2>Upload Image</h2>
-                <FileUpload ref={(el) => this.fileUploadRef = el} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php"
-                    multiple accept="image/*" maxFileSize={1000000}
-                    onUpload={this.onTemplateUpload} onSelect={this.onTemplateSelect}
-                    onError={this.onTemplateClear} onClear={this.onTemplateClear}
-                    headerTemplate={this.headerTemplate} itemTemplate={this.itemTemplate} emptyTemplate={this.emptyTemplate}
-                    chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} />
+                <FileUpload
+                    ref={(el) => this.fileUploadRef = el}
+                    name="image"
+                    url={ baseRecipeAPI() + "/child/" + this.state.id + "/image" }
+                    accept="image/*"
+                    maxFileSize={80000000}
+                    onUpload={this.onTemplateUpload}
+                    onSelect={this.onTemplateSelect}
+                    onError={this.onTemplateClear}
+                    onClear={this.onTemplateClear}
+                    headerTemplate={this.headerTemplate}
+                    itemTemplate={this.itemTemplate}
+                    emptyTemplate={this.emptyTemplate}
+                    chooseOptions={chooseOptions}
+                    uploadOptions={uploadOptions}
+                    cancelOptions={cancelOptions} />
             </Sidebar>
         );
     }

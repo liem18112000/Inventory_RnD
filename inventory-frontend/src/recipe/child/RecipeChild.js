@@ -16,6 +16,7 @@ import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import {UploadImageForm} from "../upload-media/UploadImageForm";
 
 export class RecipeChild extends Component {
 
@@ -121,7 +122,7 @@ export class RecipeChild extends Component {
             {
                 label: 'Upload',
                 icon: 'pi pi-upload',
-                command: (e) => { upload.action(rowData.id, rowData.parent.value, true) }
+                command: (e) => { this.upload.action(rowData.id) }
             }
         ];
 
@@ -318,6 +319,9 @@ export class RecipeChild extends Component {
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
                 <RecipeChildForm ref={el => this.form = el}
+                    refreshData={() => this.getPageChildren()}
+                />
+                <UploadImageForm ref={el => this.upload = el}
                     refreshData={() => this.getPageChildren()}
                 />
                 <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1>

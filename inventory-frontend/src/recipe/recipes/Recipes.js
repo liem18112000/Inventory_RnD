@@ -105,7 +105,7 @@ export class Recipes extends Component {
             {
                 label: 'Upload',
                 icon: 'pi pi-upload',
-                command: (e) => { upload.action(rowData.id, rowData.parent.value, true) }
+                command: (e) => { upload.action(rowData.id) }
             }
         ];
 
