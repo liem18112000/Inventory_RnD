@@ -158,7 +158,7 @@ public class RecipeController implements ApplicationController {
         return (ResponseEntity<?>) buildGetPageAllRecipeChildTemplateProcess(tenantId, request, recipeService).run();
     }
 
-    @PutMapping("child/{id:\\d+}/image")
+    @PostMapping("child/{id:\\d+}/image")
     public ResponseEntity<?> updateImageForRecipe(
             @PathVariable(ID) Long id,
             @RequestParam("image") MultipartFile image
