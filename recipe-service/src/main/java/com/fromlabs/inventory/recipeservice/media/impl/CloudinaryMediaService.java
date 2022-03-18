@@ -2,7 +2,9 @@ package com.fromlabs.inventory.recipeservice.media.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.fromlabs.inventory.recipeservice.media.MediaDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fromlabs.inventory.recipeservice.media.bean.MediaDto;
 import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.media.entity.MediaEntity;
 import com.fromlabs.inventory.recipeservice.media.entity.MediaRepository;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -26,6 +29,7 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CloudinaryMediaService implements MediaService {
 
+    public static final String MEDIA_URL = "secure_url";
     private final Cloudinary cloudinary;
 
     private final MediaRepository repository;
@@ -56,31 +60,63 @@ public class CloudinaryMediaService implements MediaService {
     public MediaDto upload(MediaDto mediaDto) {
 
         this.validateUpload(mediaDto);
-
-        final var mediaFile = mediaDto.getMediaFile();
-
+        Map uploadResult;
         try {
-            File uploadedFile = this.convertMultiPartToFile(mediaFile);
-            final var uploadResult = this.cloudinary.uploader()
-                    .upload(uploadedFile, ObjectUtils.emptyMap());
-            boolean isDeleted = uploadedFile.delete();
-
-            if (isDeleted){
-                log.info("Temporary file successfully deleted");
-            } else {
-                log.warn("Temporary file doesn't exist");
-            }
-
-            var entity = new MediaEntity();
-            entity.setTitle(mediaDto.getName());
-            entity.setMediaLink(uploadResult.get("url").toString());
-            entity.setCreatedAt(Instant.now().toString());
-            var savedEntity = this.repository.save(entity);
-            return MediaMapper.toDto(savedEntity);
+            uploadResult = uploadMediaToCloudinary(mediaDto.getMediaFile());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        final var media = this.repository.findByTitle(mediaDto.getName());
+        final var savedMedia = media
+            .map(entity -> updateMediaLink(entity, uploadResult))
+            .orElseGet(() -> saveMedia(mediaDto, uploadResult));
+        return MediaMapper.toDto(savedMedia);
+    }
+
+    private Map uploadMediaToCloudinary(MultipartFile mediaFile) throws IOException {
+        File uploadedFile = this.convertMultiPartToFile(mediaFile);
+        final var uploadResult = this.cloudinary.uploader()
+                .upload(uploadedFile, ObjectUtils.emptyMap());
+        boolean isDeleted = uploadedFile.delete();
+        if (isDeleted){
+            log.info("Temporary file successfully deleted");
+        } else {
+            log.warn("Temporary file doesn't exist");
+        }
+        return uploadResult;
+    }
+
+    private MediaEntity updateMediaLink(
+            @NotNull MediaEntity media, final @NotNull Map uploadResult) {
+        media.setMediaLink(uploadResult.get(MEDIA_URL).toString());
+        try {
+            var mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            media.setExtraInformation(mapper.writeValueAsString(uploadResult));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        media.setUpdatedAt(Instant.now().toString());
+        return this.repository.save(media);
+    }
+
+    private MediaEntity saveMedia(
+            final @NotNull MediaDto mediaDto, final Map uploadResult) {
+        var entity = new MediaEntity();
+        entity.setTitle(mediaDto.getName());
+        entity.setMediaLink(uploadResult.get(MEDIA_URL).toString());
+        entity.setCreatedAt(Instant.now().toString());
+        entity.setMediaType(mediaDto.getMediaType());
+        try {
+            var mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            entity.setExtraInformation(mapper.writeValueAsString(uploadResult));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        entity.setUpdatedAt(entity.getCreatedAt());
+        return this.repository.save(entity);
     }
 
     @Override

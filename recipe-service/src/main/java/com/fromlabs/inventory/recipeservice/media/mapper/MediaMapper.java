@@ -1,6 +1,6 @@
 package com.fromlabs.inventory.recipeservice.media.mapper;
 
-import com.fromlabs.inventory.recipeservice.media.MediaDto;
+import com.fromlabs.inventory.recipeservice.media.bean.MediaDto;
 import com.fromlabs.inventory.recipeservice.media.entity.MediaEntity;
 import lombok.experimental.UtilityClass;
 

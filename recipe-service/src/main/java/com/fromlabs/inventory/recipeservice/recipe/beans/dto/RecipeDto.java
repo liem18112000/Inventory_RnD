@@ -1,7 +1,6 @@
 package com.fromlabs.inventory.recipeservice.recipe.beans.dto;
 
 import com.fromlabs.inventory.recipeservice.common.dto.BaseDto;
-import com.fromlabs.inventory.recipeservice.media.MediaDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -9,7 +9,7 @@ import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPag
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.detail.mapper.RecipeDetailMapper;
 import com.fromlabs.inventory.recipeservice.detail.specification.RecipeDetailSpecification;
-import com.fromlabs.inventory.recipeservice.media.MediaDto;
+import com.fromlabs.inventory.recipeservice.media.bean.MediaDto;
 import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeEntity;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;

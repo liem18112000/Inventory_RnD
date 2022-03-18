@@ -6,7 +6,6 @@ import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
-import com.fromlabs.inventory.recipeservice.media.MediaDto;
 import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
@@ -23,7 +22,6 @@ import java.net.InetAddress;
 import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
 import static com.fromlabs.inventory.recipeservice.utility.ControllerValidation.*;
 import static com.fromlabs.inventory.recipeservice.utility.TemplateProcessDirector.*;
-import static com.fromlabs.inventory.recipeservice.utility.TransactionConstraint.*;
 import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j

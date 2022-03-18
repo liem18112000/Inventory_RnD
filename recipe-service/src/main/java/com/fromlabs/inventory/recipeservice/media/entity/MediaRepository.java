@@ -7,4 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface MediaRepository extends JpaRepository<MediaEntity, Long> {
+    Optional<MediaEntity> findByTitle(String title);
 }

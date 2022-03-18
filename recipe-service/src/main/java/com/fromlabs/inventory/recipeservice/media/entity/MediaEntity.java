@@ -32,8 +32,14 @@ public class MediaEntity {
     @Column(name = "media_type", nullable = false)
     private String mediaType = "image";
 
+    @Column(name = "extra_information", columnDefinition = "TEXT")
+    private String extraInformation;
+
     @Column(name = "created_at")
     private String createdAt;
+
+    @Column(name = "updated_at")
+    private String updatedAt;
 
     @Override
     public boolean equals(Object o) {
