@@ -122,7 +122,7 @@ export class RecipeChild extends Component {
             {
                 label: 'Upload',
                 icon: 'pi pi-upload',
-                command: (e) => { this.upload.action(rowData.id) }
+                command: (e) => { upload.action(rowData.id) }
             }
         ];
 
@@ -421,7 +421,7 @@ export class RecipeChild extends Component {
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form, this.upload)} />
                 </DataTable>
             </div >
         );
