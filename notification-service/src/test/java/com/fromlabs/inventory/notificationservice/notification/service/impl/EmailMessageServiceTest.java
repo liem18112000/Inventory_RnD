@@ -41,8 +41,8 @@ class EmailMessageServiceTest {
     @Test
     void given_send_when_allThingIsRight_then_sendMessageWithNoException() {
         final var messageObject = MessageValueObject
-                .messageBuilder().subject("Subject").body("Body")
-                .from("From").to("To").build();
+                .messageBuilder().subject("Subject").body("IngredientLowStock")
+                .from("from@gmail.com").to("to@gmail.com").build();
         final var mimeMessage = new JavaMailSenderImpl().createMimeMessage();
         when(mockSender.createMimeMessage()).thenReturn(mimeMessage);
         final var mockService = new EmailMessageService(
