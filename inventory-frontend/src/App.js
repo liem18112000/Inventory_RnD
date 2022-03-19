@@ -39,7 +39,7 @@ function App() {
 
   const handleAuthenticate = (username, password) => {
     const isLoginSuccess = authenticateService(username, password);
-    if(isLoginSuccess) {
+    if (isLoginSuccess) {
       toast.current.show({ severity: 'success', summary: 'Login success', detail: 'Login success', life: 1000 });
       sleep(500).then(() => window.location.reload())
     } else {
@@ -50,8 +50,8 @@ function App() {
   return isAuthenticate ? (
     <Router history={history}>
       <Switch>
-        <AdminTemplate path="/" exact Component={Dashboard}/>
-        <AdminTemplate path="/ingredient-inventory" exact Component={IngredientInventory}/>
+        <AdminTemplate path="/" exact Component={IngredientInventory} />
+        <AdminTemplate path="/ingredient-inventory" exact Component={IngredientInventory} />
         <AdminTemplate path="/ingredient" exact Component={IngredientCategory} />
         <AdminTemplate path="/ingredient/:id" exact Component={IngredientType} />
         <AdminTemplate path="/ingredient/history/:id" exact Component={IngredientHistory} />
@@ -74,7 +74,7 @@ function App() {
   ) : (
     <>
       <Toast ref={toast} />
-      <Login onAuthenticate={handleAuthenticate} path="/"/>
+      <Login onAuthenticate={handleAuthenticate} path="/" />
     </>
   )
 }
