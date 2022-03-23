@@ -16,6 +16,7 @@ import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import {UploadImageForm} from "../upload-media/UploadImageForm";
 
 export class RecipeChild extends Component {
 
@@ -105,7 +106,7 @@ export class RecipeChild extends Component {
         });
     }
 
-    actionBodyTemplate(rowData, form) {
+    actionBodyTemplate(rowData, form, upload) {
         console.log(rowData.id)
         let items = [
             {
@@ -117,6 +118,11 @@ export class RecipeChild extends Component {
                 label: 'Delete',
                 icon: 'pi pi-trash',
                 command: (e) => this.confirmDelete(rowData)
+            },
+            {
+                label: 'Upload',
+                icon: 'pi pi-upload',
+                command: (e) => { upload.action(rowData.id) }
             }
         ];
 
@@ -315,6 +321,9 @@ export class RecipeChild extends Component {
                 <RecipeChildForm ref={el => this.form = el}
                     refreshData={() => this.getPageChildren()}
                 />
+                <UploadImageForm ref={el => this.upload = el}
+                    refreshData={() => this.getPageChildren()}
+                />
                 <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1>
                 <Fieldset legend="Recipe" toggleable>
                     <div className="p-grid p-fluid">
@@ -412,7 +421,7 @@ export class RecipeChild extends Component {
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form, this.upload)} />
                 </DataTable>
             </div >
         );

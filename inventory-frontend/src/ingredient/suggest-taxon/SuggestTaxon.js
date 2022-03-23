@@ -45,11 +45,11 @@ export class SuggestTaxon extends Component {
                     data: data.map(elem => {
                         return {
                             ...elem,
-                            image: getMediaSource()
+                            image: !elem.recipe.image ? getMediaSource() : elem.recipe.image
                         }
                     })
                 })
-            );
+            ).then(() => console.log(this.state.data));
     }
 
     onSortChange(event) {

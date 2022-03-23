@@ -18,13 +18,15 @@ public class RecipeDto extends BaseDto<Long> implements Serializable {
 
     protected List<RecipeDto> children;
     protected String code;
+    protected Long mediaId;
 
     @Builder(builderMethodName = "recipeBuilder")
     public RecipeDto(Long id, Long tenantId, String name, String description, String updateAt,
-                     String createAt, boolean activated,
+                     String createAt, boolean activated, Long media,
                      String code, List<RecipeDto> children) {
         super(id, tenantId, name, description, updateAt, createAt, activated);
         this.setCode(code);
+        this.setMediaId(media);
         this.setChildren(children);
     }
 

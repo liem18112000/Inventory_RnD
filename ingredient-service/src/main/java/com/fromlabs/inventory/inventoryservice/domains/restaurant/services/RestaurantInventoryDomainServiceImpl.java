@@ -206,11 +206,23 @@ public class RestaurantInventoryDomainServiceImpl
             minQuantitySuggest = getMinQuantitySuggest(ingredientsInInventory, minQuantitySuggest, details);
 
             // Check for a valid suggestion based on the list of detail and quantity
-            if(isValidSuggestion(minQuantitySuggest, details))
+            if(isValidSuggestion(minQuantitySuggest, details)) {
+
+                // Add media image
+                recipe.setImage(this.getRecipeMediaLink(recipe));
 
                 // Add suggestion response to result placeholder
                 response.add(buildSuggestResponse(recipe, minQuantitySuggest, details));
+            }
         }
+    }
+
+    private String getRecipeMediaLink(final @NotNull RecipeDto recipe) {
+        if (Objects.isNull(recipe.getMediaId())) {
+            return "";
+        }
+        final var recipeMedia = recipeClient.getMedia(recipe.getMediaId());
+        return Objects.nonNull(recipeMedia) ? recipeMedia.getLink() : "";
     }
 
     /**

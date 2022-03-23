@@ -3,6 +3,11 @@ package com.fromlabs.inventory.recipeservice.applications;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import static com.fromlabs.inventory.recipeservice.config.AppConfig.ID;
 
 public interface ApplicationController {
 
@@ -106,6 +111,15 @@ public interface ApplicationController {
      * @return ResponseEntity
      */
     ResponseEntity<?> delete(
+            Long id
+    );
+
+    ResponseEntity<?> updateImageForRecipe(
+            Long id,
+            MultipartFile image
+    );
+
+    ResponseEntity<?> getMediaById(
             Long id
     );
 

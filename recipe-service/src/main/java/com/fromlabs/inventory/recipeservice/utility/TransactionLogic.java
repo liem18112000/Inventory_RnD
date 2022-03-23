@@ -9,6 +9,8 @@ import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPag
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
 import com.fromlabs.inventory.recipeservice.detail.mapper.RecipeDetailMapper;
 import com.fromlabs.inventory.recipeservice.detail.specification.RecipeDetailSpecification;
+import com.fromlabs.inventory.recipeservice.media.bean.MediaDto;
+import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeEntity;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.InetAddress;
 import java.util.List;
@@ -174,6 +177,28 @@ public class TransactionLogic {
     }
 
     //</editor-fold>
+
+    /**
+     * Update recipe entity with image
+     * @param id            Recipe ID
+     * @param image         MultipartFile
+     * @param recipeService RecipeService
+     * @return          RecipeDto
+     */
+    public RecipeDto updateImageForRecipe(
+            Long id,
+            MultipartFile image,
+            RecipeService recipeService,
+            MediaService mediaService
+    ) {
+        log.info("updateImageForRecipe");
+        var recipe = recipeService.getById(id);
+        final var savedMedia = mediaService.upload(MediaDto.builder()
+                .mediaType("image").name(recipe.getCode()).mediaFile(image).build());
+        recipe.setMediaId(savedMedia.getId());
+        final var updatedRecipe = recipeService.save(recipe);
+        return RecipeMapper.toDto(updatedRecipe);
+    }
 
     //<editor-fold desc="Delete recipe entity by id">
 
@@ -329,7 +354,6 @@ public class TransactionLogic {
     }
 
     //</editor-fold>
-
 
     //<editor-fold desc="Get all recipe detail list by tenant id and recipe">
 

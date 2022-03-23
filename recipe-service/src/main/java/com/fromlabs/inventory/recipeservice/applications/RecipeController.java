@@ -6,6 +6,7 @@ import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailService;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailPageRequest;
 import com.fromlabs.inventory.recipeservice.detail.beans.request.RecipeDetailRequest;
+import com.fromlabs.inventory.recipeservice.media.MediaService;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
@@ -14,13 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.InetAddress;
 
 import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
 import static com.fromlabs.inventory.recipeservice.utility.ControllerValidation.*;
 import static com.fromlabs.inventory.recipeservice.utility.TemplateProcessDirector.*;
-import static com.fromlabs.inventory.recipeservice.utility.TransactionConstraint.*;
 import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
@@ -33,6 +34,7 @@ public class RecipeController implements ApplicationController {
     private final RecipeService recipeService;
     private final RecipeDetailService recipeDetailService;
     private final IngredientClient ingredientClient;
+    private final MediaService mediaService;
     public static final String SERVICE_PATH = "/recipe/";
 
     /**
@@ -56,11 +58,13 @@ public class RecipeController implements ApplicationController {
     public RecipeController(
             RecipeService recipeService,
             RecipeDetailService recipeDetailService,
-            IngredientClient ingredientClient
+            IngredientClient ingredientClient,
+            MediaService mediaService
     ) {
         this.recipeService = recipeService;
         this.recipeDetailService = recipeDetailService;
         this.ingredientClient = ingredientClient;
+        this.mediaService = mediaService;
     }
 
     //</editor-fold>
@@ -152,6 +156,16 @@ public class RecipeController implements ApplicationController {
     ) {
         log.info(path(HttpMethod.POST, "child/page/all"));
         return (ResponseEntity<?>) buildGetPageAllRecipeChildTemplateProcess(tenantId, request, recipeService).run();
+    }
+
+    @PostMapping("child/{id:\\d+}/image")
+    public ResponseEntity<?> updateImageForRecipe(
+            @PathVariable(ID) Long id,
+            @RequestParam("image") MultipartFile image
+    ) {
+        log.info(path(HttpMethod.PUT, "child/".concat(String.valueOf(id)).concat("/all")));
+        return (ResponseEntity<?>) buildUpdateRecipeImageTemplateProcess(id, image,
+                recipeService, mediaService).run();
     }
 
     //</editor-fold>
@@ -353,4 +367,11 @@ public class RecipeController implements ApplicationController {
     }
 
     //</editor-fold>
+
+    @GetMapping("media/{id:\\d+}")
+    public ResponseEntity<?> getMediaById(
+            @PathVariable(ID) Long id
+    ) {
+        return ok(this.mediaService.getMedia(id));
+    }
 }

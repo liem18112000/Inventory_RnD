@@ -10,4 +10,6 @@ import java.util.List;
 @Data
 public class RecipeDto extends BaseDto<Long> {
     protected List<RecipeDto> children;
+    private Long mediaId;
+    private String image;
 }
