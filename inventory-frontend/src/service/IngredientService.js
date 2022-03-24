@@ -10,7 +10,7 @@ import {
     mockPageIngredientItem,
     mockPageIngredientType,
     mockPageInventory,
-    mockSuggestTaxon
+    mockSuggestTaxon, mockUpdateIngredientConfig
 } from "../core/models/MockDataModel";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import { compose } from "../core/utility/ComponentUtility";
@@ -383,6 +383,20 @@ export class IngredientService {
 
         // Fetch ingredient category data from api
         return axios.post(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    updateIngredientConfig(id, body, isMock = true) {
+        if (isMock) {
+            return mockUpdateIngredientConfig()
+        }
+
+        const url = `${BaseURL}/config/${id}`;
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch ingredient category data from api
+        return axios.put(url, body, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

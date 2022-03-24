@@ -1321,3 +1321,30 @@ export const mockSendPeriodStatistics = () => {
 
     return Promise.resolve(mockData);
 }
+
+export const mockUpdateIngredientConfig = () => {
+    const mockData = {
+        "id": 2,
+        "clientId": 1,
+        "name": "Not available",
+        "updateAt": "2022-01-03T05:46:15.829582100Z",
+        "ingredient": {
+            "id": 28,
+            "clientId": 1,
+            "name": "Mirinda",
+            "description": "Mirinda",
+            "updateAt": "2021-10-07T14:16:52.357651500Z",
+            "createAt": "2021-10-07T14:16:52.357651500Z",
+            "code": "88331188",
+            "unit": "bottle",
+            "unitType": "whole",
+            "category": false,
+            "active": true
+        },
+        "minimumQuantity": 50.0,
+        "maximumQuantity": 10000.0,
+        "active": true
+    }
+
+    return Promise.resolve(mockData);
+}
