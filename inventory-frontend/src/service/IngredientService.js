@@ -3,6 +3,7 @@ import { baseIngredientAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 import {
+    mockGetConfigByIngredient,
     mockIngredient,
     mockIngredientItem,
     mockIngredientLabelValue,
@@ -397,6 +398,20 @@ export class IngredientService {
 
         // Fetch ingredient category data from api
         return axios.put(url, body, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
+    }
+
+    getIngredientConfig(ingredientId, isMock = true) {
+        if (isMock) {
+            return mockGetConfigByIngredient()
+        }
+
+        const url = `${BaseURL}/${ingredientId}/config`;
+        const config = { headers: getHeaderByGatewayStatus() };
+
+        // Fetch ingredient category data from api
+        return axios.get(url, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

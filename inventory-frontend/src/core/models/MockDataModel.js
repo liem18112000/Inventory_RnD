@@ -1348,3 +1348,31 @@ export const mockUpdateIngredientConfig = () => {
 
     return Promise.resolve(mockData);
 }
+
+export const mockGetConfigByIngredient = () => {
+    const mockData = {
+        "id": 160,
+        "clientId": 1,
+        "name": "ST 25 Rice",
+        "description": "The best rice in the world",
+        "updateAt": "2022-02-24T14:52:55.742983400Z",
+        "ingredient": {
+            "id": 161,
+            "clientId": 1,
+            "name": "ST 25 Rice",
+            "description": "Rice",
+            "updateAt": "2022-02-24T14:02:27.326402600Z",
+            "createAt": "2022-02-24T14:02:27.326402600Z",
+            "code": "ST025Rice",
+            "unit": "kilogram",
+            "unitType": "weight",
+            "category": false,
+            "active": true
+        },
+        "minimumQuantity": 10.0,
+        "maximumQuantity": 10000.0,
+        "active": true
+    };
+
+    return Promise.resolve(mockData);
+}

@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { IngredientService } from '../../service/IngredientService';
-import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { sleep } from '../../core/utility/ComponentUtility';
 
@@ -20,10 +18,8 @@ export class IngredientTypeConfig extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: null,
             data: {
-                id: null,
-                parentId: null,
-                tenantId: '',
                 minimumQuantity: 1,
                 maximumQuantity: 1,
             },
@@ -40,28 +36,18 @@ export class IngredientTypeConfig extends Component {
     componentDidMount() {
     }
 
-    action = (id) => {
-        this.setState({
-            visible: true,
-            id: id
-        })
-    }
-
-    /**
-     * Set up information to state
-     */
-    setSaveInformation(parentId) {
-        this.setState({
-            data: {
-                id: null,
-                parentId: parentId,
-                tenantId: '',
-                minimumQuantity: 1,
-                maximumQuantity: 1,
-            },
-            id: null,
-            visible: true,
-        })
+    action = (ingredientId) => {
+        console.log(ingredientId)
+        this.ingredientService.getIngredientConfig(ingredientId, this.state.isMock)
+            .then(res => this.setState({
+                ...this.state,
+                visible: true,
+                id: res?.id,
+                data: {
+                    minimumQuantity: res?.minimumQuantity,
+                    maximumQuantity: res?.maximumQuantity
+                },
+            }))
     }
 
     /**
@@ -207,7 +193,8 @@ export class IngredientTypeConfig extends Component {
      * Retrieve response after submit form
      */
     getResponseAfterSubmit() {
-
+        console.log(this.state)
+        return this.ingredientService.updateIngredientConfig(this.state.id, this.state.data, this.state.isMock);
     }
 
     /**
