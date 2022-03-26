@@ -18,7 +18,8 @@ import { IngredientTypeForm } from './IngredientTypeForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { confirmDialog } from 'primereact/confirmdialog';
-import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
+import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { IngredientTypeConfig } from './IngredientTypeConfig';
 
 export class IngredientType extends Component {
 
@@ -58,14 +59,14 @@ export class IngredientType extends Component {
     };
 
     getPageTypes = () => {
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         const parentId = this.props.match.params.id;
         this.ingredientService.syncInventory().then(() => {
             this.ingredientService
                 .getPageType(parentId, filter, page, rows, sortField, sortOrder, isMock)
                 .then(data => handleGetPage(data, this.toast))
                 .then(data => this.mapper.toModel(data))
-                .then(data => this.setState({ ...this.state, ...data}));
+                .then(data => this.setState({ ...this.state, ...data }));
         })
 
     };
@@ -119,8 +120,10 @@ export class IngredientType extends Component {
                         this.toast.show({ severity: 'success', summary: 'Delete success', detail: 'Ingredient detail has been deleted', life: 1000 })
                         this.getPageTypes()
                     } else {
-                        this.toast.show({ severity: 'error', summary: 'Delete failed',
-                            detail: 'Ingredient detail may has recipe detail or material referenced ', life: 5000 })
+                        this.toast.show({
+                            severity: 'error', summary: 'Delete failed',
+                            detail: 'Ingredient detail may has recipe detail or material referenced ', life: 5000
+                        })
                     }
                 })
         }
@@ -141,7 +144,7 @@ export class IngredientType extends Component {
         });
     }
 
-    actionBodyTemplate(rowData, form) {
+    actionBodyTemplate(rowData, form, config) {
         let items = [
             {
                 label: 'Edit',
@@ -166,6 +169,11 @@ export class IngredientType extends Component {
                 label: 'Delete',
                 icon: 'pi pi-trash',
                 command: (e) => { this.confirmDelete(rowData) }
+            },
+            {
+                label: 'Config',
+                icon: 'pi pi-cog',
+                command: (e) => { config.action(rowData.id) }
             },
         ];
 
@@ -366,6 +374,9 @@ export class IngredientType extends Component {
                 <IngredientTypeForm ref={el => this.form = el}
                     refreshData={() => this.getPageTypes()}
                 />
+                <IngredientTypeConfig ref={el => this.config = el}
+                    refreshData={() => this.getPageTypes()}
+                />
                 <Fieldset legend="Ingredient Detail" toggleable>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">
@@ -474,7 +485,7 @@ export class IngredientType extends Component {
                     <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} sortable />
                     <Column field="unit" header="Unit" body={this.unitBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
+                    <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form, this.config)} />
                 </DataTable>
             </div>
         );

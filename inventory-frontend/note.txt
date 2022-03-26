@@ -2,3 +2,6 @@ npm i react-router-dom
 npm i history@4.10.0
 npm install antd
 npm i moment
+npm i primereact
+npm i primeicons
+npm i primeflex
