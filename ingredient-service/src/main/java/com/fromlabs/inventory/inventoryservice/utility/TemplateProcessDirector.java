@@ -803,4 +803,26 @@ public class TemplateProcessDirector {
 
     //</editor-fold>
 
+    //<editor-fold desc="Build get config by ingredient id template process">
+
+    /**
+     * Build get config by ingredient id template process
+     * @param tenantId          Tenant ID
+     * @param ingredientId      Ingredient ID
+     * @param ingredientService IngredientService
+     * @return                  WebTemplateProcess
+     */
+    public WebTemplateProcess buildGetConfigByIngredientIdTemplateProcess(
+            @NotNull final Long                     tenantId,
+            @NotNull final Long                     ingredientId,
+            @NotNull final IngredientService        ingredientService
+    ) {
+        return WebTemplateProcess.builder()
+                .validate(  () -> validateTenantAndIngredientId(tenantId, ingredientId))
+                .process(   () -> ok(ingredientService.getConfig(tenantId, ingredientService.getById(ingredientId))))
+                .build();
+    }
+
+    //</editor-fold>
+
 }

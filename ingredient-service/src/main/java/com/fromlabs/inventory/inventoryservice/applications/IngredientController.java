@@ -541,6 +541,22 @@ public class IngredientController implements ApplicationController {
         return (ResponseEntity<?>) buildUpdateConfigTemplateProcess(tenantId, id, request, ingredientService).run();
     }
 
+    /**
+     * Update ingredient config
+     * @param tenantId  Client ID
+     * @param ingredientId        Ingredient id
+     * @return          ResponseEntity
+     */
+    @GetMapping("{ingredientId:\\d+}/config")
+    public ResponseEntity<?> getConfigByIngredientId(
+            @RequestHeader(TENANT_ID) Long tenantId,
+            @PathVariable(INGREDIENT_ID) Long ingredientId
+    ){
+        log.info(path(HttpMethod.GET, "config/".concat(String.valueOf(ingredientId))));
+        return (ResponseEntity<?>) buildGetConfigByIngredientIdTemplateProcess(tenantId, ingredientId,
+                ingredientService).run();
+    }
+
     // </editor-fold>
 
     //<editor-fold desc="UNIT">
