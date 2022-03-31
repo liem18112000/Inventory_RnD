@@ -83,6 +83,35 @@
     font-weight: 600;
 }
 
+@media screen and (max-width: 1024px) {
+    .dataview-demo .product-grid-item img {
+        height: 25vh;
+    }
+
+    .dataview-demo .product-name {
+        font-size: 1.25rem;
+    }
+
+    .dataview-demo .product-list-item .product-price {
+        font-size: 1.25rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .dataview-demo .product-grid-item img {
+        height: 30vh;
+    }
+
+    .dataview-demo .product-name {
+        font-size: 1.25rem;
+    }
+
+    .dataview-demo .product-list-item .product-price {
+        font-size: 1.25rem;
+    }
+}
+
+
 @media screen and (max-width: 576px) {
     .dataview-demo .product-list-item {
         flex-direction: column;
@@ -113,5 +142,13 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
+    }
+
+    .dataview-demo .product-name {
+        font-size: 1rem;
+    }
+
+    .dataview-demo .product-list-item .product-price {
+        font-size: 1rem;
     }
 }

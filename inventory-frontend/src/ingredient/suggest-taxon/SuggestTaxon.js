@@ -92,15 +92,17 @@ export class SuggestTaxon extends Component {
 
     renderGridItem(data, form) {
         return (
-            <div className="p-col-12 p-md-3">
-                <div className="product-grid-item card">
+            <div className="p-col-12 p-xxl-3 p-lg-4 p-md-6 p-sm-12">
+                <div className="product-grid-item card"
+                     style={{ height: 'auto', minHeight: "98%", position: "relative", paddingBottom: "2%" }}>
                     <img src={data.image}
                         onError={(e) => e.target.src = getMediaSource()}
                         alt={data.name} />
-                    <div className="product-grid-item-content" style={{ height: '7vw' }}>
+                    <div className="product-grid-item-content" style={{marginBottom: "50px"}}>
                         <div className="product-name">{data.recipe.name}</div>
                     </div>
-                    <div className="product-grid-item-bottom">
+                    <div className="product-grid-item-bottom"
+                         style={{position: "absolute", bottom: "2%", display: "flex", justifyContent: "space-between", width: "100%"}}>
                         <span className="product-price">Quantity: {data.taxonQuantity}</span>
                         <Button label="Detail" onClick={(e) => { form.action(data) }}></Button>
                     </div>

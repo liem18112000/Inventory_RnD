@@ -41,7 +41,12 @@ const AdminTemplate = (props) => { //path, exact, Component
     return <Route {...restProps} render={(propsRoute) => { //props.location, props.history, props.match
         return <Fragment>
             <Layout style={{ minHeight: '100vh' }}>
-                <Sider theme="light" collapsible collapsed={collapsed} onCollapse={onCollapse}>
+                <Sider
+                    theme="light"
+                    collapsible
+                    breakpoint="sm"
+                    collapsed={collapsed}
+                    onCollapse={onCollapse}>
                     <div className="title">
                         <h1>Inventory System</h1>
                     </div>
