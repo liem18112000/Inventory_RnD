@@ -2,12 +2,9 @@ import React, { useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
-// import { Checkbox } from 'primereact/checkbox';
 import { Toast } from 'primereact/toast';
 import '../assets/styles/FormDemo.css';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import '../assets/styles/Test.css';
-import 'bootstrap/dist/js/bootstrap.min.js';
 import '../assets/styles/Login.css';
 export const Login = ({ onAuthenticate }) => {
     const toast = useRef(null);
