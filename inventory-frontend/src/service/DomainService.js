@@ -2,6 +2,8 @@ import {mockSendPeriodStatistics, mockSuggestTaxon} from "../core/models/MockDat
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import axios from "axios";
 import { baseIngredientAPI } from "../constant";
+import {compose} from "../core/utility/ComponentUtility";
+import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 
 export default class DomainService {
     
@@ -21,10 +23,14 @@ export default class DomainService {
         }
 
         const url       = `${baseIngredientAPI()}/restaurant/confirm`;
-        const config    = {
-            headers: getHeaderByGatewayStatus(),
+
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )(),
             params: { quantity: confirmQuantity }
-        };
+        }
 
         // fetch ingredient suggest taxon data from api
         return axios.post(url, request, config)
@@ -42,7 +48,12 @@ export default class DomainService {
         }
 
         const url       = `${baseIngredientAPI()}/restaurant/statistics`;
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
         const request   = {};
 
         return axios.post(url, request, config)

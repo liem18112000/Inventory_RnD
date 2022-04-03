@@ -2,8 +2,9 @@
 import axios from 'axios'
 import { baseIngredientAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
-import { isNumber } from "../core/utility/ComponentUtility";
+import {compose, isNumber} from "../core/utility/ComponentUtility";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
+import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 const BaseURL = baseIngredientAPI()
 
 
@@ -440,9 +441,15 @@ export default class InventoryTrackService {
             throw Error("Inventory track id is null")
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
         return axios
-            .get(`${BaseURL}/history/${id}`,{
-                headers: getHeaderByGatewayStatus({})})
+            .get(`${BaseURL}/history/${id}`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -458,7 +465,13 @@ export default class InventoryTrackService {
             return Promise.resolve(mockListSample);
         }
 
-        let config = {headers: getHeaderByGatewayStatus({})};
+        let config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
         if(isNumber(ingredientId)){
             config = {...config, params: {"ingredientId": ingredientId}}
         }
@@ -488,7 +501,12 @@ export default class InventoryTrackService {
         const url       = `${BaseURL}/history/page`;
         const request   = { ...filter, ingredientId: ingredientId };
         const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios.post(url, body, config)
             .then(res => res.data)
@@ -506,8 +524,15 @@ export default class InventoryTrackService {
             return Promise.resolve(mockEvents);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
         return axios
-            .get(`${BaseURL}/event/all/simple`)
+            .get(`${BaseURL}/event/all/simple`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -523,8 +548,15 @@ export default class InventoryTrackService {
             return Promise.resolve(mockStatus)
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
         return axios
-            .get(`${BaseURL}/status/all/simple`)
+            .get(`${BaseURL}/status/all/simple`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }

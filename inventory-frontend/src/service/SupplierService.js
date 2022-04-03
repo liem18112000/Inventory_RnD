@@ -5,6 +5,7 @@ import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import { compose } from "../core/utility/ComponentUtility";
 import {mockImportSimple} from "../core/models/MockDataModel";
+import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 
 // Supplier base URL
 const BaseURL = baseSupplierAPI()
@@ -37,7 +38,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/group/page`;
         const body = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch supplier group data from api
         return axios.post(url, body, config)
@@ -61,7 +67,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/child/page`;
         const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch supplier child data from api
         return axios
@@ -81,7 +92,12 @@ export class SupplierService {
         }
 
         const url = `${BaseURL}/${id}`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -101,7 +117,12 @@ export class SupplierService {
 
         const url = `${BaseURL}`;
         const body = addActorNameAndRole(supplier);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .post(url, body, config)
@@ -121,7 +142,12 @@ export class SupplierService {
 
         const url = `${BaseURL}`;
         const body = addActorNameAndRole(supplier);
-        const config = { headers: getHeaderByGatewayStatus({}) }
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .put(url, body, config)
@@ -145,7 +171,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/providable-material/page`;
         const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch supplier child data from api
         return axios
@@ -170,7 +201,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/import/page`;
         const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch supplier child data from api
         return axios
@@ -195,7 +231,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/import/detail/page`;
         const body = new FilterRequestMapper().toRequest(filter, page, rows, sortField, sortOrder);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch supplier child data from api
         return axios
@@ -215,7 +256,12 @@ export class SupplierService {
         }
 
         const url = `${BaseURL}/import/${id}`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -233,7 +279,12 @@ export class SupplierService {
         }
 
         const url = `${BaseURL}/import/simple`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -252,7 +303,12 @@ export class SupplierService {
         }
 
         const url = `${BaseURL}/providable-material/${id}`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -272,7 +328,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/import`;
         const body = addActorNameAndRole(imports);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .post(url, body, config)
@@ -292,7 +353,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/providable-material`;
         const body = addActorNameAndRole(material);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .post(url, body, config)
@@ -312,7 +378,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/import`;
         const body = addActorNameAndRole(imports);
-        const config = { headers: getHeaderByGatewayStatus({}) }
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal()
+            )()
+        }
 
         return axios
             .put(url, body, config)
@@ -332,7 +403,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/providable-material`;
         const body = addActorNameAndRole(material);
-        const config = { headers: getHeaderByGatewayStatus({}) }
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .put(url, body, config)
@@ -351,7 +427,12 @@ export class SupplierService {
         }
 
         const url = `${BaseURL}/import/detail/${id}`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -371,7 +452,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/import/detail`;
         const body = addActorNameAndRole(imports);
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .post(url, body, config)
@@ -391,7 +477,12 @@ export class SupplierService {
 
         const url = `${BaseURL}/import/detail`;
         const body = addActorNameAndRole(imports);
-        const config = { headers: getHeaderByGatewayStatus({}) }
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .put(url, body, config)
@@ -413,6 +504,7 @@ export class SupplierService {
         const config = {
             headers: compose(
                 getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
             )()
         }
 
@@ -434,6 +526,7 @@ export class SupplierService {
         const config = {
             headers: compose(
                 getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
             )()
         }
 
@@ -451,6 +544,7 @@ export class SupplierService {
         const config = {
             headers: compose(
                 getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
             )()
         }
 

@@ -2,6 +2,8 @@ import axios from 'axios'
 import { baseRecipeAPI, TENANT_ID } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import {FilterRequestMapper} from "../core/models/mapper/ModelMapper";
+import {compose} from "../core/utility/ComponentUtility";
+import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 
 const groupJson = {
     "content": [
@@ -404,7 +406,12 @@ export class RecipeService {
 
         const url       = `${BaseURL}/group/page`;
         const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch recipe group data from api
         return axios.post(url, body, config)
@@ -430,7 +437,12 @@ export class RecipeService {
         const url       = `${BaseURL}/child/page`;
         const request   = { ...filter, parentId: parentId };
         const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // fetch recipe child data from api
         return axios.post(url, body, config)
@@ -456,7 +468,12 @@ export class RecipeService {
         const url       = `${BaseURL}/detail/page`;
         const request   = { ...filter, recipeId: recipeId };
         const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // fetch recipe detail data from api
         return axios.post(url, body, config)
@@ -474,15 +491,20 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
         return axios
-            .get(`${BaseURL}/${id}`, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .get(`${BaseURL}/${id}`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
 
-/**
+    /**
      * Get recipe group by id
      * @param isMock        Activate mock if true otherwise use real api call
      */
@@ -491,10 +513,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .get(`${BaseURL}/group/simple`, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .get(`${BaseURL}/group/simple`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
      }
@@ -509,10 +536,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .get(`${BaseURL}/detail/${id}`, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .get(`${BaseURL}/detail/${id}`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -527,10 +559,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .put(`${BaseURL}`, recipe, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .put(`${BaseURL}`, recipe, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -545,10 +582,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .post(`${BaseURL}`, recipe, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .post(`${BaseURL}`, recipe, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -558,10 +600,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .post(`${BaseURL}/detail`, detail, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .post(`${BaseURL}/detail`, detail, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -571,10 +618,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .put(`${BaseURL}/detail`, detail, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .put(`${BaseURL}/detail`, detail, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -589,9 +641,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
-        return axios.delete(`${BaseURL}/${id}`, {
-                headers: getHeaderByGatewayStatus({})
-            }).then(res => res.data)
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
+        return axios.delete(`${BaseURL}/${id}`, config)
+            .then(res => res.data)
             .catch(error => console.log(error));
     }
 
@@ -605,9 +663,15 @@ export class RecipeService {
             return Promise.resolve(groupJson.content[0]);
         }
 
-        return axios.delete(`${BaseURL}/detail/${id}`, {
-            headers: getHeaderByGatewayStatus({})
-        }).then(res => res.data)
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
+        return axios.delete(`${BaseURL}/detail/${id}`, config)
+            .then(res => res.data)
             .catch(error => console.log(error));
     }
 
@@ -618,7 +682,12 @@ export class RecipeService {
 
         const url       = `${BaseURL}/child/page/all`;
         const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch all recipe child data from api
         return axios.post(url, body, config)

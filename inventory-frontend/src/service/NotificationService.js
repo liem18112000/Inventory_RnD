@@ -10,6 +10,8 @@ import {
     mockGetEventTypes, mockGetNotificationTypes
 } from "../core/models/MockDataModel";
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
+import {compose} from "../core/utility/ComponentUtility";
+import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
 
 // Notification base URL
 const BaseURL = baseNotificationAPI()
@@ -37,8 +39,11 @@ export class NotificationService {
 
         const url = `${BaseURL}/event/types`;
         const config = {
-            headers: getHeaderByGatewayStatus()
-        };
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         // Fetch notification event types data from api
         return axios.get(url, config)
@@ -57,8 +62,11 @@ export class NotificationService {
 
         const url = `${BaseURL}/types`;
         const config = {
-            headers: getHeaderByGatewayStatus()
-        };
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         // Fetch notification types data from api
         return axios.get(url, config)
@@ -77,8 +85,11 @@ export class NotificationService {
 
         const url = `${BaseURL}/statuses`;
         const config = {
-            headers: getHeaderByGatewayStatus()
-        };
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         // Fetch notification types data from api
         return axios.get(url, config)
@@ -108,7 +119,10 @@ export class NotificationService {
                 size: body.size,
                 sort: body.sort
             },
-            headers: getHeaderByGatewayStatus()
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
         };
 
         // Fetch notification event data from api
@@ -139,7 +153,10 @@ export class NotificationService {
                 size: body.size,
                 sort: body.sort
             },
-            headers: getHeaderByGatewayStatus()
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
         };
 
         // Fetch notification event data from api
@@ -160,7 +177,12 @@ export class NotificationService {
         }
 
         const url = `${BaseURL}/event/${id}`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -180,7 +202,12 @@ export class NotificationService {
         }
 
         const url = `${BaseURL}/${id}`
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
             .get(url, config)
@@ -200,7 +227,12 @@ export class NotificationService {
 
         const url = `${BaseURL}/event/${event.id}`;
         const body = addActorNameAndRole(event);
-        const config = { headers: getHeaderByGatewayStatus({}) }
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         return axios
             .put(url, body, config)

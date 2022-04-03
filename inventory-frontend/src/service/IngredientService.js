@@ -11,7 +11,8 @@ import {
     mockPageIngredientItem,
     mockPageIngredientType,
     mockPageInventory,
-    mockSuggestTaxon, mockUpdateIngredientConfig
+    mockSuggestTaxon,
+    mockUpdateIngredientConfig
 } from "../core/models/MockDataModel";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import { compose } from "../core/utility/ComponentUtility";
@@ -48,7 +49,12 @@ export class IngredientService {
 
         const url       = `${BaseURL}/category/page`;
         const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch ingredient category data from api
         return axios.post(url, body, config)
@@ -60,12 +66,16 @@ export class IngredientService {
      * Sync items in inventory
      */
     syncInventory() {
-        const headers = getHeaderByGatewayStatus({});
-        return axios.post(`${BaseURL}/inventory/sync`, {}, {
-            headers: headers
-        }).then(res => {
-            return res.data
-        }).catch(error => console.log(error));
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
+        return axios.post(`${BaseURL}/inventory/sync`, {}, config)
+            .then(res => res.data)
+            .catch(error => console.log(error));
     }
 
     /**
@@ -86,7 +96,12 @@ export class IngredientService {
         const url       = `${BaseURL}/type/page`;
         const request   = { ...filter, parentId: parentId };
         const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // fetch ingredient type data from api 
         return axios.post(url, body, config)
@@ -112,7 +127,12 @@ export class IngredientService {
         const url       = `${BaseURL}/item/page`;
         const request   = { ...filter, ingredientId: ingredientId };
         const body      = this.mapper.toRequest(request, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // fetch ingredient item data from api
         return axios.post(url, body, config)
@@ -136,7 +156,12 @@ export class IngredientService {
 
         const url       = `${BaseURL}/inventory/page`;
         const body      = this.mapper.toRequest(filter, page, rows, sortField, sortOrder);
-        const config    = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // fetch ingredient inventory data from api
         return axios.post(url, body, config)
@@ -154,9 +179,14 @@ export class IngredientService {
             return mockIngredientLabelValue();
         }
 
-        return axios.get(`${BaseURL}/type/simple`, {
-            headers: getHeaderByGatewayStatus({})
-        })
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
+        return axios.get(`${BaseURL}/type/simple`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -171,12 +201,15 @@ export class IngredientService {
             return mockIngredient();
         }
 
-        const headers = getHeaderByGatewayStatus({})
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
-            .get(`${BaseURL}/${id}`, {
-                headers: headers
-            })
+            .get(`${BaseURL}/${id}`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -191,12 +224,15 @@ export class IngredientService {
             return mockIngredientItem();
         }
 
-        const headers = getHeaderByGatewayStatus({})
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         return axios
-            .get(`${BaseURL}/item/${id}`, {
-                headers: headers
-            })
+            .get(`${BaseURL}/item/${id}`, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -216,7 +252,16 @@ export class IngredientService {
             ]);
         }
 
-        return axios.get(`${BaseURL}/unit-type`).then(res => res.data).catch(error => console.log(error))
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
+        return axios.get(`${BaseURL}/unit-type`, config)
+            .then(res => res.data)
+            .catch(error => console.log(error))
     }
 
     /**
@@ -235,7 +280,16 @@ export class IngredientService {
             ]);
         }
 
-        return axios.get(`${BaseURL}/unit?unit=${unitType}`).then(res => res.data).catch(error => console.log(error))
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
+
+        return axios.get(`${BaseURL}/unit?unit=${unitType}`, config)
+            .then(res => res.data)
+            .catch(error => console.log(error))
     }
 
     /**
@@ -253,7 +307,7 @@ export class IngredientService {
         const config = {
             headers: compose(
                 getHeaderByGatewayStatus,
-                authorizeWithApiKey
+                authenticateWithApiKeyAndPrincipal
             )()
         }
 
@@ -276,10 +330,15 @@ export class IngredientService {
         // Add actor role and actor name to request body as default
         const requestBody = addActorNameAndRole(item);
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .post(`${BaseURL}/item`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .post(`${BaseURL}/item`, requestBody, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -297,10 +356,15 @@ export class IngredientService {
         // Add actor role and actor name to request body as default
         const requestBody = addActorNameAndRole(items);
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .post(`${BaseURL}/item/batch`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .post(`${BaseURL}/item/batch`, requestBody, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -343,10 +407,15 @@ export class IngredientService {
         // Add actor role and actor name to request body as default
         const requestBody = addActorNameAndRole(item);
 
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
+
         return axios
-            .put(`${BaseURL}/item/${item.id}`, requestBody, {
-                headers: getHeaderByGatewayStatus({})
-            })
+            .put(`${BaseURL}/item/${item.id}`, requestBody, config)
             .then(res => res.data)
             .catch(error => console.log(error));
     }
@@ -394,7 +463,12 @@ export class IngredientService {
         }
 
         const url = `${BaseURL}/config/${id}`;
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch ingredient category data from api
         return axios.put(url, body, config)
@@ -408,7 +482,12 @@ export class IngredientService {
         }
 
         const url = `${BaseURL}/${ingredientId}/config`;
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authorizeWithApiKey
+            )()
+        }
 
         // Fetch ingredient category data from api
         return axios.get(url, config)
