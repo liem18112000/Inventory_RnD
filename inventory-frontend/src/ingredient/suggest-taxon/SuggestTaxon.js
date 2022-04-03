@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Button } from 'primereact/button';
-import { ProductService } from '../../service/ProductService';
 import { IngredientService } from '../../service/IngredientService'
 import '../../assets/styles/DataViewDemo.css';
 import { SuggestTaxonDetail } from './SuggestTaxonDetail';
@@ -23,7 +22,6 @@ export class SuggestTaxon extends Component {
             loading: true,
         };
 
-        this.productService = new ProductService();
         this.ingredientService = new IngredientService();
         this.itemTemplate = this.itemTemplate.bind(this);
         this.onSortChange = this.onSortChange.bind(this);
