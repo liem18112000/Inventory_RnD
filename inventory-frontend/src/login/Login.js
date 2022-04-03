@@ -29,14 +29,12 @@ export const Login = ({ onAuthenticate }) => {
             <Toast ref={toast} />
             <div class="container-fluid">
                 <div class="row no-gutter">
-
                     <div class="col-md-6 bg-light">
                         <div class="login d-flex align-items-center py-5">
-
                             <div class="container">
                                 <div class="row">
                                     <div class="col-lg-10 col-xl-7 mx-auto">
-                                        <img class="logo-image" src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977464/Group_95_w4o4cb.png"></img>
+                                        <img class="logo-image" alt="" src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977464/Group_95_w4o4cb.png"></img>
                                         <h4 class="display-5">Login</h4>
                                         <form className="p-fluid" onSubmit={handleSubmit}>
                                             <div className="p-field">
@@ -63,7 +61,6 @@ export const Login = ({ onAuthenticate }) => {
                         </div>
                     </div>
                     <div class="col-md-6 d-none d-md-flex bg-image"></div>
-
                 </div>
             </div>
         </div>
