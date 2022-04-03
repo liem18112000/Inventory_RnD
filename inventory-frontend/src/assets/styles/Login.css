@@ -4,7 +4,8 @@
 }
 .bg-image {
   background-image: url('https://res.cloudinary.com/ieltstinder/image/upload/v1648977311/Group_93_useolu.png');
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center center;
 }
 .logo-image {
