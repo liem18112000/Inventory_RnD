@@ -1,31 +1,67 @@
-/* FormDemo.css */
 
-.form-demo{
-    margin-top: 10rem
+
+* {
+    padding    : 0;
+    margin     : 0;
+    box-sizing : border-box;
 }
 
-.form-demo .card {
-    min-width: 450px;
+div.container {
+    width            : 770px;
+    max-width        : 90%;
+    margin           : 20vh auto 30px auto;
+    background-color : #fff;
+    border           : 2px solid white;
+    box-shadow       : 2px 15px 40px #656565;
 }
-.form-demo .card form {
-    margin-top: 2rem;
+
+img.cup {
+    float : left;
+    width : 50%;
 }
-.form-demo .card .p-field {
+
+div.table {
+    color       : #9EA74E;
+    font-family : Arial;
+    width       : 50%;
+    float       : left;
+    margin-top  : 50px;
+}
+
+.card{
+
+}
+
+.card form {
+    margin: 2rem;
+}
+.card .p-field {
     margin-bottom: 1.5rem;
 }
 
-.p-text-center .title{
-    text-decoration: underline;
+div.box-shadow {
+    width  : 0;
+    height : 0;
+    clear  : both;
 }
 
-@media screen and (max-width: 960px) {
-    .form-demo .card {
-        width: 80%;
+@media screen and (max-width : 780px) {
+    div.background-image {
+        background-size : cover;
     }
-}
-@media screen and (max-width: 640px) {
-    .form-demo .card {
-        width: 100%;
-        min-width: 0;
+
+    img.cup {
+        display : none;
     }
+
+    div.container {
+        width     : 90%;
+        max-width : 450px;
+    }
+
+    div.table {
+        width      : 100%;
+        text-align : center;
+    }
+
 }

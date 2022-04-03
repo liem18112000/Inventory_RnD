@@ -6,7 +6,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { Toast } from 'primereact/toast';
 import '../assets/styles/FormDemo.css';
 
-export const Login = ({onAuthenticate}) => {
+export const Login = ({ onAuthenticate }) => {
     const toast = useRef(null);
 
     const handleSubmit = e => {
@@ -23,12 +23,13 @@ export const Login = ({onAuthenticate}) => {
     };
 
     return (
-        <div className="form-demo">
+
+        <div className="container">
             <Toast ref={toast} />
-            <div className="p-d-flex p-jc-center">
+            <div className="table">
                 <div className="card">
-                    <h3 className="p-text-center title">Inventory System</h3>
-                    <h4 className="p-text-center">Welcome back</h4>
+                    <h3 className="title">Inventory System</h3>
+                    <h3 className="title">Login</h3>
                     <form className="p-fluid" onSubmit={handleSubmit}>
                         <div className="p-field">
                             <span className="p-float-label">
@@ -46,6 +47,33 @@ export const Login = ({onAuthenticate}) => {
                     </form>
                 </div>
             </div>
+            <img className="cup" src="https://picsum.photos/200/200" alt="rainbow cup" />
+            <div className="box-shadow" />
         </div>
+
+        // <div className="form-demo">
+        //     <Toast ref={toast} />
+        //     <div className="p-d-flex p-jc-center">
+        //         <div className="card">
+        //             <h3 className="p-text-center title">Inventory System</h3>
+        //             <h4 className="p-text-center">Welcome back</h4>
+        //             <form className="p-fluid" onSubmit={handleSubmit}>
+        //                 <div className="p-field">
+        //                     <span className="p-float-label">
+        //                         <InputText id="username" name="username" />
+        //                         <label htmlFor="username">Username</label>
+        //                     </span>
+        //                 </div>
+        //                 <div className="p-field">
+        //                     <span className="p-float-label">
+        //                         <Password id="password" name="password" toggleMask feedback={false} />
+        //                         <label htmlFor="password" >Password</label>
+        //                     </span>
+        //                 </div>
+        //                 <Button type="submit" label="Submit" className="p-mt-0" />
+        //             </form>
+        //         </div>
+        //     </div>
+        // </div>
     );
 }
