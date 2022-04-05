@@ -99,3 +99,31 @@
         margin-top: .5rem;
     }
 }
+
+/* ----------- iPhone 6, 6S, 7 and 8 ----------- */
+/* Portrait */
+/* @media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 667px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: portrait) { 
+    .overlaypanel-demo {
+        top: 60px;
+        width: 350px;
+        left: 12px;
+    }
+} */
+
+/* ----------- iPhone X ----------- */
+/* Portrait */
+/* @media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: portrait) { 
+    .overlaypanel-demo {
+        width: 350px;
+        left: 10px;
+        top: 60px;
+    }
+} */
