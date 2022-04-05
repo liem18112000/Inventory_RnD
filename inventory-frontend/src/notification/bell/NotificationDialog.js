@@ -72,6 +72,15 @@ export class NotificationDialog extends Component {
         );
     }
 
+    nameTemplate(content) {
+        console.log(content)
+        return (
+            <React.Fragment>
+                <span style={{ whileSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '200px' }}>{content.name}</span>
+            </React.Fragment>
+        );
+    }
+
     /**
      * Render component
      * @returns {JSX.Element}
@@ -86,7 +95,7 @@ export class NotificationDialog extends Component {
                 >
                     <Badge value={this.state.total} />
                 </i>
-                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
+                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" className="overlaypanel-demo">
                     <DataTable
                         lazy={true}
                         first={this.state.page * this.state.rows}
@@ -106,7 +115,7 @@ export class NotificationDialog extends Component {
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} events"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     >
-                        <Column header="Event" field="name" />
+                        <Column header="Event" field="name" body={this.nameTemplate} />
                         <Column header="Type" field="eventType" />
                     </DataTable>
                 </OverlayPanel>
