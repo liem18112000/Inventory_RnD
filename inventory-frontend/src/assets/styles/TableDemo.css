@@ -99,25 +99,3 @@
         margin-top: .5rem;
     }
 }
-
-@media screen and (max-width: 440px) {
-    .datatable-doc-demo .table-header .blue-btn {
-        margin-bottom: 10px;
-        width: 150px;
-    }
-
-    .datatable-doc-demo .table-header .p-button-constrast {
-        margin-bottom: 5px;
-        width: 150px;
-    }
-}
-
-@media screen and (max-width: 380px) {
-    .datatable-doc-demo .table-header .blue-btn {
-        width: 150px;
-    }
-
-    .datatable-doc-demo .table-header .p-button-constrast {
-        width: 150px;
-    }
-}

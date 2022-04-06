@@ -1,0 +1,15 @@
+#components-layout-demo-side .logo {
+    height: 32px;
+    margin: 16px;
+    background: white;
+}
+
+.site-layout .site-layout-background {
+    background: white;
+}
+
+.title {
+    margin: 10px 0 25px 0;
+    text-align: center;
+    text-decoration: underline;
+}
