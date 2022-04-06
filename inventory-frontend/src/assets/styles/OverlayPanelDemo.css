@@ -8,3 +8,36 @@
     width: 50px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
+
+#components-layout-demo-side .logo {
+    height: 32px;
+    margin: 16px;
+    background: white;
+}
+
+.site-layout .site-layout-background {
+    background: white;
+}
+
+.title {
+    text-align: center;
+}
+
+.title img {
+    width: 25%;
+    height: 25%; 
+}
+
+@media screen and (max-width: 576px) {
+    .title img {
+        width: 55%;
+        height: 55%; 
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .title img {
+        width: 55%;
+        height: 55%; 
+    }
+}
