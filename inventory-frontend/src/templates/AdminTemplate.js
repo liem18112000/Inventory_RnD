@@ -1,9 +1,9 @@
-import { Fragment, useEffect, useRef, useState} from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Route } from "react-router";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import { NavLink } from "react-router-dom";
 // import { history } from "../App.js";
-import "./AdminTemplate.css"
+// import "./AdminTemplate.css"
 import {
     DesktopOutlined,
     TeamOutlined,
@@ -48,7 +48,10 @@ const AdminTemplate = (props) => { //path, exact, Component
                     collapsed={collapsed}
                     onCollapse={onCollapse}>
                     <div className="title">
-                        <h1>Inventory System</h1>
+                        {/* <h1>Inventory System</h1> */}
+                        <img
+                            src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png"
+                        />
                     </div>
                     <Menu
                         // defaultSelectedKeys={['2']} 
