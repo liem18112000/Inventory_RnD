@@ -449,7 +449,12 @@ export class IngredientService {
 
         const url = `${BaseURL}/restaurant/suggest`;
         const body = {}
-        const config = { headers: getHeaderByGatewayStatus() };
+        const config = {
+            headers: compose(
+                getHeaderByGatewayStatus,
+                authenticateWithApiKeyAndPrincipal
+            )()
+        }
 
         // Fetch ingredient category data from api
         return axios.post(url, body, config)

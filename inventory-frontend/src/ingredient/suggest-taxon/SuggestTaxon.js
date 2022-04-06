@@ -5,6 +5,7 @@ import { IngredientService } from '../../service/IngredientService'
 import '../../assets/styles/DataViewDemo.css';
 import { SuggestTaxonDetail } from './SuggestTaxonDetail';
 import { getMediaSource } from '../../service/MediaService';
+import {Toast} from "primereact/toast";
 
 export class SuggestTaxon extends Component {
 
@@ -32,21 +33,40 @@ export class SuggestTaxon extends Component {
         this.suggestTaxon()
     }
 
+    handleSuggestTaxonFailed() {
+        this.toast.show({
+            severity: "warn",
+            summary: 'Load Fail',
+            detail:'Service get data failed',
+            life: 1000
+        });
+    }
+
     suggestTaxon = () => {
         const { isMock } = this.state;
         this.ingredientService
             .getSuggestTaxon(isMock)
             .then(data =>
-                this.setState({
-                    ...this.state,
-                    loading: false,
-                    data: data.map(elem => {
-                        return {
-                            ...elem,
-                            image: !elem.recipe.image ? getMediaSource() : elem.recipe.image
-                        }
+            {
+                if (!data || data.length <= 0) {
+                    this.handleSuggestTaxonFailed();
+                    this.setState({
+                        ...this.state,
+                        loading: false
                     })
-                })
+                } else {
+                    this.setState({
+                        ...this.state,
+                        loading: false,
+                        data: data.map(elem => {
+                            return {
+                                ...elem,
+                                image: !elem.recipe.image ? getMediaSource() : elem.recipe.image
+                            }
+                        })
+                    })
+                }
+            }
             ).then(() => console.log(this.state.data));
     }
 
@@ -139,6 +159,7 @@ export class SuggestTaxon extends Component {
 
         return (
             <div className="dataview-demo">
+                <Toast ref={(el) => this.toast = el} />
                 <div className="card">
                     <SuggestTaxonDetail bell={this.props.bell} ref={el => this.form = el} refreshData={() => this.suggestTaxon()} />
                     <DataView value={this.state.data} layout={this.state.layout} header={header} loading={this.state.loading}

@@ -166,7 +166,7 @@ export class SuggestTaxonDetail extends Component {
                 <Toast ref={(el) => this.toast = el} />
                 <Dialog header="Taxon Detail" visible={this.state.displayResponsive}
                     onHide={() => this.onHide('displayResponsive')}
-                    breakpoints={{ '768px': '55%' }}
+                    breakpoints={{ '1024px': '55%','768px': '70%', '576px': '80%', '425px': "90%", '320px': "95%" }}
                     style={{ width: '25vw', overflowY: 'hidden', textAlign: 'center' }}
                     footer={this.renderFooter('displayResponsive')}
                 >
