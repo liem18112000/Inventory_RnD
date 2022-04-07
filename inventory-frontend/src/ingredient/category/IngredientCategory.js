@@ -350,7 +350,7 @@ export class IngredientCategory extends Component {
                 <span className="p-input-icon-left">
                     <i className="pi pi-plus" />
                     <Button
-                        className="blue-btn"
+                        className="blue-btn-1"
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"

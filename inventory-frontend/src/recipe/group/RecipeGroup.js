@@ -109,7 +109,6 @@ export class RecipeGroup extends Component {
                 command: (e) => this.confirmDelete(rowData)
             }
         ];
-        console.log(rowData.id)
         return (
             <React.Fragment>
                 <div className="card">
@@ -284,7 +283,7 @@ export class RecipeGroup extends Component {
                 <span className="p-input-icon-left">
                     <i className="pi pi-plus" />
                     <Button
-                        className="blue-btn"
+                        className="blue-btn-1"
                         style={{ marginRight: '0.5rem' }}
                         icon="pi pi-plus"
                         iconPos="left"
