@@ -19,6 +19,11 @@
     background: white;
 }
 
+.site-layout .footer {
+    background: white;
+    padding: 10px 0
+}
+
 .title {
     text-align: center;
 }

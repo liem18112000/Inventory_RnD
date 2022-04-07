@@ -13,8 +13,9 @@ import {
 import { logout } from "../core/security/AuthenticateService";
 import '../assets/styles/OverlayPanelDemo.css';
 import { NotificationDialog } from "../notification/bell/NotificationDialog";
+// import { Footer } from "antd/lib/layout/layout";
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content, Sider, Footer } = Layout;
 const { SubMenu } = Menu;
 
 
@@ -101,9 +102,14 @@ const AdminTemplate = (props) => { //path, exact, Component
                         <Breadcrumb style={{ margin: '16px 0' }}>
                         </Breadcrumb>
                         <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
-                            <Component bell={bell} {...propsRoute} />
+                            <Component
+                                // bell={bell}
+                                {...propsRoute} />
                         </div>
                     </Content>
+                    <Footer className="footer" style={{ textAlign: 'center' }}>
+                        <span> Copyright ©2022 Inventory System 1.0</span>
+                    </Footer>
                 </Layout>
             </Layout>
         </Fragment>
