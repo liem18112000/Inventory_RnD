@@ -5,7 +5,7 @@ import { IngredientService } from '../../service/IngredientService'
 import '../../assets/styles/DataViewDemo.css';
 import { SuggestTaxonDetail } from './SuggestTaxonDetail';
 import { getMediaSource } from '../../service/MediaService';
-import {Toast} from "primereact/toast";
+import { Toast } from "primereact/toast";
 
 export class SuggestTaxon extends Component {
 
@@ -37,7 +37,7 @@ export class SuggestTaxon extends Component {
         this.toast.show({
             severity: "warn",
             summary: 'Load Fail',
-            detail:'Service get data failed',
+            detail: 'Service get data failed',
             life: 1000
         });
     }
@@ -46,8 +46,7 @@ export class SuggestTaxon extends Component {
         const { isMock } = this.state;
         this.ingredientService
             .getSuggestTaxon(isMock)
-            .then(data =>
-            {
+            .then(data => {
                 if (!data || data.length <= 0) {
                     this.handleSuggestTaxonFailed();
                     this.setState({
@@ -112,15 +111,15 @@ export class SuggestTaxon extends Component {
         return (
             <div className="p-col-12 p-xxl-3 p-lg-4 p-md-6 p-sm-12">
                 <div className="product-grid-item card"
-                     style={{ height: 'auto', minHeight: "98%", position: "relative", paddingBottom: "2%" }}>
+                    style={{ height: 'auto', minHeight: "98%", position: "relative", paddingBottom: "2%" }}>
                     <img src={data.image}
                         onError={(e) => e.target.src = getMediaSource()}
                         alt={data.name} />
-                    <div className="product-grid-item-content" style={{marginBottom: "50px"}}>
+                    <div className="product-grid-item-content" style={{ marginBottom: "50px" }}>
                         <div className="product-name">{data.recipe.name}</div>
                     </div>
                     <div className="product-grid-item-bottom"
-                         style={{position: "absolute", bottom: "2%", display: "flex", justifyContent: "space-between", width: "100%"}}>
+                        style={{ position: "absolute", bottom: "2%", display: "flex", justifyContent: "space-between", width: "100%" }}>
                         <span className="product-price">Quantity: {data.taxonQuantity}</span>
                         <Button label="Detail" onClick={(e) => { form.action(data) }}></Button>
                     </div>

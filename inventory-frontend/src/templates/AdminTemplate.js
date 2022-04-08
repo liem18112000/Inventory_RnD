@@ -50,7 +50,7 @@ const AdminTemplate = (props) => { //path, exact, Component
                     <div className="title">
                         {/* <h1>Inventory System</h1> */}
                         <img
-                            src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png"
+                            src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png" alt=''
                         />
                     </div>
                     <Menu

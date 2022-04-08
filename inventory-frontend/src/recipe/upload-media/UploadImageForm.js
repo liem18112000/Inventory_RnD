@@ -7,8 +7,8 @@ import { ProgressBar } from 'primereact/progressbar';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
-import {baseRecipeAPI} from "../../constant";
-import {sleep} from "../../core/utility/ComponentUtility";
+import { baseRecipeAPI } from "../../constant";
+import { sleep } from "../../core/utility/ComponentUtility";
 
 export class UploadImageForm extends Component {
 
@@ -22,7 +22,7 @@ export class UploadImageForm extends Component {
             id: null,
             isMock: false,
             visible: false,
-            totalSize: 0
+            totalSize: 0,
         }
         this.recipeService = new RecipeService();
         this.onTemplateUpload = this.onTemplateUpload.bind(this)
@@ -109,7 +109,7 @@ export class UploadImageForm extends Component {
                     width: '300px',
                     height: '20px',
                     marginLeft: 'auto'
-                }}/>
+                }} />
             </div>
         );
     }
@@ -138,7 +138,7 @@ export class UploadImageForm extends Component {
                     borderRadius: '50%',
                     backgroundColor: 'var(--surface-b)',
                     color: 'var(--surface-d)'
-                }}/>
+                }} />
                 <span style={{ 'fontSize': '1.2em', color: 'var(--text-color-secondary)' }} className="p-my-5">
                     Drag and Drop Image Here
                 </span>
@@ -182,8 +182,9 @@ export class UploadImageForm extends Component {
                 <FileUpload
                     ref={(el) => this.fileUploadRef = el}
                     name="image"
-                    url={ baseRecipeAPI() + "/child/" + this.state.id + "/image" }
+                    url={baseRecipeAPI() + "/child/" + this.state.id + "/image"}
                     accept="image/*"
+                    multiple
                     maxFileSize={80000000}
                     onUpload={this.onTemplateUpload}
                     onSelect={this.onTemplateSelect}
