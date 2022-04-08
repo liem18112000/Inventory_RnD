@@ -26,15 +26,15 @@ spring:
           - spring
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/recipe
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/recipe
+    username: ${DB_USER:root}
+    password: ${DB_PASS:}
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 application:
-  formatted-version: (v1.0.0)
+  formatted-version: (v1.1.0)
   base-url: recipe
 domain:
   service-name: FromLabsRestaurantDomainService
@@ -61,9 +61,9 @@ spring:
   profiles: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/recipe
-    username: root
-    password:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/recipe
+    username: ${DB_USER:root}
+    password: ${DB_PASS:}
   jpa:
     show-sql: true
     properties:
