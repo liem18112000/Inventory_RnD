@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { baseRecipeAPI, TENANT_ID } from '../constant'
+import { baseRecipeAPI } from '../constant'
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import {FilterRequestMapper} from "../core/models/mapper/ModelMapper";
 import {compose} from "../core/utility/ComponentUtility";

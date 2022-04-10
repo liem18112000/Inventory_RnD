@@ -296,14 +296,6 @@ export class ImportDetail extends Component {
             <div className="table-header">
                 <span className="p-input-icon-left">
                     <i className="pi pi-plus" />
-                    {/* <Button
-                        className="blue-btn"
-                        style={{ marginRight: '0.5rem' }}
-                        icon="pi pi-plus"
-                        iconPos="left"
-                        label="New import detail"
-                        onClick={() => this.form.action(null, this.props.match.params.id, true)}
-                    /> */}
                     <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>

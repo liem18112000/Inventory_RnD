@@ -15,12 +15,7 @@ import { RecipeDetail } from './recipe/detail/RecipeDetail';
 import { Recipes } from './recipe/recipes/Recipes';
 import { IngredientHistory } from './ingredient/type/IngredientHistory';
 import { SupplierGroup } from './supplier/group/SupplierGroup';
-// import { IngredientItem } from './ingredient/item/IngredientItem';
-import { Login } from './login/Login';
-import React, { useRef } from "react";
-import { Toast } from "primereact/toast";
-import { authenticateService, getAuthenticateToken } from "./core/security/AuthenticateService";
-import { sleep } from "./core/utility/ComponentUtility";
+import React from "react";
 import { SupplierChild } from './supplier/child/SupplierChild';
 import { SupplierMaterial } from './supplier/material/SupplierMaterial';
 import { SupplierImport } from './supplier/supplier-import/SupplierImport';
@@ -35,39 +30,13 @@ export const history = createBrowserHistory();
 
 function App() {
 
-  const toast = useRef(null);
-  // const isAuthenticate = getAuthenticateToken()?.isAuthenticate;
-  const { keycloak, initialized } = useKeycloak();
+  const { keycloak } = useKeycloak();
 
-  // const handleAuthenticate = (username, password) => {
-  //   const isLoginSuccess = authenticateService(username, password);
-  //   if (isLoginSuccess) {
-  //     toast.current.show({ severity: 'success', summary: 'Login success', detail: 'Login success', life: 1000 });
-  //     sleep(500).then(() => window.location.reload())
-  //   } else {
-  //     toast.current.show({ severity: 'error', summary: 'Login failed', detail: 'Login failed', life: 1000 });
-  //   }
-  // }
-
-  // return isAuthenticate ? (
   return (
     <Router history={history}>
-      <div className="hover:text-gray-200">
-        {!keycloak.authenticated && (
-            <button type="button" onClick={() => keycloak.login()}>
-              Login
-            </button>
-        )}
-
-        {keycloak.authenticated && (
-            <button type="button" onClick={() => keycloak.logout()}>
-              Logout ({keycloak.tokenParsed.preferred_username})
-            </button>
-        )}
-      </div>
       <Switch>
-        <AdminTemplate path="/" exact Component={IngredientInventory} />
-        <KeycloakPrivateRoute>
+        <KeycloakPrivateRoute keycloak={keycloak}>
+          <AdminTemplate path="/" exact Component={IngredientInventory} />
           <AdminTemplate path="/ingredient-inventory" exact Component={IngredientInventory} />
           <AdminTemplate path="/ingredient" exact Component={IngredientCategory} />
           <AdminTemplate path="/ingredient/:id" exact Component={IngredientType} />
@@ -90,13 +59,6 @@ function App() {
       </Switch>
     </Router>
   )
-
-  // : (
-  //   <>
-  //     <Toast ref={toast} />
-  //     <Login onAuthenticate={handleAuthenticate} path="/" />
-  //   </>
-  // )
 }
 
 export default App;

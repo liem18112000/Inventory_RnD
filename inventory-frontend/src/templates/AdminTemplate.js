@@ -10,18 +10,16 @@ import {
     ShoppingCartOutlined,
     BellOutlined
 } from '@ant-design/icons';
-import { logout } from "../core/security/AuthenticateService";
 import '../assets/styles/OverlayPanelDemo.css';
 import { NotificationDialog } from "../notification/bell/NotificationDialog";
-// import { Footer } from "antd/lib/layout/layout";
+import { useKeycloak } from "@react-keycloak/web";
 
 const { Header, Content, Sider, Footer } = Layout;
 const { SubMenu } = Menu;
 
+const AdminTemplate = (props) => {
 
-
-const AdminTemplate = (props) => { //path, exact, Component
-    // console.log(props);
+    const { keycloak } = useKeycloak();
 
     const { Component, ...restProps } = props;
 
@@ -48,10 +46,8 @@ const AdminTemplate = (props) => { //path, exact, Component
                     collapsed={collapsed}
                     onCollapse={onCollapse}>
                     <div className="title">
-                        {/* <h1>Inventory System</h1> */}
-                        <img
-                            src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png"
-                        />
+                        <img src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png"
+                         alt={"Inventory"}/>
                     </div>
                     <Menu
                         // defaultSelectedKeys={['2']} 
@@ -92,8 +88,9 @@ const AdminTemplate = (props) => { //path, exact, Component
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>
 
-                        {/*TODO: Style logout button*/}
-                        <Button onClick={(e) => logout()}>Logout</Button>
+                        <Button onClick={() => keycloak.logout()}>
+                            {keycloak.tokenParsed.preferred_username} Logout
+                        </Button>
 
                         <NotificationDialog ref={bell} />
 
@@ -103,7 +100,6 @@ const AdminTemplate = (props) => { //path, exact, Component
                         </Breadcrumb>
                         <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
                             <Component
-                                // bell={bell}
                                 {...propsRoute} />
                         </div>
                     </Content>
