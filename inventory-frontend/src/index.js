@@ -6,10 +6,14 @@ import reportWebVitals from './reportWebVitals';
 
 // ant design
 import "antd/dist/antd.css";
+import keycloakConfiguration from "./core/security/KeycloakConfiguration";
+import { ReactKeycloakProvider } from '@react-keycloak/web'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ReactKeycloakProvider authClient={keycloakConfiguration}>
+      <App />
+    </ReactKeycloakProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

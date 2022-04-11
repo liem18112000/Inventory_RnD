@@ -1,9 +1,9 @@
-import {mockSendPeriodStatistics, mockSuggestTaxon} from "../core/models/MockDataModel";
+import { mockSendPeriodStatistics, mockSuggestTaxon } from "../core/models/MockDataModel";
 import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import axios from "axios";
 import { baseIngredientAPI } from "../constant";
-import {compose} from "../core/utility/ComponentUtility";
-import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import { compose } from "../core/utility/ComponentUtility";
+import { authenticateWithApiKeyAndPrincipal } from "../core/security/ApiKeyHeaderConfig";
 
 export default class DomainService {
     
