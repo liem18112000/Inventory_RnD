@@ -2,7 +2,6 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Route } from "react-router";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import { NavLink } from "react-router-dom";
-// import { history } from "../App.js";
 import {
     DesktopOutlined,
     TeamOutlined,
@@ -100,6 +99,7 @@ const AdminTemplate = (props) => {
                         </Breadcrumb>
                         <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
                             <Component
+                                bell={bell}
                                 {...propsRoute} />
                         </div>
                     </Content>
