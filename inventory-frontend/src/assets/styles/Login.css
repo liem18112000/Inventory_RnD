@@ -13,3 +13,137 @@
     width: 270px;
     height: 100px;
   }
+
+/* ----------- iPhone 6, 6S, 7 and 8 ----------- */
+/* Portrait */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 667px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: portrait) { 
+    .display-5 {
+      font-size: calc(1.425rem + 2.1vw);
+      font-weight: 300;
+      line-height: 1.2;
+      text-align: center;
+  }
+    .p-mt-2 {
+      cursor: pointer;
+    margin: 0;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+    .logo-image {
+      object-fit: contain;
+      width: 270px;
+      height: 100px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 95%;
+  }
+}
+
+/* ----------- iPhone 6+, 7+ and 8+ ----------- */
+/* Portrait */
+@media only screen 
+  and (min-device-width: 414px) 
+  and (max-device-width: 736px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: portrait) { 
+    .display-5 {
+      font-size: calc(1.425rem + 2.1vw);
+      font-weight: 300;
+      line-height: 1.2;
+      text-align: center;
+  }
+    .p-mt-2 {
+      cursor: pointer;
+    margin: 0;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+    .logo-image {
+      object-fit: contain;
+      width: 270px;
+      height: 100px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 95%;
+  }
+}
+
+/* ----------- iPhone X ----------- */
+/* Portrait */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: portrait) { 
+    .display-5 {
+      font-size: calc(1.425rem + 2.1vw);
+      font-weight: 300;
+      line-height: 1.2;
+      text-align: center;
+  }
+    .p-mt-2 {
+      cursor: pointer;
+    margin: 0;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+    .logo-image {
+      object-fit: contain;
+      width: 270px;
+      height: 100px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 95%;
+  }
+}
+
+/* ----------- Galaxy Fold ----------- */
+/* Portrait */
+@media(max-width: 320px){
+    .display-5 {
+      font-size: calc(1.425rem + 2.1vw);
+      font-weight: 300;
+      line-height: 1.2;
+      text-align: center;
+  }
+    .p-mt-2 {
+      cursor: pointer;
+    margin: 0;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+    .logo-image {
+      object-fit: contain;
+      width: 270px;
+      height: 100px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+  }
+}
+
+.ant-btn {
+    position: relative;
+    float: right;
+    margin: 20px 20px 0 0;
+}

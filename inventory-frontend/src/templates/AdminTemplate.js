@@ -12,6 +12,7 @@ import {
 import '../assets/styles/OverlayPanelDemo.css';
 import { NotificationDialog } from "../notification/bell/NotificationDialog";
 import { useKeycloak } from "@react-keycloak/web";
+import '../assets/styles/Login.css';
 
 const { Header, Content, Sider, Footer } = Layout;
 const { SubMenu } = Menu;
@@ -46,7 +47,7 @@ const AdminTemplate = (props) => {
                     onCollapse={onCollapse}>
                     <div className="title">
                         <img src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png"
-                         alt={"Inventory"}/>
+                            alt={"Inventory"} />
                     </div>
                     <Menu
                         // defaultSelectedKeys={['2']} 
@@ -87,7 +88,7 @@ const AdminTemplate = (props) => {
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>
 
-                        <Button onClick={() => keycloak.logout()}>
+                        <Button className="ant-btn" onClick={() => keycloak.logout()}>
                             {keycloak.tokenParsed.preferred_username} Logout
                         </Button>
 
