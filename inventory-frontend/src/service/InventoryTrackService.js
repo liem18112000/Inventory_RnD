@@ -5,6 +5,7 @@ import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import {compose, isNumber} from "../core/utility/ComponentUtility";
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import {handleExceptionWithSentry} from "../core/utility/integrations/SentryExceptionResolver";
 const BaseURL = baseIngredientAPI()
 
 
@@ -451,7 +452,7 @@ export default class InventoryTrackService {
         return axios
             .get(`${BaseURL}/history/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -479,7 +480,7 @@ export default class InventoryTrackService {
         return axios
             .get(`${BaseURL}/history/all`,config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -510,7 +511,7 @@ export default class InventoryTrackService {
 
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -534,7 +535,7 @@ export default class InventoryTrackService {
         return axios
             .get(`${BaseURL}/event/all/simple`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -558,7 +559,7 @@ export default class InventoryTrackService {
         return axios
             .get(`${BaseURL}/status/all/simple`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
 }

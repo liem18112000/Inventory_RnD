@@ -25,10 +25,14 @@ import { ImportDetail } from './supplier/import-detail/ImportDetail';
 import { SuggestTaxon } from './ingredient/suggest-taxon/SuggestTaxon';
 import KeycloakPrivateRoute from "./core/security/KeycloakPrivateRoute";
 import {useKeycloak} from "@react-keycloak/web";
+import * as Sentry from "@sentry/react";
+import {sentryConfiguration} from "./core/utility/SentryConfiguration";
 
 export const history = createBrowserHistory();
 
 function App() {
+
+  Sentry.init(sentryConfiguration);
 
   const { keycloak } = useKeycloak();
 
@@ -61,4 +65,4 @@ function App() {
   )
 }
 
-export default App;
+export default Sentry.withProfiler(App);

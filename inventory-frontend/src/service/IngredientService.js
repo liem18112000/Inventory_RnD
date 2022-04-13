@@ -17,6 +17,7 @@ import {
 import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import { compose } from "../core/utility/ComponentUtility";
 import { authenticateWithApiKeyAndPrincipal, authorizeWithApiKey } from "../core/security/ApiKeyHeaderConfig";
+import { handleExceptionWithSentry } from "../core/utility/integrations/SentryExceptionResolver";
 
 // Ingredient base URL
 const BaseURL = baseIngredientAPI()
@@ -59,7 +60,7 @@ export class IngredientService {
         // Fetch ingredient category data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -75,7 +76,7 @@ export class IngredientService {
 
         return axios.post(`${BaseURL}/inventory/sync`, {}, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -106,7 +107,7 @@ export class IngredientService {
         // fetch ingredient type data from api 
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -137,7 +138,7 @@ export class IngredientService {
         // fetch ingredient item data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -166,7 +167,7 @@ export class IngredientService {
         // fetch ingredient inventory data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -188,7 +189,7 @@ export class IngredientService {
 
         return axios.get(`${BaseURL}/type/simple`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -211,7 +212,7 @@ export class IngredientService {
         return axios
             .get(`${BaseURL}/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -234,7 +235,7 @@ export class IngredientService {
         return axios
             .get(`${BaseURL}/item/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -261,7 +262,7 @@ export class IngredientService {
 
         return axios.get(`${BaseURL}/unit-type`, config)
             .then(res => res.data)
-            .catch(error => console.log(error))
+            .catch(error => handleExceptionWithSentry(error))
     }
 
     /**
@@ -289,7 +290,7 @@ export class IngredientService {
 
         return axios.get(`${BaseURL}/unit?unit=${unitType}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error))
+            .catch(error => handleExceptionWithSentry(error))
     }
 
     /**
@@ -314,7 +315,7 @@ export class IngredientService {
         return axios
             .post(`${BaseURL}`, requestBody, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -340,7 +341,7 @@ export class IngredientService {
         return axios
             .post(`${BaseURL}/item`, requestBody, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -366,7 +367,7 @@ export class IngredientService {
         return axios
             .post(`${BaseURL}/item/batch`, requestBody, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -391,7 +392,7 @@ export class IngredientService {
         return axios
             .put(`${BaseURL}`, requestBody, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -417,7 +418,7 @@ export class IngredientService {
         return axios
             .put(`${BaseURL}/item/${item.id}`, requestBody, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -439,7 +440,7 @@ export class IngredientService {
 
         return axios.delete(`${BaseURL}/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     getSuggestTaxon(isMock = true) {
@@ -459,7 +460,7 @@ export class IngredientService {
         // Fetch ingredient category data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     updateIngredientConfig(id, body, isMock = true) {
@@ -478,7 +479,7 @@ export class IngredientService {
         // Fetch ingredient category data from api
         return axios.put(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     getIngredientConfig(ingredientId, isMock = true) {
@@ -497,6 +498,6 @@ export class IngredientService {
         // Fetch ingredient category data from api
         return axios.get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 }

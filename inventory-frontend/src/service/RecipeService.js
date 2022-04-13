@@ -4,6 +4,7 @@ import { getHeaderByGatewayStatus } from "../core/utility/GatewayHeaderConfig";
 import {FilterRequestMapper} from "../core/models/mapper/ModelMapper";
 import {compose} from "../core/utility/ComponentUtility";
 import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import {handleExceptionWithSentry} from "../core/utility/integrations/SentryExceptionResolver";
 
 const groupJson = {
     "content": [
@@ -416,7 +417,7 @@ export class RecipeService {
         // Fetch recipe group data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -447,7 +448,7 @@ export class RecipeService {
         // fetch recipe child data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -478,7 +479,7 @@ export class RecipeService {
         // fetch recipe detail data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -501,7 +502,7 @@ export class RecipeService {
         return axios
             .get(`${BaseURL}/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -523,7 +524,7 @@ export class RecipeService {
         return axios
             .get(`${BaseURL}/group/simple`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
      }
 
     /**
@@ -546,7 +547,7 @@ export class RecipeService {
         return axios
             .get(`${BaseURL}/detail/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -569,7 +570,7 @@ export class RecipeService {
         return axios
             .put(`${BaseURL}`, recipe, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -592,7 +593,7 @@ export class RecipeService {
         return axios
             .post(`${BaseURL}`, recipe, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     saveDetail(detail, isMock = true) {
@@ -610,7 +611,7 @@ export class RecipeService {
         return axios
             .post(`${BaseURL}/detail`, detail, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     updateDetail(detail, isMock = true) {
@@ -628,7 +629,7 @@ export class RecipeService {
         return axios
             .put(`${BaseURL}/detail`, detail, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -650,7 +651,7 @@ export class RecipeService {
 
         return axios.delete(`${BaseURL}/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -672,7 +673,7 @@ export class RecipeService {
 
         return axios.delete(`${BaseURL}/detail/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     getAllRecipeChild(filter, page, rows, sortField, sortOrder, isMock = true) {
@@ -692,7 +693,7 @@ export class RecipeService {
         // Fetch all recipe child data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
 
     }
 }

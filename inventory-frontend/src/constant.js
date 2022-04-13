@@ -25,6 +25,11 @@ export const KEYCLOAK_REALM      = process.env.REACT_APP_KEYCLOAK_REALM.trim()
 export const KEYCLOAK_CLIENT     = process.env.REACT_APP_KEYCLOAK_CLIENT.trim()
 export const KEYCLOAK_SERVER     = process.env.REACT_APP_KEYCLOAK_SERVER.trim()
 
+export const SENTRY_DSN          = process.env.REACT_APP_SENTRY_DSN.trim()
+export const SENTRY_TRACE_SAMPLE = process.env.REACT_APP_SENTRY_TRACE_SAMPLE_RATE
+export const SENTRY_ENVIRONMENT  = process.env.REACT_APP_SENTRY_ENVIRONMENT.trim()
+
+
 /**
  * Base api for Ingredient service
  * @returns Ingredient service url (domain/path-to-service/version)

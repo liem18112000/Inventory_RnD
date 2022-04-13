@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
 // ant design
 import "antd/dist/antd.css";
 import keycloakConfiguration from "./core/security/KeycloakConfiguration";
