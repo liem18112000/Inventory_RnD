@@ -17,6 +17,7 @@ import com.fromlabs.inventory.supplierservice.supplier.providable_material.Provi
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialService;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.specification.ProvidableMaterialSpecification;
 import com.fromlabs.inventory.supplierservice.utility.TransactionLogic;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import static com.fromlabs.inventory.supplierservice.imports.details.specificati
 
 @Slf4j
 @RestController
+@SentryTransaction(operation = "supplier-endpoint")
 @RequestMapping(value = "endpoint/supplier/" + ApiV1.URI_API)
 public class EndpointImpl implements Endpoint {
 

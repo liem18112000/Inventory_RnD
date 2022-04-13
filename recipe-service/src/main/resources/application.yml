@@ -56,6 +56,12 @@ services:
   security-service:
     name: security-service
     url:  http://localhost:8084
+sentry:
+  dsn: https://b3f34902f18a4236ac10d265a280b959@o1200481.ingest.sentry.io/6328247
+  traces-sample-rate: 1.0
+  environment: production
+  sample-rate: 1.0
+  release: inventory@1.1.0
 ---
 spring:
   profiles: dev
@@ -77,3 +83,5 @@ spring:
     url: jdbc:mysql://localhost:3306/recipe
     username: root
     password:
+sentry:
+  environment: develop

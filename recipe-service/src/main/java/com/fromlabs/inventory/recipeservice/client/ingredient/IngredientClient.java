@@ -2,6 +2,7 @@ package com.fromlabs.inventory.recipeservice.client.ingredient;
 
 import com.fromlabs.inventory.recipeservice.client.ingredient.beans.IngredientDto;
 import com.fromlabs.inventory.recipeservice.config.ApiV1;
+import io.sentry.spring.tracing.SentryTransaction;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import static com.fromlabs.inventory.recipeservice.config.AppConfig.*;
 /**
  * Ingredient client
  */
+@SentryTransaction(operation = "recipe-ingredient-client")
 @FeignClient(value = "${services.ingredient-service.name}")
 @RequestMapping(value = "endpoint/ingredient/" + ApiV1.URI_API)
 public interface IngredientClient {

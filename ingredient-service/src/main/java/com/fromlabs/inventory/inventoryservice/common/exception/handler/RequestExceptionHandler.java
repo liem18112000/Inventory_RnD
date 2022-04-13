@@ -9,6 +9,7 @@ import com.fromlabs.inventory.inventoryservice.common.exception.FailTransactionE
 import com.fromlabs.inventory.inventoryservice.common.exception.NotImplementException;
 import com.fromlabs.inventory.inventoryservice.common.exception.ObjectNotFoundException;
 import com.fromlabs.inventory.inventoryservice.common.exception.RequestNotFoundException;
+import io.sentry.Sentry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -194,7 +195,8 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
      * @see Throwable
      */
     protected Object handleRequestNotFound(Throwable throwable) {
-        // Replace this below line with a specific handle for this exception
+        Sentry.captureException(throwable);
+        Sentry.captureMessage("Request not found exception was thrown");
         return null;
     }
 
@@ -205,7 +207,8 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
      * @see Throwable
      */
     protected Object handleObjectNotFound(Throwable throwable) {
-        // Replace this below line with a specific handle for this exception
+        Sentry.captureException(throwable);
+        Sentry.captureMessage("Object not found exception was thrown");
         return null;
     }
 
@@ -216,7 +219,8 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
      * @see Throwable
      */
     protected Object handleNotImplement(Throwable throwable) {
-        // Replace this below line with a specific handle for this exception
+        Sentry.captureException(throwable);
+        Sentry.captureMessage("Not implement exception was thrown");
         return null;
     }
 
@@ -227,7 +231,8 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
      * @see Throwable
      */
     protected Object handleFailTransaction(Throwable throwable) {
-        // Replace this below line with a specific handle for this exception
+        Sentry.captureException(throwable);
+        Sentry.captureMessage("Fail transaction exception was thrown");
         return null;
     }
 
@@ -238,7 +243,8 @@ public class RequestExceptionHandler implements ExceptionHandler<ResponseEntity<
      * @see Throwable
      */
     protected Object handleDefault(Throwable throwable) {
-        // Replace this below line with a specific handle for this exception
+        Sentry.captureException(throwable);
+        Sentry.captureMessage("Unknown exception was thrown");
         return null;
     }
 }

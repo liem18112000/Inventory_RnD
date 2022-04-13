@@ -5,6 +5,7 @@ import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDT
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.service.EventService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
@@ -31,7 +32,7 @@ import static org.springframework.http.ResponseEntity.*;
  */
 @Slf4j
 @RestController
-//@RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API, produces = ApiV1.MIME_API)
+@SentryTransaction(operation = "notification-service")
 @RequestMapping(value = "notification/" + ApiV1.URI_API, produces = ApiV1.MIME_API)
 public class NotificationController {
 

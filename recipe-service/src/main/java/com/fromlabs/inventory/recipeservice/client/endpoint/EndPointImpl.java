@@ -18,6 +18,7 @@ import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.dto.RecipeDto;
 import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
 import com.fromlabs.inventory.recipeservice.utility.TransactionLogic;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ import static com.fromlabs.inventory.recipeservice.utility.TransactionLogic.*;
  */
 @Slf4j
 @RestController
+@SentryTransaction(operation = "recipe-endpoint")
 @RequestMapping(value = "endpoint/recipe/" + ApiV1.URI_API)
 public class EndPointImpl implements EndPoint {
 

@@ -5,6 +5,7 @@ import com.fromlabs.inventory.apisecurity.token.InternalAPIKeyEntityRepository;
 import com.fromlabs.inventory.apisecurity.token.mapper.InternalAPIKeyMapper;
 import com.fromlabs.inventory.apisecurity.token.service.hashstrategy.InternalAPIKeyHashStrategy;
 import com.fromlabs.inventory.apisecurity.token.service.matchstrategy.InternalAPIKeyMatchStrategy;
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,7 @@ public class InternalAPIKeyServiceImpl extends AbstractInternalAPIKeyService {
             allKeys = this.getAll().stream().map(InternalAPIKeyDTO::getKeyHashed);
         } catch (Exception exception) {
             log.error(exception.getMessage());
+            Sentry.captureException(exception);
             return false;
         }
 
@@ -82,6 +84,7 @@ public class InternalAPIKeyServiceImpl extends AbstractInternalAPIKeyService {
             allKeys = this.getAll();
         } catch (Exception exception) {
             log.error(exception.getMessage());
+            Sentry.captureException(exception);
             return null;
         }
 

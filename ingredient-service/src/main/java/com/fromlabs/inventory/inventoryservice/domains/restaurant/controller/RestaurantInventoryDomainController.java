@@ -13,6 +13,7 @@ import com.fromlabs.inventory.inventoryservice.domains.restaurant.utility.Restau
 import com.fromlabs.inventory.inventoryservice.domains.restaurant.utility.RestaurantTransactionLogic;
 import com.fromlabs.inventory.inventoryservice.utility.ControllerValidation;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,6 +29,7 @@ import static org.springframework.http.ResponseEntity.ok;
 /**
  * Domain controller for restaurant
  */
+@SentryTransaction(operation = "restaurant-ingredient-service")
 @RestController
 @RequestMapping(
         value       = "${application.base-url}/" + ApiV1.URI_API + "/${domain.service-path}", produces = ApiV1.MIME_API

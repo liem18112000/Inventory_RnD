@@ -16,6 +16,7 @@ import com.fromlabs.inventory.supplierservice.supplier.providable_material.Provi
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialPageRequest;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.beans.request.ProvidableMaterialRequest;
 import com.fromlabs.inventory.supplierservice.utility.TransactionLogic;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ import static com.fromlabs.inventory.supplierservice.utility.TemplateProcessDire
  */
 @Slf4j
 @RestController
+@SentryTransaction(operation = "supplier-service")
 @RequestMapping(value = "${application.base-url}/" + URI_API, produces = MIME_API)
 public class SupplierController implements ApplicationController {
 

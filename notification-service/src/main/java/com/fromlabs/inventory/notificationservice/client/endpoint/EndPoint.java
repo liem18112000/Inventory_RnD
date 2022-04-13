@@ -7,6 +7,7 @@ import com.fromlabs.inventory.notificationservice.notification.beans.dto.EventDT
 import com.fromlabs.inventory.notificationservice.notification.beans.dto.NotificationDTO;
 import com.fromlabs.inventory.notificationservice.notification.service.EventService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import static org.springframework.http.ResponseEntity.*;
  */
 @Slf4j
 @RestController
+@SentryTransaction(operation = "notification-endpoint")
 @RequestMapping(value = "endpoint/${application.base-url}/" + ApiV1.URI_API)
 public class EndPoint {
 

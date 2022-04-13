@@ -24,6 +24,7 @@ import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.item.ItemService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -272,6 +273,7 @@ public class RestaurantInventoryDomainServiceImpl
             return processConfirmSuggestion(request, quantity);
         } catch (Exception exception) {
             exception.printStackTrace();
+            Sentry.captureException(exception);
             return generateFailedConfirmResponse(quantity);
         }
     }
@@ -471,6 +473,7 @@ public class RestaurantInventoryDomainServiceImpl
             return response;
         } catch (Exception exception) {
             exception.printStackTrace();
+            Sentry.captureException(exception);
             final var response =
                     generateFailedSendStatisticResponse(exception.getMessage());
             log.info("End sendInventoryStatistics : {}", response);
@@ -514,6 +517,7 @@ public class RestaurantInventoryDomainServiceImpl
                 log.info("Statistics last sent configuration updated: {}",
                         this.configuration.getStatisticsLastSentDate(tenantId));
             } catch (Exception exception) {
+                Sentry.captureException(exception);
                 exception.printStackTrace();
                 log.warn("Statistics last sent configuration update failed");
             }
@@ -523,6 +527,7 @@ public class RestaurantInventoryDomainServiceImpl
                     .sendSuccess(true)
                     .build();
         } catch (Exception exception) {
+            Sentry.captureException(exception);
             exception.printStackTrace();
             return generateFailedSendStatisticResponse(exception.getMessage());
         }

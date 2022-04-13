@@ -6,6 +6,7 @@ package com.fromlabs.inventory.supplierservice.domains.restaurant.controller;
 
 import com.fromlabs.inventory.supplierservice.config.ApiV1;
 import com.fromlabs.inventory.supplierservice.domains.restaurant.services.RestaurantInventoryDomainService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,6 +21,7 @@ import static com.fromlabs.inventory.supplierservice.domains.DomainServiceConfig
  * Domain controller for restaurant
  */
 @RestController
+@SentryTransaction(operation = "supplier-restaurant-service")
 @RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API + "/${domain.service-path}", produces = ApiV1.MIME_API)
 @ConditionalOnProperty(
         value       = DOMAIN_SERVICE_NAME_CONFIG,

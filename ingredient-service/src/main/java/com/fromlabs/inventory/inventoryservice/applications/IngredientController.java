@@ -26,6 +26,7 @@ import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemDeleteAllR
 import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemPageRequest;
 import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +55,7 @@ import static org.springframework.http.ResponseEntity.*;
  * @author Liem
  * @see <a href="https://spring.io/guides/tutorials/rest/">REST Controller example : Building REST services with Spring</a>
  */
+@SentryTransaction(operation = "ingredient-service")
 @Slf4j
 @RestController
 @RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API, produces = ApiV1.MIME_API)

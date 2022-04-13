@@ -11,6 +11,7 @@ import com.fromlabs.inventory.recipeservice.recipe.RecipeService;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipePageRequest;
 import com.fromlabs.inventory.recipeservice.recipe.beans.request.RecipeRequest;
 import com.fromlabs.inventory.recipeservice.recipe.mapper.RecipeMapper;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
 @RestController
+@SentryTransaction(operation = "recipe-service")
 @RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API, produces = ApiV1.MIME_API)
 public class RecipeController implements ApplicationController {
 
