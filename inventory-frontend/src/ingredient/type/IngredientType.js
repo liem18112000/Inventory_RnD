@@ -20,6 +20,7 @@ import { Toast } from 'primereact/toast';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { IngredientTypeConfig } from './IngredientTypeConfig';
+import { Calendar } from 'primereact/calendar';
 
 export class IngredientType extends Component {
 
@@ -401,11 +402,16 @@ export class IngredientType extends Component {
                             />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
-                            <InputText
+                            {/* <InputText
                                 placeholder="Create At"
                                 value={this.state.filter.createAt}
                                 onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })}
-                            />
+                            /> */}
+                            <Calendar
+                                dateFormat="yy-mm-dd"
+                                placeholder="Create At"
+                                id="basic" value={this.state.filter.createAt}
+                                onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })} />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <Dropdown value={this.state.filter.unitType}

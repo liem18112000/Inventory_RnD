@@ -6,6 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { SplitButton } from 'primereact/splitbutton';
 import { Button } from "primereact/button";
 import { Fieldset } from "primereact/fieldset";
+import { Calendar } from 'primereact/calendar';
 
 import { IngredientService } from '../service/IngredientService.js'
 import DomainService from '../service/DomainService.js'
@@ -351,11 +352,16 @@ export class IngredientInventory extends Component {
                             />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
-                            <InputText
+                            {/* <InputText
                                 placeholder="Update At"
                                 value={this.state.filter.updateAt}
                                 onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: e.target.value })}
-                            />
+                            /> */}
+                            <Calendar
+                                dateFormat="yy-mm-dd"
+                                placeholder="Update From"
+                                id="basic" value={this.state.filter.updateAt}
+                                onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: e.target.value })} />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <Dropdown value={this.state.filter.unitType}

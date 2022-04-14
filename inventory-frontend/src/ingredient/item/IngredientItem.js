@@ -16,7 +16,8 @@ import moment from 'moment';
 import { IngredientItemForm } from './IngredientItemForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
-import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
+import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { Calendar } from 'primereact/calendar';
 
 class IngredientItem extends Component {
 
@@ -54,13 +55,13 @@ class IngredientItem extends Component {
     };
 
     getPageItems = () => {
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         const ingredientId = this.props.match.params.id;
         this.ingredientService
             .getPageItem(ingredientId, filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => this.setState({ ...this.state, ...data}));
+            .then(data => this.setState({ ...this.state, ...data }));
     };
 
     setFilter = (filter) => {
@@ -334,11 +335,16 @@ class IngredientItem extends Component {
                             />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
-                            <InputText
+                            {/* <InputText
                                 placeholder="Expired At"
                                 value={this.state.filter.expiredAt}
                                 onChange={(e) => this.setFilter({ ...this.state.filter, expiredAt: e.target.value })}
-                            />
+                            /> */}
+                            <Calendar
+                                dateFormat="yy-mm-dd"
+                                placeholder="Expired At"
+                                id="basic" value={this.state.filter.expiredAt}
+                                onChange={(e) => this.setFilter({ ...this.state.filter, expiredAt: e.target.value })} />
                         </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
@@ -388,9 +394,9 @@ class IngredientItem extends Component {
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column sortField="name" filterField="name" header="Name" body={this.categoryBodyTemplate} sortable />
                     <Column sortField="expiredAt" filterField="expiredAt" header="Expired At" body={this.expiredAtBodyTemplate} sortable />
-                    <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate}/>
-                    <Column field="unit" header="Unit" body={this.unitBodyTemplate}/>
-                    <Column field="imports" header="Import" body={this.importBodyTemplate}/>
+                    <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} />
+                    <Column field="unit" header="Unit" body={this.unitBodyTemplate} />
+                    <Column field="imports" header="Import" body={this.importBodyTemplate} />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     {/* <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} /> */}
                 </DataTable>

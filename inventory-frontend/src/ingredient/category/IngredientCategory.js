@@ -14,6 +14,7 @@ import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { Calendar } from 'primereact/calendar';
 
 export class IngredientCategory extends Component {
 
@@ -88,8 +89,10 @@ export class IngredientCategory extends Component {
                         this.toast.show({ severity: 'success', summary: 'Delete success', detail: 'Ingredient category has been deleted', life: 1000 })
                         this.getPageCategories()
                     } else {
-                        this.toast.show({ severity: 'error', summary: 'Delete failed',
-                            detail: 'Ingredient category may has ingredient details, recipe detail or material referenced ', life: 5000 })
+                        this.toast.show({
+                            severity: 'error', summary: 'Delete failed',
+                            detail: 'Ingredient category may has ingredient details, recipe detail or material referenced ', life: 5000
+                        })
                     }
                 })
         }
@@ -410,11 +413,16 @@ export class IngredientCategory extends Component {
                                 </div>
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
-                                        <InputText
+                                        {/* <InputText
                                             placeholder="Create At"
                                             value={this.state.filter.createAt}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })}
-                                        />
+                                        /> */}
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Create At"
+                                            id="basic" value={this.state.filter.createAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })} />
                                     </div>
                                 </div>
                             </div>
