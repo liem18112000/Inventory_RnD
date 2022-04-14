@@ -6,6 +6,7 @@ import '../../assets/styles/DataViewDemo.css';
 import { SuggestTaxonDetail } from './SuggestTaxonDetail';
 import { getMediaSource } from '../../service/MediaService';
 import { Toast } from "primereact/toast";
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 export class SuggestTaxon extends Component {
 
@@ -65,8 +66,8 @@ export class SuggestTaxon extends Component {
                         })
                     })
                 }
-            }
-            ).then(() => console.log(this.state.data));
+            }).then(() => console.log(this.state.data))
+            .catch(e => handleExceptionWithSentryAndSendFeedback(e, "Suggest taxon failed."));
     }
 
     onSortChange(event) {

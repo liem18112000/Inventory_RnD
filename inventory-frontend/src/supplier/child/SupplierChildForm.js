@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
 import { SupplierService } from '../../service/SupplierService';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * supplier form for save or update supplier form information
@@ -84,7 +85,6 @@ export class SupplierChildForm extends Component {
      */
     setUpdateInformation(id, parentId) {
         this.supplierService.getByID(id, this.state.isMock).then(data => {
-            // const supplier = this.state.supplierGroups.find((item) => item.value === parentId);
             this.setState({
                 data: {
                     id: data ? data.id : null,
@@ -98,7 +98,7 @@ export class SupplierChildForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get supplier failed."));
     }
 
     /**

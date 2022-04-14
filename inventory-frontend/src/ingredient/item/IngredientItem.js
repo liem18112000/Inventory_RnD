@@ -392,7 +392,6 @@ class IngredientItem extends Component {
                     <Column field="unit" header="Unit" body={this.unitBodyTemplate}/>
                     <Column field="imports" header="Import" body={this.importBodyTemplate}/>
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    {/* <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} /> */}
                 </DataTable>
             </div>
         );

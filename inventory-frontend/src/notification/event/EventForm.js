@@ -6,6 +6,7 @@ import { Toast } from 'primereact/toast';
 import { sleep } from "../../core/utility/ComponentUtility";
 import { NotificationService } from '../../service/NotificationService';
 import moment from 'moment';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 export class EventForm extends Component {
 
@@ -54,7 +55,7 @@ export class EventForm extends Component {
                 id: data ? data.id : null,
                 visible: true,
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get event failed"))
     }
 
     /**

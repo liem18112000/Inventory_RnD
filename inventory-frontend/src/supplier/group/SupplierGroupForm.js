@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { Toast } from 'primereact/toast';
 import { sleep } from "../../core/utility/ComponentUtility";
 import { SupplierService } from '../../service/SupplierService';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * supplier form for save or update supplier form information
@@ -91,7 +92,7 @@ export class SupplierGroupForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get supplier group failed."));
     }
 
     /**

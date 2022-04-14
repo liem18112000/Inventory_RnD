@@ -6,6 +6,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { IngredientService } from '../../service/IngredientService';
 import { sleep } from "../../core/utility/ComponentUtility";
 import { Toast } from 'primereact/toast';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Ingredient form for save or update ingredient form information
@@ -94,7 +95,7 @@ export class IngredientCategoryForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get ingredient failed."))
     }
 
     /**

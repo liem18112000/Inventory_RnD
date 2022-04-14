@@ -15,9 +15,7 @@ import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
 import { EventForm } from './EventForm';
 import { EventTable } from './EventTable';
-import * as Sentry from "@sentry/react";
 import {
-    handleExceptionWithSentry,
     handleExceptionWithSentryAndSendFeedback
 } from "../../core/utility/integrations/SentryExceptionResolver";
 
@@ -97,8 +95,7 @@ export class Event extends Component {
                 ...this.state,
                 eventTypes: types.content
             })
-        }).catch(e => handleExceptionWithSentryAndSendFeedback(
-            e, "Event service is unavailable."))
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Event service is unavailable."))
     }
 
     /**

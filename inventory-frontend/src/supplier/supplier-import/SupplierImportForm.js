@@ -6,6 +6,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
 import { SupplierService } from '../../service/SupplierService';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Recipe form for save or update recipe form information
@@ -96,7 +97,7 @@ export class SupplierImportForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get import failed."));
     }
 
     /**
