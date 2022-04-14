@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.sql.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,6 +35,30 @@ public final class BaseSpecification<T> implements Specification<T> {
         else if (operation.equals(SearchOperation.GREATER_THAN)){
             return builder.greaterThan(
                     root.get(criteria.getKey()), criteria.getValue().toString());
+        }
+        else if (operation.equals(SearchOperation.TIMESTAMP_GREATER_THAN)){
+            return builder.greaterThan(
+                    builder.function("DATE", Date.class, root.get(criteria.getKey())),
+                    builder.function("DATE", Date.class, builder.literal(criteria.getValue().toString()))
+            );
+        }
+        else if (operation.equals(SearchOperation.TIMESTAMP_LESS_THAN)){
+            return builder.lessThan(
+                    builder.function("DATE", Date.class, root.get(criteria.getKey())),
+                    builder.function("DATE", Date.class, builder.literal(criteria.getValue().toString()))
+            );
+        }
+        else if (operation.equals(SearchOperation.TIMESTAMP_GREATER_THAN_OR_EQUAL)){
+            return builder.greaterThanOrEqualTo(
+                    builder.function("DATE", Date.class, root.get(criteria.getKey())),
+                    builder.function("DATE", Date.class, builder.literal(criteria.getValue().toString()))
+            );
+        }
+        else if (operation.equals(SearchOperation.TIMESTAMP_LESS_THAN_OR_EQUAL)){
+            return builder.lessThanOrEqualTo(
+                    builder.function("DATE", Date.class, root.get(criteria.getKey())),
+                    builder.function("DATE", Date.class, builder.literal(criteria.getValue().toString()))
+            );
         }
         else if (operation.equals(SearchOperation.LESS_THAN_OR_EQUAL)) {
             return builder.lessThanOrEqualTo(

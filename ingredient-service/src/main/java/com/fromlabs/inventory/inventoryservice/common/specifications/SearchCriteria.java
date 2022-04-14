@@ -28,6 +28,10 @@ public class SearchCriteria {
         return SearchCriteria.builder().key(key).operation(SearchOperation.GREATER_THAN).value(value).build();
     }
 
+    static public SearchCriteria criteriaTimestampGreaterThan(String key, Object value) {
+        return SearchCriteria.builder().key(key).operation(SearchOperation.TIMESTAMP_GREATER_THAN).value(value).build();
+    }
+
     static public SearchCriteria criteriaGreaterThanOrEqual(String key, Object value) {
         return SearchCriteria.builder().key(key).operation(SearchOperation.GREATER_THAN_OR_EQUAL).value(value).build();
     }
