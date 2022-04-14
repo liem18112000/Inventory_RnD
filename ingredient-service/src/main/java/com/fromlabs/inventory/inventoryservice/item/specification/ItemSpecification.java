@@ -12,8 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification.Spec;
-import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaEqual;
-import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaStrictlyEqual;
+import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.*;
 
 /**
  * Item specification for filter
@@ -57,6 +56,10 @@ public class ItemSpecification {
         return Spec(criteriaEqual("updateAt", updateAt));
     }
 
+    public static BaseSpecification<ItemEntity> hasUpdateAtGreaterThan(String updateAt) {
+        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+    }
+
     public static Specification<ItemEntity> filter(ItemEntity entity, IngredientEntity ingredient) {
         var spec = hasClientId(entity.getClientId())
                 .and(hasName(entity.getName()))
@@ -64,7 +67,8 @@ public class ItemSpecification {
                 .and(hasCode(entity.getCode()))
                 .and(hasDescription(entity.getDescription()))
                 .and(hasUnitType(entity.getUnitType()))
-                .and(hasUpdatedAt(entity.getUpdateAt()));
+                .and(Objects.nonNull(entity.getUpdateAt()) ?
+                        hasUpdateAtGreaterThan(entity.getUpdateAt()) : hasUpdatedAt(entity.getUpdateAt()));
         return Objects.nonNull(ingredient) ? spec.and(hasIngredient(ingredient)) : spec;
     }
 }

@@ -14,8 +14,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.validation.constraints.NotNull;
 
+import java.util.Objects;
+
 import static com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaEqual;
+import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaTimestampGreaterThan;
 import static java.util.Objects.isNull;
 
 @UtilityClass
@@ -94,6 +97,15 @@ public class IngredientHistorySpecification {
     }
 
     /**
+     * Filter for has updated from
+     * @param updateAt  update timestamp
+     * @return          BaseSpecification&lt;IngredientHistoryEntity&gt;
+     */
+    public static BaseSpecification<IngredientHistoryEntity> hasUpdateAtGreaterThan(String updateAt) {
+        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+    }
+
+    /**
      * Filter for has track time stamp
      * @param track     Track timestamp
      * @return          BaseSpecification&lt;IngredientEntity&gt;
@@ -127,7 +139,8 @@ public class IngredientHistorySpecification {
                 .and(hasActorName(criteria.getActorName()))
                 .and(hasActorRole(criteria.getActorRole()))
                 .and(hasTrackTimestamp(criteria.getTrackTimestamp()))
-                .and(hasUpdatedAt(criteria.getUpdateAt()))
+                .and(Objects.nonNull(criteria.getUpdateAt()) ?
+                        hasUpdateAtGreaterThan(criteria.getUpdateAt()) : hasUpdatedAt(criteria.getUpdateAt()))
                 .and(hasIngredient(ingredient))
                 .and(hasEventStatus(criteria.getStatus()));
         return isNull(event) ? spec : spec.and(hasEvent(event));

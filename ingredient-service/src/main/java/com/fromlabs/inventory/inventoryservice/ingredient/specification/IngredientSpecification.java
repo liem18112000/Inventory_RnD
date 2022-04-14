@@ -6,7 +6,10 @@ package com.fromlabs.inventory.inventoryservice.ingredient.specification;
 
 import com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
+import com.fromlabs.inventory.inventoryservice.item.ItemEntity;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Objects;
 
 import static com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.*;
@@ -107,6 +110,14 @@ public class IngredientSpecification {
         return Spec(criteriaEqual("updateAt", updateAt));
     }
 
+    public static BaseSpecification<IngredientEntity> hasUpdateAtGreaterThan(String updateAt) {
+        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+    }
+
+    public static BaseSpecification<IngredientEntity> hasCreateAtGreaterThan(String updateAt) {
+        return Spec(criteriaTimestampGreaterThan("createAt", updateAt));
+    }
+
     /**
      * Filter for all ingredient
      * @param entity    IngredientEntity
@@ -121,7 +132,11 @@ public class IngredientSpecification {
                 .and(hasUnitType(entity.getUnitType()))
                 .and(hasCategory(entity.isCategory()))
                 .and(hasCreateAt(entity.getCreateAt()))
-                .and(hasUpdatedAt(entity.getUpdateAt()));
+                .and(Objects.nonNull(entity.getUpdateAt()) ?
+                        hasUpdateAtGreaterThan(entity.getUpdateAt()) : hasUpdatedAt(entity.getUpdateAt()))
+                .and(Objects.nonNull(entity.getCreateAt()) ?
+                        hasCreateAtGreaterThan(entity.getUpdateAt()) : hasCreateAt(entity.getCreateAt()))
+                ;
         return isNull(parent) ? spec : spec.and(hasParent(parent));
     }
 }
