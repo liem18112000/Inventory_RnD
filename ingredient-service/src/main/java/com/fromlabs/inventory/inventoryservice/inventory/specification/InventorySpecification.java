@@ -7,7 +7,6 @@ package com.fromlabs.inventory.inventoryservice.inventory.specification;
 import com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryEntity;
-import com.fromlabs.inventory.inventoryservice.item.ItemEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
@@ -62,8 +61,8 @@ public class InventorySpecification {
         return Spec(criteriaEqual("updateAt", updateAt));
     }
 
-    public static BaseSpecification<InventoryEntity> hasUpdateAtGreaterThan(String updateAt) {
-        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+    public static BaseSpecification<InventoryEntity> hasUpdateFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updateAt", updateAt));
     }
 
     public static Specification<InventoryEntity> filter(InventoryEntity entity, IngredientEntity ingredient) {
@@ -75,7 +74,7 @@ public class InventorySpecification {
                 .and(hasQuantity(entity.getQuantity()))
                 .and(hasReserved(entity.getReserved()))
                 .and(StringUtils.hasText(entity.getUpdateAt()) ?
-                        hasUpdateAtGreaterThan(entity.getUpdateAt()) :
+                        hasUpdateFrom(entity.getUpdateAt()) :
                         hasUpdatedAt(entity.getUpdateAt()));
         return Objects.nonNull(ingredient) ? spec.and(hasIngredient(ingredient)) : spec;
     }

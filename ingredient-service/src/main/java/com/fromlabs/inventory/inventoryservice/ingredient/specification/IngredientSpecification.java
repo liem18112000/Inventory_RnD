@@ -6,8 +6,8 @@ package com.fromlabs.inventory.inventoryservice.ingredient.specification;
 
 import com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
-import com.fromlabs.inventory.inventoryservice.item.ItemEntity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -110,12 +110,12 @@ public class IngredientSpecification {
         return Spec(criteriaEqual("updateAt", updateAt));
     }
 
-    public static BaseSpecification<IngredientEntity> hasUpdateAtGreaterThan(String updateAt) {
-        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+    public static BaseSpecification<IngredientEntity> hasUpdateFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updateAt", updateAt));
     }
 
-    public static BaseSpecification<IngredientEntity> hasCreateAtGreaterThan(String updateAt) {
-        return Spec(criteriaTimestampGreaterThan("createAt", updateAt));
+    public static BaseSpecification<IngredientEntity> hasCreateFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("createAt", updateAt));
     }
 
     /**
@@ -131,11 +131,10 @@ public class IngredientSpecification {
                 .and(hasDescription(entity.getDescription()))
                 .and(hasUnitType(entity.getUnitType()))
                 .and(hasCategory(entity.isCategory()))
-                .and(hasCreateAt(entity.getCreateAt()))
-                .and(Objects.nonNull(entity.getUpdateAt()) ?
-                        hasUpdateAtGreaterThan(entity.getUpdateAt()) : hasUpdatedAt(entity.getUpdateAt()))
-                .and(Objects.nonNull(entity.getCreateAt()) ?
-                        hasCreateAtGreaterThan(entity.getUpdateAt()) : hasCreateAt(entity.getCreateAt()))
+                .and(StringUtils.hasText(entity.getUpdateAt()) ?
+                        hasUpdateFrom(entity.getUpdateAt()) : hasUpdatedAt(entity.getUpdateAt()))
+                .and(StringUtils.hasText(entity.getCreateAt()) ?
+                        hasCreateFrom(entity.getCreateAt()) : hasCreateAt(entity.getCreateAt()))
                 ;
         return isNull(parent) ? spec : spec.and(hasParent(parent));
     }

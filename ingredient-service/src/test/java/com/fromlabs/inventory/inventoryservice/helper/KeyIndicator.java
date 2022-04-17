@@ -15,6 +15,7 @@ public class KeyIndicator {
     static public final String CHILD_CODE           = "childCode";
     static public final String CHILD_NAME           = "childName";
     static public final String DESCRIPTION          = "description";
+    static public final String CHILD_DESCRIPTION    = "childDescription";
     static public final String UNIT                 = "unit";
     static public final String UNIT_TYPE            = "unitType";
     static public final String CHILD_UNIT           = "childUnit";

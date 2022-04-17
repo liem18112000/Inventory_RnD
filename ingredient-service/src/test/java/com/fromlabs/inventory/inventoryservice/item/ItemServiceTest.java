@@ -52,17 +52,18 @@ class ItemServiceTest {
         return UnitTestTemplateProcess.builder()
                 .process(() -> this.itemService.getById((Long) getInput("id")))
                 .asserts(testCase).build()
-                .input("id", 1L).input("clientId", 1L);
+                .input("id", this.itemService.getAll(1L).get(0).getId()).input("clientId", 1L);
     }
     //<editor-fold desc="Get item by code">
     @DisplayName("Get item by code" + " - positive case : all thing is right")
     @Test
     void getByCode_Positive_AllThingsIsRight() {
         // get item from service
-        var item = this.itemService.getByCode(1L,"Code");
+        final var expectCode = this.itemService.getAll(1L).get(0).getCode();
+        var item = this.itemService.getByCode(1L, expectCode);
         assert Objects.nonNull(item);
         assert Objects.equals(item.getClientId(),1L);
-        assert Objects.equals(item.getCode(),"Code");
+        assert Objects.equals(item.getCode(),expectCode);
     }
     @DisplayName("Get item by code" + " - negative case : item code is not exist")
     @Test
@@ -85,12 +86,13 @@ class ItemServiceTest {
     @Test
     void getByName_Positive_AllThingsIsRight() {
         // get item by name
-        var items = this.itemService.getByName(1L,"Name");
+        final var expectName = this.itemService.getAll(1L).get(0).getName();
+        var items = this.itemService
+                .getByName(1L, expectName);
         assert Objects.nonNull(items);
         assert !items.isEmpty();
-
         assert items.stream().allMatch(item -> item.getClientId().equals(1L) &&
-                item.getName().equals("Name"));
+                item.getName().equals(expectName));
     }
     //</editor-fold>
 

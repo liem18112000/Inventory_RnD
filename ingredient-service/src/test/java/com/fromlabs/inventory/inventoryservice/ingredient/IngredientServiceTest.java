@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -44,23 +45,26 @@ class IngredientServiceTest {
     //<editor-fold desc="SETUP">
     @BeforeEach
     void setUp() {
+        final var expectIngredient = this.service.getAll(1L).get(0);
+        final var expectChildIngredient = this.service.getAll(1L, expectIngredient.getId()).get(0);
         this.getTemplateUnitTest = UnitTestTemplateProcess.builder()
                 .build()
-                .input(ID,          160L).input(NEGATIVE_ID,          -1L).input(NON_EXIST_ID,            99999L).input(CHILD_ID,    161L)
+                .input(ID, expectIngredient.getId()).input(NEGATIVE_ID, -1L).input(NON_EXIST_ID, 99999L).input(CHILD_ID, expectChildIngredient.getId())
                 .input(TENANT_ID,   1L).input(NEGATIVE_TENANT_ID,   -1L).input(NON_EXIST_TENANT_ID,     99999L)
-                .input(PARENT_ID,   160L).input(NEGATIVE_PARENT_ID,   -1L).input(NON_EXIST_PARENT_ID,     99999L)
+                .input(PARENT_ID,   expectIngredient.getId()).input(NEGATIVE_PARENT_ID,   -1L).input(NON_EXIST_PARENT_ID,     99999L)
                 .input(PAGE_NUMBER, 0) .input(NEGATIVE_PAGE_NUMBER, -1) .input(NON_EXIST_PAGE_NUMBER,   99999)
                 .input(PAGE_SIZE,   10) .input(NEGATIVE_PAGE_SIZE,  -1) .input(NON_EXIST_PAGE_SIZE,     99999).input(ZERO_PAGE_SIZE, 0)
                 .input(ASC_SORT,    "id, asc")  .input(NON_EXIST_ASC_SORT,      "nonExist, asc")
                 .input(ASC_SORT,    "id, desc") .input(NON_EXIST_DESC_SORT,     "nonExist, desc")
-                .input(NAME,        "Rice")     .input(NON_EXIST_NAME,          NON_EXIST_NAME).input(CHILD_NAME, "ST 25 Rice")
-                .input(CODE,        "Rice")     .input(NON_EXIST_CODE,          NON_EXIST_CODE).input(CHILD_CODE, "ST025Rice")
-                .input(DESCRIPTION, "Rice")     .input(NON_EXIST_DESCRIPTION,   NON_EXIST_DESCRIPTION)
-                .input(UNIT,        "generic")   .input(NON_EXIST_UNIT,          NON_EXIST_UNIT).input(CHILD_UNIT, "kilogram")
-                .input(UNIT_TYPE,   "generic")    .input(NON_EXIST_UNIT_TYPE,     NON_EXIST_UNIT_TYPE).input(CHILD_UNIT_TYPE, "weight")
-                .input(CREATED_AT,  "2022-02-24T14:02:27.326402600Z").input(NON_EXIST_CREATED_AT, Instant.now().plusSeconds(3600).toString())
-                .input(CHILD_CREATED_AT, "2022-02-24T14:02:27.326402600Z").input(CHILD_UPDATED_AT, "2022-02-24T14:02:27.326402600Z")
-                .input(UPDATED_AT,  "2022-02-24T14:02:27.326402600Z").input(NON_EXIST_UPDATED_AT, Instant.now().plusSeconds(3600).toString())
+                .input(NAME,        expectIngredient.getName())     .input(NON_EXIST_NAME,          NON_EXIST_NAME).input(CHILD_NAME, expectChildIngredient.getName())
+                .input(CODE,        expectIngredient.getCode())     .input(NON_EXIST_CODE,          NON_EXIST_CODE).input(CHILD_CODE, expectChildIngredient.getCode())
+                .input(DESCRIPTION, expectIngredient.getDescription())     .input(NON_EXIST_DESCRIPTION,   NON_EXIST_DESCRIPTION)
+                .input(CHILD_DESCRIPTION, expectChildIngredient.getDescription())
+                .input(UNIT,        expectIngredient.getUnit())   .input(NON_EXIST_UNIT,          NON_EXIST_UNIT).input(CHILD_UNIT, "kilogram")
+                .input(UNIT_TYPE,   expectIngredient.getUnitType())    .input(NON_EXIST_UNIT_TYPE,     NON_EXIST_UNIT_TYPE).input(CHILD_UNIT_TYPE, "weight")
+                .input(CREATED_AT,  expectIngredient.getCreateAt()).input(NON_EXIST_CREATED_AT, Instant.now().plusSeconds(3600).toString())
+                .input(CHILD_CREATED_AT, expectChildIngredient.getCreateAt()).input(CHILD_UPDATED_AT, expectChildIngredient.getUpdateAt())
+                .input(UPDATED_AT,  expectIngredient.getUpdateAt()).input(NON_EXIST_UPDATED_AT, Instant.now().plusSeconds(3600).toString())
                 .input(PAGE_REQUEST, new IngredientPageRequest());
     }
 
@@ -334,7 +338,8 @@ class IngredientServiceTest {
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID)) &&
-                                Objects.equals(ingredient.getCreateAt(), getInput(CREATED_AT));
+                                !Date.valueOf(getInput(CREATED_AT).toString())
+                                        .before(Date.valueOf(ingredient.getCreateAt()));
                     });
                 }
         ).run();
@@ -355,7 +360,8 @@ class IngredientServiceTest {
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID)) &&
-                                Objects.equals(ingredient.getUpdateAt(), getInput(UPDATED_AT));
+                                !Date.valueOf(getInput(UPDATED_AT).toString())
+                                        .before(Date.valueOf(ingredient.getUpdateAt()));
                     });
                 }
         ).run();
@@ -715,14 +721,14 @@ class IngredientServiceTest {
                     var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
                     request.setParentId((Long) getInput(PARENT_ID));
                     request.setClientId((Long) getInput(TENANT_ID));
-                    request.setDescription((String) getInput(DESCRIPTION));
+                    request.setDescription((String) getInput(CHILD_DESCRIPTION));
                     return this.service.getPage(filter(toEntity(request), service.getById(request.getParentId())), request.getPageable());
                 }, bootstrap -> {
                     Page<?> ingredientPage = assertPageIsNotNullAndNotEmpty((Page<?>) bootstrap);
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  !ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID)) &&
-                                ingredient.getDescription().contains((CharSequence) getInput(DESCRIPTION));
+                                ingredient.getDescription().toLowerCase().contains(getInput(CHILD_DESCRIPTION).toString().toLowerCase());
                     });
                 }
         ).run();
@@ -744,7 +750,8 @@ class IngredientServiceTest {
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  !ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID)) &&
-                                Objects.equals(ingredient.getCreateAt(), getInput(CHILD_CREATED_AT));
+                                !Date.valueOf(getInput(CHILD_CREATED_AT).toString())
+                                        .before(Date.valueOf(ingredient.getCreateAt()));
                     });
                 }
         ).run();
@@ -766,7 +773,8 @@ class IngredientServiceTest {
                     assert  ingredientPage.stream().allMatch(item -> {
                         var     ingredient = (IngredientEntity) item;
                         return  !ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID)) &&
-                                Objects.equals(ingredient.getUpdateAt(), getInput(CHILD_UPDATED_AT));
+                                !Date.valueOf(getInput(CHILD_UPDATED_AT).toString())
+                                        .before(Date.valueOf(ingredient.getUpdateAt()));
                     });
                 }
         ).run();
@@ -1005,8 +1013,6 @@ class IngredientServiceTest {
                 }).run();
     }
 
-    // TODO: Try to fix the bugs
-    @Disabled
     @DisplayName(GET_INGREDIENT_CONFIG_BY_ID + " - negative case : id is negative")
     @Test
     @Order(46)
@@ -1017,8 +1023,6 @@ class IngredientServiceTest {
                 }).run();
     }
 
-    // TODO: Try to fix the bugs
-    @Disabled
     @DisplayName(GET_INGREDIENT_CONFIG_BY_ID + " - negative case : id is non exist")
     @Test
     @Order(47)

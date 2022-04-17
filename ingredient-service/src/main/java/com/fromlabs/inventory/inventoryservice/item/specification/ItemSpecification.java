@@ -57,7 +57,7 @@ public class ItemSpecification {
     }
 
     public static BaseSpecification<ItemEntity> hasUpdateAtGreaterThan(String updateAt) {
-        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+        return Spec(criteriaTimestampGreaterThanOrEqual("updateAt", updateAt));
     }
 
     public static Specification<ItemEntity> filter(ItemEntity entity, IngredientEntity ingredient) {
