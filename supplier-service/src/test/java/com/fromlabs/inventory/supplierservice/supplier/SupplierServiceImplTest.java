@@ -6,12 +6,12 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class SupplierServiceImplTest {
 
-    @Mock
-    private SupplierRepository repository;
+    private final SupplierRepository repository = mock(SupplierRepository.class);
 
     private SupplierService service;
 
@@ -81,6 +81,7 @@ class SupplierServiceImplTest {
         final var code = "API_Group_01";
         SupplierEntity entity = new SupplierEntity();
         entity.setCode(code);
+        this.service = new SupplierServiceImpl(this.repository);
         when(this.repository. findByCode(code)).thenReturn(entity);
         final var supplier = this.service.getByCode(code);
         assertEquals(supplier.getCode(), code);
@@ -88,7 +89,10 @@ class SupplierServiceImplTest {
 
     @Test
     void getByNotExistCode() {
-        final var supplier = this.service.getByCode(String.valueOf(System.currentTimeMillis()));
+        final var notExistCode = "notExist";
+        when(this.repository.findByCode(notExistCode)).thenReturn(null);
+        this.service = new SupplierServiceImpl(this.repository);
+        final var supplier = this.service.getByCode(notExistCode);
         assertNull(supplier);
     }
 

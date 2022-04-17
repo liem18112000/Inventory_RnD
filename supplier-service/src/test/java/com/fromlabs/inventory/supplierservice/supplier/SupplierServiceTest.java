@@ -31,9 +31,10 @@ class SupplierServiceTest {
     @DisplayName("Positive: get supplier by id")
     @Test
     void getByValidId() {
-        final var supplier = this.service.getById(1L);
+        final var expectedSupplier = this.service.getAll(1L).get(0);
+        final var supplier = this.service.getById(expectedSupplier.getId());
         assertNotNull(supplier);
-        assertEquals(supplier.getId(), 1L);
+        assertEquals(supplier.getId(), expectedSupplier.getId());
     }
 
     @Order(2)
@@ -60,9 +61,10 @@ class SupplierServiceTest {
     @DisplayName("Positive: get supplier by code")
     @Test
     void getByValidCode() {
-        final var supplier = this.service.getByCode("API_Group_01");
+        final var expectedSupplier = this.service.getAll(1L).get(0);
+        final var supplier = this.service.getByCode(expectedSupplier.getCode());
         assertNotNull(supplier);
-        assertEquals(supplier.getCode(), "API_Group_01");
+        assertEquals(supplier.getCode(), expectedSupplier.getCode());
     }
 
     @Order(5)
