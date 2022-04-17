@@ -29,11 +29,8 @@ import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpMethod;;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -205,65 +202,6 @@ public class IngredientController implements ApplicationController {
         this.processCache.clearCache();
         return ok().build();
     }
-
-    //<editor-fold desc="Authenticate & Authorize">
-
-    private ResponseEntity<?> isNotAuthorized(String apiKey) {
-        if (isApiSecurityEnabled()) {
-            try{
-                final var auth = this.authClient.authorize(apiKey);
-                log.info("API authorize result : {}", auth);
-                if (!auth.isSuccess()) {
-                    return status(HttpStatus.UNAUTHORIZED).body(auth);
-                }
-            } catch (Exception exception) {
-                if (!isApiSecurityFailTolerant()) {
-                    return internalServerError().contentType(MediaType.TEXT_PLAIN)
-                            .body("Auth service provider failed to authorized");
-                } else {
-                    log.warn("API fault tolerance is activated");
-                }
-            }
-        } else {
-            log.warn("API Security is disabled");
-        }
-        return null;
-    }
-
-    private ResponseEntity<?> isNotAuthenticated(
-            final String apiKey, final String principal) {
-        if (isApiSecurityEnabled()) {
-            try {
-                final var auth = this.authClient.authenticate(apiKey, principal);
-                log.info("API authenticate result : {}", auth);
-                if (!auth.isSuccess()){
-                    return status(HttpStatus.FORBIDDEN).body(auth);
-                }
-            } catch (Exception exception) {
-                if (!isApiSecurityFailTolerant()) {
-                    return internalServerError().contentType(MediaType.TEXT_PLAIN)
-                            .body("Auth service provider failed to authenticate");
-                } else {
-                    log.warn("API fault tolerance is activated");
-                }
-            }
-        } else {
-            log.warn("API Security is disabled");
-        }
-        return null;
-    }
-
-    private boolean isApiSecurityFailTolerant() {
-        return StringUtils.hasText(this.apiSecurityFaultTolerant) &&
-                Boolean.parseBoolean(this.apiSecurityFaultTolerant);
-    }
-
-    private boolean isApiSecurityEnabled() {
-        return StringUtils.hasText(this.apiSecurityEnabled) &&
-                Boolean.parseBoolean(this.apiSecurityEnabled);
-    }
-
-    //</editor-fold>
 
     // </editor-fold>
 
@@ -474,8 +412,6 @@ public class IngredientController implements ApplicationController {
     ){
         log.info(path(HttpMethod.POST, ""));
         var transactFlag = new AtomicBoolean(Boolean.TRUE);
-        final var unauthorized = isNotAuthorized(apiKey);
-        if (unauthorized != null) return unauthorized;
         return (ResponseEntity<?>) buildSaveIngredientTemplateProcess(tenantId, request,
                 transactFlag, ingredientService, historyService, eventService).run();
     }
@@ -494,8 +430,6 @@ public class IngredientController implements ApplicationController {
             @RequestBody IngredientRequest request
     ){
         log.info(path(HttpMethod.PUT, ""));
-        final var unauthenticated = this.isNotAuthenticated(apiKey, principal);
-        if (unauthenticated != null) return unauthenticated;
         return (ResponseEntity<?>) buildUpdateIngredientTemplateProcess(tenantId, request,
                 ingredientService, historyService, eventService).run();
     }
@@ -514,8 +448,6 @@ public class IngredientController implements ApplicationController {
             @PathVariable(ID) Long id
     ){
         log.info(path(HttpMethod.DELETE, String.valueOf(id)));
-        final var unauthenticated = this.isNotAuthenticated(apiKey, principal);
-        if (unauthenticated != null) return unauthenticated;
         return (ResponseEntity<?>) buildDeleteIngredientByIdTemplateProcess(tenantId, id,
                 ingredientService, recipeClient, supplierClient).run();
     }
