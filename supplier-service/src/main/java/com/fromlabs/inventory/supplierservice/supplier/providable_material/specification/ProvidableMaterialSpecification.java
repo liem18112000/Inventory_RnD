@@ -8,9 +8,11 @@ import com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecific
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import com.fromlabs.inventory.supplierservice.supplier.providable_material.ProvidableMaterialEntity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import static com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaEqual;
+import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaTimestampGreaterThanOrEqual;
 import static java.util.Objects.isNull;
 
 public class ProvidableMaterialSpecification {
@@ -70,6 +72,15 @@ public class ProvidableMaterialSpecification {
     }
 
     /**
+     *
+     * @param updateAt  update timestamp
+     * @return          BaseSpecification&lt;ProvidableMaterialEntity&gt;
+     */
+    public static BaseSpecification<ProvidableMaterialEntity> hasUpdatedFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updatedAt", updateAt));
+    }
+
+    /**
      * Filter for all ingredient
      * @param entity    SupplierEntity
      * @return          Specification&lt;SupplierEntity&gt;
@@ -78,7 +89,9 @@ public class ProvidableMaterialSpecification {
         var spec = hasClientId(entity.getClientId())
                 .and(hasName(entity.getName()))
                 .and(hasDescription(entity.getDescription()))
-                .and(hasUpdatedAt(entity.getUpdatedAt()));
+                .and(StringUtils.hasText(entity.getUpdatedAt()) ?
+                        hasUpdatedFrom(entity.getUpdatedAt()) :
+                        hasUpdatedAt(entity.getUpdatedAt()));
         spec = isNull(entity.getIngredientId()) ? spec : spec.and(hasIngredientId(entity.getIngredientId()));
         return isNull(supplier) ? spec : spec.and(hasSuppler(supplier));
     }

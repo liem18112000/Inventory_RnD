@@ -8,6 +8,7 @@ import com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecific
 import com.fromlabs.inventory.supplierservice.imports.ImportEntity;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 
 import static com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaEqual;
+import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaTimestampGreaterThanOrEqual;
 
 /**
  * Import entity specification
@@ -86,6 +88,24 @@ public class ImportSpecification {
     }
 
     /**
+     * Filter for has created from
+     * @param createdAt create timestamp
+     * @return          BaseSpecification&lt;ImportEntity&gt;
+     */
+    public static BaseSpecification<ImportEntity> hasCreateFrom(String createdAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("createdAt", createdAt));
+    }
+
+    /**
+     * Filter for has updated from
+     * @param updateAt  update timestamp
+     * @return          BaseSpecification&lt;ImportEntity&gt;
+     */
+    public static BaseSpecification<ImportEntity> hasUpdatedFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updatedAt", updateAt));
+    }
+
+    /**
      * Filter for all import entity
      * @param entity    ImportEntity
      * @return          Specification&lt;ImportEntity&gt;
@@ -96,8 +116,12 @@ public class ImportSpecification {
                 .and(hasName(entity.getName()))
                 .and(hasCode(entity.getCode()))
                 .and(hasDescription(entity.getDescription()))
-                .and(hasCreateAt(entity.getCreatedAt()))
-                .and(hasUpdatedAt(entity.getUpdatedAt()));
+                .and(StringUtils.hasText(entity.getCreatedAt()) ?
+                        hasCreateFrom(entity.getCreatedAt()) :
+                        hasCreateAt(entity.getCreatedAt()))
+                .and(StringUtils.hasText(entity.getUpdatedAt()) ?
+                        hasUpdatedFrom(entity.getUpdatedAt()) :
+                        hasUpdatedAt(entity.getUpdatedAt()));
         return Objects.nonNull(supplier) ? spec.and(hasSupplier(supplier)) : spec;
     }
 

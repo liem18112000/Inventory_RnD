@@ -7,6 +7,7 @@ package com.fromlabs.inventory.supplierservice.supplier.specification;
 import com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification;
 import com.fromlabs.inventory.supplierservice.supplier.SupplierEntity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import static com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.*;
@@ -90,6 +91,24 @@ public class SupplierSpecification {
     }
 
     /**
+     * Filter for has created from
+     * @param createdAt create timestamp
+     * @return          BaseSpecification&lt;SupplierEntity&gt;
+     */
+    public static BaseSpecification<SupplierEntity> hasCreateFrom(String createdAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("createdAt", createdAt));
+    }
+
+    /**
+     * Filter for has updated from
+     * @param updateAt  update timestamp
+     * @return          BaseSpecification&lt;SupplierEntity&gt;
+     */
+    public static BaseSpecification<SupplierEntity> hasUpdatedFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updatedAt", updateAt));
+    }
+
+    /**
      * Filter for all supplier
      * @param entity    SupplierEntity
      * @return          Specification&lt;SupplierEntity&gt;
@@ -100,8 +119,12 @@ public class SupplierSpecification {
                 .and(hasCode(entity.getCode()))
                 .and(hasDescription(entity.getDescription()))
                 .and(hasGroup(entity.isGroup()))
-                .and(hasCreateAt(entity.getCreatedAt()))
-                .and(hasUpdatedAt(entity.getUpdatedAt()));
+                .and(StringUtils.hasText(entity.getCreatedAt()) ?
+                        hasCreateFrom(entity.getCreatedAt()) :
+                        hasCreateAt(entity.getCreatedAt()))
+                .and(StringUtils.hasText(entity.getUpdatedAt()) ?
+                        hasUpdatedFrom(entity.getUpdatedAt()) :
+                        hasUpdatedAt(entity.getUpdatedAt()));
         return isNull(parent) ? spec : spec.and(hasParent(parent));
     }
 }

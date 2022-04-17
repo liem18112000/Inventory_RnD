@@ -10,11 +10,13 @@ import com.fromlabs.inventory.supplierservice.imports.details.ImportDetailEntity
 import com.fromlabs.inventory.supplierservice.imports.details.beans.request.ImportDetailPageRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 
 import static com.fromlabs.inventory.supplierservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaEqual;
+import static com.fromlabs.inventory.supplierservice.common.specifications.SearchCriteria.criteriaTimestampGreaterThanOrEqual;
 import static java.util.Objects.isNull;
 
 /**
@@ -79,6 +81,24 @@ public class ImportDetailSpecification {
     }
 
     /**
+     * Filter for has created from
+     * @param createdAt create timestamp
+     * @return          BaseSpecification&lt;ImportDetailEntity&gt;
+     */
+    public static BaseSpecification<ImportDetailEntity> hasCreatedFrom(String createdAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("createdAt", createdAt));
+    }
+
+    /**
+     * Filter for has updated from
+     * @param updateAt  update timestamp
+     * @return          BaseSpecification&lt;ImportDetailEntity&gt;
+     */
+    public static BaseSpecification<ImportDetailEntity> hasUpdatedFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updatedAt", updateAt));
+    }
+
+    /**
      *
      * @param ingredientId  ingredient id
      * @return              BaseSpecification&lt;ImportDetailEntity&gt;
@@ -98,8 +118,12 @@ public class ImportDetailSpecification {
         var spec = hasClientId(request.getClientId())
                 .and(hasName(request.getName()))
                 .and(hasDescription(request.getDescription()))
-                .and(hasUpdatedAt(request.getUpdateAt()))
-                .and(hasCreatedAt(request.getCreateAt()));
+                .and(StringUtils.hasText(request.getCreateAt()) ?
+                        hasCreatedFrom(request.getCreateAt()) :
+                        hasCreatedAt(request.getCreateAt()))
+                .and(StringUtils.hasText(request.getUpdateAt()) ?
+                        hasUpdatedFrom(request.getUpdateAt()) :
+                        hasUpdatedAt(request.getUpdateAt()));
         spec = isNull(request.getIngredientId()) ? spec : spec.and(hasIngredientId(request.getIngredientId()));
         return isNull(importEntity) ? spec : spec.and(hasImport(importEntity));
     }
