@@ -28,7 +28,14 @@ export const isNumber = (number) => {
     return number && !isNaN(number);
 }
 
-export const convertDateToEnCADate = (dateString) => new Date(dateString).toLocaleDateString('en-CA')
+export const convertDateToEnCADate = (dateString) => {
+    try {
+        return new Date(dateString).toLocaleDateString('en-CA');
+    } catch (e) {
+        console.error("Parse date with local en-CA failed");
+        return new Date().toLocaleDateString('en-CA');
+    }
+}
 
 export const compose = (...functions) =>
         argument =>
