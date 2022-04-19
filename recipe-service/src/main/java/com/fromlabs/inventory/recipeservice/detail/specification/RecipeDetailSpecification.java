@@ -4,10 +4,10 @@ import com.fromlabs.inventory.recipeservice.common.specifications.BaseSpecificat
 import com.fromlabs.inventory.recipeservice.detail.RecipeDetailEntity;
 import com.fromlabs.inventory.recipeservice.recipe.RecipeEntity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import static com.fromlabs.inventory.recipeservice.common.specifications.BaseSpecification.Spec;
-import static com.fromlabs.inventory.recipeservice.common.specifications.SearchCriteria.criteriaEqual;
-import static com.fromlabs.inventory.recipeservice.common.specifications.SearchCriteria.criteriaGreaterThanOrEqual;
+import static com.fromlabs.inventory.recipeservice.common.specifications.SearchCriteria.*;
 import static java.util.Objects.isNull;
 
 public class RecipeDetailSpecification {
@@ -40,12 +40,23 @@ public class RecipeDetailSpecification {
         return Spec(criteriaEqual("recipe", recipe));
     }
 
+    public static BaseSpecification<RecipeDetailEntity> hasUpdateAt(String updateAt) {
+        return Spec(criteriaEqual("updateAt", updateAt.trim()));
+    }
+
+    public static BaseSpecification<RecipeDetailEntity> hasUpdateFrom(String updateAt) {
+        return Spec(criteriaTimestampGreaterThanOrEqual("updateAt", updateAt.trim()));
+    }
+
     public static Specification<RecipeDetailEntity> filter(RecipeDetailEntity entity, RecipeEntity recipe) {
         var spec =  hasClientId(entity.getClientId())
                 .and(hasCode(entity.getCode()))
                 .and(hasName(entity.getName()))
                 .and(hasDescription(entity.getDescription()))
-                .and(hasQuantity(entity.getQuantity()));
+                .and(hasQuantity(entity.getQuantity()))
+                .and(StringUtils.hasText(entity.getUpdateAt()) ?
+                        hasUpdateFrom(entity.getUpdateAt()) :
+                        hasUpdateAt(entity.getUpdateAt()));;
         spec = isNull(entity.getIngredientId()) ? spec : spec.and(hasIngredientId(entity.getIngredientId()));
         return isNull(recipe) ? spec : spec.and(hasRecipe(recipe));
     }

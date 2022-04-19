@@ -73,6 +73,7 @@ public class RecipeMapper {
         entity.setCode(request.getCode());
         entity.setDescription(request.getDescription());
         entity.setGroup(RecipeEntity.checkIsGroupFromPageRequest(request));
+        entity.setUpdateAt(request.getUpdatedAt());
         return entity;
     }
 

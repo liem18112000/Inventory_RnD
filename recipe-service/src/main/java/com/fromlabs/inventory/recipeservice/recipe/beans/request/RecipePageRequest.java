@@ -13,4 +13,5 @@ public class RecipePageRequest extends BaseCustomizePageRequest {
     protected String    description = "";
     protected String    code = "";
     protected Boolean   group;
+    protected String    updatedAt;
 }
