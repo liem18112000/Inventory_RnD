@@ -15,6 +15,7 @@ import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { Calendar } from 'primereact/calendar';
 
 export class RecipeGroup extends Component {
 
@@ -49,12 +50,12 @@ export class RecipeGroup extends Component {
     };
 
     getPageGroups = () => {
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         this.recipeService
             .getPageGroup(filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => this.setState({ ...this.state, ...data}));
+            .then(data => this.setState({ ...this.state, ...data }));
     }
 
     descriptionBodyTemplate(rowData) {
@@ -67,18 +68,24 @@ export class RecipeGroup extends Component {
 
     deleteRecipe(recipeId) {
         if (!recipeId) {
-            this.toast.show({ severity: 'warning', summary: 'Delete failed',
-                detail: 'Recipe id is not set', life: 3000 })
+            this.toast.show({
+                severity: 'warning', summary: 'Delete failed',
+                detail: 'Recipe id is not set', life: 3000
+            })
         } else {
             this.recipeService.deleteRecipe(recipeId, this.state.isMock)
                 .then(res => {
                     if (res) {
-                        this.toast.show({ severity: 'success', summary: 'Delete success',
-                            detail: 'Recipe group has been deleted', life: 1000 })
+                        this.toast.show({
+                            severity: 'success', summary: 'Delete success',
+                            detail: 'Recipe group has been deleted', life: 1000
+                        })
                         this.getPageGroups()
                     } else {
-                        this.toast.show({ severity: 'error', summary: 'Delete failed',
-                            detail: 'Recipe group may has recipe child or recipe detail.', life: 5000 })
+                        this.toast.show({
+                            severity: 'error', summary: 'Delete failed',
+                            detail: 'Recipe group may has recipe child or recipe detail.', life: 5000
+                        })
                     }
                 })
         }
@@ -91,8 +98,10 @@ export class RecipeGroup extends Component {
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
             accept: () => this.deleteRecipe(rowData.id, this.state.isMock),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete',
-                detail: 'You have cancel delete', life: 1000 })
+            reject: () => this.toast.show({
+                severity: 'info', summary: 'Cancel delete',
+                detail: 'You have cancel delete', life: 1000
+            })
         });
     }
 
@@ -342,11 +351,11 @@ export class RecipeGroup extends Component {
                                 </div>
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Updated At"
-                                            value={this.state.filter.updatedAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })}
-                                        />
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Update At"
+                                            id="basic" value={this.state.filter.updatedAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })} />
                                     </div>
                                 </div>
                             </div>

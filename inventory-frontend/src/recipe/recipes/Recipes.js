@@ -16,6 +16,7 @@ import { RecipeChildForm } from '../child/RecipeChildForm';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { UploadImageForm } from '../upload-media/UploadImageForm';
+import { Calendar } from 'primereact/calendar';
 
 export class Recipes extends Component {
 
@@ -341,11 +342,11 @@ export class Recipes extends Component {
                                 </div>
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Updated At"
-                                            value={this.state.filter.updatedAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })}
-                                        />
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Update At"
+                                            id="basic" value={this.state.filter.updatedAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })} />
                                     </div>
                                 </div>
                             </div>

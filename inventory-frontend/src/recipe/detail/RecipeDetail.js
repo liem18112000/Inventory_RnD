@@ -15,6 +15,7 @@ import { RecipeDetailForm } from './RecipeDetailForm';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
+import { Calendar } from 'primereact/calendar';
 
 export class RecipeDetail extends Component {
     constructor(props) {
@@ -82,18 +83,24 @@ export class RecipeDetail extends Component {
 
     deleteRecipeDetail(recipeId) {
         if (!recipeId) {
-            this.toast.show({ severity: 'warning', summary: 'Delete failed',
-                detail: 'Recipe detail id is not set', life: 3000 })
+            this.toast.show({
+                severity: 'warning', summary: 'Delete failed',
+                detail: 'Recipe detail id is not set', life: 3000
+            })
         } else {
             this.recipeService.deleteRecipeDetail(recipeId, this.state.isMock)
                 .then(res => {
                     if (res) {
-                        this.toast.show({ severity: 'success', summary: 'Delete success',
-                            detail: 'Recipe detail has been deleted', life: 1000 })
+                        this.toast.show({
+                            severity: 'success', summary: 'Delete success',
+                            detail: 'Recipe detail has been deleted', life: 1000
+                        })
                         this.getPageDetails()
                     } else {
-                        this.toast.show({ severity: 'error', summary: 'Delete failed',
-                            detail: 'Recipe detail caught unknown error.', life: 5000 })
+                        this.toast.show({
+                            severity: 'error', summary: 'Delete failed',
+                            detail: 'Recipe detail caught unknown error.', life: 5000
+                        })
                     }
                 })
         }
@@ -367,11 +374,11 @@ export class RecipeDetail extends Component {
                                 </div>
                                 <div className="p-col-12">
                                     <div className="p-inputgroup">
-                                        <InputText
-                                            placeholder="Updated At"
-                                            value={this.state.filter.updatedAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })}
-                                        />
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Update At"
+                                            id="basic" value={this.state.filter.updatedAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })} />
                                     </div>
                                 </div>
                             </div>
@@ -423,7 +430,7 @@ export class RecipeDetail extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="ingredient.name" header="Ingredient"/>
+                    <Column field="ingredient.name" header="Ingredient" />
                     <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />

@@ -402,11 +402,6 @@ export class IngredientType extends Component {
                             />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
-                            {/* <InputText
-                                placeholder="Create At"
-                                value={this.state.filter.createAt}
-                                onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })}
-                            /> */}
                             <Calendar
                                 dateFormat="yy-mm-dd"
                                 placeholder="Create At"

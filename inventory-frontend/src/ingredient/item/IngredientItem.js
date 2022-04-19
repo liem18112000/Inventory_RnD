@@ -335,11 +335,6 @@ class IngredientItem extends Component {
                             />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
-                            {/* <InputText
-                                placeholder="Expired At"
-                                value={this.state.filter.expiredAt}
-                                onChange={(e) => this.setFilter({ ...this.state.filter, expiredAt: e.target.value })}
-                            /> */}
                             <Calendar
                                 dateFormat="yy-mm-dd"
                                 placeholder="Expired At"
