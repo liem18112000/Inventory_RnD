@@ -15,6 +15,7 @@ import { Toast } from 'primereact/toast';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { Calendar } from 'primereact/calendar';
+import {convertDateToEnCADate} from "../../core/utility/ComponentUtility";
 
 export class IngredientCategory extends Component {
 
@@ -417,7 +418,7 @@ export class IngredientCategory extends Component {
                                             dateFormat="yy-mm-dd"
                                             placeholder="Create At"
                                             id="basic" value={this.state.filter.createAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })} />
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, createAt: convertDateToEnCADate(e.target.value)})} />
                                     </div>
                                 </div>
                             </div>

@@ -28,6 +28,8 @@ export const isNumber = (number) => {
     return number && !isNaN(number);
 }
 
+export const convertDateToEnCADate = (dateString) => new Date(dateString).toLocaleDateString('en-CA')
+
 export const compose = (...functions) =>
         argument =>
             functions.reduce(
