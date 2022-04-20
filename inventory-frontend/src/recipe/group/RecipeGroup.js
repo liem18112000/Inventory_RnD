@@ -153,7 +153,7 @@ export class RecipeGroup extends Component {
     updatedAtBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updatedAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
+                <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>{moment(rowData.updateAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}</span>
             </React.Fragment>
         );
     }
