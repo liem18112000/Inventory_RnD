@@ -15,6 +15,8 @@ import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { SupplierChildForm } from './SupplierChildForm';
 import { SupplierService } from '../../service/SupplierService';
+import { Calendar } from 'primereact/calendar';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
 export class SupplierChild extends Component {
 
@@ -310,6 +312,20 @@ export class SupplierChild extends Component {
                                 onChange={(e) => this.setFilter({ ...this.state.filter, code: e.target.value })}
                             />
                         </div>
+                        <div className="p-col-12 p-md-6 p-lg-6">
+                            <Calendar
+                                dateFormat="yy-mm-dd"
+                                placeholder="Create From"
+                                id="basic" value={this.state.filter.createAt}
+                                onChange={(e) => this.setFilter({ ...this.state.filter, createAt: convertDateToEnCADate(e.target.value) })} />
+                        </div>
+                        <div className="p-col-12 p-md-6 p-lg-6">
+                            <Calendar
+                                dateFormat="yy-mm-dd"
+                                placeholder="Update From"
+                                id="basic" value={this.state.filter.updateAt}
+                                onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: convertDateToEnCADate(e.target.value) })} />
+                        </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
                         <div className="p-mr-2">
@@ -358,8 +374,8 @@ export class SupplierChild extends Component {
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column sortField="createdAt" filterField="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column sortField="updatedAt" filterField="updatedAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
+                    <Column sortField="createdAt" filterField="createdAt" header="Create From" body={this.createAtBodyTemplate} sortable />
+                    <Column sortField="updatedAt" filterField="updatedAt" header="Update From" body={this.updateAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div>

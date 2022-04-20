@@ -18,6 +18,7 @@ import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { Calendar } from 'primereact/calendar';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
 class IngredientItem extends Component {
 
@@ -337,9 +338,9 @@ class IngredientItem extends Component {
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <Calendar
                                 dateFormat="yy-mm-dd"
-                                placeholder="Expired At"
+                                placeholder="Expired From"
                                 id="basic" value={this.state.filter.expiredAt}
-                                onChange={(e) => this.setFilter({ ...this.state.filter, expiredAt: e.target.value })} />
+                                onChange={(e) => this.setFilter({ ...this.state.filter, expiredAt: convertDateToEnCADate(e.target.value) })} />
                         </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
@@ -388,7 +389,7 @@ class IngredientItem extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column sortField="name" filterField="name" header="Name" body={this.categoryBodyTemplate} sortable />
-                    <Column sortField="expiredAt" filterField="expiredAt" header="Expired At" body={this.expiredAtBodyTemplate} sortable />
+                    <Column sortField="expiredAt" filterField="expiredAt" header="Expired From" body={this.expiredAtBodyTemplate} sortable />
                     <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} />
                     <Column field="unit" header="Unit" body={this.unitBodyTemplate} />
                     <Column field="imports" header="Import" body={this.importBodyTemplate} />

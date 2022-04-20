@@ -16,7 +16,7 @@ import { Dropdown } from 'primereact/dropdown';
 import moment from 'moment';
 import { handleGetPage } from '../core/handlers/ApiLoadContentHandler.js';
 import { Toast } from 'primereact/toast';
-import { sleep } from "../core/utility/ComponentUtility";
+import { convertDateToEnCADate, sleep } from "../core/utility/ComponentUtility";
 
 export class IngredientInventory extends Component {
 
@@ -352,16 +352,11 @@ export class IngredientInventory extends Component {
                             />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
-                            {/* <InputText
-                                placeholder="Update At"
-                                value={this.state.filter.updateAt}
-                                onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: e.target.value })}
-                            /> */}
                             <Calendar
                                 dateFormat="yy-mm-dd"
                                 placeholder="Update From"
                                 id="basic" value={this.state.filter.updateAt}
-                                onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: e.target.value })} />
+                                onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: convertDateToEnCADate(e.target.value) })} />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <Dropdown value={this.state.filter.unitType}

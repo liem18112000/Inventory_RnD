@@ -15,6 +15,8 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { SupplierImportForm } from './SupplierImportForm';
 import { SupplierService } from '../../service/SupplierService';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { Calendar } from 'primereact/calendar';
 
 export class SupplierImport extends Component {
     constructor(props) {
@@ -186,6 +188,8 @@ export class SupplierImport extends Component {
                 ...this.state.filter,
                 name: "",
                 code: "",
+                updateAt: "",
+                createAt: ""
             }
         }, () => {
             this.setState({ loading: true });
@@ -359,6 +363,32 @@ export class SupplierImport extends Component {
                                 </div>
                             </div>
                         </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Create From"
+                                            id="basic" value={this.state.filter.createAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, createAt: convertDateToEnCADate(e.target.value) })} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Update From"
+                                            id="basic" value={this.state.filter.updateAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: convertDateToEnCADate(e.target.value) })} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
                         <div className="p-mr-2">
@@ -407,8 +437,8 @@ export class SupplierImport extends Component {
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
-                    <Column field="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column field="updatedAt" header="Update At" body={this.updateAtBodyTemplate} sortable />
+                    <Column field="createdAt" header="Create From" body={this.createAtBodyTemplate} sortable />
+                    <Column field="updatedAt" header="Update From" body={this.updateAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >

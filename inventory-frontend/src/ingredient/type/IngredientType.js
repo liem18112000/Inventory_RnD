@@ -21,6 +21,7 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { IngredientTypeConfig } from './IngredientTypeConfig';
 import { Calendar } from 'primereact/calendar';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
 export class IngredientType extends Component {
 
@@ -404,9 +405,9 @@ export class IngredientType extends Component {
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <Calendar
                                 dateFormat="yy-mm-dd"
-                                placeholder="Create At"
+                                placeholder="Create From"
                                 id="basic" value={this.state.filter.createAt}
-                                onChange={(e) => this.setFilter({ ...this.state.filter, createAt: e.target.value })} />
+                                onChange={(e) => this.setFilter({ ...this.state.filter, createAt: convertDateToEnCADate(e.target.value) })} />
                         </div>
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <Dropdown value={this.state.filter.unitType}
@@ -481,7 +482,7 @@ export class IngredientType extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column sortField="name" filterField="name" header="Name" body={this.categoryBodyTemplate} sortable />
-                    <Column sortField="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column sortField="createAt" filterField="createAt" header="Create From" body={this.createAtBodyTemplate} sortable />
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
                     <Column field="unitType" header="Unit Type" body={this.unitTypeBodyTemplate} sortable />
                     <Column field="unit" header="Unit" body={this.unitBodyTemplate} sortable />

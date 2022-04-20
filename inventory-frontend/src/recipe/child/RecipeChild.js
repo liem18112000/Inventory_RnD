@@ -18,6 +18,7 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import {UploadImageForm} from "../upload-media/UploadImageForm";
 import { Calendar } from 'primereact/calendar';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
 export class RecipeChild extends Component {
 
@@ -365,9 +366,9 @@ export class RecipeChild extends Component {
                                     <div className="p-inputgroup">
                                         <Calendar
                                             dateFormat="yy-mm-dd"
-                                            placeholder="Update At"
+                                            placeholder="Update From"
                                             id="basic" value={this.state.filter.updatedAt}
-                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: e.target.value })} />
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updatedAt: convertDateToEnCADate(e.target.value) })} />
                                     </div>
                                 </div>
                             </div>
@@ -420,7 +421,7 @@ export class RecipeChild extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
-                    <Column field="updateAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
+                    <Column field="updateAt" header="Updated From" body={this.updatedAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form, this.upload)} />
                 </DataTable>

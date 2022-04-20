@@ -416,7 +416,7 @@ export class IngredientCategory extends Component {
                                     <div className="p-inputgroup">
                                         <Calendar
                                             dateFormat="yy-mm-dd"
-                                            placeholder="Create At"
+                                            placeholder="Create From"
                                             id="basic" value={this.state.filter.createAt}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, createAt: convertDateToEnCADate(e.target.value)})} />
                                     </div>
@@ -471,7 +471,7 @@ export class IngredientCategory extends Component {
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column field="name" filterField="name" header="Categories" body={this.categoryBodyTemplate} sortable />
-                    <Column field="createAt" filterField="createAt" header="Create At" body={this.createAtBodyTemplate} sortable />
+                    <Column field="createAt" filterField="createAt" header="Create From" body={this.createAtBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="action" header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>

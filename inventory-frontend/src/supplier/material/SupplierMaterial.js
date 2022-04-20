@@ -17,6 +17,8 @@ import { SupplierMaterialForm } from './SupplierMaterialForm';
 import { SupplierService } from '../../service/SupplierService';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from 'primereact/calendar';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
 export class SupplierMaterial extends Component {
     constructor(props) {
@@ -89,18 +91,24 @@ export class SupplierMaterial extends Component {
 
     deleteMaterial(materialId) {
         if (!materialId) {
-            this.toast.show({ severity: 'warning', summary: 'Delete failed',
-                detail: 'Material id is not set', life: 3000 })
+            this.toast.show({
+                severity: 'warning', summary: 'Delete failed',
+                detail: 'Material id is not set', life: 3000
+            })
         } else {
             this.supplierService.deleteMaterial(materialId, this.state.isMock)
                 .then(res => {
                     if (res) {
-                        this.toast.show({ severity: 'success', summary: 'Delete success',
-                            detail: 'Material has been deleted', life: 1000 })
+                        this.toast.show({
+                            severity: 'success', summary: 'Delete success',
+                            detail: 'Material has been deleted', life: 1000
+                        })
                         this.getPageMaterials()
                     } else {
-                        this.toast.show({ severity: 'error', summary: 'Delete failed',
-                            detail: 'Material caught an unknown error.', life: 5000 })
+                        this.toast.show({
+                            severity: 'error', summary: 'Delete failed',
+                            detail: 'Material caught an unknown error.', life: 5000
+                        })
                     }
                 })
         }
@@ -113,8 +121,10 @@ export class SupplierMaterial extends Component {
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
             accept: () => this.deleteMaterial(rowData.id),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete',
-                detail: 'You have cancel delete', life: 1000 })
+            reject: () => this.toast.show({
+                severity: 'info', summary: 'Cancel delete',
+                detail: 'You have cancel delete', life: 1000
+            })
         });
     }
 
@@ -194,7 +204,9 @@ export class SupplierMaterial extends Component {
                 ...this.state.filter,
                 ingredientId: null,
                 name: "",
-                code: ""
+                code: "",
+                updateAt: "",
+                createAt: ""
             }
         }, () => {
             this.setState({ loading: true });
@@ -371,6 +383,19 @@ export class SupplierMaterial extends Component {
                                 </div>
                             </div>
                         </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Update From"
+                                            id="basic" value={this.state.filter.updateAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: convertDateToEnCADate(e.target.value) })} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
                         <div className="p-mr-2">
@@ -421,7 +446,7 @@ export class SupplierMaterial extends Component {
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="minimumQuantity" header="Min Quant" body={this.minQuantityBodyTemplate} sortable />
                     <Column field="maximumQuantity" header="Max Quant" body={this.maxQuantityBodyTemplate} sortable />
-                    <Column field="updatedAt" header="Updated At" body={this.updatedAtBodyTemplate} sortable />
+                    <Column field="updatedAt" header="Updated From" body={this.updatedAtBodyTemplate} sortable />
                     <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} />
                 </DataTable>
             </div >

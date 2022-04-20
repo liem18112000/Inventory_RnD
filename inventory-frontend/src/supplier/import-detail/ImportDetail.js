@@ -16,6 +16,8 @@ import { SupplierService } from '../../service/SupplierService';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
 import { ImportDetailForm } from './ImportDetailForm';
+import { Calendar } from 'primereact/calendar';
+import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
 export class ImportDetail extends Component {
     constructor(props) {
@@ -175,7 +177,9 @@ export class ImportDetail extends Component {
             filter: {
                 ...this.state.filter,
                 name: "",
-                ingredientId: null
+                ingredientId: null,
+                updateAt: "",
+                createAt: ""
             }
         }, () => {
             this.setState({ loading: true });
@@ -347,6 +351,32 @@ export class ImportDetail extends Component {
                                 </div>
                             </div>
                         </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Create From"
+                                            id="basic" value={this.state.filter.createAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, createAt: convertDateToEnCADate(e.target.value) })} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-col-12 p-md-6">
+                            <div className="p-grid">
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Update From"
+                                            id="basic" value={this.state.filter.updateAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, updateAt: convertDateToEnCADate(e.target.value) })} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="p-d-flex p-jc-center">
                         <div className="p-mr-2">
@@ -396,8 +426,8 @@ export class ImportDetail extends Component {
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
                     <Column field="quantity" header="Quantity" body={this.quantityBodyTemplate} sortable />
-                    <Column field="createdAt" header="Create At" body={this.createAtBodyTemplate} sortable />
-                    <Column field="updatedAt" header="Update At" body={this.updatedAtBodyTemplate} sortable />
+                    <Column field="createdAt" header="Create From" body={this.createAtBodyTemplate} sortable />
+                    <Column field="updatedAt" header="Update From" body={this.updatedAtBodyTemplate} sortable />
                     {/* <Column header="Action" body={(rowData) => this.actionBodyTemplate(rowData, this.form)} /> */}
                 </DataTable>
             </div >
