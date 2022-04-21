@@ -3,6 +3,7 @@ package com.fromlabs.inventory.apisecurity.controller;
 import com.fromlabs.inventory.apisecurity.config.ApiV1;
 import com.fromlabs.inventory.apisecurity.token.dto.AuthDTO;
 import com.fromlabs.inventory.apisecurity.token.service.InternalAPIKeyService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import static com.fromlabs.inventory.apisecurity.config.AppConfig.X_PRINCIPAL_HE
 
 @Slf4j
 @RestController
+@SentryTransaction(operation = "api-key-endpoint")
 @RequestMapping(value = "endpoint/security/" + ApiV1.URI_API)
 public class InternalAPIKeyEndpoint {
 

@@ -5,6 +5,7 @@ import com.fromlabs.inventory.apisecurity.token.dto.InternalAPIKeyDTO;
 import com.fromlabs.inventory.apisecurity.token.dto.AuthDTO;
 import com.fromlabs.inventory.apisecurity.token.dto.RegisterKeyDTO;
 import com.fromlabs.inventory.apisecurity.token.service.InternalAPIKeyService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import static com.fromlabs.inventory.apisecurity.config.AppConfig.*;
 
 @Slf4j
 @RestController
+@SentryTransaction(operation = "api-key-controller")
 @RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API, produces = ApiV1.MIME_API)
 public class InternalAPIKeyController {
 

@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { RecipeService } from '../../service/RecipeService';
 import { Toast } from 'primereact/toast';
 import { sleep } from "../../core/utility/ComponentUtility";
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Recipe form for save or update recipe form information
@@ -91,7 +92,7 @@ export class RecipeGroupForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get recipe group failed."))
     }
 
     /**

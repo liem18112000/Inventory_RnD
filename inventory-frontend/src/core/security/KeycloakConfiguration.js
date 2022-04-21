@@ -9,6 +9,7 @@ const keycloakConfiguration = new Keycloak({
     url: `${KEYCLOAK_SERVER}/auth`,
     realm: KEYCLOAK_REALM,
     clientId: KEYCLOAK_CLIENT,
+    release: "inventory@1.1.0"
 });
 
 export default keycloakConfiguration;

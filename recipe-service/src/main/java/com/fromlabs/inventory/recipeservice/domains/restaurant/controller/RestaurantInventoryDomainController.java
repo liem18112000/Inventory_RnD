@@ -6,6 +6,7 @@ package com.fromlabs.inventory.recipeservice.domains.restaurant.controller;
 
 import com.fromlabs.inventory.recipeservice.config.ApiV1;
 import com.fromlabs.inventory.recipeservice.domains.restaurant.services.RestaurantInventoryDomainService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,6 +26,7 @@ import static com.fromlabs.inventory.recipeservice.domains.DomainServiceConfigur
         havingValue = RESTAURANT_DOMAIN
 )
 @Slf4j
+@SentryTransaction(operation = "restaurant-recipe-service")
 public class RestaurantInventoryDomainController {
 
     //<editor-fold desc="SETUP">

@@ -6,6 +6,7 @@ package com.fromlabs.inventory.notificationservice.domains.restaurant.controller
 
 import com.fromlabs.inventory.notificationservice.config.ApiV1;
 import com.fromlabs.inventory.notificationservice.domains.restaurant.services.RestaurantInventoryDomainService;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,6 +19,7 @@ import static com.fromlabs.inventory.notificationservice.domains.DomainServiceCo
 /**
  * Domain controller for restaurant
  */
+@SentryTransaction(operation = "notification-restaurant-endpoint")
 @RestController
 @RequestMapping(value = "${application.base-url}/" + ApiV1.URI_API + "/${domain.service-path}", produces = ApiV1.MIME_API)
 @ConditionalOnProperty(

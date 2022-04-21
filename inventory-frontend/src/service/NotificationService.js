@@ -12,6 +12,7 @@ import {
 import { addActorNameAndRole } from "../core/utility/RequestActorConfig";
 import {compose} from "../core/utility/ComponentUtility";
 import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import {handleExceptionWithSentry} from "../core/utility/integrations/SentryExceptionResolver";
 
 // Notification base URL
 const BaseURL = baseNotificationAPI()
@@ -48,7 +49,7 @@ export class NotificationService {
         // Fetch notification event types data from api
         return axios.get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -71,7 +72,7 @@ export class NotificationService {
         // Fetch notification types data from api
         return axios.get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -94,7 +95,7 @@ export class NotificationService {
         // Fetch notification types data from api
         return axios.get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -128,7 +129,7 @@ export class NotificationService {
         // Fetch notification event data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -162,7 +163,7 @@ export class NotificationService {
         // Fetch notification event data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -187,7 +188,7 @@ export class NotificationService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -212,7 +213,7 @@ export class NotificationService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -237,6 +238,6 @@ export class NotificationService {
         return axios
             .put(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 }

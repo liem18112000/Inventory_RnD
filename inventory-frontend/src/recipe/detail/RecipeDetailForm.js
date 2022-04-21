@@ -8,6 +8,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { IngredientService } from '../../service/IngredientService';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Recipe form for save or update recipe form information
@@ -110,7 +111,7 @@ export class RecipeDetailForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get recipe detail failed."))
     }
 
     /**

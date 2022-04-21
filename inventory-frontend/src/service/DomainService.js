@@ -4,6 +4,7 @@ import axios from "axios";
 import { baseIngredientAPI } from "../constant";
 import { compose } from "../core/utility/ComponentUtility";
 import { authenticateWithApiKeyAndPrincipal } from "../core/security/ApiKeyHeaderConfig";
+import {handleExceptionWithSentry} from "../core/utility/integrations/SentryExceptionResolver";
 
 export default class DomainService {
     
@@ -35,7 +36,7 @@ export default class DomainService {
         // fetch ingredient suggest taxon data from api
         return axios.post(url, request, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error, true));
     }
 
     /**
@@ -58,6 +59,6 @@ export default class DomainService {
 
         return axios.post(url, request, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error, true));
     }
 }

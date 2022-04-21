@@ -6,6 +6,7 @@ package com.fromlabs.inventory.notificationservice.client.ingredient;
 
 import com.fromlabs.inventory.notificationservice.client.ingredient.bean.IngredientDto;
 import com.fromlabs.inventory.notificationservice.config.ApiV1;
+import io.sentry.spring.tracing.SentryTransaction;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import static com.fromlabs.inventory.notificationservice.config.AppConfig.*;
 /**
  * Ingredient client
  */
+@SentryTransaction(operation = "notification-ingredient-client")
 @FeignClient(value = "${services.ingredient-service.name}")
 @RequestMapping(value = "ingredient/" + ApiV1.URI_API)
 public interface IngredientClient {

@@ -10,6 +10,7 @@ import moment from 'moment';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Ingredient form for save or update ingredient form information
@@ -134,7 +135,7 @@ export class IngredientItemForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get item failed."))
     }
 
     /**

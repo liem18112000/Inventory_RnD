@@ -3,6 +3,7 @@ import { InputText } from 'primereact/inputtext';
 import { NotificationService } from '../../service/NotificationService';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 export class NotificationForm extends Component {
 
@@ -47,7 +48,7 @@ export class NotificationForm extends Component {
                 id: data ? data.id : null,
                 displayResponsive: true,
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Notification service is unavailable."))
     }
 
     onClick(name, position) {

@@ -48,6 +48,12 @@ services:
   notification-service:
     name: recipe-service
     url:  http://localhost:8083
+sentry:
+  dsn: https://c490dc765cb24cb8a2414c855b1f5fb0@o1200481.ingest.sentry.io/6328206
+  traces-sample-rate: 1.0
+  environment: production
+  sample-rate: 1.0
+  release: inventory@1.1.0
 ---
 spring:
   profiles: dev
@@ -61,6 +67,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+sentry:
+  environment: develop
 
 

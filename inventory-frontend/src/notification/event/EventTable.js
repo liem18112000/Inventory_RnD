@@ -76,11 +76,11 @@ export class EventTable extends Component {
                 <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw' }}>
                     <div className="card">
                         <DataTable value={this.state.data}>
-                            <Column field="ingredientCode" header="Code"></Column>
-                            <Column field="ingredientName" header="Name"></Column>
-                            <Column field="quantity" header="Quantity"></Column>
-                            <Column field="unitType" header="Unit Type"></Column>
-                            <Column field="unit" header="Unit"></Column>
+                            <Column field="ingredientCode" header="Code"/>
+                            <Column field="ingredientName" header="Name"/>
+                            <Column field="quantity" header="Quantity"/>
+                            <Column field="unitType" header="Unit Type"/>
+                            <Column field="unit" header="Unit"/>
                         </DataTable>
                     </div>
                 </Dialog>
@@ -91,10 +91,10 @@ export class EventTable extends Component {
                 <Dialog header="Event Table" visible={this.state.displayResponsive} onHide={() => this.onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '70vw' }}>
                     <div className="card">
                         <DataTable value={this.state.data}>
-                            <Column field="ingredientCode" header="Code"></Column>
-                            <Column field="ingredientName" header="Name"></Column>
-                            <Column field="minQuantity" header="Minimum Quantity"></Column>
-                            <Column field="currentQuantity" header="Current Quantity"></Column>
+                            <Column field="ingredientCode" header="Code"/>
+                            <Column field="ingredientName" header="Name"/>
+                            <Column field="minQuantity" header="Minimum Quantity"/>
+                            <Column field="currentQuantity" header="Current Quantity"/>
                         </DataTable>
                     </div>
                 </Dialog>

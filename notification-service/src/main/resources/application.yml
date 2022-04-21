@@ -54,7 +54,11 @@ services:
   ingredient-service:
     name: ingredient-service
     url: http://localhost:8080
-
+sentry:
+  dsn: https://86b29b3a6f1d4c2aa1d6f01993e29cdc@o1200481.ingest.sentry.io/6328335
+  traces-sample-rate: 1.0
+  environment: production
+  sample-rate: 1.0
 ---
 spring:
   profiles: dev
@@ -76,7 +80,8 @@ spring:
     url: jdbc:mysql://localhost:3306/notification
     username: root
     password:
-
+sentry:
+  environment: develop
 
 
 

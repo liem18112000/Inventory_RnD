@@ -8,6 +8,7 @@ import { RecipeService } from '../../service/RecipeService';
 import { sleep } from '../../core/utility/ComponentUtility';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Recipe form for save or update recipe form information
@@ -94,7 +95,6 @@ export class RecipeChildForm extends Component {
      */
     setUpdateInformation(id, parentId) {
         this.recipeService.getByID(id, this.state.isMock).then(data => {
-            // const recipe = this.state.recipeGroups.find((item) => item.value === parentId);
             this.setState({
                 data: {
                     id: data ? data.id : null,
@@ -109,7 +109,7 @@ export class RecipeChildForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get recipe failed."))
     }
 
     /**

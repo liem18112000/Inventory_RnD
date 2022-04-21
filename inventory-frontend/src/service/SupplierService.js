@@ -6,6 +6,7 @@ import { FilterRequestMapper } from "../core/models/mapper/ModelMapper";
 import { compose } from "../core/utility/ComponentUtility";
 import {mockImportSimple} from "../core/models/MockDataModel";
 import {authenticateWithApiKeyAndPrincipal, authorizeWithApiKey} from "../core/security/ApiKeyHeaderConfig";
+import {handleExceptionWithSentry} from "../core/utility/integrations/SentryExceptionResolver";
 
 // Supplier base URL
 const BaseURL = baseSupplierAPI()
@@ -48,7 +49,7 @@ export class SupplierService {
         // Fetch supplier group data from api
         return axios.post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -78,7 +79,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -102,7 +103,7 @@ export class SupplierService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -127,7 +128,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -152,7 +153,7 @@ export class SupplierService {
         return axios
             .put(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -182,7 +183,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -212,7 +213,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -242,7 +243,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -266,7 +267,7 @@ export class SupplierService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -289,7 +290,7 @@ export class SupplierService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -313,7 +314,7 @@ export class SupplierService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -338,7 +339,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -363,7 +364,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -388,7 +389,7 @@ export class SupplierService {
         return axios
             .put(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -413,7 +414,7 @@ export class SupplierService {
         return axios
             .put(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -437,7 +438,7 @@ export class SupplierService {
         return axios
             .get(url, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -462,7 +463,7 @@ export class SupplierService {
         return axios
             .post(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -487,7 +488,7 @@ export class SupplierService {
         return axios
             .put(url, body, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     /**
@@ -533,7 +534,7 @@ export class SupplierService {
         return axios
             .delete(`${BaseURL}/import/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 
     deleteMaterial(id, isMock = true) {
@@ -551,6 +552,6 @@ export class SupplierService {
         return axios
             .delete(`${BaseURL}/providable-material/${id}`, config)
             .then(res => res.data)
-            .catch(error => console.log(error));
+            .catch(error => handleExceptionWithSentry(error));
     }
 }

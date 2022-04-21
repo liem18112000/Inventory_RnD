@@ -10,6 +10,7 @@ import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDt
 import com.fromlabs.inventory.inventoryservice.ingredient.mapper.IngredientMapper;
 import com.fromlabs.inventory.inventoryservice.inventory.InventoryService;
 import com.fromlabs.inventory.inventoryservice.utility.TransactionLogic;
+import io.sentry.spring.tracing.SentryTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import static com.fromlabs.inventory.inventoryservice.config.AppConfig.*;
  * Ingredient endpoint implementation for internally expose API to other service
  * @author Liem
  */
+@SentryTransaction(operation = "ingredient-endpoint")
 @Slf4j
 @RestController
 @RequestMapping(value = "endpoint/ingredient/" + ApiV1.URI_API)

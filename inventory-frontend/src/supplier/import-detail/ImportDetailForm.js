@@ -8,6 +8,7 @@ import { Toast } from 'primereact/toast';
 import { SupplierService } from '../../service/SupplierService';
 import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 /**
  * Import detail form for save or update import detail form information
@@ -107,7 +108,7 @@ export class ImportDetailForm extends Component {
                 visible: true,
                 formHeader: this.state.editTitle
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get import detail failed."));
     }
 
     /**

@@ -24,6 +24,7 @@ import com.fromlabs.inventory.notificationservice.notification.notfication.Notif
 import com.fromlabs.inventory.notificationservice.notification.notfication.NotificationType;
 import com.fromlabs.inventory.notificationservice.notification.service.MessageService;
 import com.fromlabs.inventory.notificationservice.notification.service.NotificationService;
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.notificationservice.common.specifications.SearchCriteria.criteriaEqual;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
  * {@inheritDoc}
@@ -135,6 +137,8 @@ public class NotificationServiceImpl implements NotificationService {
             try {
                 return this.notificationMapper.toDto(entity);
             } catch (JsonProcessingException e) {
+                Sentry.captureMessage("Notification DTO conversion failed");
+                Sentry.captureException(e);
                 log.error("Notification DTO conversion failed: {}", e.getMessage());
                 return null;
             }
@@ -158,6 +162,8 @@ public class NotificationServiceImpl implements NotificationService {
             try {
                 return this.notificationMapper.toDto(entity);
             } catch (JsonProcessingException e) {
+                Sentry.captureMessage("Notification DTO conversion failed");
+                Sentry.captureException(e);
                 log.error("Notification DTO conversion failed: {}", e.getMessage());
                 return null;
             }
@@ -236,6 +242,7 @@ public class NotificationServiceImpl implements NotificationService {
                         event.getDescription(), new TypeReference<List<LowStockDetails>>(){});
                 message.setDetails(descriptions);
             } catch (JsonProcessingException e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
                 message.setDetails(List.of());
             }
@@ -255,6 +262,7 @@ public class NotificationServiceImpl implements NotificationService {
                         event.getDescription(), new TypeReference<List<StatisticsDetails>>(){});
                 message.setDetails(descriptions);
             } catch (JsonProcessingException e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
                 message.setDetails(List.of());
             }
@@ -387,6 +395,8 @@ public class NotificationServiceImpl implements NotificationService {
                 final var sentMessage = sendMessageWithType(message, messageType);
                 log.info("Sent notification message success: {}", sentMessage);
             } catch (MessagingException exception) {
+                Sentry.captureMessage("Sent notification message with HTML failed, send raw message");
+                Sentry.captureException(exception);
                 message.setBody(originalMessageBody);
                 final var sentMessage = sentDefaultMessageWithType(message, messageType);
                 log.warn("Sent notification message with HTML failed, send raw message: {}", sentMessage);
@@ -424,6 +434,7 @@ public class NotificationServiceImpl implements NotificationService {
             return new MessageValueObject();
         } else {
             log.error("Message type is not valid: {}", type);
+            Sentry.captureMessage("Message type is not valid: " + type);
             throw new IllegalArgumentException(
                     String.format("Message type is not valid: %s", type));
         }
@@ -450,6 +461,7 @@ public class NotificationServiceImpl implements NotificationService {
             throw new NotImplementedException("Feature is under implemented");
         } else {
             log.error("Message type is not valid: {}", type);
+            Sentry.captureMessage("Message type is not valid: " + type);
             throw new IllegalArgumentException(
                     String.format("Message type is not valid: %s", type));
         }
@@ -467,13 +479,10 @@ public class NotificationServiceImpl implements NotificationService {
                 this.templateRepository.findByName(dto.getEvent().getEventType());
         if (messageTemplate.isPresent()) {
             log.info("Notification template message applied");
-            // TODO: Try to use template engine
-//            final var templateString = String.format(
-//                    messageTemplate.get().getContent(),
-//                    message.getBody());
             final var templateString = messageTemplate.get().getContent();
             message.setBody(templateString);
         } else {
+            Sentry.captureMessage("Notification template message is not found");
             log.warn("Notification template message is not found");
         }
     }
@@ -528,6 +537,7 @@ public class NotificationServiceImpl implements NotificationService {
                     try {
                         return this.sendNotification(entity.getId());
                     } catch (Exception exception) {
+                        Sentry.captureException(exception);
                         failedNotifications.add(String.format("Notification with id - %s : %s",
                                 entity.getId().toString(), exception.getMessage()));
                         return null;

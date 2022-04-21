@@ -15,6 +15,7 @@ import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
 import { Link } from "react-router-dom";
 import { NotificationForm } from './NotificationForm';
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 
 export class Notification extends Component {
 
@@ -67,7 +68,7 @@ export class Notification extends Component {
                 ...this.state,
                 notificationTypes: types.content
             })
-        });
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get notification type failed."));
     }
 
     getNotificationStatuses() {
@@ -76,7 +77,7 @@ export class Notification extends Component {
                 ...this.state,
                 notificationStatuses: statuses.content
             })
-        })
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get notification status failed."))
     }
 
     /**

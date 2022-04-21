@@ -5,6 +5,8 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@react-keycloak/web": "^3.4.0",
+    "@sentry/react": "^6.19.6",
+    "@sentry/tracing": "^6.19.6",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
