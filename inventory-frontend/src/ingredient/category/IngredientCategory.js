@@ -137,9 +137,11 @@ export class IngredientCategory extends Component {
         return (
             <React.Fragment>
                 <div className="card">
-                    <SplitButton label="View" onClick={() => window.location.replace(
-                        `ingredient/${rowData.id}`
-                    )} model={items}></SplitButton>
+                    <SplitButton label="View"
+                        onClick={() => this.props.history.push({
+                            pathname: `ingredient/${rowData.id}`
+                        })} model={items}>
+                    </SplitButton>
                 </div>
             </React.Fragment>
         );
