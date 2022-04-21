@@ -16,6 +16,7 @@ public class RecipeDetailPageRequest extends RecipePageRequest {
     protected Long recipeId     = null;
     protected Long ingredientId = null;
     protected Float quantity    = 0f;
+    protected String updatedAt  = "";
 
     public RecipeDetailEntity to() {
         var entity = RecipeDetailEntityFactory.create(DEFAULT);

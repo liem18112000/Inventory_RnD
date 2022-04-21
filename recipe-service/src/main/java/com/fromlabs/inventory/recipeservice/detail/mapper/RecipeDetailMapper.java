@@ -73,6 +73,7 @@ public class RecipeDetailMapper {
         entity.setCode(request.getCode());
         entity.setDescription(request.getDescription());
         entity.setQuantity(request.getQuantity());
+        entity.setUpdateAt(request.getUpdatedAt());
         return entity;
     }
 
