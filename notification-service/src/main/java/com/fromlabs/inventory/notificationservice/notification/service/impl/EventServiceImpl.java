@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.fromlabs.inventory.notificationservice.common.specifications.BaseSpecification.Spec;
 import static com.fromlabs.inventory.notificationservice.common.specifications.SearchCriteria.criteriaEqual;
+import static com.fromlabs.inventory.notificationservice.common.specifications.SearchCriteria.criteriaTimestampGreaterThanOrEqual;
 
 /**
  * {@inheritDoc}
@@ -85,10 +86,13 @@ public class EventServiceImpl implements EventService {
     }
 
     private Specification<EventEntity> getSpecification(final EventDTO eventDTO) {
+        final var occurAt = getStringDefault(eventDTO.getOccurAt());
         return BaseSpecification.<EventEntity>Spec(criteriaEqual("name", getStringDefault(eventDTO.getName())))
                 .and(Spec(criteriaEqual("eventType", getStringDefault(eventDTO.getEventType()))))
                 .and(Spec(criteriaEqual("description", getStringDefault(eventDTO.getDescription()))))
-                .and(Spec(criteriaEqual("occurAt", getStringDefault(eventDTO.getOccurAt()))));
+                .and(Spec(StringUtils.hasText(occurAt) ?
+                        criteriaTimestampGreaterThanOrEqual("occurAt", occurAt) :
+                        criteriaEqual("occurAt", occurAt)));
     }
 
     /**

@@ -17,8 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification.Spec;
-import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaEqual;
-import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaTimestampGreaterThan;
+import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.*;
 import static java.util.Objects.isNull;
 
 @UtilityClass
@@ -102,7 +101,7 @@ public class IngredientHistorySpecification {
      * @return          BaseSpecification&lt;IngredientHistoryEntity&gt;
      */
     public static BaseSpecification<IngredientHistoryEntity> hasUpdateAtGreaterThan(String updateAt) {
-        return Spec(criteriaTimestampGreaterThan("updateAt", updateAt));
+        return Spec(criteriaTimestampGreaterThanOrEqual("updateAt", updateAt));
     }
 
     /**

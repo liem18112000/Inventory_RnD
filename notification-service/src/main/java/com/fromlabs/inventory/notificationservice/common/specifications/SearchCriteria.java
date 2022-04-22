@@ -33,4 +33,20 @@ public class SearchCriteria {
     static public SearchCriteria criteriaNotEqual(String key, Object value) {
         return SearchCriteria.builder().key(key).operation(SearchOperation.NOT_EQUAL).value(value).build();
     }
+
+    static public SearchCriteria criteriaTimestampGreaterThan(String key, Object value) {
+        return SearchCriteria.builder().key(key).operation(SearchOperation.TIMESTAMP_GREATER_THAN).value(value).build();
+    }
+
+    static public SearchCriteria criteriaTimestampLessThan(String key, Object value) {
+        return SearchCriteria.builder().key(key).operation(SearchOperation.TIMESTAMP_LESS_THAN).value(value).build();
+    }
+
+    static public SearchCriteria criteriaTimestampGreaterThanOrEqual(String key, Object value) {
+        return SearchCriteria.builder().key(key).operation(SearchOperation.TIMESTAMP_GREATER_THAN_OR_EQUAL).value(value).build();
+    }
+
+    static public SearchCriteria criteriaTimestampLessThanOrEqual(String key, Object value) {
+        return SearchCriteria.builder().key(key).operation(SearchOperation.TIMESTAMP_LESS_THAN_OR_EQUAL).value(value).build();
+    }
 }
