@@ -15,6 +15,8 @@ import { NotificationService } from "../../service/NotificationService";
 import { Dropdown } from "primereact/dropdown";
 import { EventForm } from './EventForm';
 import { EventTable } from './EventTable';
+import {Calendar} from "primereact/calendar";
+import {convertDateToEnCADate} from "../../core/utility/ComponentUtility";
 
 export class Event extends Component {
 
@@ -36,7 +38,8 @@ export class Event extends Component {
             filter: {
                 name: "",
                 eventType: "",
-                description: ""
+                description: "",
+                occurAt: ""
             },
             eventTypes: [],
             isMock: false,
@@ -388,6 +391,15 @@ export class Event extends Component {
                                             value={this.state.filter.name}
                                             onChange={(e) => this.setFilter({ ...this.state.filter, name: e.target.value })}
                                         />
+                                    </div>
+                                </div>
+                                <div className="p-col-12">
+                                    <div className="p-inputgroup">
+                                        <Calendar
+                                            dateFormat="yy-mm-dd"
+                                            placeholder="Occur From"
+                                            value={this.state.filter.occurAt}
+                                            onChange={(e) => this.setFilter({ ...this.state.filter, occurAt: convertDateToEnCADate(e.target.value) })} />
                                     </div>
                                 </div>
                             </div>
