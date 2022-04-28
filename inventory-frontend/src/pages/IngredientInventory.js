@@ -413,6 +413,8 @@ export class IngredientInventory extends Component {
                     className="p-datatable-customers"
                     dataKey="id"
                     rowHover
+                    scrollable
+                    scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
                     paginator={true}

@@ -425,7 +425,7 @@ export class SupplierMaterial extends Component {
                     header={header}
                     className="p-datatable-customers"
                     dataKey="id"
-                    rowHover
+                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
                     paginator={true}

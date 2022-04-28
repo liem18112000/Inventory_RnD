@@ -95,9 +95,10 @@ export class SupplierGroup extends Component {
         return (
             <React.Fragment>
                 <div className="card">
-                    <SplitButton label="View" onClick={() => window.location.replace(
-                        `supplier/${rowData.id}`
-                    )} model={items}></SplitButton>
+                    <SplitButton label="View" onClick={() => this.props.history.push({
+                        pathname:`supplier/${rowData.id}`
+                    })} model={items}>
+                    </SplitButton>
                 </div>
             </React.Fragment>
         );
@@ -425,7 +426,7 @@ export class SupplierGroup extends Component {
                     header={header}
                     className="p-datatable-customers"
                     dataKey="id"
-                    rowHover
+                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
                     paginator={true}
