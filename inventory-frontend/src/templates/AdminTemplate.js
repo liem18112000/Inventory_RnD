@@ -40,7 +40,8 @@ const AdminTemplate = (props) => {
         return <Fragment>
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider
-                    theme="light"
+                    theme="dark"
+                    mode="inline"
                     collapsible
                     breakpoint="sm"
                     collapsed={collapsed}
@@ -50,7 +51,8 @@ const AdminTemplate = (props) => {
                             alt={"Inventory"} />
                     </div>
                     <Menu
-                        // defaultSelectedKeys={['2']} 
+                        // defaultSelectedKeys={['2']}
+                        theme="dark"
                         mode="inline">
                         <SubMenu key="sub1" title="Dashboard" icon={<DesktopOutlined />}>
                             <Menu.Item key="1" >
