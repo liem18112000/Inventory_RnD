@@ -41,7 +41,8 @@ export class RecipeChild extends Component {
             },
             groupName: "",
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.history = props.history
         this.recipeService = new RecipeService();
@@ -334,8 +335,8 @@ export class RecipeChild extends Component {
                 <UploadImageForm ref={el => this.upload = el}
                     refreshData={() => this.getPageChildren()}
                 />
-                <h1 style={{ fontSize: "1.2rem", padding: "15px 0 0 20px", }}>{this.state.groupName}</h1>
-                <Fieldset legend="Recipe" toggleable>
+                <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1>
+                <Fieldset legend="Recipe" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

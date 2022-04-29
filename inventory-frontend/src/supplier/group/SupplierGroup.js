@@ -38,7 +38,8 @@ export class SupplierGroup extends Component {
                 code: "",
             },
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.supplierService = new SupplierService();
         this.mapper = new PagingDataModelMapper();
@@ -343,7 +344,7 @@ export class SupplierGroup extends Component {
                 <SupplierGroupForm ref={el => this.form = el}
                     refreshData={() => this.getPage()}
                 />
-                <Fieldset legend="Supplier Group" toggleable>
+                <Fieldset legend="Supplier Group" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

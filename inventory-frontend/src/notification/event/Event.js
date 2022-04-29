@@ -47,7 +47,8 @@ export class Event extends Component {
             eventTypes: [],
             isMock: false,
             loading: false,
-            displayResponsive: false
+            displayResponsive: false,
+            panelCollapsed: true
         };
         this.notificationService = new NotificationService();
         this.mapper = new PagingDataModelMapper();
@@ -368,7 +369,7 @@ export class Event extends Component {
                 <EventTable ref={el => this.table = el}
                     refreshData={() => this.getPage()}
                 />
-                <Fieldset legend="Notification Event" toggleable>
+                <Fieldset legend="Notification Event" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

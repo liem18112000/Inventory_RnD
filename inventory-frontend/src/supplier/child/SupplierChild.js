@@ -37,7 +37,8 @@ export class SupplierChild extends Component {
                 code: "",
             },
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
 
         this.supplierService = new SupplierService();
@@ -296,7 +297,7 @@ export class SupplierChild extends Component {
                 <SupplierChildForm ref={el => this.form = el}
                     refreshData={() => this.getPageChildren()}
                 />
-                <Fieldset legend="Supplier" toggleable>
+                <Fieldset legend="Supplier" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText

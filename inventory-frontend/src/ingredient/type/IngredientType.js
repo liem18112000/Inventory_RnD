@@ -45,7 +45,8 @@ export class IngredientType extends Component {
                 unitType: "",
             },
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
 
         this.ingredientService = new IngredientService();
@@ -379,7 +380,7 @@ export class IngredientType extends Component {
                 <IngredientTypeConfig ref={el => this.config = el}
                     refreshData={() => this.getPageTypes()}
                 />
-                <Fieldset legend="Ingredient Detail" toggleable>
+                <Fieldset legend="Ingredient Detail" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText

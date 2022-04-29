@@ -38,7 +38,8 @@ export class SupplierImport extends Component {
             },
             supplierGroupId: props.location.state.supplierGroupId,
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.supplierService = new SupplierService();
         console.log(props);
@@ -335,7 +336,7 @@ export class SupplierImport extends Component {
                     refreshData={() => this.getPageImports()}
                 // id={this.props.match.params.id}
                 />
-                <Fieldset legend="Supplier Import" toggleable>
+                <Fieldset legend="Supplier Import" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

@@ -41,7 +41,8 @@ export class IngredientCategory extends Component {
                 createAt: "",
             },
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.ingredientService = new IngredientService();
         this.mapper = new PagingDataModelMapper();
@@ -379,7 +380,7 @@ export class IngredientCategory extends Component {
                 <IngredientCategoryForm ref={el => this.form = el}
                     refreshData={() => this.getPageCategories()}
                 />
-                <Fieldset legend="Ingredient Categories" toggleable>
+                <Fieldset legend="Ingredient Categories" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

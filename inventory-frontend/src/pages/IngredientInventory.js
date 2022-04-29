@@ -43,7 +43,8 @@ export class IngredientInventory extends Component {
             },
             isMock: false,
             loading: false,
-            ingredientList: []
+            ingredientList: [],
+            panelCollapsed: true
         };
 
         this.ingredientService = new IngredientService();
@@ -325,7 +326,7 @@ export class IngredientInventory extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <Fieldset legend="Ingredient Inventory" toggleable>
+                <Fieldset legend="Ingredient Inventory" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText
