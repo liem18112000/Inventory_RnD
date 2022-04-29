@@ -43,6 +43,7 @@ export class SupplierMaterial extends Component {
             supplierGroupId: props.location.state.supplierGroupId,
             isMock: false,
             loading: false,
+            panelCollapsed: true
         };
         this.supplierService = new SupplierService();
         this.ingredientService = new IngredientService();
@@ -352,7 +353,7 @@ export class SupplierMaterial extends Component {
                     refreshData={() => this.getPageMaterials()}
                     id={this.props.match.params.id}
                 />
-                <Fieldset legend="Supplier Material" toggleable>
+                <Fieldset legend="Supplier Material" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

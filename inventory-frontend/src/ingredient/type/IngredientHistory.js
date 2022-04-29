@@ -15,7 +15,7 @@ import moment from 'moment';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import InventoryTrackService from '../../service/InventoryTrackService';
-import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
+import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 
 export class IngredientHistory extends Component {
 
@@ -43,7 +43,8 @@ export class IngredientHistory extends Component {
             events: [],
             statuses: [],
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.inventoryTrackService = new InventoryTrackService();
         this.mapper = new PagingDataModelMapper();
@@ -57,13 +58,13 @@ export class IngredientHistory extends Component {
     };
 
     getPages = () => {
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         const ingredientId = this.props.match.params.id;
         this.inventoryTrackService
             .getPage(ingredientId, filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => this.setState({ ...this.state, ...data}));
+            .then(data => this.setState({ ...this.state, ...data }));
     };
 
     /**
@@ -82,7 +83,7 @@ export class IngredientHistory extends Component {
      */
     getStatuses = () => {
         this.inventoryTrackService.getStatuses(this.state.isMock)
-            .then(statuses => this.setState({...this.state, statuses: statuses}))
+            .then(statuses => this.setState({ ...this.state, statuses: statuses }))
     }
 
     setFilter = (filter) => {
@@ -291,7 +292,7 @@ export class IngredientHistory extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
-                <Fieldset legend="Inventory History" toggleable>
+                <Fieldset legend="Inventory History" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText

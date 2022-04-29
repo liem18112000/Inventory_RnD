@@ -40,6 +40,7 @@ export class ImportDetail extends Component {
             supplierId: props.location.state.supplierId,
             isMock: false,
             loading: false,
+            panelCollapsed: true,
             ingredientList: []
         };
         this.supplierService = new SupplierService();
@@ -322,7 +323,7 @@ export class ImportDetail extends Component {
                     refreshData={() => this.getPageDetail()}
                     id={this.props.match.params.id}
                 />
-                <Fieldset legend="Import Detail" toggleable>
+                <Fieldset legend="Import Detail" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

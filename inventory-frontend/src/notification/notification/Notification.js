@@ -46,7 +46,8 @@ export class Notification extends Component {
             notificationTypes: [],
             notificationStatuses: [],
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.notificationService = new NotificationService();
         this.mapper = new PagingDataModelMapper();
@@ -364,7 +365,7 @@ export class Notification extends Component {
                 <NotificationForm ref={el => this.form = el}
                     refreshData={() => this.getPage()}
                 />
-                <Fieldset legend="Notification" toggleable>
+                <Fieldset legend="Notification" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

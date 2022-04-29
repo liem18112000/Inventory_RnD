@@ -145,7 +145,7 @@ export class SuggestTaxon extends Component {
         return (
             <div className="p-grid p-nogutter">
                 <div className="p-col-6" style={{ textAlign: 'left' }}>
-                    {/* <Dropdown options={this.sortOptions} value={this.state.sortKey} optionLabel="label" placeholder="Sort By Price" onChange={this.onSortChange} /> */}
+                    <h4>Suggest Taxon</h4>
                 </div>
                 <div className="p-col-6" style={{ textAlign: 'right' }}>
                     <DataViewLayoutOptions layout={this.state.layout} onChange={(e) => this.setState({ layout: e.value })} />

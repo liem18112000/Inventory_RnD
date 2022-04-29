@@ -38,7 +38,8 @@ export class RecipeGroup extends Component {
                 updatedAt: "",
             },
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.history = props.history
         this.recipeService = new RecipeService();
@@ -315,7 +316,7 @@ export class RecipeGroup extends Component {
                 <RecipeGroupForm ref={el => this.form = el}
                     refreshData={() => this.getPageGroups()}
                 />
-                <Fieldset legend="Recipe Groups" toggleable>
+                <Fieldset legend="Recipe Groups" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

@@ -44,7 +44,8 @@ class IngredientItem extends Component {
             // --paginator state--
             isMock: false,
             isBatch: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.ingredientService = new IngredientService();
         this.mapper = new PagingDataModelMapper();
@@ -312,7 +313,7 @@ class IngredientItem extends Component {
                     unitType={this.props.location.state.unitType}
                     unit={this.props.location.state.unit}
                 />
-                <Fieldset legend="Ingredient Item" toggleable>
+                <Fieldset legend="Ingredient Item" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">
                             <InputText

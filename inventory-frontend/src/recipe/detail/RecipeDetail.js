@@ -40,7 +40,8 @@ export class RecipeDetail extends Component {
             groupId: props.location.state.groupId,
             isParent: props.location.state.isParent,
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.recipeService = new RecipeService();
         console.log(props);
@@ -338,7 +339,7 @@ export class RecipeDetail extends Component {
                     refreshData={() => this.getPageDetails()}
                     id={this.props.match.params.id}
                 />
-                <Fieldset legend="Recipe Detail" toggleable>
+                <Fieldset legend="Recipe Detail" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

@@ -40,7 +40,8 @@ export class Recipes extends Component {
             },
             // groupName: props.location.state.groupName,
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.history = props.history;
         this.recipeService = new RecipeService();
@@ -306,7 +307,7 @@ export class Recipes extends Component {
                 <UploadImageForm ref={el => this.upload = el}
                     refreshData={() => this.getAllRecipeChildren()}
                 />
-                <Fieldset legend="Recipes" toggleable>
+                <Fieldset legend="Recipes" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">

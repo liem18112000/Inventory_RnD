@@ -16,7 +16,7 @@ import { Toast } from 'primereact/toast';
 import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
-import {UploadImageForm} from "../upload-media/UploadImageForm";
+import { UploadImageForm } from "../upload-media/UploadImageForm";
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 
@@ -41,7 +41,8 @@ export class RecipeChild extends Component {
             },
             groupName: "",
             isMock: false,
-            loading: false
+            loading: false,
+            panelCollapsed: true
         };
         this.history = props.history
         this.recipeService = new RecipeService();
@@ -61,12 +62,12 @@ export class RecipeChild extends Component {
 
     getPageChildren = () => {
         const recipeId = this.props.match.params.id;
-        const {filter, page, rows, sortField, sortOrder, isMock} = this.state;
+        const { filter, page, rows, sortField, sortOrder, isMock } = this.state;
         this.recipeService
             .getPageChild(recipeId, filter, page, rows, sortField, sortOrder, isMock)
             .then(data => handleGetPage(data, this.toast))
             .then(data => this.mapper.toModel(data))
-            .then(data => this.setState({ ...this.state, ...data}));
+            .then(data => this.setState({ ...this.state, ...data }));
     }
 
     descriptionBodyTemplate(rowData) {
@@ -79,18 +80,24 @@ export class RecipeChild extends Component {
 
     deleteRecipe(recipeId) {
         if (!recipeId) {
-            this.toast.show({ severity: 'warning', summary: 'Delete failed',
-                detail: 'Recipe id is not set', life: 3000 })
+            this.toast.show({
+                severity: 'warning', summary: 'Delete failed',
+                detail: 'Recipe id is not set', life: 3000
+            })
         } else {
             this.recipeService.deleteRecipe(recipeId, this.state.isMock)
                 .then(res => {
                     if (res) {
-                        this.toast.show({ severity: 'success', summary: 'Delete success',
-                            detail: 'Recipe child has been deleted', life: 1000 })
+                        this.toast.show({
+                            severity: 'success', summary: 'Delete success',
+                            detail: 'Recipe child has been deleted', life: 1000
+                        })
                         this.getPageChildren()
                     } else {
-                        this.toast.show({ severity: 'error', summary: 'Delete failed',
-                            detail: 'Recipe child may has recipe detail.', life: 5000 })
+                        this.toast.show({
+                            severity: 'error', summary: 'Delete failed',
+                            detail: 'Recipe child may has recipe detail.', life: 5000
+                        })
                     }
                 })
         }
@@ -103,8 +110,10 @@ export class RecipeChild extends Component {
             icon: 'pi pi-info-circle',
             acceptClassName: 'p-button-danger',
             accept: () => this.deleteRecipe(rowData.id, this.state.isMock),
-            reject: () => this.toast.show({ severity: 'info', summary: 'Cancel delete',
-                detail: 'You have cancel delete', life: 1000 })
+            reject: () => this.toast.show({
+                severity: 'info', summary: 'Cancel delete',
+                detail: 'You have cancel delete', life: 1000
+            })
         });
     }
 
@@ -327,7 +336,7 @@ export class RecipeChild extends Component {
                     refreshData={() => this.getPageChildren()}
                 />
                 <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1>
-                <Fieldset legend="Recipe" toggleable>
+                <Fieldset legend="Recipe" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
                             <div className="p-grid">
