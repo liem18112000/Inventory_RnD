@@ -1,6 +1,16 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Route } from "react-router";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
+import { NavLink } from "react-router-dom";
+import {
+    DesktopOutlined,
+    TeamOutlined,
+    OneToOneOutlined,
+    ShoppingCartOutlined,
+    BellOutlined,
+    LogoutOutlined,
+    UserOutlined
+} from '@ant-design/icons';
 import '../assets/styles/OverlayPanelDemo.css';
 import { NotificationDialog } from "../notification/bell/NotificationDialog";
 import { useKeycloak } from "@react-keycloak/web";
@@ -49,10 +59,11 @@ const AdminTemplate = (props) => {
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>
                         <div className="header_button">
-                            <Button>
-                                {keycloak.tokenParsed.preferred_username}
+                            <UserOutlined style={{ fontSize: '2rem', color: 'rgba(0, 0, 0, 0.6)', position: 'relative', bottom: '5px' }} />{keycloak.tokenParsed.preferred_username}
+                            <Button onClick={() => keycloak.logout()} style={{ margin: '15px 15px 0px 20px', padding: 'unset' }}>
+                                {/* <i className="pi pi-sign-out"></i> */}
+                                <LogoutOutlined style={{ fontSize: '2rem', color: 'rgba(0, 0, 0, 0.6)', position: 'relative', bottom: '5px' }} />
                             </Button>
-                            <i onClick={() => keycloak.logout()} className="pi pi-sign-out" style={{ 'padding': '15px' }}></i>
                         </div>
                         <NotificationDialog ref={bell} />
 
