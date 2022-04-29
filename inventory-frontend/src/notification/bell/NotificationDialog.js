@@ -8,6 +8,7 @@ import { NotificationService } from "../../service/NotificationService";
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Badge } from 'primereact/badge';
 import '../../assets/styles/TableDemo.css'
+import { Link } from 'react-router-dom';
 
 export class NotificationDialog extends Component {
 
@@ -72,11 +73,17 @@ export class NotificationDialog extends Component {
         );
     }
 
-    nameTemplate(content) {
-        console.log(content)
+    nameTemplate(rowData) {
+        // console.log(content)
         return (
             <React.Fragment>
-                <span style={{ whileSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '200px' }}>{content.name}</span>
+                <Link to={`event/${rowData.id}`}>
+                    <span
+                        style={{ whileSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '200px' }}
+                    >
+                        {rowData.name}
+                    </span>
+                </Link>
             </React.Fragment>
         );
     }
@@ -115,7 +122,7 @@ export class NotificationDialog extends Component {
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} events"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     >
-                        <Column header="Event" field="name" body={this.nameTemplate} />
+                        <Column header="Event" field="name" body={(rowData) => this.nameTemplate(rowData)} />
                         <Column header="Type" field="eventType" />
                     </DataTable>
                 </OverlayPanel>
