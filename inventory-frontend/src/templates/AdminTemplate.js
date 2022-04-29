@@ -13,6 +13,7 @@ import '../assets/styles/OverlayPanelDemo.css';
 import { NotificationDialog } from "../notification/bell/NotificationDialog";
 import { useKeycloak } from "@react-keycloak/web";
 import '../assets/styles/Login.css';
+import 'primeicons/primeicons.css';
 
 const { Header, Content, Sider, Footer } = Layout;
 const { SubMenu } = Menu;
@@ -89,11 +90,12 @@ const AdminTemplate = (props) => {
                 </Sider>
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>
-
-                        <Button className="ant-btn" onClick={() => keycloak.logout()}>
-                            {keycloak.tokenParsed.preferred_username} Logout
-                        </Button>
-
+                        <div className="header_button">
+                            <Button>
+                                {keycloak.tokenParsed.preferred_username}
+                            </Button>
+                            <i onClick={() => keycloak.logout()} className="pi pi-sign-out" style={{ 'padding': '15px' }}></i>
+                        </div>
                         <NotificationDialog ref={bell} />
 
                     </Header>
