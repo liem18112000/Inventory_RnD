@@ -17,6 +17,7 @@ import moment from 'moment';
 import { handleGetPage } from '../core/handlers/ApiLoadContentHandler.js';
 import { Toast } from 'primereact/toast';
 import { convertDateToEnCADate, sleep } from "../core/utility/ComponentUtility";
+import {ExportOutlined} from "@ant-design/icons";
 
 export class IngredientInventory extends Component {
 
@@ -314,6 +315,7 @@ export class IngredientInventory extends Component {
                             iconPos="left"
                             label="Send Statistics"
                             onClick={() => this.sendStatistics()}
+                            icon="pi pi-envelope"
                         />
                         <SplitButton className="table-control-length p-button-constrast" label="Refresh" icon="pi pi-refresh"
                             onClick={this.onRefresh} model={tableLengthOptions}>

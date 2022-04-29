@@ -9,6 +9,7 @@ import {useKeycloak} from "@react-keycloak/web";
 import * as Sentry from "@sentry/react";
 import {sentryConfiguration} from "./core/utility/SentryConfiguration";
 import {renderRoute} from "./config/Routes";
+import "./App.css"
 
 export const history = createBrowserHistory();
 
