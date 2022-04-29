@@ -1,22 +1,15 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Route } from "react-router";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
-import { NavLink } from "react-router-dom";
-import {
-    DesktopOutlined,
-    TeamOutlined,
-    OneToOneOutlined,
-    ShoppingCartOutlined,
-    BellOutlined
-} from '@ant-design/icons';
 import '../assets/styles/OverlayPanelDemo.css';
 import { NotificationDialog } from "../notification/bell/NotificationDialog";
 import { useKeycloak } from "@react-keycloak/web";
 import '../assets/styles/Login.css';
 import 'primeicons/primeicons.css';
+import {menu} from "../config/PagesAndMenu";
+import SiderMenu from "../components/common/SiderMenu";
 
 const { Header, Content, Sider, Footer } = Layout;
-const { SubMenu } = Menu;
 
 const AdminTemplate = (props) => {
 
@@ -51,42 +44,7 @@ const AdminTemplate = (props) => {
                         <img src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977417/Group_1_eco8m0.png"
                             alt={"Inventory"} />
                     </div>
-                    <Menu
-                        // defaultSelectedKeys={['2']}
-                        theme="dark"
-                        mode="inline">
-                        <SubMenu key="sub1" title="Dashboard" icon={<DesktopOutlined />}>
-                            <Menu.Item key="1" >
-                                <NavLink to="/ingredient-inventory">Ingredient Inventory</NavLink>
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub2" title="Ingredient Mgt" icon={<ShoppingCartOutlined />}>
-                            <Menu.Item key="2" >
-                                <NavLink to="/ingredient">Ingredient Categories</NavLink>
-                            </Menu.Item>
-                            <Menu.Item key="3" >
-                                <NavLink to="/taxon">Suggest Taxon</NavLink>
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub3" title="Recipe Mgt" icon={<OneToOneOutlined />}>
-                            <Menu.Item key="4" >
-                                <NavLink to="/recipe">Recipe Groups</NavLink>
-                            </Menu.Item>
-                            <Menu.Item key="5" >
-                                <NavLink to="/recipes">Recipes</NavLink>
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub4" title="Supplier Mgt" icon={<TeamOutlined />} >
-                            <Menu.Item key="6" >
-                                <NavLink to="/supplier">Supplier Group</NavLink>
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub5" title="Notification Mgt" icon={<BellOutlined />}>
-                            <Menu.Item key="7" >
-                                <NavLink to="/notification/event">Event</NavLink>
-                            </Menu.Item>
-                        </SubMenu>
-                    </Menu>
+                    <SiderMenu {...menu}/>
                 </Sider>
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>

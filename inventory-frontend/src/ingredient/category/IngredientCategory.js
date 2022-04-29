@@ -448,7 +448,7 @@ export class IngredientCategory extends Component {
                     </div>
                 </Fieldset>
 
-                < DataTable ref={(el) => this.dt = el}
+                <DataTable ref={(el) => this.dt = el}
                     lazy={true}
                     first={this.state.page * this.state.rows}
                     value={this.state.content}
