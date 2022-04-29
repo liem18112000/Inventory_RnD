@@ -51,10 +51,6 @@ const routes = [
     component: RecipeGroup,
   },
   {
-    path: "/taxon",
-    component: SuggestTaxon,
-  },
-  {
     path: "/recipes",
     component: Recipes,
   },
