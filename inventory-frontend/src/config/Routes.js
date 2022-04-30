@@ -16,6 +16,7 @@ import {Notification} from "../notification/notification/Notification";
 import {Event} from "../notification/event/Event";
 import {SupplierImport} from "../supplier/supplier-import/SupplierImport";
 import AdminTemplate from "../templates/AdminTemplate";
+import TableExample from "../components/table/TableExample";
 
 const routes = [
   {
@@ -89,6 +90,10 @@ const routes = [
   {
     path: "/supplier/import/detail/:id",
     component: ImportDetail,
+  },
+  {
+    path: "/test",
+    component: TableExample,
   }
 ]
 

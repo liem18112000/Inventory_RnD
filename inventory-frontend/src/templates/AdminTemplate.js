@@ -1,13 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Route } from "react-router";
-import { Layout, Menu, Breadcrumb, Button } from 'antd';
-import { NavLink } from "react-router-dom";
+import { Layout, Breadcrumb, Button } from 'antd';
 import {
-    DesktopOutlined,
-    TeamOutlined,
-    OneToOneOutlined,
-    ShoppingCartOutlined,
-    BellOutlined,
     LogoutOutlined,
     UserOutlined
 } from '@ant-design/icons';
