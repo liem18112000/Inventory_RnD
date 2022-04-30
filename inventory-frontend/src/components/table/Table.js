@@ -14,6 +14,7 @@ import {
     DEFAULT_TABLE_LENGTH_OPTIONS
 } from "./config";
 import { getFilterModel } from "./TableUtil";
+import {Link} from "react-router-dom";
 
 const Table = (props) => {
     const {
@@ -29,6 +30,10 @@ const Table = (props) => {
 
         filterLegend,
         headerSection,
+        headerSectionPosition,
+
+        getNavigateBackLink,
+        navigateBackLabel
     } = props;
 
     const [data, setData] = useState([]);
@@ -242,6 +247,13 @@ const Table = (props) => {
                         </SplitButton>
                         {position === "after" && additionalHeader}
                     </span>
+                    {navigateBackLabel && getNavigateBackLink && <span
+                        className="p-input-icon-left"
+                        style={{ fontSize: "17px" }}>
+                        <Link to={getNavigateBackLink()}>
+                            {navigateBackLabel}
+                        </Link>
+                    </span>}
                 </div>
             </React.Fragment>
         )
@@ -276,7 +288,7 @@ const Table = (props) => {
                        first={paginator.page * paginator.rows}
                        value={data}
                        loading={loading}
-                       header={renderHeader(headerSection)}
+                       header={renderHeader(headerSection, headerSectionPosition)}
                        className="p-datatable-customers"
                        onPage={onChangePage}
                        onSort={onSort}
@@ -286,8 +298,7 @@ const Table = (props) => {
                        sortOrder={paginator.sortOrder}
                        rowHover
                        scrollable
-                       {...DEFAULT_TABLE_CONFIG}
-            >
+                       {...DEFAULT_TABLE_CONFIG}>
                 {renderColumns(columns)}
             </DataTable>
         </div>

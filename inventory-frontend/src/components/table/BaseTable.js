@@ -1,78 +1,66 @@
-import {IngredientService} from "../../service/IngredientService";
 import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 import {handleGetPage} from "../../core/handlers/ApiLoadContentHandler";
 import {Toast} from "primereact/toast";
 import React, {useRef} from "react";
 import Table from "./Table";
 import {SORT_ASC} from "./config";
+import {Button} from "primereact/button";
+import {
+    capitalizeTheFirstLetterOfEachWord,
+    getActionColumnConfig,
+    getDateColumnConfig,
+    getDefaultColumnConfig
+} from "./TableUtil";
 
-const TableExample = (props) => {
+const BaseTable = (props) => {
+
+    const {
+        name,
+        service,
+        additionalColumns,
+        additionalHeaders,
+        Form
+    } = props
+
     const columns = [
-        {
-            field: "code",
-            filterConfig: {
-                enabled: true,
-                defaultValue: "",
-                inputProps: {
-                    placeholder: "Code"
+        getDefaultColumnConfig("code"),
+        getDefaultColumnConfig("name"),
+        ...additionalColumns,
+        getDateColumnConfig("createAt", "Create from"),
+        getDefaultColumnConfig("description"),
+        getActionColumnConfig(
+            (rowData) => props.history.push({
+                pathname: `ingredient/${rowData.id}`
+            }),
+            (rowData) => [
+                {
+                    label: 'Edit',
+                    icon: 'pi pi-pencil',
+                    command: (e) => { form.current?.action(rowData.id, false) }
                 }
-            },
-            columnConfig: {
-                sortable: true,
-            }
-        },
-        {
-            field: "name",
-            filterConfig: {
-                enabled: true,
-                defaultValue: "",
-                inputProps: {
-                    placeholder: "Name"
-                }
-            },
-            columnConfig: {
-                sortable: true,
-            }
-        },
-        {
-            field: "createAt",
-            sortable: true,
-            filterConfig: {
-                enabled: true,
-                defaultValue: "",
-
-                inputProps: {
-                    placeholder: "Create From"
-                }
-            },
-            columnConfig: {
-                sortable: true,
-            }
-        },
-        {
-            field: "description",
-            sortable: true,
-            filterConfig: {
-                enabled: true,
-                defaultValue: "",
-                inputProps: {
-                    placeholder: "Description"
-                }
-            },
-            columnConfig: {
-                sortable: true,
-            }
-        }
+            ]
+        )
     ]
-    const service = new IngredientService();
+
+    const headers = (<>
+        {additionalHeaders}
+        <Button
+            style={{ marginRight: '0.5rem' }}
+            icon="pi pi-plus"
+            iconPos="left"
+            label={`New ${capitalizeTheFirstLetterOfEachWord(name)}`}
+            onClick={() => form.current?.action(null, true)}
+        />
+    </>)
+
     const mapper = new PagingDataModelMapper();
-    const toast = useRef(null);
     const toastInterval = 1000
+    const toast = useRef(null);
+    const form = useRef(null);
 
     const fetchData = (filter, pagination) => {
         const { page, rows, sortField, sortOrder } = pagination;
-        return service
-            .getPageCategory(filter, page, rows, sortField, sortOrder, false)
+        return service.getData(filter, page, rows, sortField, sortOrder, false)
             .then(data => handleGetPage(data, toast.current))
             .then(data => mapper.toModel(data))
     }
@@ -115,17 +103,21 @@ const TableExample = (props) => {
     return (
         <React.Fragment>
             <Toast ref={toast} />
+            <Form ref={form}
+                  refreshData={fetchData}/>
             <Table columns={columns}
                    fetchData={fetchData}
-                   filterLegend={"Ingredient Category"}
+                   filterLegend={capitalizeTheFirstLetterOfEachWord(name)}
                    onAfterResetFilter={onAfterResetFilter}
                    onAfterRefresh={onAfterRefresh}
                    onAfterSort={onAfterSort}
                    onAfterChangeSize={onAfterChangeSize}
                    onAfterChangePage={onAfterChangePage}
+                   headerSection={headers}
+                   headerSectionPosition="before"
             />
         </React.Fragment>
     )
 }
 
-export default TableExample;
+export default BaseTable;

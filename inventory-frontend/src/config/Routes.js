@@ -16,7 +16,8 @@ import {Notification} from "../notification/notification/Notification";
 import {Event} from "../notification/event/Event";
 import {SupplierImport} from "../supplier/supplier-import/SupplierImport";
 import AdminTemplate from "../templates/AdminTemplate";
-import TableExample from "../components/table/TableExample";
+import BaseTable from "../components/table/BaseTable";
+import ExampleTable from "../components/table/ExampleTable";
 
 const routes = [
   {
@@ -93,8 +94,8 @@ const routes = [
   },
   {
     path: "/test",
-    component: TableExample,
-  }
+    component: ExampleTable,
+  },
 ]
 
 const renderRoute = () => {
