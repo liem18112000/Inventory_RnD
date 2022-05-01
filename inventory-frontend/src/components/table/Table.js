@@ -10,6 +10,7 @@ import {
     DEFAULT_FILTER_FIELDSET_CONFIG,
     DEFAULT_PAGINATOR,
     DEFAULT_SIZE,
+    DEFAULT_SORT,
     DEFAULT_TABLE_CONFIG,
     DEFAULT_TABLE_LENGTH_OPTIONS
 } from "./config";
@@ -22,11 +23,18 @@ const Table = (props) => {
         fetchData,
 
         mockData,
+        onBeforeSort,
         onAfterSort,
+        onBeforeChangePage,
         onAfterChangePage,
+        onBeforeChangeSize,
         onAfterChangeSize,
+        onBeforeRefresh,
         onAfterRefresh,
+        onBeforeResetFilter,
         onAfterResetFilter,
+        onBeforeResetSort,
+        onAfterResetSort,
 
         filterLegend,
         headerSection,
@@ -55,51 +63,42 @@ const Table = (props) => {
      * On fetch data
      */
     const onFetchData = () => {
-        onLoading(() => {
-            if (Array.isArray(mockData) && mockData.length > 0) {
-                console.log("Mock data")
-                setData(mockData)
+        setLoading(true)
+        if (Array.isArray(mockData) && mockData.length > 0) {
+            console.log("Mock data");
+            setData(mockData);
+            setLoading(false);
+        } else {
+            if (!fetchData) {
+                console.error("fetchData is null");
+                setLoading(false);
             } else {
-                if (!fetchData) {
-                    console.error("fetchData is null")
-                } else {
-                    fetchData(filter, paginator).then(res => {
-                        const {content, page, rows, total} = res
-                        setData(content);
-                        setPaginator({
-                            ...paginator,
-                            page: page,
-                            total: total,
-                            rows: rows
-                        })
-                    });
-                }
+                fetchData(filter, paginator).then(res => {
+                    const {content, page, rows, total} = res
+                    setData(content);
+                    setPaginator({
+                        ...paginator,
+                        page: page,
+                        total: total,
+                        rows: rows
+                    })
+                }).then(() => setLoading(false));
             }
-        })
-    }
-
-    /**
-     * On loading
-     * @param func function need to be executed with loading effect
-     */
-    const onLoading = (func) => {
-        setLoading(true);
-        try {
-            func()
-        } catch (e) {
-            console.error(e)
-            setLoading(false)
         }
-        setLoading(false)
     }
 
     /**
      * On reset filter
      */
     const onResetFilter = () => {
-        setFilter(getFilterModel(columns))
+        if (onBeforeResetFilter) {
+            onBeforeResetFilter(filter);
+        }
+
+        setFilter(getFilterModel(columns));
+
         if (onAfterResetFilter) {
-            onAfterResetFilter()
+            onAfterResetFilter(filter)
         }
     }
 
@@ -109,6 +108,9 @@ const Table = (props) => {
      */
     const onChangePage = e => {
         const { page } = e
+        if (onBeforeChangePage) {
+            onBeforeChangePage(paginator.page);
+        }
         setPaginator({
             ...paginator,
             page: page
@@ -123,32 +125,49 @@ const Table = (props) => {
      * @param e event
      */
     const onSort = e => {
-        const {sortField, sortOrder} = e
+        const {sortField, sortOrder} = e;
+        if (onBeforeSort) {
+            onBeforeSort(sortField, sortOrder);
+        }
         setPaginator({
             ...paginator,
             sortField: sortField,
             sortOrder: sortOrder
-        })
+        });
         if (onAfterSort) {
-            onAfterSort(sortField, sortOrder)
+            onAfterSort(sortField, sortOrder);
         }
     };
 
     /**
-     * On reset paginator
+     * On reset sort
      */
-    const onResetPagination = () => {
-        setPaginator(DEFAULT_PAGINATOR);
+    const onResetSort = () => {
+        if (onBeforeResetSort) {
+            onBeforeResetSort(paginator.sortField, paginator.sortOrder);
+        }
+        setPaginator({
+            ...paginator,
+            ...DEFAULT_SORT
+        });
+        if (onAfterResetSort) {
+            onAfterResetSort(DEFAULT_SORT.sortField, DEFAULT_SORT.sortOrder);
+        }
     }
 
     /**
      * On refresh data
      */
     const onRefresh = () => {
-        onResetFilter()
-        onResetPagination()
+        if (onBeforeRefresh) {
+            onBeforeRefresh(filter, paginator);
+        }
+
+        onResetFilter();
+        onResetSort();
+
         if (onAfterRefresh) {
-            onAfterRefresh()
+            onAfterRefresh(filter, paginator)
         }
     }
 
@@ -157,12 +176,15 @@ const Table = (props) => {
      * @param size table size
      */
     const onChangeSize = size => {
+        if (onBeforeChangeSize) {
+            onBeforeChangeSize(size);
+        }
         setPaginator({
             ...paginator,
             rows: size > 0 ? size : DEFAULT_SIZE
-        })
+        });
         if (onAfterChangeSize) {
-            onAfterChangeSize(size)
+            onAfterChangeSize(size);
         }
     };
 
@@ -213,13 +235,22 @@ const Table = (props) => {
                     {renderFilterInputs(filterInputs)}
                 </div>
                 <div className="p-d-flex p-jc-center">
-                    <div>
+                    <div className="p-mr-2">
                         <Button
                             className="p-button-warning"
-                            icon="pi pi-trash"
+                            icon="pi pi-filter-slash"
                             iconPos="left"
                             label="Clear filter"
                             onClick={onResetFilter}
+                        />
+                    </div>
+
+                    <div className="p-mr-2">
+                        <Button
+                            icon="pi pi-sort-alt"
+                            iconPos="left"
+                            label="Clear sort"
+                            onClick={onResetSort}
                         />
                     </div>
                 </div>
@@ -296,8 +327,6 @@ const Table = (props) => {
                        totalRecords={paginator.total}
                        sortField={paginator.sortField}
                        sortOrder={paginator.sortOrder}
-                       rowHover
-                       scrollable
                        {...DEFAULT_TABLE_CONFIG}>
                 {renderColumns(columns)}
             </DataTable>
