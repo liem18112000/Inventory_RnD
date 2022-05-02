@@ -1,7 +1,7 @@
 import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 import {handleGetPage} from "../../core/handlers/ApiLoadContentHandler";
 import {Toast} from "primereact/toast";
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Table from "./Table";
 import {DEFAULT_PAGINATOR, DEFAULT_SORT, DEFAULT_TOAST_INTERVAL, SORT_ASC} from "./config";
 import {Button} from "primereact/button";
@@ -20,30 +20,66 @@ const BaseTable = (props) => {
         additionalColumns,
         additionalHeaders,
         headerSectionPosition = "before",
+        toastInterval = DEFAULT_TOAST_INTERVAL,
+
         Form,
-        toastInterval = DEFAULT_TOAST_INTERVAL
+        formProps = {},
+
+        navigateViewLabel = "View",
+        getNavigateViewLink,
+        getAdditionalActionItems,
+
+        getNavigateBackLink,
+        navigateBackLabel = "Back",
+
+        obtainFilter
     } = props
 
+    const [formVisible, setFormVisible] = useState(false);
+
+    const [formDataId, setFormDataId] = useState(null);
+
+    const [refreshTimestamp, setRefreshTimestamp] = useState(new Date());
+
     const toast = useRef(null);
-    const form = useRef(null);
+
+    const actionItemsModel = (rowData, getActionItems) => {
+        const actionItems = getActionItems ? getActionItems(rowData,
+            () => setRefreshTimestamp(new Date())) : null;
+        if (actionItems) {
+            return [
+                {
+                    key: "edit-option",
+                    label: 'Edit',
+                    icon: 'pi pi-pencil',
+                    command: (e) => {
+                        setFormDataId(rowData.id);
+                        setFormVisible(true)
+                    }
+                },
+                ...actionItems
+            ]
+        }
+
+        return [{
+            label: 'Edit',
+            icon: 'pi pi-pencil',
+            command: (e) => {
+                setFormDataId(rowData.id);
+                setFormVisible(true)
+            }
+        }]
+    }
 
     const columns = [
         getDefaultColumnConfig("code"),
         getDefaultColumnConfig("name"),
         ...additionalColumns,
-        getDateColumnConfig("createAt", "Create from"),
         getDefaultColumnConfig("description"),
         getActionColumnConfig(
-            (rowData) => props.history.push({
-                pathname: `ingredient/${rowData.id}`
-            }),
-            (rowData) => [
-                {
-                    label: 'Edit',
-                    icon: 'pi pi-pencil',
-                    command: (e) => { form.current?.action(rowData.id, false) }
-                }
-            ]
+            rowData => props.history.push({pathname: getNavigateViewLink ? getNavigateViewLink(rowData) : "#"}),
+            rowData => actionItemsModel(rowData, getAdditionalActionItems),
+            navigateViewLabel
         )
     ]
 
@@ -56,7 +92,7 @@ const BaseTable = (props) => {
     const fetchData = (filter = getFilterModel(columns), pagination = DEFAULT_PAGINATOR) => {
         const { page, rows, sortField, sortOrder } = pagination;
         const mapper = new PagingDataModelMapper();
-        return service.getData(filter, page, rows, sortField, sortOrder, false)
+        return service.getData(filter, page, rows, sortField, sortOrder)
             .then(data => handleGetPage(data, toast.current))
             .then(data => mapper.toModel(data))
     }
@@ -73,8 +109,11 @@ const BaseTable = (props) => {
                 style={{ marginRight: '0.5rem' }}
                 icon="pi pi-plus"
                 iconPos="left"
-                label={`New ${capitalizeTheFirstLetterOfEachWord(name)}`}
-                onClick={() => form.current?.action(null, true)}
+                label={window.innerWidth > 768 ? `New ${capitalizeTheFirstLetterOfEachWord(name)}` : ""}
+                onClick={() => {
+                    setFormDataId(null);
+                    setFormVisible(true)
+                }}
             />
         </>)
     }
@@ -141,11 +180,21 @@ const BaseTable = (props) => {
         });
     }
 
+    /**
+     * On form submit refresh
+     */
+    const onFormSubmitRefresh = () => {
+        setRefreshTimestamp(new Date());
+    }
+
     return (
         <React.Fragment>
             <Toast ref={toast} />
-            <Form ref={form}
-                  refreshData={fetchData}/>
+            <Form  id={formDataId}
+                   visible={formVisible}
+                   setVisible={setFormVisible}
+                   refreshData={onFormSubmitRefresh}
+                   {...formProps}/>
             <Table columns={columns}
                    fetchData={fetchData}
                    filterLegend={capitalizeTheFirstLetterOfEachWord(name)}
@@ -157,6 +206,11 @@ const BaseTable = (props) => {
                    onAfterChangePage={onAfterChangePage}
                    headerSection={renderHeader(additionalHeaders)}
                    headerSectionPosition={headerSectionPosition}
+                   getNavigateBackLink={getNavigateBackLink}
+                   navigateBackLabel={navigateBackLabel}
+                   refreshTimestamp={refreshTimestamp}
+                   setRefreshTimestamp={setRefreshTimestamp}
+                   obtainFilter={obtainFilter}
             />
         </React.Fragment>
     )

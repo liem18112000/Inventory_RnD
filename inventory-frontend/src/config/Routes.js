@@ -18,6 +18,7 @@ import {SupplierImport} from "../supplier/supplier-import/SupplierImport";
 import AdminTemplate from "../templates/AdminTemplate";
 import BaseTable from "../components/table/BaseTable";
 import ExampleTable from "../components/table/ExampleTable";
+import ExampleChildTable from "../components/table/ExampleChildTable";
 
 const routes = [
   {
@@ -95,6 +96,10 @@ const routes = [
   {
     path: "/test",
     component: ExampleTable,
+  },
+  {
+    path: "/test/:id",
+    component: ExampleChildTable,
   },
 ]
 

@@ -4,6 +4,8 @@ import {convertDateToEnCADate} from "../../core/utility/ComponentUtility";
 import moment from "moment";
 import {SplitButton} from "primereact/splitbutton";
 import {Button} from "primereact/button";
+import {InputNumber} from "primereact/inputnumber";
+import {Dropdown} from "primereact/dropdown";
 
 /**
  * Get filter model from columns
@@ -28,18 +30,18 @@ const getFilterModel = (columns) => {
         }, {});
 }
 
-const getDefaultColumnConfig = (field) => {
+const getDefaultColumnConfig = (field, sort = true, filter = true) => {
     return {
         field: field,
         filterConfig: {
-            enabled: true,
+            enabled: filter,
             defaultValue: "",
             inputProps: {
                 placeholder: field.charAt(0).toUpperCase() + field.slice(1)
             }
         },
         columnConfig: {
-            sortable: true,
+            sortable: sort,
             body: rowData => <React.Fragment>
                     <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>
                         {rowData[field]}
@@ -49,11 +51,11 @@ const getDefaultColumnConfig = (field) => {
     }
 }
 
-const getDateColumnConfig = (field, placeholder, dateFormat = "yy-mm-dd") => {
+const getDateColumnConfig = (field, placeholder, dateFormat = "yy-mm-dd", sort = true, filter = true) => {
     return {
         field: field,
         filterConfig: {
-            enabled: true,
+            enabled: filter,
             defaultValue: "",
             InputComponent: Calendar,
             formatInput: input => convertDateToEnCADate(input),
@@ -63,7 +65,7 @@ const getDateColumnConfig = (field, placeholder, dateFormat = "yy-mm-dd") => {
             }
         },
         columnConfig: {
-            sortable: true,
+            sortable: sort,
             body: rowData => <React.Fragment>
                     <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>
                         {moment(rowData.createAt).format('HH:mm-A-ddd-DD/MMM/YYYY')}
@@ -73,7 +75,59 @@ const getDateColumnConfig = (field, placeholder, dateFormat = "yy-mm-dd") => {
     }
 }
 
-const getActionColumnConfig = (onClick, getItemModel) => {
+const getNumericColumnConfig = (field, sort = true, filter = true) => {
+    return {
+        field: field,
+        filterConfig: {
+            enabled: filter,
+            defaultValue: null,
+            InputComponent: InputNumber,
+            inputProps: {
+                placeholder: field.charAt(0).toUpperCase() + field.slice(1),
+                min: 0,
+                max: 9999,
+                mode: "decimal",
+                buttonLayout: "horizontal",
+                showButtons: true
+            },
+            getValueFromEvent: event => event ? event.value : 0,
+            formatInput: input => input ? parseInt(input, 10) : 0,
+        },
+        columnConfig: {
+            sortable: sort,
+            body: rowData => <React.Fragment>
+                    <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>
+                        {rowData[field]}
+                    </span>
+            </React.Fragment>
+        }
+    }
+}
+
+const getDropdownColumnConfig = (field, options = [], sort = true, filter = true) => {
+    return {
+        field: field,
+        filterConfig: {
+            enabled: filter,
+            defaultValue: "",
+            InputComponent: Dropdown,
+            inputProps: {
+                options: options,
+                placeholder: field.charAt(0).toUpperCase() + field.slice(1)
+            }
+        },
+        columnConfig: {
+            sortable: sort,
+            body: rowData => <React.Fragment>
+                    <span style={{ verticalAlign: 'middle', marginRight: '.6em' }}>
+                        {rowData[field]}
+                    </span>
+            </React.Fragment>
+        }
+    }
+}
+
+const getActionColumnConfig = (onClick, getItemModel, actionLabel = "View") => {
     return {
         field: "action",
         filterConfig: {
@@ -86,7 +140,7 @@ const getActionColumnConfig = (onClick, getItemModel) => {
                     return (
                         <React.Fragment>
                             <div className="card">
-                                <Button label="View"
+                                <Button label={actionLabel}
                                         onClick={() => onClick(rowData)}>
                                 </Button>
                             </div>
@@ -96,7 +150,7 @@ const getActionColumnConfig = (onClick, getItemModel) => {
                 return (
                     <React.Fragment>
                         <div className="card">
-                            <SplitButton label="View"
+                            <SplitButton label={actionLabel}
                                          onClick={() => onClick(rowData)}
                                          model={getItemModel(rowData)}>
                             </SplitButton>
@@ -128,6 +182,8 @@ export {
     getDateColumnConfig,
     getDefaultColumnConfig,
     getActionColumnConfig,
+    getNumericColumnConfig,
+    getDropdownColumnConfig,
     capitalizeTheFirstLetter,
     capitalizeTheFirstLetterOfEachWord
 }

@@ -18,7 +18,7 @@ const DEFAULT_TABLE_LENGTH_OPTIONS = [
 
 const DEFAULT_TABLE_CONFIG = {
     dataKey: "id",
-    scrollHeight: "calc(85vh - 200px)",
+    scrollHeight: "max(calc(85vh - 200px), 70vh)",
     paginator: true,
     rowHover: true,
     scrollable: true,

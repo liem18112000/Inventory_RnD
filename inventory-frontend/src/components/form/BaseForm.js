@@ -1,0 +1,156 @@
+import SideForm from "./SideForm";
+import React, {useEffect, useRef, useState} from "react";
+import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
+import {Toast} from "primereact/toast";
+import {DEFAULT_TOAST_INTERVAL} from "../table/config";
+import {getFormDataModel} from "./FormUtil";
+
+const BaseForm = (props) => {
+
+    const {
+        title = "form",
+        formInputs,
+        additionalData = null,
+        service,
+        visible = false,
+        setVisible,
+        id = null,
+        refreshData,
+        ...formConfig
+    } = props;
+
+    const editFormTitle = `Edit ${title}`;
+    const createFormTitle = `New ${title}`;
+    const toast = useRef(null);
+    const toastInterval = DEFAULT_TOAST_INTERVAL;
+
+    const [formTitle, setFormTitle] = useState(createFormTitle);
+    const [formData, setFormData] = useState(null);
+
+    useEffect(() => {
+        if (visible) {
+            if (id != null) {
+                setFormTitle(editFormTitle);
+                onUpdateInformation(id);
+            } else {
+                setFormTitle(createFormTitle);
+            }
+        }
+    }, [visible])
+
+    const onAppendAdditionalData = (_data, _additionalData) => {
+        if (_additionalData) {
+            return {
+                ..._additionalData,
+                ..._data,
+            }
+        }
+        return _data;
+    }
+
+    /**
+     * Get updated and set to update information state
+     * @param id id
+     */
+    const onUpdateInformation = (id) => {
+        service.getById(id).then(data => {
+            if (data) {
+                const defaultData = getFormDataModel(formInputs);
+                const finalData = Object.keys(defaultData)
+                    .reduce((obj, key) => {
+                        let tempObj = {...obj};
+                        tempObj[key] = data[key];
+                        return tempObj;
+                    }, defaultData)
+                setFormData(onAppendAdditionalData(finalData, additionalData));
+            } else {
+                console.log("Get data by id failed");
+            }
+        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get ingredient failed."))
+    }
+
+    const onSubmit = (formValue) => {
+        if (formTitle === editFormTitle) {
+            return service.update(formValue)
+                .then(res => res !== null);
+        }
+        return service.save(formValue)
+            .then(res => res !== null);
+
+    }
+
+    const onAfterSuccessSubmit = () => {
+        toast.current?.show({
+            severity: 'success',
+            summary: 'Submit Success',
+            detail: formTitle === editFormTitle ? 'Update Success' : "Create Success",
+            life: toastInterval
+        });
+
+        if (refreshData) {
+            setFormData(onAppendAdditionalData(getFormDataModel(formInputs), additionalData));
+            refreshData()
+        }
+    }
+
+    const onAfterFailedSubmit = () => {
+        toast.current.show({
+            severity: 'error',
+            summary: 'Submit Failed',
+            detail: `${formTitle} failed`,
+            life: toastInterval
+        });
+    }
+
+    const onFailedValidate = (values, failValidatedValue) => {
+        toast.current?.show({
+            severity: 'error', summary: 'Validate Failed',
+            content: renderFailedValidate(failValidatedValue),
+            life: toastInterval
+        });
+    }
+
+    /**
+     * Show and reader validation fail errors
+     * @returns {JSX.Element}
+     */
+    const renderFailedValidate = (failedValidateErrors) => {
+        console.log(failedValidateErrors)
+        const messages = Object.values(failedValidateErrors);
+        console.log(messages)
+        return (
+            <div className="p-flex p-flex-column" style={{ flex: '1' }}>
+                <div className="p-text-center">
+                    <h3>Fail Validation</h3>
+                </div>
+                <div className="p-grid p-fluid">
+                    {messages.map((message, index) => (
+                        <div className="p-col-12" key={`message-${index}`}>
+                            {message}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <Toast ref={toast} />
+            <SideForm
+                title={formTitle}
+                formInputs={formInputs}
+                visible={visible}
+                setVisible={setVisible}
+                formData={formData}
+                onSubmit={onSubmit}
+                onAfterSuccessSubmit={onAfterSuccessSubmit}
+                onAfterFailedSubmit={onAfterFailedSubmit}
+                onFailedValidate={onFailedValidate}
+                {...formConfig}
+            />
+        </>
+    )
+}
+
+export default BaseForm;

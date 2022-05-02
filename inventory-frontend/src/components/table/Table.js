@@ -41,7 +41,13 @@ const Table = (props) => {
         headerSectionPosition,
 
         getNavigateBackLink,
-        navigateBackLabel
+        navigateBackLabel,
+
+        obtainFilter,
+        obtainPagination,
+
+        refreshTimestamp = new Date(),
+        setRefreshTimestamp
     } = props;
 
     const [data, setData] = useState([]);
@@ -57,7 +63,20 @@ const Table = (props) => {
      */
     useEffect(() => {
         onFetchData()
-    }, [JSON.stringify(paginator), JSON.stringify(filter)])
+        onObtainState()
+    }, [JSON.stringify(paginator), JSON.stringify(filter), refreshTimestamp])
+
+    /**
+     * On obtain state
+     */
+    const onObtainState = () => {
+        if (obtainFilter) {
+            obtainFilter(filter)
+        }
+        if (obtainPagination) {
+            obtainPagination(paginator)
+        }
+    }
 
     /**
      * On fetch data
@@ -165,6 +184,7 @@ const Table = (props) => {
 
         onResetFilter();
         onResetSort();
+        setRefreshTimestamp(new Date());
 
         if (onAfterRefresh) {
             onAfterRefresh(filter, paginator)
@@ -201,13 +221,14 @@ const Table = (props) => {
 
                 const {
                     InputComponent = InputText,
-                    formatInput = (input) => input ? input.trim() : "",
-                    inputProps = {}
+                    formatInput = (input) => input ? input : "",
+                    inputProps = {},
+                    getValueFromEvent = (event) => event.target.value
                 } = filterConfig;
 
                 const onFilterValueChange = (event) => {
                     let tempFilter = {...filter};
-                    tempFilter[field] = formatInput(event.target.value);
+                    tempFilter[field] = formatInput(getValueFromEvent(event));
                     setFilter({...tempFilter})
                 }
 
@@ -237,6 +258,7 @@ const Table = (props) => {
                 <div className="p-d-flex p-jc-center">
                     <div className="p-mr-2">
                         <Button
+                            key={"clear-filter"}
                             className="p-button-warning"
                             icon="pi pi-filter-slash"
                             iconPos="left"
@@ -247,6 +269,7 @@ const Table = (props) => {
 
                     <div className="p-mr-2">
                         <Button
+                            key={"clear-sort"}
                             icon="pi pi-sort-alt"
                             iconPos="left"
                             label="Clear sort"
@@ -271,7 +294,7 @@ const Table = (props) => {
                     <span className="p-input-icon-left">
                         {position === "before" && additionalHeader}
                         <SplitButton className="table-control-length p-button-contrast"
-                                     label="Refresh"
+                                     label={window.innerWidth > 768 ? "Refresh" : ""}
                                      icon="pi pi-refresh"
                                      onClick={onRefresh}
                                      model={tableLengthOptions}>
@@ -281,7 +304,7 @@ const Table = (props) => {
                     {navigateBackLabel && getNavigateBackLink && <span
                         className="p-input-icon-left"
                         style={{ fontSize: "17px" }}>
-                        <Link to={getNavigateBackLink()}>
+                        <Link to={getNavigateBackLink(props)}>
                             {navigateBackLabel}
                         </Link>
                     </span>}

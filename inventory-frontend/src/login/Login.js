@@ -13,7 +13,7 @@ export const Login = () => {
                     <div className="col-md-6 bg-light">
                         <div className="login d-flex align-items-center py-5">
                             <div className="container">
-                                <div class="row">
+                                <div className="row">
                                     <div className="col-lg-10 col-xl-7 mx-auto">
                                         <img className="logo-image" alt="" src="https://res.cloudinary.com/ieltstinder/image/upload/v1648977464/Group_95_w4o4cb.png"/>
                                         <h4 className="display-5">Login</h4>

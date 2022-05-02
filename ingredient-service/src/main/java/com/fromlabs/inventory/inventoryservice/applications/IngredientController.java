@@ -409,7 +409,6 @@ public class IngredientController implements ApplicationController {
     @PostMapping
     public ResponseEntity<?> saveIngredient(
             @RequestHeader(TENANT_ID) Long tenantId,
-            @RequestHeader(value = X_API_KEY_HEADER, required = false) String apiKey,
             @RequestBody IngredientRequest request
     ){
         log.info(path(HttpMethod.POST, ""));
@@ -427,8 +426,6 @@ public class IngredientController implements ApplicationController {
     @PutMapping
     public ResponseEntity<?> updateIngredient(
             @RequestHeader(TENANT_ID) Long tenantId,
-            @RequestHeader(value = X_API_KEY_HEADER, required = false) String apiKey,
-            @RequestHeader(value = X_PRINCIPAL_HEADER, required = false) String principal,
             @RequestBody IngredientRequest request
     ){
         log.info(path(HttpMethod.PUT, ""));
@@ -445,8 +442,6 @@ public class IngredientController implements ApplicationController {
     @DeleteMapping("{id:\\d+}")
     public ResponseEntity<?> deleteIngredient(
             @RequestHeader(TENANT_ID) Long tenantId,
-            @RequestHeader(value = X_API_KEY_HEADER, required = false) String apiKey,
-            @RequestHeader(value = X_PRINCIPAL_HEADER, required = false) String principal,
             @PathVariable(ID) Long id
     ){
         log.info(path(HttpMethod.DELETE, String.valueOf(id)));
