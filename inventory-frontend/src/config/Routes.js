@@ -1,4 +1,4 @@
-import {IngredientCategory} from "../ingredient/category/IngredientCategory";
+import IngredientCategory from "../ingredient/category/IngredientCategory";
 import {IngredientInventory} from "../pages/IngredientInventory";
 import {IngredientType} from "../ingredient/type/IngredientType";
 import {IngredientHistory} from "../ingredient/type/IngredientHistory";

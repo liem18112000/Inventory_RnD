@@ -45,7 +45,7 @@ const BaseTable = (props) => {
 
     const actionItemsModel = (rowData, getActionItems) => {
         const actionItems = getActionItems ? getActionItems(rowData,
-            () => setRefreshTimestamp(new Date())) : null;
+            () => setRefreshTimestamp(new Date())) : [];
         if (actionItems) {
             return [
                 {

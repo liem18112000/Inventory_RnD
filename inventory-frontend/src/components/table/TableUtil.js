@@ -1,11 +1,13 @@
 import React from "react";
 import {Calendar} from "primereact/calendar";
-import {convertDateToEnCADate} from "../../core/utility/ComponentUtility";
+import {convertDateToEnCADate, sleep} from "../../core/utility/ComponentUtility";
 import moment from "moment";
 import {SplitButton} from "primereact/splitbutton";
 import {Button} from "primereact/button";
 import {InputNumber} from "primereact/inputnumber";
 import {Dropdown} from "primereact/dropdown";
+import {DEFAULT_TOAST_INTERVAL} from "./config";
+import {confirmDialog} from "primereact/confirmdialog";
 
 /**
  * Get filter model from columns
@@ -177,6 +179,71 @@ const capitalizeTheFirstLetterOfEachWord = (words, separator = ' ') => {
     return separateWords.join(separator);
 }
 
+const getDeleteActionItem =
+    (service, rowData, refresh, toast,
+     successDetailMessage = "", failedDetailMessage = "") => {
+
+    const onConfirmDelete = (id, refresh) => {
+        if (!id) {
+            toast.current?.show({
+                severity: 'warning',
+                summary: 'Delete failed',
+                detail: 'Id is not set',
+                life: 3000
+            })
+        } else {
+            service.delete(id).then(res => {
+                if (res) {
+                    toast.current?.show({
+                        severity: 'success',
+                        summary: 'Delete success',
+                        detail: successDetailMessage,
+                        life: DEFAULT_TOAST_INTERVAL
+                    })
+                    sleep(DEFAULT_TOAST_INTERVAL / 2)
+                        .then(refresh)
+                } else {
+                    toast.current?.show({
+                        severity: 'error',
+                        summary: 'Delete failed',
+                        detail: failedDetailMessage,
+                        life: 5000
+                    })
+                }
+            })
+        }
+    }
+
+    const onCancelDelete = () => {
+        toast.current?.show({
+            severity: 'info',
+            summary: 'Cancel delete',
+            detail: 'You have cancel delete',
+            life: DEFAULT_TOAST_INTERVAL
+        })
+    }
+
+    const onDelete = (id, refresh) => {
+        if (id) {
+            confirmDialog({
+                message: 'Do you want to delete this item?',
+                header: 'Delete Confirmation',
+                icon: 'pi pi-info-circle',
+                acceptClassName: 'p-button-danger',
+                accept: () => onConfirmDelete(id, refresh),
+                reject: onCancelDelete
+            });
+        }
+    }
+
+    return {
+        key: "delete-option",
+        label: 'Delete',
+        icon: 'pi pi-trash',
+        command: (e) => onDelete(rowData.id, refresh)
+    };
+}
+
 export {
     getFilterModel,
     getDateColumnConfig,
@@ -185,5 +252,6 @@ export {
     getNumericColumnConfig,
     getDropdownColumnConfig,
     capitalizeTheFirstLetter,
-    capitalizeTheFirstLetterOfEachWord
+    capitalizeTheFirstLetterOfEachWord,
+    getDeleteActionItem
 }
