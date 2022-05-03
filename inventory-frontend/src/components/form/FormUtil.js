@@ -1,6 +1,8 @@
 import {InputText} from "primereact/inputtext";
 import {InputTextarea} from "primereact/inputtextarea";
 import {Dropdown} from "primereact/dropdown";
+import {splitCamelCaseWord} from "../table/TableUtil";
+import {Editor} from "primereact/editor";
 
 const REQUIRED = {
     name: "required",
@@ -93,7 +95,7 @@ const getDefaultInputConfig = (field, validators = [REQUIRED]) => ({
     getValueFromEvent: e => e.target.value,
     formatInput: input => input ? input : "",
     inputProps: {
-        placeholder: `Enter ${field}`
+        placeholder: `Enter ${splitCamelCaseWord(field).toLowerCase()}`
     }
 })
 
@@ -105,8 +107,21 @@ const getTextareaInputConfig = (field, validators = [], rows = 5) => ({
     getValueFromEvent: e => e.target.value,
     formatInput: input => input ? input : "",
     inputProps: {
-        placeholder: `Enter ${field}`,
+        placeholder: `Enter ${splitCamelCaseWord(field).toLowerCase()}`,
         rows: rows
+    }
+})
+
+const getEditorInputConfig = (field, validators = [], height = "max(100px, 20vh)") => ({
+    field: field,
+    defaultValue: "",
+    InputComponent: Editor,
+    validators: validators,
+    getValueFromEvent: e => e.target.value,
+    formatInput: input => input ? input : "",
+    inputProps: {
+        placeholder: `Enter ${splitCamelCaseWord(field).toLowerCase()}`,
+        style: {height: height}
     }
 })
 
@@ -118,7 +133,8 @@ const getDropdownInputConfig = (field, options = [], validators = [REQUIRED]) =>
     getValueFromEvent: e => e.target.value,
     formatInput: input => input ? input : "",
     inputProps: {
-        placeholder: `Enter ${field}`,
+        disabled: !options || options.length === 0,
+        placeholder: `Enter ${splitCamelCaseWord(field).toLowerCase()}`,
         options: options
     }
 })
@@ -130,4 +146,5 @@ export {
     getDefaultInputConfig,
     getTextareaInputConfig,
     getDropdownInputConfig,
+    getEditorInputConfig
 }

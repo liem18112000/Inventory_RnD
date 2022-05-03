@@ -106,7 +106,7 @@ const getNumericColumnConfig = (field, sort = true, filter = true) => {
     }
 }
 
-const getDropdownColumnConfig = (field, options = [], sort = true, filter = true) => {
+const getDropdownColumnConfig = (field, options = [], sort = true, filter = true, placeholder = null) => {
     return {
         field: field,
         filterConfig: {
@@ -114,8 +114,9 @@ const getDropdownColumnConfig = (field, options = [], sort = true, filter = true
             defaultValue: "",
             InputComponent: Dropdown,
             inputProps: {
+                disabled: options.length === 0,
                 options: options,
-                placeholder: field.charAt(0).toUpperCase() + field.slice(1)
+                placeholder: !placeholder ? splitCamelCaseWord(field) : placeholder
             }
         },
         columnConfig: {
@@ -178,6 +179,9 @@ const capitalizeTheFirstLetterOfEachWord = (words, separator = ' ') => {
     }
     return separateWords.join(separator);
 }
+
+const splitCamelCaseWord = (words) =>
+    capitalizeTheFirstLetter(words).replace(/([a-z])([A-Z])/g, '$1 $2');
 
 const getDeleteActionItem =
     (service, rowData, refresh, toast,
@@ -253,5 +257,6 @@ export {
     getDropdownColumnConfig,
     capitalizeTheFirstLetter,
     capitalizeTheFirstLetterOfEachWord,
+    splitCamelCaseWord,
     getDeleteActionItem
 }

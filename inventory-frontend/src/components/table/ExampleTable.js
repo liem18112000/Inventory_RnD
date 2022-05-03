@@ -85,6 +85,7 @@ const ExampleTable = (props) => {
             });
         }
     }
+
     return (
         <>
             <Toast ref={toast} />

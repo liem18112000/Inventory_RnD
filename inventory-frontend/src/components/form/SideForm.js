@@ -3,7 +3,7 @@ import {Button} from "primereact/button";
 import React, {useEffect, useState} from "react";
 import {DEFAULT_SIDE_FORM_CONFIG, DEFAULT_SIDE_FORM_INPUTS} from "./config";
 import {getFormDataModel} from "./FormUtil";
-import {capitalizeTheFirstLetter, capitalizeTheFirstLetterOfEachWord} from "../table/TableUtil";
+import {capitalizeTheFirstLetter, capitalizeTheFirstLetterOfEachWord, splitCamelCaseWord} from "../table/TableUtil";
 
 const SideForm = (props) => {
 
@@ -40,16 +40,27 @@ const SideForm = (props) => {
     useEffect(() => {
         if (formData) {
             setData(formData);
-            onObtainData(formData);
-            onObtainErrors(errors)
         } else {
             setData(getFormDataModel(formInputs));
         }
     }, [formData])
 
+    useEffect(() => {
+        if (data) {
+            onObtainData(data);
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (errors) {
+            onObtainErrors(errors);
+        }
+    }, [errors])
+
     const onObtainData = (d) => {
         if (obtainData) {
             obtainData(d);
+            console.log(d)
         }
     }
 
@@ -156,7 +167,7 @@ const SideForm = (props) => {
 
             const renderLabel = (key, field) => {
                 return  <label key={key}>
-                    {capitalizeTheFirstLetterOfEachWord(field)}
+                    {splitCamelCaseWord(field)}
                 </label>
             }
 
@@ -173,7 +184,6 @@ const SideForm = (props) => {
             }
 
             const renderInput = (key, value, config, hasValidator = false, hasErrors = false) => {
-                console.log(config)
                 if (hasValidator) {
                     return (
                         <span className="p-input-icon-right">

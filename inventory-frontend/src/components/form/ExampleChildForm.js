@@ -1,6 +1,6 @@
 import {IngredientService} from "../../service/IngredientService";
 import {useEffect, useState} from "react";
-import {getDefaultInputConfig, getDropdownInputConfig, getTextareaInputConfig} from "./FormUtil";
+import {getDefaultInputConfig, getDropdownInputConfig, getEditorInputConfig, getTextareaInputConfig} from "./FormUtil";
 import BaseForm from "./BaseForm";
 
 const ExampleChildForm = (props) => {
@@ -32,6 +32,8 @@ const ExampleChildForm = (props) => {
             service
                 .getUnit(data.unitType, false)
                 .then(setUnit)
+        } else {
+            setUnit([])
         }
     }, [data.unitType])
 
@@ -40,7 +42,7 @@ const ExampleChildForm = (props) => {
         getDefaultInputConfig("code"),
         getDropdownInputConfig("unitType", unitType),
         getDropdownInputConfig("unit", unit),
-        getTextareaInputConfig("description"),
+        getEditorInputConfig("description"),
     ]
 
     return (

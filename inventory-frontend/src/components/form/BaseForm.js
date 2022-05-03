@@ -115,9 +115,7 @@ const BaseForm = (props) => {
      * @returns {JSX.Element}
      */
     const renderFailedValidate = (failedValidateErrors) => {
-        console.log(failedValidateErrors)
         const messages = Object.values(failedValidateErrors);
-        console.log(messages)
         return (
             <div className="p-flex p-flex-column" style={{ flex: '1' }}>
                 <div className="p-text-center">
