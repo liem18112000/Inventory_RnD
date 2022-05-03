@@ -4,6 +4,7 @@ import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integ
 import {Toast} from "primereact/toast";
 import {DEFAULT_TOAST_INTERVAL} from "../table/config";
 import {getFormDataModel} from "./FormUtil";
+import {FORM_CREATE_MODE, FORM_EDIT_MODE} from "./config";
 
 const BaseForm = (props) => {
 
@@ -16,6 +17,7 @@ const BaseForm = (props) => {
         setVisible,
         id = null,
         refreshData,
+        obtainMode,
         ...formConfig
     } = props;
 
@@ -26,17 +28,26 @@ const BaseForm = (props) => {
 
     const [formTitle, setFormTitle] = useState(createFormTitle);
     const [formData, setFormData] = useState(null);
+    const [formMode, setFormMode] = useState(FORM_CREATE_MODE);
 
     useEffect(() => {
         if (visible) {
             if (id != null) {
                 setFormTitle(editFormTitle);
                 onUpdateInformation(id);
+                setFormMode(FORM_EDIT_MODE);
             } else {
                 setFormTitle(createFormTitle);
+                setFormMode(FORM_CREATE_MODE);
             }
         }
     }, [visible])
+
+    useEffect(() => {
+        if (obtainMode) {
+            obtainMode(formMode);
+        }
+    }, [formMode])
 
     const onAppendAdditionalData = (_data, _additionalData) => {
         if (_additionalData) {

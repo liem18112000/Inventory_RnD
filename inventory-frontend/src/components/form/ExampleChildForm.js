@@ -1,7 +1,8 @@
 import {IngredientService} from "../../service/IngredientService";
 import {useEffect, useState} from "react";
-import {getDefaultInputConfig, getDropdownInputConfig, getEditorInputConfig, getTextareaInputConfig} from "./FormUtil";
+import {getDefaultInputConfig, getDropdownInputConfig, getTextareaInputConfig} from "./FormUtil";
 import BaseForm from "./BaseForm";
+import {DEFAULT_SIDE_FORM_INPUTS, FORM_CREATE_MODE} from "./config";
 
 const ExampleChildForm = (props) => {
 
@@ -20,6 +21,7 @@ const ExampleChildForm = (props) => {
     const [unitType, setUnitType] = useState([]);
     const [unit, setUnit] = useState([]);
     const [data, setData] = useState({unitType: ""});
+    const [formMode, setFormMode] = useState(FORM_CREATE_MODE);
 
     useEffect(() => {
         service
@@ -37,13 +39,15 @@ const ExampleChildForm = (props) => {
         }
     }, [data.unitType])
 
-    const formInputs = [
+    const isCreateMode = formMode === FORM_CREATE_MODE;
+
+    const formInputs = isCreateMode ? [
         getDefaultInputConfig("name"),
         getDefaultInputConfig("code"),
         getDropdownInputConfig("unitType", unitType),
         getDropdownInputConfig("unit", unit),
-        getEditorInputConfig("description"),
-    ]
+        getTextareaInputConfig("description"),
+    ] : DEFAULT_SIDE_FORM_INPUTS;
 
     return (
         <BaseForm
@@ -53,6 +57,7 @@ const ExampleChildForm = (props) => {
             title={"ingredient type"}
             refreshData={refreshData}
             obtainData={setData}
+            obtainMode={setFormMode}
             {...formConfig}
         />
     )
