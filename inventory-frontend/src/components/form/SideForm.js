@@ -3,7 +3,7 @@ import {Button} from "primereact/button";
 import React, {useEffect, useState} from "react";
 import {DEFAULT_SIDE_FORM_CONFIG, DEFAULT_SIDE_FORM_INPUTS} from "./config";
 import {getFormDataModel} from "./FormUtil";
-import {capitalizeTheFirstLetter, capitalizeTheFirstLetterOfEachWord, splitCamelCaseWord} from "../table/TableUtil";
+import {capitalizeTheFirstLetter, splitCamelCaseWord} from "../table/TableUtil";
 
 const SideForm = (props) => {
 
