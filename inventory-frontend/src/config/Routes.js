@@ -1,6 +1,6 @@
 import IngredientCategory from "../ingredient/category/IngredientCategory";
 import {IngredientInventory} from "../pages/IngredientInventory";
-import {IngredientType} from "../ingredient/type/IngredientType";
+import IngredientType from "../ingredient/type/IngredientType";
 import {IngredientHistory} from "../ingredient/type/IngredientHistory";
 import IngredientItem from "../ingredient/item/IngredientItem";
 import {SuggestTaxon} from "../ingredient/suggest-taxon/SuggestTaxon";
@@ -16,7 +16,6 @@ import {Notification} from "../notification/notification/Notification";
 import {Event} from "../notification/event/Event";
 import {SupplierImport} from "../supplier/supplier-import/SupplierImport";
 import AdminTemplate from "../templates/AdminTemplate";
-import BaseTable from "../components/table/BaseTable";
 import ExampleTable from "../components/table/ExampleTable";
 import ExampleChildTable from "../components/table/ExampleChildTable";
 

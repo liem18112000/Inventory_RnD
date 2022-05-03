@@ -60,7 +60,6 @@ const SideForm = (props) => {
     const onObtainData = (d) => {
         if (obtainData) {
             obtainData(d);
-            console.log(d)
         }
     }
 
