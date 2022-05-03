@@ -10,8 +10,6 @@ import {GatewayConfigurationError} from "./GatewayConfigurationError";
  */
 export function getHeaderByGatewayStatus(currentHeader = {}) {
 
-    console.log("Current headers : ", currentHeader);
-
     // Gateway config is not found
     if(!ENABLE_GATEWAY) {
         console.error("Enable gateway configuration is not found")

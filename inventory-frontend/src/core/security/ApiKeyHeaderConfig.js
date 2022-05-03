@@ -11,8 +11,6 @@ import { isJson } from "../utility/ComponentUtility";
  */
 const validatePreConditionForAuthorize = (currentHeader) => {
 
-    console.log("Current headers : ", currentHeader);
-
     // If api key configuration is not found
     if (!API_KEY) {
         console.error("Api key configuration is not found");

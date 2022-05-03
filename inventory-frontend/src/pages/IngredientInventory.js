@@ -17,7 +17,6 @@ import moment from 'moment';
 import { handleGetPage } from '../core/handlers/ApiLoadContentHandler.js';
 import { Toast } from 'primereact/toast';
 import { convertDateToEnCADate, sleep } from "../core/utility/ComponentUtility";
-import {ExportOutlined} from "@ant-design/icons";
 
 export class IngredientInventory extends Component {
 
