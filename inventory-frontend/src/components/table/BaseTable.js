@@ -76,7 +76,7 @@ const BaseTable = (props) => {
         ...additionalColumns,
         getDefaultColumnConfig("description"),
         getActionColumnConfig(
-            rowData => props.history.push({pathname: getNavigateViewLink ? getNavigateViewLink(rowData) : "#"}),
+            rowData => props.history.push({ pathname: getNavigateViewLink ? getNavigateViewLink(rowData) : "#" }),
             rowData => actionItemsModel(rowData, getAdditionalActionItems),
             navigateViewLabel
         )
@@ -189,27 +189,27 @@ const BaseTable = (props) => {
     return (
         <React.Fragment>
             <Toast ref={toast} />
-            <Form  id={formDataId}
-                   visible={formVisible}
-                   setVisible={setFormVisible}
-                   refreshData={onFormSubmitRefresh}
-                   {...formProps}/>
+            <Form id={formDataId}
+                visible={formVisible}
+                setVisible={setFormVisible}
+                refreshData={onFormSubmitRefresh}
+                {...formProps} />
             <Table columns={columns}
-                   fetchData={fetchData}
-                   filterLegend={capitalizeTheFirstLetterOfEachWord(name)}
-                   onAfterResetFilter={onAfterResetFilter}
-                   onAfterResetSort={onAfterResetSort}
-                   onAfterRefresh={onAfterRefresh}
-                   onAfterSort={onAfterSort}
-                   onAfterChangeSize={onAfterChangeSize}
-                   onAfterChangePage={onAfterChangePage}
-                   headerSection={renderHeader(additionalHeaders)}
-                   headerSectionPosition={headerSectionPosition}
-                   getNavigateBackLink={getNavigateBackLink}
-                   navigateBackLabel={navigateBackLabel}
-                   refreshTimestamp={refreshTimestamp}
-                   setRefreshTimestamp={setRefreshTimestamp}
-                   obtainFilter={obtainFilter}
+                fetchData={fetchData}
+                filterLegend={capitalizeTheFirstLetterOfEachWord(name)}
+                onAfterResetFilter={onAfterResetFilter}
+                onAfterResetSort={onAfterResetSort}
+                onAfterRefresh={onAfterRefresh}
+                onAfterSort={onAfterSort}
+                onAfterChangeSize={onAfterChangeSize}
+                onAfterChangePage={onAfterChangePage}
+                headerSection={renderHeader(additionalHeaders)}
+                headerSectionPosition={headerSectionPosition}
+                getNavigateBackLink={getNavigateBackLink}
+                navigateBackLabel={navigateBackLabel}
+                refreshTimestamp={refreshTimestamp}
+                setRefreshTimestamp={setRefreshTimestamp}
+                obtainFilter={obtainFilter}
             />
         </React.Fragment>
     )

@@ -1,17 +1,18 @@
 import BaseTable from "./BaseTable";
-import {IngredientService} from "../../service/IngredientService";
+import { IngredientService } from "../../service/IngredientService";
 import {
     getDateColumnConfig,
     getDropdownColumnConfig,
     getNumericColumnConfig
 } from "./TableUtil";
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ExampleChildForm from "../form/ExampleChildForm";
-import {DEFAULT_TOAST_INTERVAL} from "./config";
-import {sleep} from "../../core/utility/ComponentUtility";
-import {confirmDialog} from "primereact/confirmdialog";
-import {IngredientTypeConfig} from "../../ingredient/type/IngredientTypeConfig";
-import {Toast} from "primereact/toast";
+import { DEFAULT_TOAST_INTERVAL } from "./config";
+import { sleep } from "../../core/utility/ComponentUtility";
+import { confirmDialog } from "primereact/confirmdialog";
+import { IngredientTypeConfig } from "../../ingredient/type/IngredientTypeConfig";
+import { Toast } from "primereact/toast";
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 const ExampleChildTable = (props) => {
     const {
@@ -27,11 +28,18 @@ const ExampleChildTable = (props) => {
 
     let service = new IngredientService();
     service.getData = (filter, page, rows, sortField, sortOrder) =>
-            service.getPageType(parentId, filter, page, rows, sortField, sortOrder, isMock);
+        service.getPageType(parentId, filter, page, rows, sortField, sortOrder, isMock);
     service.delete = id => service.deleteIngredient(id, isMock);
     const [unitType, setUnitType] = useState([]);
     const [unit, setUnit] = useState([]);
-    const [filter, setFilter] = useState({unitType: ""});
+    const [filter, setFilter] = useState({ unitType: "" });
+
+    const items = [
+        { label: 'Ingredient Category', url: '/test' },
+        { label: 'Ingredient Detail' }
+    ];
+
+    const home = { icon: 'pi pi-home', url: '/ingredient-inventory' }
 
     const confirmDelete = (id, refresh) => {
         if (!id) {
@@ -123,9 +131,9 @@ const ExampleChildTable = (props) => {
     }
 
     useEffect(() => {
-       service
-           .getUnitTypes(false)
-           .then(setUnitType);
+        service
+            .getUnitTypes(false)
+            .then(setUnitType);
     }, [])
 
     useEffect(() => {
@@ -143,8 +151,9 @@ const ExampleChildTable = (props) => {
             <Toast ref={toast} />
             <IngredientTypeConfig
                 ref={configForm}
-                refreshData={() => {}}
+                refreshData={() => { }}
             />
+            <BreadCrumb model={items} home={home} />
             <BaseTable
                 service={service}
                 name={"ingredient detail"}
@@ -155,7 +164,7 @@ const ExampleChildTable = (props) => {
                     getDateColumnConfig("createAt", "Create from"),
                 ]}
                 Form={ExampleChildForm}
-                formProps={{parentId: parentId}}
+                formProps={{ parentId: parentId }}
                 navigateBackLabel={"Back to ingredient category"}
                 getNavigateBackLink={(props) => "../test"}
                 obtainFilter={setFilter}

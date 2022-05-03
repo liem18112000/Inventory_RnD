@@ -77,7 +77,7 @@ export class NotificationDialog extends Component {
         // console.log(content)
         return (
             <React.Fragment>
-                <Link to={`event/${rowData.id}`}>
+                <Link to={`/notification/event/${rowData.id}`}>
                     <span
                         style={{ whileSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '200px' }}
                     >

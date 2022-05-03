@@ -1,4 +1,17 @@
-.p-inputtext {
+  body::-webkit-scrollbar {
+    width: 1em;
+}
+   
+  body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+   
+  body::-webkit-scrollbar-thumb {
+    background-color: rgb(175, 175, 175);
+    outline: 1px solid rgb(255, 255, 255);
+}
+
+  .p-inputtext {
     padding: 0.5rem 1rem !important
 }
 
@@ -6,3 +19,6 @@
     padding: 0.5rem 1rem !important
 }
 /*.p-*/
+.p-fieldset {
+    border: unset !important;
+}

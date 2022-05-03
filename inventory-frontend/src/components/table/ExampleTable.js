@@ -1,12 +1,13 @@
 import BaseTable from "./BaseTable";
-import {IngredientService} from "../../service/IngredientService";
-import {getDateColumnConfig} from "./TableUtil";
+import { IngredientService } from "../../service/IngredientService";
+import { getDateColumnConfig } from "./TableUtil";
 import ExampleForm from "../form/ExampleForm";
-import {confirmDialog} from "primereact/confirmdialog";
-import {useRef} from "react";
-import {Toast} from "primereact/toast";
-import {DEFAULT_TOAST_INTERVAL} from "./config";
-import {sleep} from "../../core/utility/ComponentUtility";
+import { confirmDialog } from "primereact/confirmdialog";
+import { useRef } from "react";
+import { Toast } from "primereact/toast";
+import { DEFAULT_TOAST_INTERVAL } from "./config";
+import { sleep } from "../../core/utility/ComponentUtility";
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 const ExampleTable = (props) => {
 
@@ -19,6 +20,12 @@ const ExampleTable = (props) => {
     service.getData = (filter, page, rows, sortField, sortOrder) =>
         service.getPageCategory(filter, page, rows, sortField, sortOrder, isMock);
     service.delete = id => service.deleteIngredient(id, isMock);
+
+    const items = [
+        { label: 'Ingredient Category' }
+    ];
+
+    const home = { icon: 'pi pi-home', url: '/ingredient-inventory' }
 
     const confirmDelete = (id, refresh) => {
         if (!id) {
@@ -89,6 +96,7 @@ const ExampleTable = (props) => {
     return (
         <>
             <Toast ref={toast} />
+            <BreadCrumb model={items} home={home} />
             <BaseTable
                 service={service}
                 name={"ingredient category"}
