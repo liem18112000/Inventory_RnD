@@ -1,14 +1,13 @@
 import {PagingDataModelMapper} from "../../core/models/mapper/ModelMapper";
 import {handleGetPage} from "../../core/handlers/ApiLoadContentHandler";
 import {Toast} from "primereact/toast";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Table from "./Table";
-import {DEFAULT_PAGINATOR, DEFAULT_SORT, DEFAULT_TOAST_INTERVAL, SORT_ASC} from "./config";
+import {DEFAULT_PAGINATOR, DEFAULT_TOAST_INTERVAL, SORT_ASC} from "./config";
 import {Button} from "primereact/button";
 import {
     capitalizeTheFirstLetterOfEachWord,
     getActionColumnConfig,
-    getDateColumnConfig,
     getDefaultColumnConfig, getFilterModel
 } from "./TableUtil";
 

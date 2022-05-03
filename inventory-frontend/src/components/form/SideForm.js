@@ -40,34 +40,24 @@ const SideForm = (props) => {
     useEffect(() => {
         if (formData) {
             setData(formData);
-        } else {
-            setData(getFormDataModel(formInputs));
         }
     }, [formData])
 
     useEffect(() => {
         if (data) {
-            onObtainData(data);
+            if (obtainData) {
+                obtainData(data);
+            }
         }
-    }, [data])
+    }, [data, obtainData])
 
     useEffect(() => {
         if (errors) {
-            onObtainErrors(errors);
+            if (obtainErrors) {
+                obtainErrors(errors);
+            }
         }
-    }, [errors])
-
-    const onObtainData = (d) => {
-        if (obtainData) {
-            obtainData(d);
-        }
-    }
-
-    const onObtainErrors = (e) => {
-        if (obtainErrors) {
-            obtainErrors(e);
-        }
-    }
+    }, [errors, obtainErrors])
 
     const onHide = () => {
         setVisible(false);

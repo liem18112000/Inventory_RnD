@@ -33,6 +33,27 @@ const IngredientType = (props) => {
     const [filter, setFilter] = useState({unitType: ""});
 
     const getAdditionalActionItems = (rowData, refresh) => [
+        {
+            key: "history-option",
+            label: 'History',
+            icon: 'pi pi-external-link',
+            command: (e) => {
+                props.history.push({
+                    pathname: `./history/${rowData.id}`,
+                    state: {
+                        cateId: parentId,
+                        unitType: rowData.unitType,
+                        unit: rowData.unit
+                    }
+                })
+            }
+        },
+        {
+            key: "config-option",
+            label: 'Config',
+            icon: 'pi pi-cog',
+            command: (e) => { configForm.current?.action(rowData.id) }
+        },
         getDeleteActionItem(service, rowData, refresh, toast, DELETE_SUCCESS_MESSAGE, DELETE_FAILED_MESSAGE)
     ];
 

@@ -1,6 +1,8 @@
 import SideForm from "./SideForm";
 import React, {useEffect, useRef, useState} from "react";
-import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
+import {
+    handleExceptionWithSentry
+} from "../../core/utility/integrations/SentryExceptionResolver";
 import {Toast} from "primereact/toast";
 import {DEFAULT_TOAST_INTERVAL} from "../table/config";
 import {getFormDataModel} from "./FormUtil";
@@ -38,6 +40,7 @@ const BaseForm = (props) => {
                 setFormMode(FORM_EDIT_MODE);
             } else {
                 setFormTitle(createFormTitle);
+                onCreateInformation()
                 setFormMode(FORM_CREATE_MODE);
             }
         }
@@ -77,17 +80,20 @@ const BaseForm = (props) => {
             } else {
                 console.log("Get data by id failed");
             }
-        }).catch(e => handleExceptionWithSentryAndSendFeedback(e, "Get ingredient failed."))
+        }).catch(e => handleExceptionWithSentry(e))
+    }
+
+    const onCreateInformation = () => {
+        setFormData(onAppendAdditionalData(getFormDataModel(formInputs), additionalData));
     }
 
     const onSubmit = (formValue) => {
         if (formTitle === editFormTitle) {
             return service.update(formValue)
-                .then(res => res !== null);
+                .then(res => !!res);
         }
         return service.save(formValue)
-            .then(res => res !== null);
-
+            .then(res => !!res);
     }
 
     const onAfterSuccessSubmit = () => {
