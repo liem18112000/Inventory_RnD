@@ -8,6 +8,7 @@ import com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecifi
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
 import com.fromlabs.inventory.inventoryservice.item.ItemEntity;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -67,8 +68,9 @@ public class ItemSpecification {
                 .and(hasCode(entity.getCode()))
                 .and(hasDescription(entity.getDescription()))
                 .and(hasUnitType(entity.getUnitType()))
-                .and(Objects.nonNull(entity.getUpdateAt()) ?
-                        hasUpdateAtGreaterThan(entity.getUpdateAt()) : hasUpdatedAt(entity.getUpdateAt()));
+                .and(StringUtils.hasText(entity.getUpdateAt()) ?
+                        hasUpdateAtGreaterThan(entity.getUpdateAt()) :
+                        hasUpdatedAt(entity.getUpdateAt()));
         return Objects.nonNull(ingredient) ? spec.and(hasIngredient(ingredient)) : spec;
     }
 }
