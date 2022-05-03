@@ -11,6 +11,7 @@ import com.fromlabs.inventory.inventoryservice.ingredient.track.IngredientHistor
 import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.IngredientHistoryPageRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -138,7 +139,7 @@ public class IngredientHistorySpecification {
                 .and(hasActorName(criteria.getActorName()))
                 .and(hasActorRole(criteria.getActorRole()))
                 .and(hasTrackTimestamp(criteria.getTrackTimestamp()))
-                .and(Objects.nonNull(criteria.getUpdateAt()) ?
+                .and(StringUtils.hasText(criteria.getUpdateAt()) ?
                         hasUpdateAtGreaterThan(criteria.getUpdateAt()) : hasUpdatedAt(criteria.getUpdateAt()))
                 .and(hasIngredient(ingredient))
                 .and(hasEventStatus(criteria.getStatus()));
