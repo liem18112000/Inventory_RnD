@@ -9,6 +9,7 @@ import {
     DELETE_FAILED_MESSAGE,
     DELETE_SUCCESS_MESSAGE,
     getNavigateViewLink,
+    getNavigateViewState,
     getService
 } from "./config";
 import {getDeleteActionItem} from "../../components/table/TableUtil";
@@ -38,6 +39,7 @@ const IngredientCategory = (props) => {
                 additionalColumns={ADDITIONAL_COLUMNS}
                 Form={IngredientCategoryForm}
                 getNavigateViewLink={getNavigateViewLink}
+                getNavigateViewState={getNavigateViewState}
                 getAdditionalActionItems={getAdditionalActionItems}
                 isMock={isMock}
                 {...tableConfig}

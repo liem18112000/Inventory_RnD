@@ -22,9 +22,15 @@ const getService = (parentId, isMock = false) => {
     return service;
 }
 
-const getNavigateViewLink = rowData => `/type/${rowData.id}`;
+const getNavigateViewLink = rowData => `/ingredient/type/${rowData.id}`;
 
-const getNavigateBackLink = props => "../ingredient";
+const getNavigateBackLink = props => "/ingredient";
+
+const getNavigateViewState = (rowData, props) => ({
+    cateId: props.location.state.cateId,
+    unit: rowData.unit,
+    unitType: rowData.unitType,
+});
 
 export {
     COMPONENT_TITLE,
@@ -34,4 +40,5 @@ export {
     getService,
     getNavigateViewLink,
     getNavigateBackLink,
+    getNavigateViewState
 }

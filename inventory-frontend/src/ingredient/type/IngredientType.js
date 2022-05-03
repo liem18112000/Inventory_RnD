@@ -4,13 +4,21 @@ import { Toast } from 'primereact/toast';
 import { IngredientTypeConfig } from './IngredientTypeConfig';
 import BaseTable from "../../components/table/BaseTable";
 import {
-    getDateColumnConfig, getDeleteActionItem,
+    getDateColumnConfig,
+    getDeleteActionItem,
     getDropdownColumnConfig,
     getNumericColumnConfig
 } from "../../components/table/TableUtil";
-import {DELETE_FAILED_MESSAGE, DELETE_SUCCESS_MESSAGE} from "./config";
-import {COMPONENT_TITLE, getNavigateBackLink, getService, NAVIGATE_BACK_LABEL} from "./config";
+import {
+    COMPONENT_TITLE,
+    DELETE_FAILED_MESSAGE,
+    DELETE_SUCCESS_MESSAGE,
+    getNavigateBackLink, getNavigateViewState,
+    getService,
+    NAVIGATE_BACK_LABEL
+} from "./config";
 import IngredientTypeForm from "./IngredientTypeForm";
+import {getNavigateViewLink} from "./config";
 
 const IngredientType = (props) => {
     const {
@@ -97,6 +105,8 @@ const IngredientType = (props) => {
                 }}
                 navigateBackLabel={NAVIGATE_BACK_LABEL}
                 getNavigateBackLink={getNavigateBackLink}
+                getNavigateViewState={getNavigateViewState}
+                getNavigateViewLink={getNavigateViewLink}
                 obtainFilter={setFilter}
                 getAdditionalActionItems={getAdditionalActionItems}
                 {...props}

@@ -298,7 +298,10 @@ class IngredientItem extends Component {
                         </SplitButton>
                     </span>
                     <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
-                        <Link to={`/ingredient/${this.state.cateId}`}> Back to Ingredient Types</Link>
+                        <Link to={{
+                            pathname: `/ingredient/${this.state.cateId}`,
+                            state: {cateId: this.state.cateId}
+                        }}> Back to Ingredient Types</Link>
                     </span>
                 </div>
             </>

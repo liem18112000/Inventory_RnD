@@ -25,6 +25,8 @@ const getService = (isMock = false) => {
 
 const getNavigateViewLink = rowData => `/ingredient/${rowData.id}`;
 
+const getNavigateViewState = (rowData, props) => ({cateId: rowData.id});
+
 export {
     FORM_INPUTS,
     ADDITIONAL_COLUMNS,
@@ -32,5 +34,6 @@ export {
     DELETE_SUCCESS_MESSAGE,
     DELETE_FAILED_MESSAGE,
     getService,
-    getNavigateViewLink
+    getNavigateViewLink,
+    getNavigateViewState,
 }

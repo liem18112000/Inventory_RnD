@@ -26,6 +26,7 @@ const BaseTable = (props) => {
 
         navigateViewLabel = "View",
         getNavigateViewLink,
+        getNavigateViewState,
         getAdditionalActionItems,
 
         getNavigateBackLink,
@@ -76,7 +77,10 @@ const BaseTable = (props) => {
         ...additionalColumns,
         getDefaultColumnConfig("description"),
         getActionColumnConfig(
-            rowData => props.history.push({ pathname: getNavigateViewLink ? getNavigateViewLink(rowData) : "#" }),
+            rowData => props.history.push({
+                pathname: getNavigateViewLink ? getNavigateViewLink(rowData) : "#",
+                state: getNavigateViewState ? getNavigateViewState(rowData, props) : null
+            }),
             rowData => actionItemsModel(rowData, getAdditionalActionItems),
             navigateViewLabel
         )
