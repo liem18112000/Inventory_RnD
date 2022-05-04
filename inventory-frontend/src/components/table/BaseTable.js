@@ -106,13 +106,16 @@ const BaseTable = (props) => {
      * @returns {JSX.Element}
      */
     const renderHeader = (additionalHeaders) => {
+        const renderHeaderLabel = () =>
+            window.innerWidth > 960 ? `New ${capitalizeTheFirstLetterOfEachWord(name)}` :
+                window.innerWidth > 768 ? "New" : ""
         return (<>
             {additionalHeaders}
             <Button
                 style={{ marginRight: '0.5rem' }}
                 icon="pi pi-plus"
                 iconPos="left"
-                label={window.innerWidth > 768 ? `New ${capitalizeTheFirstLetterOfEachWord(name)}` : ""}
+                label={renderHeaderLabel()}
                 onClick={() => {
                     setFormDataId(null);
                     setFormVisible(true)
