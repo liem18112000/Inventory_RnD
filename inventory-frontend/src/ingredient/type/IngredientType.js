@@ -19,6 +19,11 @@ import {
 } from "./config";
 import IngredientTypeForm from "./IngredientTypeForm";
 import {getNavigateViewLink} from "./config";
+import {
+    BREADCRUMB_HOME_MODEL,
+    getBreadcrumbIngredientTypeModel
+} from "../../components/common/breadcrumModel";
+import {BreadCrumb} from "primereact/breadcrumb";
 
 const IngredientType = (props) => {
     const {
@@ -39,6 +44,9 @@ const IngredientType = (props) => {
     const [unit, setUnit] = useState([]);
 
     const [filter, setFilter] = useState({unitType: ""});
+
+    const [breadcrumbModel, setBreadcrumbModel] = useState(
+        getBreadcrumbIngredientTypeModel());
 
     const getAdditionalActionItems = (rowData, refresh) => [
         {
@@ -72,6 +80,21 @@ const IngredientType = (props) => {
     }, [])
 
     useEffect(() => {
+        if (props?.location?.state?.cateId) {
+            service
+                .getById(props?.location?.state?.cateId)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        setBreadcrumbModel(
+                            getBreadcrumbIngredientTypeModel(name, id)
+                        )
+                    }
+                });
+        }
+    }, [props?.location?.state?.cateId])
+
+    useEffect(() => {
         if (filter && filter.unitType && filter.unitType !== "") {
             service
                 .getUnit(filter.unitType, false)
@@ -88,6 +111,9 @@ const IngredientType = (props) => {
                 ref={configForm}
                 refreshData={() => {}}
             />
+            <BreadCrumb
+                model={breadcrumbModel}
+                home={BREADCRUMB_HOME_MODEL} />
             <BaseTable
                 service={service}
                 name={COMPONENT_TITLE}

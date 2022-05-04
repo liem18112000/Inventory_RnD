@@ -19,6 +19,11 @@ import { Toast } from 'primereact/toast';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import {BreadCrumb} from "primereact/breadcrumb";
+import {
+    BREADCRUMB_HOME_MODEL,
+    getBreadcrumbIngredientItemModel
+} from "../../components/common/breadcrumModel";
 
 class IngredientItem extends Component {
 
@@ -45,7 +50,9 @@ class IngredientItem extends Component {
             isMock: false,
             isBatch: false,
             loading: false,
-            panelCollapsed: true
+            panelCollapsed: true,
+
+            breadcrumbModel: getBreadcrumbIngredientItemModel()
         };
         this.ingredientService = new IngredientService();
         this.mapper = new PagingDataModelMapper();
@@ -54,6 +61,28 @@ class IngredientItem extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageItems();
+        if (this.props?.location?.state?.cateId) {
+            this.ingredientService
+                .getByID(this.props?.location?.state?.cateId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.ingredientService
+                            .getByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbIngredientItemModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getPageItems = () => {
@@ -316,6 +345,9 @@ class IngredientItem extends Component {
                     unitType={this.props.location.state.unitType}
                     unit={this.props.location.state.unit}
                 />
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Ingredient Item" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">

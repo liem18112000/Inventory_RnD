@@ -14,6 +14,8 @@ import {
 } from "./config";
 import {getDeleteActionItem} from "../../components/table/TableUtil";
 import IngredientCategoryForm from "./IngredientCategoryForm";
+import {BreadCrumb} from "primereact/breadcrumb";
+import {BREADCRUMB_HOME_MODEL, getBreadcrumbIngredientCategoryModel} from "../../components/common/breadcrumModel";
 
 const IngredientCategory = (props) => {
 
@@ -33,6 +35,9 @@ const IngredientCategory = (props) => {
     return (
         <>
             <Toast ref={toast} />
+            <BreadCrumb
+                model={getBreadcrumbIngredientCategoryModel()}
+                home={BREADCRUMB_HOME_MODEL} />
             <BaseTable
                 service={service}
                 name={COMPONENT_TITLE}
