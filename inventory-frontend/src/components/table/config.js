@@ -17,11 +17,13 @@ const DEFAULT_TABLE_LENGTH_OPTIONS = [
 ]
 
 const DEFAULT_TABLE_CONFIG = {
+    responsiveLayout: "stack",
+    breakpoint: "960px",
     dataKey: "id",
-    scrollHeight: "max(calc(85vh - 200px), 70vh)",
+    scrollHeight: window.innerWidth > 960 ? "max(calc(85vh - 200px), 70vh)" : "flex",
     paginator: true,
     rowHover: true,
-    scrollable: true,
+    scrollable: window.innerWidth > 960,
     emptyMessage: "No data found",
     currentPageReportTemplate: "Showing {first} to {last} of {totalRecords} entries",
     paginatorTemplate: "FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"

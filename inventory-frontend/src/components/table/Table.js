@@ -294,7 +294,7 @@ const Table = (props) => {
                     <span className="p-input-icon-left">
                         {position === "before" && additionalHeader}
                         <SplitButton className="table-control-length p-button-contrast"
-                                     label={window.innerWidth > 768 ? "Refresh" : ""}
+                                     label={window.innerWidth > 960 ? "Refresh" : ""}
                                      icon="pi pi-refresh"
                                      onClick={onRefresh}
                                      model={tableLengthOptions}>
@@ -329,6 +329,7 @@ const Table = (props) => {
                             sortField={sortField}
                             filterField={filterField}
                             header={header}
+                            style={{ flexGrow: 1, flexBasis: '200px' }}
                             {...columnConfig} />
                 )
             })
