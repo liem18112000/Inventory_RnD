@@ -72,7 +72,7 @@ const AdminTemplate = (props) => {
                         </div>
                     </Content>
                     <Footer className="footer" style={{ textAlign: 'center' }}>
-                        <span> Copyright ©2022 Inventory System 1.0</span>
+                        <span> Copyright ©2022 Inventory System 1.1</span>
                     </Footer>
                 </Layout>
             </Layout>
