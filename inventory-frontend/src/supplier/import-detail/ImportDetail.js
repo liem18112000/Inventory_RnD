@@ -41,7 +41,9 @@ export class ImportDetail extends Component {
             isMock: false,
             loading: false,
             panelCollapsed: true,
-            ingredientList: []
+            ingredientList: [],
+
+            
         };
         this.supplierService = new SupplierService();
         this.ingredientService = new IngredientService();

@@ -19,6 +19,8 @@ import { IngredientService } from '../../service/IngredientService';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbSupplierMaterialModel } from '../../components/common/breadcrumModel';
 
 export class SupplierMaterial extends Component {
     constructor(props) {
@@ -43,7 +45,9 @@ export class SupplierMaterial extends Component {
             supplierGroupId: props.location.state.supplierGroupId,
             isMock: false,
             loading: false,
-            panelCollapsed: true
+            panelCollapsed: true,
+
+            breadcrumbModel: getBreadcrumbSupplierMaterialModel()
         };
         this.supplierService = new SupplierService();
         this.ingredientService = new IngredientService();
@@ -58,6 +62,28 @@ export class SupplierMaterial extends Component {
                 ...this.state, ingredientList: data
             })
         })
+        if (this.props?.location?.state?.groupId) {
+            this.supplierService
+                .getMaterialByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.supplierService
+                            .getMaterialByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbSupplierMaterialModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getPageMaterials = () => {
@@ -353,6 +379,9 @@ export class SupplierMaterial extends Component {
                     refreshData={() => this.getPageMaterials()}
                     id={this.props.match.params.id}
                 />
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Supplier Material" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">

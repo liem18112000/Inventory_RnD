@@ -20,6 +20,8 @@ import {convertDateToEnCADate} from "../../core/utility/ComponentUtility";
 import {
     handleExceptionWithSentryAndSendFeedback
 } from "../../core/utility/integrations/SentryExceptionResolver";
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbEventModel } from '../../components/common/breadcrumModel';
 
 export class Event extends Component {
 
@@ -369,6 +371,9 @@ export class Event extends Component {
                 <EventTable ref={el => this.table = el}
                     refreshData={() => this.getPage()}
                 />
+                <BreadCrumb
+                    model={getBreadcrumbEventModel()}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Notification Event" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">

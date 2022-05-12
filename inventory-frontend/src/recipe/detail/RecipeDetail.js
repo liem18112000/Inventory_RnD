@@ -17,6 +17,8 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbRecipeDetailModel } from '../../components/common/breadcrumModel';
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 export class RecipeDetail extends Component {
     constructor(props) {
@@ -41,7 +43,9 @@ export class RecipeDetail extends Component {
             isParent: props.location.state.isParent,
             isMock: false,
             loading: false,
-            panelCollapsed: true
+            panelCollapsed: true,
+
+            breadcrumbModel: getBreadcrumbRecipeDetailModel()
         };
         this.recipeService = new RecipeService();
         console.log(props);
@@ -49,7 +53,29 @@ export class RecipeDetail extends Component {
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.getPageDetails()
+        this.getPageDetails();
+        if (this.props?.location?.state?.groupId) {
+            this.recipeService
+                .getByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.recipeService
+                            .getByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbRecipeDetailModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getPageDetails = () => {
@@ -339,6 +365,9 @@ export class RecipeDetail extends Component {
                     refreshData={() => this.getPageDetails()}
                     id={this.props.match.params.id}
                 />
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Recipe Detail" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">

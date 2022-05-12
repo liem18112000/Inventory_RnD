@@ -16,6 +16,8 @@ import { Dropdown } from "primereact/dropdown";
 import { Link } from "react-router-dom";
 import { NotificationForm } from './NotificationForm';
 import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbNotificationModel } from '../../components/common/breadcrumModel';
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 export class Notification extends Component {
 
@@ -47,7 +49,9 @@ export class Notification extends Component {
             notificationStatuses: [],
             isMock: false,
             loading: false,
-            panelCollapsed: true
+            panelCollapsed: true,
+
+            breadcrumbModel: getBreadcrumbNotificationModel()
         };
         this.notificationService = new NotificationService();
         this.mapper = new PagingDataModelMapper();
@@ -61,6 +65,28 @@ export class Notification extends Component {
         this.getPage();
         this.getNotificationTypes();
         this.getNotificationStatuses();
+        if (this.props?.location?.state?.groupId) {
+            this.notificationService
+                .getEventByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.notificationService
+                            .getEventByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbNotificationModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getNotificationTypes() {
@@ -365,6 +391,9 @@ export class Notification extends Component {
                 <NotificationForm ref={el => this.form = el}
                     refreshData={() => this.getPage()}
                 />
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Notification" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">

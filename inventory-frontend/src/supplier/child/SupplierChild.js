@@ -17,6 +17,8 @@ import { SupplierChildForm } from './SupplierChildForm';
 import { SupplierService } from '../../service/SupplierService';
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbSupplierChildModel } from '../../components/common/breadcrumModel';
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 export class SupplierChild extends Component {
 
@@ -38,7 +40,9 @@ export class SupplierChild extends Component {
             },
             isMock: false,
             loading: false,
-            panelCollapsed: true
+            panelCollapsed: true,
+
+            breadcrumbModel: getBreadcrumbSupplierChildModel()
         };
 
         this.supplierService = new SupplierService();
@@ -49,6 +53,28 @@ export class SupplierChild extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageChildren();
+        if (this.props?.location?.state?.groupId) {
+            this.supplierService
+                .getByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.supplierService
+                            .getByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbSupplierChildModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getPageChildren = () => {
@@ -297,6 +323,9 @@ export class SupplierChild extends Component {
                 <SupplierChildForm ref={el => this.form = el}
                     refreshData={() => this.getPageChildren()}
                 />
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Supplier" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">

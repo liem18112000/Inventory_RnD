@@ -19,6 +19,8 @@ import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { UploadImageForm } from "../upload-media/UploadImageForm";
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbRecipeChildModel } from '../../components/common/breadcrumModel';
 
 export class RecipeChild extends Component {
 
@@ -42,7 +44,9 @@ export class RecipeChild extends Component {
             groupName: "",
             isMock: false,
             loading: false,
-            panelCollapsed: true
+            panelCollapsed: true,
+            
+            breadcrumbModel: getBreadcrumbRecipeChildModel()
         };
         this.history = props.history
         this.recipeService = new RecipeService();
@@ -52,12 +56,34 @@ export class RecipeChild extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageChildren();
-        this.recipeService.getByID(this.props.match.params.id, this.state.isMock)
-            .then(recipe => {
-                this.setState(
-                    { ...this.state, groupName: recipe.name }
-                );
-            })
+        // this.recipeService.getByID(this.props.match.params.id, this.state.isMock)
+        //     .then(recipe => {
+        //         this.setState(
+        //             { ...this.state, groupName: recipe.name }
+        //         );
+        //     })
+        if (this.props?.location?.state?.groupId) {
+            this.recipeService
+                .getByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.recipeService
+                            .getByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbRecipeChildModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getPageChildren = () => {
@@ -335,7 +361,10 @@ export class RecipeChild extends Component {
                 <UploadImageForm ref={el => this.upload = el}
                     refreshData={() => this.getPageChildren()}
                 />
-                <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1>
+                {/* <h1 style={{ fontSize: "25px", margin: "10px 0 10px 20px", }}>Recipe Group: {this.state.groupName}</h1> */}
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Recipe" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">

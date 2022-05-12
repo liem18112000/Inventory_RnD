@@ -17,6 +17,9 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import {BreadCrumb} from "primereact/breadcrumb";
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbRecipeGroupModel } from '../../components/common/breadcrumModel';
+
 
 export class RecipeGroup extends Component {
 
@@ -316,6 +319,9 @@ export class RecipeGroup extends Component {
                 <RecipeGroupForm ref={el => this.form = el}
                     refreshData={() => this.getPageGroups()}
                 />
+                <BreadCrumb
+                    model={getBreadcrumbRecipeGroupModel()}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Recipe Groups" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
