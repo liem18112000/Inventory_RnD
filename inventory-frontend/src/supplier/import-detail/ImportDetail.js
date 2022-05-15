@@ -18,6 +18,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { ImportDetailForm } from './ImportDetailForm';
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbImportDetailModel } from '../../components/common/breadcrumModel';
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 export class ImportDetail extends Component {
     constructor(props) {
@@ -43,7 +45,7 @@ export class ImportDetail extends Component {
             panelCollapsed: true,
             ingredientList: [],
 
-            
+            breadcrumbModel: getBreadcrumbImportDetailModel()
         };
         this.supplierService = new SupplierService();
         this.ingredientService = new IngredientService();
@@ -58,6 +60,28 @@ export class ImportDetail extends Component {
                 ...this.state, ingredientList: data
             })
         })
+        if (this.props?.location?.state?.groupId) {
+            this.supplierService
+                .getImportDetailByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .then(data => {
+                    const { id, name } = data;
+                    if (name && id) {
+                        this.supplierService
+                            .getImportByID(this.props.match.params.id, this.state.isMock)
+                            .then(res => {
+                                this.setState({
+                                    ...this.state,
+                                    breadcrumbModel: getBreadcrumbImportDetailModel(
+                                        name,
+                                        res.name,
+                                        id,
+                                        res.id
+                                    )
+                                })
+                            })
+                    }
+                });
+        }
     };
 
     getPageDetail = () => {
@@ -325,6 +349,9 @@ export class ImportDetail extends Component {
                     refreshData={() => this.getPageDetail()}
                     id={this.props.match.params.id}
                 />
+                <BreadCrumb
+                    model={this.state.breadcrumbModel}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Import Detail" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
@@ -420,6 +447,8 @@ export class ImportDetail extends Component {
                     // ---Paginator--- 
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
+
+                    responsiveLayout="stack"
 
                     emptyMessage="No import detail found"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"

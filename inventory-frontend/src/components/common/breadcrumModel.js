@@ -77,6 +77,14 @@ const getBreadcrumbSupplierImportModel = (groupName, typeName, groupId, typeId) 
     },
 ]
 
+const getBreadcrumbImportDetailModel = (groupName, typeName, groupId, typeId) => [
+    ...getBreadcrumbSupplierImportModel(groupName, groupId),
+    {
+        label: typeName ? typeName : 'Import Detail',
+        url: typeId ? `/supplier/import/detail/${typeId}` : "#"
+    },
+]
+
 const getBreadcrumbEventModel = () => [
     {
         label: 'Notification Event',
@@ -92,6 +100,7 @@ const getBreadcrumbNotificationModel = (groupName, typeName, groupId, typeId) =>
     },
 ]
 
+
 export {
     getBreadcrumbIngredientTypeModel,
     getBreadcrumbIngredientCategoryModel,
@@ -105,7 +114,7 @@ export {
     getBreadcrumbSupplierChildModel,
     getBreadcrumbSupplierMaterialModel,
     getBreadcrumbSupplierImportModel,
-    // getBreadcrumbImportDetailModel,
+    getBreadcrumbImportDetailModel,
 
     getBreadcrumbEventModel,
     getBreadcrumbNotificationModel,
