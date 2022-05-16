@@ -17,6 +17,8 @@ import moment from 'moment';
 import { handleGetPage } from '../core/handlers/ApiLoadContentHandler.js';
 import { Toast } from 'primereact/toast';
 import { convertDateToEnCADate, sleep } from "../core/utility/ComponentUtility";
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbIngredientInventoryModel } from '../components/common/breadcrumModel.js';
 
 export class IngredientInventory extends Component {
 
@@ -327,6 +329,9 @@ export class IngredientInventory extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <BreadCrumb
+                    model={getBreadcrumbIngredientInventoryModel()}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Ingredient Inventory" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">

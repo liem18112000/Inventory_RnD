@@ -1,5 +1,12 @@
 const BREADCRUMB_HOME_MODEL = { icon: 'pi pi-home', url: '/ingredient-inventory' }
 
+const getBreadcrumbIngredientInventoryModel = () => [
+    {
+        label: 'Ingredient Inventory',
+        url: '/ingredient-inventory'
+    },
+];
+
 const getBreadcrumbIngredientCategoryModel = () => [
     {
         label: 'Ingredient Category',
@@ -22,6 +29,21 @@ const getBreadcrumbIngredientItemModel = (categoryName, typeName, cateId, typeId
         url: typeId ? `/ingredient/type/${typeId}` : "#"
     },
 ]
+
+const getBreadcrumbIngredientHistoryModel = (categoryName, typeName, cateId, typeId) => [
+    ...getBreadcrumbIngredientTypeModel(categoryName, cateId),
+    {
+        label: typeName ? typeName : 'Ingredient History',
+        url: typeId ? `/ingredient/history/${typeId}` : "#"
+    },
+]
+
+const getBreadcrumbRecipesModel = () => [
+    {
+        label: 'Recipes',
+        url: '/recipes'
+    },
+];
 
 const getBreadcrumbRecipeGroupModel = () => [
     {
@@ -102,10 +124,14 @@ const getBreadcrumbNotificationModel = (groupName, typeName, groupId, typeId) =>
 
 
 export {
-    getBreadcrumbIngredientTypeModel,
-    getBreadcrumbIngredientCategoryModel,
-    getBreadcrumbIngredientItemModel,
+    getBreadcrumbIngredientInventoryModel,
 
+    getBreadcrumbIngredientCategoryModel,
+    getBreadcrumbIngredientTypeModel,
+    getBreadcrumbIngredientItemModel,
+    getBreadcrumbIngredientHistoryModel,
+
+    getBreadcrumbRecipesModel,
     getBreadcrumbRecipeGroupModel,
     getBreadcrumbRecipeChildModel,
     getBreadcrumbRecipeDetailModel,

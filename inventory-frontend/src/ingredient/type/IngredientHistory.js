@@ -16,6 +16,8 @@ import { handleGetPage } from "../../core/handlers/ApiLoadContentHandler";
 import { Toast } from 'primereact/toast';
 import InventoryTrackService from '../../service/InventoryTrackService';
 import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbIngredientHistoryModel } from '../../components/common/breadcrumModel';
 
 export class IngredientHistory extends Component {
 
@@ -292,6 +294,9 @@ export class IngredientHistory extends Component {
         return (
             <div className="datatable-doc-demo">
                 <Toast ref={(el) => this.toast = el} />
+                <BreadCrumb
+                    model={getBreadcrumbIngredientHistoryModel()}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Inventory History" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6 p-lg-6">

@@ -18,6 +18,8 @@ import { PagingDataModelMapper } from "../../core/models/mapper/ModelMapper";
 import { UploadImageForm } from '../upload-media/UploadImageForm';
 import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
+import { BREADCRUMB_HOME_MODEL, getBreadcrumbRecipesModel } from '../../components/common/breadcrumModel';
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 export class Recipes extends Component {
 
@@ -307,6 +309,9 @@ export class Recipes extends Component {
                 <UploadImageForm ref={el => this.upload = el}
                     refreshData={() => this.getAllRecipeChildren()}
                 />
+                <BreadCrumb
+                    model={getBreadcrumbRecipesModel()}
+                    home={BREADCRUMB_HOME_MODEL} />
                 <Fieldset legend="Recipes" toggleable collapsed={this.state.panelCollapsed}>
                     <div className="p-grid p-fluid">
                         <div className="p-col-12 p-md-6">
