@@ -22,6 +22,7 @@ import {
 } from "../../core/utility/integrations/SentryExceptionResolver";
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbEventModel } from '../../components/common/breadcrumModel';
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 export class Event extends Component {
 
@@ -441,11 +442,9 @@ export class Event extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -454,9 +453,7 @@ export class Event extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No event found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column sortField="occurAt" filterField="createAt" header="Occur At" body={this.occurAtBodyTemplate} sortable />

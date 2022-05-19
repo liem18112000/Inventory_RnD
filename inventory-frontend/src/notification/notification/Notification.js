@@ -18,6 +18,7 @@ import { NotificationForm } from './NotificationForm';
 import {handleExceptionWithSentryAndSendFeedback} from "../../core/utility/integrations/SentryExceptionResolver";
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbNotificationModel } from '../../components/common/breadcrumModel';
 import { BreadCrumb } from 'primereact/breadcrumb';
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 export class Notification extends Component {
 
@@ -480,11 +481,9 @@ export class Notification extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -493,9 +492,7 @@ export class Notification extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No event found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />

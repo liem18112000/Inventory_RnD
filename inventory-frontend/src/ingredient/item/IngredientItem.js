@@ -24,6 +24,7 @@ import {
     BREADCRUMB_HOME_MODEL,
     getBreadcrumbIngredientItemModel
 } from "../../components/common/breadcrumModel";
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 class IngredientItem extends Component {
 
@@ -406,11 +407,9 @@ class IngredientItem extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -419,9 +418,7 @@ class IngredientItem extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No item found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />
                     <Column sortField="name" filterField="name" header="Name" body={this.categoryBodyTemplate} sortable />

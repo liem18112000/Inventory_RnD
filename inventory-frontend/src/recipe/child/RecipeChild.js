@@ -21,6 +21,7 @@ import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbRecipeChildModel } from '../../components/common/breadcrumModel';
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 export class RecipeChild extends Component {
 
@@ -439,11 +440,9 @@ export class RecipeChild extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -452,9 +451,7 @@ export class RecipeChild extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No recipe categories found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 // paginatorPosition="top,bottom"
                 >
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />

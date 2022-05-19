@@ -19,6 +19,7 @@ import { Toast } from 'primereact/toast';
 import { convertDateToEnCADate, sleep } from "../core/utility/ComponentUtility";
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbIngredientInventoryModel } from '../components/common/breadcrumModel.js';
+import { DEFAULT_TABLE_CONFIG } from '../components/table/config.js';
 
 export class IngredientInventory extends Component {
 
@@ -418,13 +419,9 @@ export class IngredientInventory extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover
-                    scrollable
-                    scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -433,9 +430,7 @@ export class IngredientInventory extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No ingredient categories found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="description" header="Description" body={this.descriptionBodyTemplate} sortable />
