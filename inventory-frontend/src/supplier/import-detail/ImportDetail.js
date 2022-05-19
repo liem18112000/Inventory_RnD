@@ -20,6 +20,7 @@ import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbImportDetailModel } from '../../components/common/breadcrumModel';
 import { BreadCrumb } from 'primereact/breadcrumb';
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 export class ImportDetail extends Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export class ImportDetail extends Component {
                 name: "",
                 ingredientId: null
             },
-            supplierId: props.location.state.supplierId,
+            supplierId: props?.location?.state?.supplierId,
             isMock: false,
             loading: false,
             panelCollapsed: true,
@@ -331,14 +332,14 @@ export class ImportDetail extends Component {
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
-                <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                     <a href="#/" onClick={() => this.props.history.push({
                         pathname: `../${this.state.supplierId}`,
                         state: {
                             supplierGroupId: this.props.location.state.supplierGroupId,
                         }
                     })}>Back to Supplier Import</a>
-                </span>
+                </span> */}
             </div>
         )
 
@@ -435,11 +436,9 @@ export class ImportDetail extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -450,9 +449,7 @@ export class ImportDetail extends Component {
 
                     responsiveLayout="stack"
 
-                    emptyMessage="No import detail found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column field="ingredientId" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />

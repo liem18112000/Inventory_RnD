@@ -21,6 +21,7 @@ import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbSupplierMaterialModel } from '../../components/common/breadcrumModel';
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 export class SupplierMaterial extends Component {
     constructor(props) {
@@ -42,7 +43,7 @@ export class SupplierMaterial extends Component {
                 name: "",
                 code: "",
             },
-            supplierGroupId: props.location.state.supplierGroupId,
+            supplierGroupId: props?.location?.state?.supplierGroupId,
             isMock: false,
             loading: false,
             panelCollapsed: true,
@@ -366,9 +367,9 @@ export class SupplierMaterial extends Component {
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
-                <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                     <Link to={`../${this.state.supplierGroupId}`}> Back to Supplier</Link>
-                </span>
+                </span> */}
             </div>
         )
 
@@ -454,11 +455,9 @@ export class SupplierMaterial extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -467,9 +466,7 @@ export class SupplierMaterial extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No supplier material found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column field="ingredientId" header="Ingredient" body={this.ingredientBodyTemplate} sortable />
                     <Column field="name" header="Name" body={this.nameBodyTemplate} sortable />

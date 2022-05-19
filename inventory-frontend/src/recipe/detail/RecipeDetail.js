@@ -39,8 +39,8 @@ export class RecipeDetail extends Component {
                 description: "",
                 updatedAt: "",
             },
-            groupId: props.location.state.groupId,
-            isParent: props.location.state.isParent,
+            groupId: props?.location?.state?.groupId,
+            isParent: props?.location?.state?.isParent,
             isMock: false,
             loading: false,
             panelCollapsed: true,
@@ -352,9 +352,9 @@ export class RecipeDetail extends Component {
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
-                <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                     {this.goBack(this.state.isParent)}
-                </span>
+                </span> */}
             </div>
         )
 

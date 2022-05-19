@@ -18,6 +18,8 @@ import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbSupplierGroupModel } from '../../components/common/breadcrumModel';
 
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
+
 export class SupplierGroup extends Component {
 
     /**
@@ -431,11 +433,9 @@ export class SupplierGroup extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -444,9 +444,7 @@ export class SupplierGroup extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No supplier group found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />

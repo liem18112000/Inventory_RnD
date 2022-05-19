@@ -39,7 +39,7 @@ class IngredientItem extends Component {
                 description: "",
                 expiredAt: "",
             },
-            cateId: props.location.state.cateId,
+            cateId: props?.location?.state?.cateId,
             // --paginator state--
             page: 0,
             rows: 10,
@@ -326,12 +326,12 @@ class IngredientItem extends Component {
                             onClick={this.onRefresh} model={tableLengthOptions}>
                         </SplitButton>
                     </span>
-                    <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                    {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                         <Link to={{
                             pathname: `/ingredient/${this.state.cateId}`,
                             state: {cateId: this.state.cateId}
                         }}> Back to Ingredient Types</Link>
-                    </span>
+                    </span> */}
                 </div>
             </>
         )

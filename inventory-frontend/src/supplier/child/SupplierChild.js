@@ -19,6 +19,7 @@ import { Calendar } from 'primereact/calendar';
 import { convertDateToEnCADate } from '../../core/utility/ComponentUtility';
 import { BREADCRUMB_HOME_MODEL, getBreadcrumbSupplierChildModel } from '../../components/common/breadcrumModel';
 import { BreadCrumb } from 'primereact/breadcrumb';
+import { DEFAULT_TABLE_CONFIG } from '../../components/table/config';
 
 export class SupplierChild extends Component {
 
@@ -310,9 +311,9 @@ export class SupplierChild extends Component {
                             onClick={this.onRefresh} model={tableLengthOptions}>
                         </SplitButton>
                     </span>
-                    <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                    {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                         <Link to='/supplier'>Back to Supplier Group</Link>
-                    </span>
+                    </span> */}
                 </div>
             </>
         )
@@ -384,11 +385,9 @@ export class SupplierChild extends Component {
                     loading={this.state.loading}
                     header={header}
                     className="p-datatable-customers"
-                    dataKey="id"
-                    rowHover scrollable scrollHeight="calc(85vh - 200px)"
 
                     // ---Paginator--- 
-                    paginator={true}
+                    // paginator={true}
                     onPage={this.onPage}
                     onSort={this.onSort}
                     rows={this.state.rows}
@@ -397,9 +396,7 @@ export class SupplierChild extends Component {
                     sortField={this.state.sortField}
                     sortOrder={this.state.sortOrder}
 
-                    emptyMessage="No supplier found"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    {...DEFAULT_TABLE_CONFIG}
                 >
                     <Column sortField="name" filterField="name" header="Name" body={this.nameBodyTemplate} sortable />
                     <Column field="code" header="Code" body={this.codeBodyTemplate} sortable />

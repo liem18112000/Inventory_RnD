@@ -379,9 +379,9 @@ export class Notification extends Component {
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
-                <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                     <Link to='/notification/event'>Back to Notification Event</Link>
-                </span>
+                </span> */}
             </div>
         )
 

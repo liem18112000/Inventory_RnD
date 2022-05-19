@@ -41,7 +41,7 @@ export class IngredientHistory extends Component {
                 trackTimestamp: "",
                 status: "",
             },
-            cateId: props.location.state.cateId,
+            cateId: props?.location?.state?.cateId,
             events: [],
             statuses: [],
             isMock: false,
@@ -284,9 +284,9 @@ export class IngredientHistory extends Component {
                             onClick={this.onRefresh} model={tableLengthOptions}>
                         </SplitButton>
                     </span>
-                    <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                    {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                         <Link to={`/ingredient/${this.state.cateId}`}> Back to Ingredient Types</Link>
-                    </span>
+                    </span> */}
                 </div>
             </>
         )

@@ -346,9 +346,9 @@ export class RecipeChild extends Component {
                         onClick={this.onRefresh} model={tableLengthOptions}>
                     </SplitButton>
                 </span>
-                <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
+                {/* <span className="p-input-icon-left" style={{ fontSize: "17px" }}>
                     <Link to='/recipe'>Back to Recipe Groups</Link>
-                </span>
+                </span> */}
             </div>
         )
 
