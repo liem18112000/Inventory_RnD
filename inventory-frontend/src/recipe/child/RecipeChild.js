@@ -57,33 +57,15 @@ export class RecipeChild extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageChildren();
-        // this.recipeService.getByID(this.props.match.params.id, this.state.isMock)
-        //     .then(recipe => {
-        //         this.setState(
-        //             { ...this.state, groupName: recipe.name }
-        //         );
-        //     })
-        if (this.props?.location?.state?.groupId) {
-            this.recipeService
-                .getByID(this.props?.location?.state?.groupId, this.state.isMock)
-                .then(data => {
-                    const { id, name } = data;
-                    if (name && id) {
-                        this.recipeService
-                            .getByID(this.props.match.params.id, this.state.isMock)
-                            .then(res => {
-                                this.setState({
-                                    ...this.state,
-                                    breadcrumbModel: getBreadcrumbRecipeChildModel(
-                                        name,
-                                        res.name,
-                                        id,
-                                        res.id
-                                    )
-                                })
-                            })
-                    }
-                });
+        const recipeGroupName = this.props?.location?.state?.groupName;
+        if (recipeGroupName) {
+            this.setState({
+                ...this.state,
+                breadcrumbModel: getBreadcrumbRecipeChildModel(
+                    recipeGroupName,
+                    this.props.match.params.id
+                )
+            })
         }
     };
 
