@@ -43,38 +43,25 @@ export class SupplierChild extends Component {
             loading: false,
             panelCollapsed: true,
 
-            breadcrumbModel: getBreadcrumbSupplierChildModel()
+            breadcrumbModel: getBreadcrumbSupplierChildModel(),
         };
 
         this.supplierService = new SupplierService();
         this.mapper = new PagingDataModelMapper();
-        console.log(this.state);
     }
 
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageChildren();
-        if (this.props?.location?.state?.groupId) {
-            this.supplierService
-                .getByID(this.props?.location?.state?.groupId, this.state.isMock)
-                .then(data => {
-                    const { id, name } = data;
-                    if (name && id) {
-                        this.supplierService
-                            .getByID(this.props.match.params.id, this.state.isMock)
-                            .then(res => {
-                                this.setState({
-                                    ...this.state,
-                                    breadcrumbModel: getBreadcrumbSupplierChildModel(
-                                        name,
-                                        res.name,
-                                        id,
-                                        res.id
-                                    )
-                                })
-                            })
-                    }
-                });
+        const supplierGroupName = this.props?.location?.state?.supplierGroupName;
+        if (supplierGroupName) {
+            this.setState({
+                ...this.state,
+                breadcrumbModel: getBreadcrumbSupplierChildModel(
+                    supplierGroupName,
+                    this.props.match.params.id
+                )
+            })
         }
     };
 

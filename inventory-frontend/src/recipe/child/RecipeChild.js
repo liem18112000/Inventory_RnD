@@ -49,6 +49,7 @@ export class RecipeChild extends Component {
             
             breadcrumbModel: getBreadcrumbRecipeChildModel()
         };
+        // console.log(props.location);
         this.history = props.history
         this.recipeService = new RecipeService();
         this.mapper = new PagingDataModelMapper();

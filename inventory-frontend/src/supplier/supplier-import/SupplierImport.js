@@ -53,9 +53,9 @@ export class SupplierImport extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         this.getPageImports();
-        if (this.props?.location?.state?.groupId) {
+        if (this.props?.location?.state?.supplierGroupId) {
             this.supplierService
-                .getImportByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .getImportByID(this.props?.location?.state?.supplierGroupId, this.state.isMock)
                 .then(data => {
                     const { id, name } = data;
                     if (name && id) {

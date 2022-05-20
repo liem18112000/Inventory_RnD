@@ -54,6 +54,7 @@ export class Notification extends Component {
 
             breadcrumbModel: getBreadcrumbNotificationModel()
         };
+        // console.log(props.location);
         this.notificationService = new NotificationService();
         this.mapper = new PagingDataModelMapper();
     }
@@ -66,27 +67,15 @@ export class Notification extends Component {
         this.getPage();
         this.getNotificationTypes();
         this.getNotificationStatuses();
-        if (this.props?.location?.state?.groupId) {
-            this.notificationService
-                .getEventByID(this.props?.location?.state?.groupId, this.state.isMock)
-                .then(data => {
-                    const { id, name } = data;
-                    if (name && id) {
-                        this.notificationService
-                            .getEventByID(this.props.match.params.id, this.state.isMock)
-                            .then(res => {
-                                this.setState({
-                                    ...this.state,
-                                    breadcrumbModel: getBreadcrumbNotificationModel(
-                                        name,
-                                        res.name,
-                                        id,
-                                        res.id
-                                    )
-                                })
-                            })
-                    }
-                });
+        const eventName = this.props?.location?.state?.groupName;
+        if (eventName) {
+            this.setState({
+                ...this.state,
+                breadcrumbModel: getBreadcrumbNotificationModel(
+                    eventName,
+                    this.props.match.params.id
+                )
+            })
         }
     };
 

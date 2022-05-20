@@ -75,35 +75,35 @@ const getBreadcrumbSupplierGroupModel = () => [
     },
 ];
 
-const getBreadcrumbSupplierChildModel = (groupName, groupId) => [
-    ...getBreadcrumbSupplierGroupModel(groupName),
+const getBreadcrumbSupplierChildModel = (supplierGroupName, supplierGroupId) => [
+    ...getBreadcrumbSupplierGroupModel(supplierGroupName),
     {
-        label: groupName ? groupName : 'Supplier',
-        url: groupId ? `/supplier/${groupId}` : "#"
+        label: supplierGroupName ? supplierGroupName : 'Supplier',
+        url: supplierGroupId ? `/supplier/${supplierGroupId}` : "#"
     },
 ]
 
-const getBreadcrumbSupplierMaterialModel = (groupName, typeName, groupId, typeId) => [
-    ...getBreadcrumbSupplierChildModel(groupName, groupId),
+const getBreadcrumbSupplierMaterialModel = (supplierGroupName, parentName, supplierGroupId, parentId) => [
+    ...getBreadcrumbSupplierChildModel(supplierGroupName, supplierGroupId),
     {
-        label: typeName ? typeName : 'Supplier Material',
-        url: typeId ? `/supplier/material/${typeId}` : "#"
+        label: parentName ? parentName : 'Supplier Material',
+        url: parentId ? `/supplier/material/${parentId}` : "#"
     },
 ]
 
-const getBreadcrumbSupplierImportModel = (groupName, typeName, groupId, typeId) => [
-    ...getBreadcrumbSupplierChildModel(groupName, groupId),
+const getBreadcrumbSupplierImportModel = (supplierGroupName, parentName, supplierGroupId, parentId) => [
+    ...getBreadcrumbSupplierChildModel(supplierGroupName, supplierGroupId),
     {
-        label: typeName ? typeName : 'Supplier Import',
-        url: typeId ? `/supplier/import/${typeId}` : "#"
+        label: parentName ? parentName : 'Supplier Import',
+        url: parentId ? `/supplier/import/${parentId}` : "#"
     },
 ]
 
-const getBreadcrumbImportDetailModel = (groupName, typeName, groupId, typeId) => [
-    ...getBreadcrumbSupplierImportModel(groupName, groupId),
+const getBreadcrumbImportDetailModel = (supplierGroupName, parentName, supplierGroupId, parentId) => [
+    ...getBreadcrumbSupplierImportModel(supplierGroupName, supplierGroupId),
     {
-        label: typeName ? typeName : 'Import Detail',
-        url: typeId ? `/supplier/import/detail/${typeId}` : "#"
+        label: parentName ? parentName : 'Import Detail',
+        url: parentId ? `/supplier/import/detail/${parentId}` : "#"
     },
 ]
 

@@ -52,7 +52,6 @@ export class SupplierMaterial extends Component {
         };
         this.supplierService = new SupplierService();
         this.ingredientService = new IngredientService();
-        console.log(props);
     }
 
     componentDidMount() {
@@ -63,9 +62,9 @@ export class SupplierMaterial extends Component {
                 ...this.state, ingredientList: data
             })
         })
-        if (this.props?.location?.state?.groupId) {
+        if (this.props?.location?.state?.supplierGroupId) {
             this.supplierService
-                .getMaterialByID(this.props?.location?.state?.groupId, this.state.isMock)
+                .getMaterialById(this.props?.location?.state?.supplierGroupId, this.state.isMock)
                 .then(data => {
                     const { id, name } = data;
                     if (name && id) {
