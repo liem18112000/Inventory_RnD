@@ -27,7 +27,6 @@ import java.util.Objects;
 @Table(name="ingredient_config")
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 public class IngredientConfigEntity extends IngredientReferencedBaseEntity<Long> {
 
@@ -52,18 +51,5 @@ public class IngredientConfigEntity extends IngredientReferencedBaseEntity<Long>
         if(Objects.nonNull(request.getMaximumQuantity())) this.setMaximumQuantity(request.getMaximumQuantity());
         this.setUpdateAt(Instant.now().toString());
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        IngredientConfigEntity that = (IngredientConfigEntity) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 566213035;
     }
 }

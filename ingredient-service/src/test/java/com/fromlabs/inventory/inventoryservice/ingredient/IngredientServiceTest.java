@@ -9,7 +9,12 @@ import com.fromlabs.inventory.inventoryservice.common.helper.CustomizePageReques
 import com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientPageRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigEntity;
+import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigRepository;
+import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigService;
+import com.fromlabs.inventory.inventoryservice.ingredient.config.IngredientConfigServiceImpl;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -39,6 +44,15 @@ class IngredientServiceTest {
 
     @Autowired
     private IngredientService service;
+
+    @Mock
+    private IngredientRepository ingredientRepository;
+
+    @Mock
+    private IngredientConfigService ingredientConfigService;
+
+    @Mock
+    private IngredientConfigRepository ingredientConfigRepository;
 
     private UnitTestTemplateProcess getTemplateUnitTest;
 
@@ -79,6 +93,12 @@ class IngredientServiceTest {
     }
 
     private Page<?> assertPageIsNotNullAndNotEmpty(Page<?> bootstrap) {
+        assert Objects.nonNull(bootstrap);
+        assert !bootstrap.isEmpty();
+        return bootstrap;
+    }
+
+    private List<?> assertListIsNotNullAndNotEmpty(List<?> bootstrap) {
         assert Objects.nonNull(bootstrap);
         assert !bootstrap.isEmpty();
         return bootstrap;
@@ -993,18 +1013,57 @@ class IngredientServiceTest {
     //</editor-fold>
 
     @Test
-    void save() {
+    void getAllBySpecification() {
+        this.getTemplate(
+            () -> {
+                var request = (IngredientPageRequest) getInput(PAGE_REQUEST);
+                request.setClientId((Long) getInput(TENANT_ID));
+                return this.service.getAll(filter(toEntity(request), service.getById(request.getParentId())));
+            }, bootstrap -> {
+                List<?> ingredientList = assertListIsNotNullAndNotEmpty((List<?>) bootstrap);
+                assert  ingredientList.stream().allMatch(item -> {
+                    var     ingredient = (IngredientEntity) item;
+                    return  ingredient.isCategory() && Objects.equals(ingredient.getClientId(), getInput(TENANT_ID));
+                });
+            }).run();
     }
 
+    @DisplayName("Save ingredient")
     @Test
+    @Order(45)
+    void save() {
+        var ingredient = new IngredientEntity();
+        ingredient.setId(1L);
+        ingredient.setName("Name");
+        ingredient.setDescription("Description");
+        ingredient.setUnitType("Unit type");
+        ingredient.setUnit("Unit");
+        ingredient.setClientId(1L);
+        ingredient.setCode("Code");
+        Mockito.when(this.ingredientRepository.save(ingredient))
+                .thenReturn(ingredient);
+        var service = new IngredientServiceImpl(
+                this.ingredientRepository, this.ingredientConfigService);
+        final var saved = service.save(ingredient);
+        Assertions.assertEquals(ingredient, saved);
+    }
+
+    @DisplayName("Delete ingredient")
+    @Test
+    @Order(46)
     void delete() {
+        var ingredient = new IngredientEntity();
+        ingredient.setId(1L);
+        var service = new IngredientServiceImpl(
+                this.ingredientRepository, this.ingredientConfigService);
+        Assertions.assertDoesNotThrow(() -> service.delete(ingredient));
     }
 
     //<editor-fold desc="GET CONFIG BY ID">
 
     @DisplayName(GET_INGREDIENT_CONFIG_BY_ID + " - positive case : all thing is right")
     @Test
-    @Order(45)
+    @Order(47)
     void getConfig_PositiveCase_AllThingIsRight() {
         this.getTemplate(
                 () -> this.service.getConfig((Long) getInput(ID)), (config) -> {
@@ -1015,7 +1074,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_BY_ID + " - negative case : id is negative")
     @Test
-    @Order(46)
+    @Order(48)
     void getConfig_NegativeCase_IdIsNegative() {
         this.getTemplate(
                 () -> this.service.getConfig((Long) getInput(NEGATIVE_ID)), (config) -> {
@@ -1025,7 +1084,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_BY_ID + " - negative case : id is non exist")
     @Test
-    @Order(47)
+    @Order(49)
     void getConfig_NegativeCase_IdIsNonExist() {
         this.getTemplate(
                 () -> this.service.getConfig((Long) getInput(NON_EXIST_ID)), (config) -> {
@@ -1039,7 +1098,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_BY_INGREDIENT + " - positive case : all thing is right")
     @Test
-    @Order(48)
+    @Order(50)
     void GetConfigByIngredientId_PositiveCase_AllThingIsRight() {
         this.getTemplate(
                 () -> this.service.getConfig((Long) getInput(TENANT_ID), service.getById((Long) getInput(ID))), (config) -> {
@@ -1049,7 +1108,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_BY_INGREDIENT + " - negative case : tenant id is not exist")
     @Test
-    @Order(49)
+    @Order(51)
     void GetConfigByIngredientId_NegativeCase_TenantIdIsNotExist() {
         this.getTemplate(
                 () -> this.service.getConfig((Long) getInput(NON_EXIST_TENANT_ID), service.getById((Long) getInput(ID))), (config) -> {
@@ -1059,7 +1118,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_BY_INGREDIENT + " - negative case : ingredient id is not exist")
     @Test
-    @Order(50)
+    @Order(52)
     void GetConfigByIngredientId_NegativeCase_IngredientIdIsNotExist() {
         this.getTemplate(
                 () -> this.service.getConfig((Long) getInput(TENANT_ID), service.getById((Long) getInput(NON_EXIST_ID))), (config) -> {
@@ -1073,7 +1132,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_ALL + " - positive case : all thing is right")
     @Test
-    @Order(51)
+    @Order(53)
     void getAllConfig_PositiveCase_AllThingIsRight() {
         this.getTemplate(
                 () -> this.service.getAllConfig((Long) getInput(TENANT_ID)), (configList) -> {
@@ -1085,7 +1144,7 @@ class IngredientServiceTest {
 
     @DisplayName(GET_INGREDIENT_CONFIG_ALL + " - negative case : tenant id is non exist")
     @Test
-    @Order(52)
+    @Order(54)
     void getAllConfig_NegativeCase_TenantIdIsNotExist() {
         this.getTemplate(
                 () -> this.service.getAllConfig((Long) getInput(NON_EXIST_TENANT_ID)), (configList) -> {
@@ -1097,14 +1156,33 @@ class IngredientServiceTest {
     //</editor-fold>
 
     @Test
-    void getPageConfig() {
-    }
-
-    @Test
     void saveConfig() {
+        var config = new IngredientConfigEntity();
+        config.setId(1L);
+        config.setIngredient(new IngredientEntity());
+        config.setName("Name");
+        config.setDescription("Description");
+        config.setMaximumQuantity(10000f);
+        config.setMinimumQuantity(10f);
+        Mockito.when(this.ingredientConfigRepository.save(config))
+                .thenReturn(config);
+        var configService = new IngredientConfigServiceImpl(this.ingredientConfigRepository);
+        var service = new IngredientServiceImpl(this.ingredientRepository, configService);
+        final var saved = service.saveConfig(config);
+        Assertions.assertEquals(config, saved);
     }
 
     @Test
     void deleteConfig() {
+        var config = new IngredientConfigEntity();
+        config.setId(1L);
+        config.setIngredient(new IngredientEntity());
+        config.setName("Name");
+        config.setDescription("Description");
+        config.setMaximumQuantity(10000f);
+        config.setMinimumQuantity(10f);
+        var configService = new IngredientConfigServiceImpl(this.ingredientConfigRepository);
+        var service = new IngredientServiceImpl(this.ingredientRepository, configService);
+        Assertions.assertDoesNotThrow(() -> service.deleteConfig(config));
     }
 }

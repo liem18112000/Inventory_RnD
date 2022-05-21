@@ -67,36 +67,4 @@ public class IngredientUnit {
         meter
     }
     //</editor-fold>
-
-    //<editor-fold desc="CONVERTER">
-    public Float covertGramToKilogram(Float gram){
-        if(gram <= 0) return 0f;
-        return gram / 1000;
-    }
-
-    public Float covertKiloramToGram(Float kiliogram){
-        if(kiliogram <= 0) return 0f;
-        return kiliogram * 1000;
-    }
-
-    public Float covertMililiterToLiter(Float mililiter){
-        if(mililiter <= 0) return 0f;
-        return mililiter / 1000;
-    }
-
-    public Float covertLiterToMililiter(Float liter){
-        if(liter <= 0) return 0f;
-        return liter * 1000;
-    }
-
-    public Float covertCentimeterToMeter(Float centimeter){
-        if(centimeter <= 0) return 0f;
-        return centimeter / 100;
-    }
-
-    public Float covertMeterToCentimeter(Float meter){
-        if(meter <= 0) return 0f;
-        return meter * 100;
-    }
-    //</editor-fold>
 }

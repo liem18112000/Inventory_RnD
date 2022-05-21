@@ -21,7 +21,6 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
 @Table(name="history")
@@ -65,18 +64,5 @@ public class IngredientHistoryEntity extends IngredientReferencedMultiEntity<Lon
         this.setExtraInformation(request.getExtraInformation());
         this.setUpdateAt(Instant.now().toString());
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        IngredientHistoryEntity that = (IngredientHistoryEntity) o;
-        return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

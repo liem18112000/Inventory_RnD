@@ -32,10 +32,6 @@ public class IngredientEntityFactory extends BaseEntityWithCreateAtAndLongIDFact
         return new IngredientEntity();
     }
 
-    public String getEntityClassName() {
-        return this.getClass().getName();
-    }
-
     static private final IngredientEntityFactory factory = new IngredientEntityFactory();
 
     static public IngredientEntity create(FactoryCreateType createType) {

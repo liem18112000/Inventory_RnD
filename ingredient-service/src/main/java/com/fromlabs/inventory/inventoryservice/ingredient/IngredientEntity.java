@@ -22,7 +22,6 @@ import static java.time.Instant.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Table(name="ingredient")
 public class IngredientEntity extends IngredientBaseEntity<Long> {
@@ -72,10 +71,5 @@ public class IngredientEntity extends IngredientBaseEntity<Long> {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         IngredientEntity that = (IngredientEntity) o;
         return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 49125696;
     }
 }
