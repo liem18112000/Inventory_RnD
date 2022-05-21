@@ -1,4 +1,4 @@
-package com.fromlabs.inventory.inventoryservice.ingredient.beans.request;
+package com.fromlabs.inventory.inventoryservice.inventory.beans.request;
 
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
 import org.junit.jupiter.api.Assertions;
@@ -14,23 +14,15 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = InventoryServiceApplication.class)
 @ActiveProfiles({"dev","liem-local"} )
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class IngredientPageRequestTest {
+class InventoryRequestTest {
 
     @Test
-    void testEquals() {
-        var request = new IngredientPageRequest();
-        request.setClientId(1L);
-        request.setSort("id,asc");
-        var equalRequest = new IngredientPageRequest();
-        equalRequest.setClientId(1L);
-        equalRequest.setSort("id,asc");
-        Assertions.assertTrue(request.equals(equalRequest));
+    public void test() {
+        var request = new InventoryRequest(1L, 1L, "Name", "Description");
+        Assertions.assertEquals(1L, request.getId());
+        Assertions.assertEquals(1L, request.getClientId());
+        Assertions.assertEquals("Name", request.getName());
+        Assertions.assertEquals("Description", request.getDescription());
     }
 
-    @Test
-    void testHashCode() {
-        var request = new IngredientPageRequest();
-        request.setClientId(1L);
-        Assertions.assertNotNull(request.hashCode());
-    }
 }

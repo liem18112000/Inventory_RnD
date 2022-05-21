@@ -16,7 +16,6 @@ import java.util.Objects;
 @Table(name = "event")
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 public class IngredientEventEntity extends BaseEntity<Long> {
 
@@ -26,10 +25,5 @@ public class IngredientEventEntity extends BaseEntity<Long> {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         IngredientEventEntity that = (IngredientEventEntity) o;
         return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

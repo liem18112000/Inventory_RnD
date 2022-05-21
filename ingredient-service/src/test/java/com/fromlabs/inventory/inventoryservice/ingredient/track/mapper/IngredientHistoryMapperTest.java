@@ -1,13 +1,18 @@
 package com.fromlabs.inventory.inventoryservice.ingredient.track.mapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.request.IngredientRequest;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.IngredientEventEntity;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.IngredientEventService;
+import com.fromlabs.inventory.inventoryservice.ingredient.event.beans.dto.IngredientEventDto;
 import com.fromlabs.inventory.inventoryservice.ingredient.event.status.IngredientEventStatus;
 import com.fromlabs.inventory.inventoryservice.ingredient.track.IngredientHistoryEntity;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request.IngredientHistoryPageRequest;
+import com.fromlabs.inventory.inventoryservice.item.beans.request.ItemRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -137,28 +142,92 @@ class IngredientHistoryMapperTest {
     }
 
     @Test
-    void toEntity() {
+    void toEntityFromIngredient() throws JsonProcessingException {
         var ingredient = new IngredientEntity();
-        ingredient.setId(1L);
         when(this.ingredientService.getById(ingredient.getId()))
                 .thenReturn(ingredient);
         var request = new IngredientRequest();
-        request.setId(1L);
         request.setClientId(1L);
         request.setName("Name");
         request.setActorName("ActorName");
         request.setActorRole("ActorRole");
+        request.setDescription("Description");
 
         var event = new IngredientEventEntity();
+        event.setDescription("Description");
         var status = IngredientEventStatus.SUCCESS;
 
+        final var entity = IngredientHistoryMapper.toEntity(
+                request, ingredientService, event, status);
+
+        Assertions.assertEquals(1L, entity.getClientId());
+        Assertions.assertEquals(ingredient, entity.getIngredient());
+        Assertions.assertEquals("ActorName", entity.getActorName());
+        Assertions.assertEquals("ActorRole", entity.getActorRole());
+        Assertions.assertEquals("Description-event successfully occurred", entity.getDescription());
+        Assertions.assertEquals(event, entity.getEvent());
+        Assertions.assertEquals(status.getName(), entity.getEventStatus());
+        Assertions.assertEquals(request.getClass().getSimpleName(), entity.getExtraInformationClass());
+        Assertions.assertEquals(new ObjectMapper().writeValueAsString(request),
+                entity.getExtraInformation());
+        Assertions.assertTrue(entity.isActive());
+
     }
 
     @Test
-    void testToEntity() {
+    void ToEntityFromItem() throws JsonProcessingException {
+        var ingredient = new IngredientEntity();
+        ingredient.setId(1L);
+        when(this.ingredientService.getById(ingredient.getId()))
+                .thenReturn(ingredient);
+        var request = new ItemRequest();
+        request.setClientId(1L);
+        request.setName("Name");
+        request.setActorName("ActorName");
+        request.setActorRole("ActorRole");
+        request.setDescription("Description");
+
+        var event = new IngredientEventEntity();
+        event.setDescription("Description");
+        var status = IngredientEventStatus.SUCCESS;
+
+        final var entity = IngredientHistoryMapper.toEntity(
+                request, ingredientService, event, status);
+
+        Assertions.assertEquals(1L, entity.getClientId());
+        Assertions.assertEquals("ActorName", entity.getActorName());
+        Assertions.assertEquals("ActorRole", entity.getActorRole());
+        Assertions.assertEquals("Description-event successfully occurred", entity.getDescription());
+        Assertions.assertEquals(event, entity.getEvent());
+        Assertions.assertEquals(status.getName(), entity.getEventStatus());
+        Assertions.assertEquals(request.getClass().getSimpleName(), entity.getExtraInformationClass());
+        Assertions.assertEquals(new ObjectMapper().writeValueAsString(request),
+                entity.getExtraInformation());
+        Assertions.assertTrue(entity.isActive());
     }
 
     @Test
-    void testToEntity1() {
+    void toEntityFromPageRequest() {
+        var ingredient = new IngredientEntity();
+        ingredient.setId(1L);
+        when(this.ingredientService.getById(ingredient.getId()))
+                .thenReturn(ingredient);
+        var request = new IngredientHistoryPageRequest();
+        request.setClientId(1L);
+        request.setName("Name");
+        request.setActorName("ActorName");
+        request.setActorRole("ActorRole");
+        request.setDescription("Description");
+
+        var event = IngredientEventDto.builder().build();
+        var status = IngredientEventStatus.SUCCESS;
+
+        final var entity = IngredientHistoryMapper.toEntity(
+                request, event, ingredientService);
+
+        Assertions.assertEquals(1L, entity.getClientId());
+        Assertions.assertEquals("ActorName", entity.getActorName());
+        Assertions.assertEquals("ActorRole", entity.getActorRole());
+        Assertions.assertEquals("Description", entity.getDescription());
     }
 }

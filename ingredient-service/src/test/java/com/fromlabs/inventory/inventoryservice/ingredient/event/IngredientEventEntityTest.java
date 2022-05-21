@@ -1,4 +1,4 @@
-package com.fromlabs.inventory.inventoryservice.ingredient.beans.request;
+package com.fromlabs.inventory.inventoryservice.ingredient.event;
 
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
 import org.junit.jupiter.api.Assertions;
@@ -14,23 +14,14 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = InventoryServiceApplication.class)
 @ActiveProfiles({"dev","liem-local"} )
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class IngredientPageRequestTest {
+class IngredientEventEntityTest {
 
     @Test
     void testEquals() {
-        var request = new IngredientPageRequest();
-        request.setClientId(1L);
-        request.setSort("id,asc");
-        var equalRequest = new IngredientPageRequest();
-        equalRequest.setClientId(1L);
-        equalRequest.setSort("id,asc");
-        Assertions.assertTrue(request.equals(equalRequest));
-    }
-
-    @Test
-    void testHashCode() {
-        var request = new IngredientPageRequest();
-        request.setClientId(1L);
-        Assertions.assertNotNull(request.hashCode());
+        var entity1 = new IngredientEventEntity();
+        entity1.setId(1L);
+        var entity2 = new IngredientEventEntity();
+        entity2.setId(1L);
+        Assertions.assertTrue(entity1.equals(entity2));
     }
 }

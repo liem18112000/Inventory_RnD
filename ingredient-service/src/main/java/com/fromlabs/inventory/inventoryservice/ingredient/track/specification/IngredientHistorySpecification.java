@@ -139,8 +139,7 @@ public class IngredientHistorySpecification {
                 .and(hasActorName(criteria.getActorName()))
                 .and(hasActorRole(criteria.getActorRole()))
                 .and(hasTrackTimestamp(criteria.getTrackTimestamp()))
-                .and(StringUtils.hasText(criteria.getUpdateAt()) ?
-                        hasUpdateAtGreaterThan(criteria.getUpdateAt()) : hasUpdatedAt(criteria.getUpdateAt()))
+                .and(StringUtils.hasText(criteria.getUpdateAt()) ? hasUpdateAtGreaterThan(criteria.getUpdateAt()) : hasUpdatedAt(criteria.getUpdateAt()))
                 .and(hasIngredient(ingredient))
                 .and(hasEventStatus(criteria.getStatus()));
         return isNull(event) ? spec : spec.and(hasEvent(event));

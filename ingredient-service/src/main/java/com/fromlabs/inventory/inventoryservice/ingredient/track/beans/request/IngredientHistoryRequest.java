@@ -4,9 +4,11 @@
 
 package com.fromlabs.inventory.inventoryservice.ingredient.track.beans.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class IngredientHistoryRequest{
     private final Long      id;
     private final Long      clientId;

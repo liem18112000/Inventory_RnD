@@ -1,6 +1,8 @@
-package com.fromlabs.inventory.inventoryservice.ingredient.beans.request;
+package com.fromlabs.inventory.inventoryservice.ingredient.track.factory;
 
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
+import com.fromlabs.inventory.inventoryservice.common.factory.FactoryCreateType;
+import com.fromlabs.inventory.inventoryservice.ingredient.track.IngredientHistoryEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -14,23 +16,12 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = InventoryServiceApplication.class)
 @ActiveProfiles({"dev","liem-local"} )
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class IngredientPageRequestTest {
+class IngredientHistoryEntityFactoryTest {
 
     @Test
-    void testEquals() {
-        var request = new IngredientPageRequest();
-        request.setClientId(1L);
-        request.setSort("id,asc");
-        var equalRequest = new IngredientPageRequest();
-        equalRequest.setClientId(1L);
-        equalRequest.setSort("id,asc");
-        Assertions.assertTrue(request.equals(equalRequest));
-    }
-
-    @Test
-    void testHashCode() {
-        var request = new IngredientPageRequest();
-        request.setClientId(1L);
-        Assertions.assertNotNull(request.hashCode());
+    void create() {
+        final var entity = IngredientHistoryEntityFactory
+                .create(FactoryCreateType.RANDOM);
+        Assertions.assertNotNull(entity);
     }
 }

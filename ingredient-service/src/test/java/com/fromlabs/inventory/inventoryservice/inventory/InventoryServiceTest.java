@@ -6,15 +6,21 @@ package com.fromlabs.inventory.inventoryservice.inventory;
 
 import com.fromlabs.inventory.inventoryservice.InventoryServiceApplication;
 import com.fromlabs.inventory.inventoryservice.common.helper.CustomizePageRequest;
+import com.fromlabs.inventory.inventoryservice.common.specifications.BaseSpecification;
+import com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria;
 import com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientEntity;
 import com.fromlabs.inventory.inventoryservice.ingredient.IngredientService;
 import com.fromlabs.inventory.inventoryservice.inventory.beans.request.InventoryPageRequest;
 import com.fromlabs.inventory.inventoryservice.inventory.mapper.InventoryMapper;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Date;
@@ -24,6 +30,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
+import static com.fromlabs.inventory.inventoryservice.common.specifications.SearchCriteria.criteriaEqual;
 import static com.fromlabs.inventory.inventoryservice.common.template.UnitTestTemplateProcess.getInput;
 import static com.fromlabs.inventory.inventoryservice.helper.KeyIndicator.*;
 import static com.fromlabs.inventory.inventoryservice.helper.TestKeyIndicator.*;
@@ -38,6 +45,9 @@ class InventoryServiceTest {
 
     @Autowired
     private InventoryService service;
+
+    @Mock
+    private InventoryRepository repository;
 
     @Autowired
     private IngredientService ingredientService;
@@ -560,9 +570,60 @@ class InventoryServiceTest {
 
     @Test
     void save() {
+        var entity = new InventoryEntity();
+        Mockito.when(repository.save(entity)).thenReturn(entity);
+        final var service = new InventoryServiceImpl(repository);
+        Assertions.assertEquals(entity, service.save(entity));
     }
 
     @Test
     void delete() {
+        var entity = new InventoryEntity();
+        final var service = new InventoryServiceImpl(repository);
+        Assertions.assertDoesNotThrow(() -> service.delete(entity));
+    }
+
+    @Test
+    public void getAllByUnitType() {
+        var entity = new InventoryEntity();
+        entity.setClientId(1L);
+        entity.setUnitType("UnitType");
+        Mockito.when(repository.findAllByClientIdAndUnitType(
+                entity.getClientId(), entity.getUnitType()))
+                .thenReturn(List.of(entity));
+        final var service = new InventoryServiceImpl(repository);
+        service.getAll(entity.getClientId(), entity.getUnitType()).forEach(actual -> {
+            Assertions.assertEquals(entity.getClientId(), actual.getClientId());
+            Assertions.assertEquals(entity.getUnitType(), actual.getUnitType());
+        });
+    }
+
+    @Test
+    public void getAllBySpec() {
+        var entity = new InventoryEntity();
+        entity.setClientId(1L);
+        final var spec = BaseSpecification
+            .<InventoryEntity>Spec(criteriaEqual("clientId", entity.getClientId()));
+        Mockito.when(repository.findAll(spec))
+                .thenReturn(List.of(entity));
+        final var service = new InventoryServiceImpl(repository);
+        service.getAll(entity.getClientId(), entity.getUnitType()).forEach(actual -> {
+            Assertions.assertEquals(entity.getClientId(), actual.getClientId());
+        });
+    }
+
+    @Test
+    public void getPageByClientId() {
+        var entity = new InventoryEntity();
+        entity.setClientId(1L);
+        final var pageable = Pageable.ofSize(10);
+        Mockito.when(repository.findAllByClientId(
+                        entity.getClientId(), pageable))
+                .thenReturn(new PageImpl<>(List.of(entity)));
+        final var service = new InventoryServiceImpl(repository);
+        service.getPage(entity.getClientId(), pageable).forEach(actual -> {
+            Assertions.assertEquals(entity.getClientId(), actual.getClientId());
+            Assertions.assertEquals(entity.getUnitType(), actual.getUnitType());
+        });
     }
 }

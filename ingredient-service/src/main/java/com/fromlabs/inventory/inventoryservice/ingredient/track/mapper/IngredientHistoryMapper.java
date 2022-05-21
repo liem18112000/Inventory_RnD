@@ -4,6 +4,7 @@
 
 package com.fromlabs.inventory.inventoryservice.ingredient.track.mapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromlabs.inventory.inventoryservice.ingredient.*;
 import com.fromlabs.inventory.inventoryservice.ingredient.beans.dto.IngredientDto;
@@ -216,37 +217,11 @@ public class IngredientHistoryMapper {
      * @param request   IngredientHistoryRequest
      * @return          Return the default name as actorName + actorRole if name is null
      */
-    private static String getNameFromRequest(
-            @NotNull final IngredientHistoryRequest request
-    ) {
-        return  StringUtils.hasLength(request.getName()) ? request.getName() :
-                request.getActorName().concat("_").concat(request.getActorRole());
-    }
-
-    /**
-     * Get request name
-     * @param request   IngredientHistoryRequest
-     * @return          Return the default name as actorName + actorRole if name is null
-     */
     private String getNameFromRequest(
             @NotNull final ItemRequest request
     ) {
-        return  StringUtils.hasLength(request.getName()) ? request.getName() :
-                request.getActorName().concat("_").concat(request.getActorRole());
-    }
-
-    /**
-     * Get ingredient by id from request
-     * @param request   IngredientHistoryRequest
-     * @param service   IngredientService
-     * @return          IngredientEntity
-     */
-    private IngredientEntity getIngredient(
-            @NotNull final IngredientHistoryRequest request,
-            @NotNull final IngredientService service
-    ) {
-        return  nonNull(request.getIngredientId()) ?
-                service.getById(requireNonNull(request.getIngredientId())) : null;
+        return  StringUtils.hasLength(request.getName()) ?
+                request.getName() : request.getActorName().concat("_").concat(request.getActorRole());
     }
 
     /**

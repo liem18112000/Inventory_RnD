@@ -22,7 +22,6 @@ import java.util.Objects;
 @Table(name="inventory")
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 public class InventoryEntity extends IngredientReferencedExtendEntity<Long> {
 
